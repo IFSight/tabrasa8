@@ -718,6 +718,8 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
 #   include __DIR__ . '/settings.local.php';
 # }
 
-if ($ff = '/fulcrum/fulcrum8.php' AND file_exists($ff) AND (include $ff) AND isset($_FULCRUM)) {
+if ($ff = '/fulcrum.php' AND file_exists($ff) AND (include $ff) AND isset($_FULCRUM)) {
+  fulcrum_cfg('pre', $_FULCRUM['conf'], $settings, $databases);
+} else if ($ff = "{$_SERVER['HOME']}/fulcrum/etc/fulcrum/php/fulcrum.php" AND file_exists($ff) AND (include $ff) AND isset($_FULCRUM)) {
   fulcrum_cfg('pre', $_FULCRUM['conf'], $settings, $databases);
 }
