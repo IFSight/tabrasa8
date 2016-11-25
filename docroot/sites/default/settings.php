@@ -722,4 +722,6 @@ if ($ff = '/fulcrum/fulcrum.php' AND file_exists($ff) AND (include $ff) AND isse
   fulcrum_cfg('pre', $_FULCRUM['conf'], $settings, $databases);
 } else if ($ff = "{$_SERVER['HOME']}/fulcrum/etc/fulcrum/php/fulcrum.php" AND file_exists($ff) AND (include $ff) AND isset($_FULCRUM)) {
   fulcrum_cfg('pre', $_FULCRUM['conf'], $settings, $databases);
+} else if ($ff = "{$_SERVER['HOME']}/fulcrum/php/fulcrum.php" AND file_exists($ff) AND (include $ff) AND isset($_FULCRUM)) {
+  fulcrum_cfg('pre', $_FULCRUM['conf'], $settings, $databases);
 }
