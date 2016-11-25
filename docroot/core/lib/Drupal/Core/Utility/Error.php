@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Utility\Error.
- */
-
 namespace Drupal\Core\Utility;
 
 use Drupal\Component\Utility\SafeMarkup;
@@ -76,7 +71,7 @@ class Error {
       '%line' => $caller['line'],
       'severity_level' => static::ERROR,
       'backtrace' => $backtrace,
-      'backtrace_string' => $exception->getTraceAsString(),
+      '@backtrace_string' => $exception->getTraceAsString(),
     );
   }
 

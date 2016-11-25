@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\node\Tests\NodeQueryAlterTest.
- */
-
 namespace Drupal\node\Tests;
 
 /**
@@ -198,4 +193,5 @@ class NodeQueryAlterTest extends NodeTestBase {
     }
     \Drupal::state()->delete('node_access_test.no_access_uid');
   }
+
 }

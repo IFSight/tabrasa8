@@ -79,9 +79,9 @@
  * Web services make it possible for applications and web sites to read and
  * update information from other web sites. There are several standard
  * techniques for providing web services, including:
- * - SOAP: http://en.wikipedia.org/wiki/SOAP SOAP
- * - XML-RPC: http://en.wikipedia.org/wiki/XML-RPC
- * - REST: http://en.wikipedia.org/wiki/Representational_state_transfer
+ * - SOAP: http://wikipedia.org/wiki/SOAP
+ * - XML-RPC: http://wikipedia.org/wiki/XML-RPC
+ * - REST: http://wikipedia.org/wiki/Representational_state_transfer
  * Drupal sites can both provide web services and integrate third-party web
  * services.
  *
@@ -254,7 +254,7 @@
  * - Exporting and importing configuration.
  *
  * The file storage format for configuration information in Drupal is
- * @link http://en.wikipedia.org/wiki/YAML YAML files. @endlink Configuration is
+ * @link http://wikipedia.org/wiki/YAML YAML files. @endlink Configuration is
  * divided into files, each containing one configuration object. The file name
  * for a configuration object is equal to the unique name of the configuration,
  * with a '.yml' extension. The default configuration files for each module are
@@ -461,7 +461,8 @@
  * caches.
  *
  * Other common cache bins are the following:
- *   - bootstrap: Small caches needed for the bootstrap on every request.
+ *   - bootstrap: Data needed from the beginning to the end of most requests,
+ *     that has a very strict limit on variations and is invalidated rarely.
  *   - render: Contains cached HTML strings like cached pages and blocks, can
  *     grow to large size.
  *   - data: Contains data that can vary by path or similar context.
@@ -1143,7 +1144,7 @@
  *
  * A runtime assertion is a statement that is expected to always be true at
  * the point in the code it appears at. They are tested using PHP's internal
- * @link http://www.php.net/assert assert() @endlink statement. If an
+ * @link http://php.net/assert assert() @endlink statement. If an
  * assertion is ever FALSE it indicates an error in the code or in module or
  * theme configuration files. User-provided configuration files should be
  * verified with standard control structures at all times, not just checked in
@@ -1691,7 +1692,11 @@
  *     // Create a $form API array.
  *     $form['phone_number'] = array(
  *       '#type' => 'tel',
- *       '#title' => $this->t('Your phone number')
+ *       '#title' => $this->t('Your phone number'),
+ *     );
+ *     $form['save'] = array(
+ *       '#type' => 'submit',
+ *       '#value' => $this->t('Save'),
  *     );
  *     return $form;
  *   }
@@ -1893,21 +1898,32 @@
 function hook_cron() {
   // Short-running operation example, not using a queue:
   // Delete all expired records since the last cron run.
-  $expires = \Drupal::state()->get('mymodule.cron_last_run', REQUEST_TIME);
-  db_delete('mymodule_table')
+  $expires = \Drupal::state()->get('mymodule.last_check', 0);
+  \Drupal::database()->delete('mymodule_table')
     ->condition('expires', $expires, '>=')
     ->execute();
-  \Drupal::state()->set('mymodule.cron_last_run', REQUEST_TIME);
+  \Drupal::state()->set('mymodule.last_check', REQUEST_TIME);
 
   // Long-running operation example, leveraging a queue:
-  // Fetch feeds from other sites.
-  $result = db_query('SELECT * FROM {aggregator_feed} WHERE checked + refresh < :time AND refresh <> :never', array(
-    ':time' => REQUEST_TIME,
-    ':never' => AGGREGATOR_CLEAR_NEVER,
-  ));
+  // Queue news feeds for updates once their refresh interval has elapsed.
   $queue = \Drupal::queue('aggregator_feeds');
-  foreach ($result as $feed) {
-    $queue->createItem($feed);
+  $ids = \Drupal::entityManager()->getStorage('aggregator_feed')->getFeedIdsToRefresh();
+  foreach (Feed::loadMultiple($ids) as $feed) {
+    if ($queue->createItem($feed)) {
+      // Add timestamp to avoid queueing item more than once.
+      $feed->setQueuedTime(REQUEST_TIME);
+      $feed->save();
+    }
+  }
+  $ids = \Drupal::entityQuery('aggregator_feed')
+    ->condition('queued', REQUEST_TIME - (3600 * 6), '<')
+    ->execute();
+  if ($ids) {
+    $feeds = Feed::loadMultiple($ids);
+    foreach ($feeds as $feed) {
+      $feed->setQueuedTime(0);
+      $feed->save();
+    }
   }
 }
 
@@ -1957,33 +1973,34 @@ function hook_queue_info_alter(&$queues) {
  *
  * @param $message
  *   An array containing the message data. Keys in this array include:
- *  - 'id':
+ *   - 'id':
  *     The MailManagerInterface->mail() id of the message. Look at module source
  *     code or MailManagerInterface->mail() for possible id values.
- *  - 'to':
+ *   - 'to':
  *     The address or addresses the message will be sent to. The
  *     formatting of this string must comply with RFC 2822.
- *  - 'from':
+ *   - 'from':
  *     The address the message will be marked as being from, which is
  *     either a custom address or the site-wide default email address.
- *  - 'subject':
+ *   - 'subject':
  *     Subject of the email to be sent. This must not contain any newline
  *     characters, or the email may not be sent properly.
- *  - 'body':
- *     An array of strings containing the message text. The message body is
- *     created by concatenating the individual array strings into a single text
- *     string using "\n\n" as a separator.
- *  - 'headers':
+ *   - 'body':
+ *     An array of strings or objects that implement
+ *     \Drupal\Component\Render\MarkupInterface containing the message text. The
+ *     message body is created by concatenating the individual array strings
+ *     into a single text string using "\n\n" as a separator.
+ *   - 'headers':
  *     Associative array containing mail headers, such as From, Sender,
  *     MIME-Version, Content-Type, etc.
- *  - 'params':
+ *   - 'params':
  *     An array of optional parameters supplied by the caller of
  *     MailManagerInterface->mail() that is used to build the message before
  *     hook_mail_alter() is invoked.
- *  - 'language':
+ *   - 'language':
  *     The language object used to build the message before hook_mail_alter()
  *     is invoked.
- *  - 'send':
+ *   - 'send':
  *     Set to FALSE to abort sending this email message.
  *
  * @see \Drupal\Core\Mail\MailManagerInterface::mail()
@@ -2021,7 +2038,9 @@ function hook_mail_alter(&$message) {
  *     string when the hook is invoked.
  *   - body: An array of lines containing the message to be sent. Drupal will
  *     format the correct line endings for you. MailManagerInterface->mail()
- *     sets this to an empty array when the hook is invoked.
+ *     sets this to an empty array when the hook is invoked. The array may
+ *     contain either strings or objects implementing
+ *     \Drupal\Component\Render\MarkupInterface.
  *   - from: The address the message will be marked as being from, which is
  *     set by MailManagerInterface->mail() to either a custom address or the
  *     site-wide default email address when the hook is invoked.
@@ -2032,7 +2051,7 @@ function hook_mail_alter(&$message) {
  *   An array of parameters supplied by the caller of
  *   MailManagerInterface->mail().
  *
- * @see \Drupal\Core\Mail\MailManagerInterface->mail()
+ * @see \Drupal\Core\Mail\MailManagerInterface::mail()
  */
 function hook_mail($key, &$message, $params) {
   $account = $params['account'];
@@ -2092,7 +2111,7 @@ function hook_mail_backend_info_alter(&$info) {
  * @param $countries
  *   The associative array of countries keyed by two-letter country code.
  *
- * @see \Drupal\Core\Locale\CountryManager::getList().
+ * @see \Drupal\Core\Locale\CountryManager::getList()
  */
 function hook_countries_alter(&$countries) {
   // Elbonia is now independent, so add it to the country list.

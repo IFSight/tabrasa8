@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\views\Plugin\views\display\EntityReference.
- */
-
 namespace Drupal\views\Plugin\views\display;
 
 /**
@@ -180,4 +175,5 @@ class EntityReference extends DisplayPluginBase {
     }
     return $errors;
   }
+
 }

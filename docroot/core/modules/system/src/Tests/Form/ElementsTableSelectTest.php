@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\system\Tests\Form\ElementsTableSelectTest.
- */
-
 namespace Drupal\system\Tests\Form;
 
 use Drupal\Core\Form\FormState;
@@ -259,4 +254,5 @@ class ElementsTableSelectTest extends WebTestBase {
     // to allow the caller lowlevel access to the form.
     return array($form, $form_state, $errors);
   }
+
 }

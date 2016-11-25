@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\views\Plugin\views\argument\NumericArgument.
- */
-
 namespace Drupal\views\Plugin\views\argument;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -23,13 +18,13 @@ class NumericArgument extends ArgumentPluginBase {
    * The operator used for the query: or|and.
    * @var string
    */
-  var $operator;
+  public $operator;
 
   /**
    * The actual value which is used for querying.
    * @var array
    */
-  var $value;
+  public $value;
 
   protected function defineOptions() {
     $options = parent::defineOptions();

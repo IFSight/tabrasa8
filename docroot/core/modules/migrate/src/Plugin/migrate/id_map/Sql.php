@@ -1,17 +1,12 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\migrate\Plugin\migrate\id_map\Sql.
- */
-
 namespace Drupal\migrate\Plugin\migrate\id_map;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\migrate\Entity\MigrationInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Event\MigrateIdMapMessageEvent;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateMessageInterface;
@@ -83,7 +78,7 @@ class Sql extends PluginBase implements MigrateIdMapInterface, ContainerFactoryP
   /**
    * The migration being done.
    *
-   * @var \Drupal\migrate\Entity\MigrationInterface
+   * @var \Drupal\migrate\Plugin\MigrationInterface
    */
   protected $migration;
 
@@ -154,7 +149,7 @@ class Sql extends PluginBase implements MigrateIdMapInterface, ContainerFactoryP
    *   The plugin ID for the migration process to do.
    * @param mixed $plugin_definition
    *   The configuration for the plugin.
-   * @param \Drupal\migrate\Entity\MigrationInterface $migration
+   * @param \Drupal\migrate\Plugin\MigrationInterface $migration
    *   The migration to do.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, EventDispatcherInterface $event_dispatcher) {
@@ -446,20 +441,40 @@ class Sql extends PluginBase implements MigrateIdMapInterface, ContainerFactoryP
    * Creates schema from an ID definition.
    *
    * @param array $id_definition
-   *   A field schema definition. Can be SQL schema or a type data
-   *   based schema. In the latter case, the value of type needs to be
-   *   $typed_data_type.$column.
+   *   The definition of the field having the structure as the items returned by
+   *   MigrateSourceInterface or MigrateDestinationInterface::getIds().
    *
    * @return array
-   *   The schema definition.
+   *   The database schema definition.
+   *
+   * @see \Drupal\migrate\Plugin\MigrateSourceInterface::getIds()
+   * @see \Drupal\migrate\Plugin\MigrateDestinationInterface::getIds()
    */
   protected function getFieldSchema(array $id_definition) {
     $type_parts = explode('.', $id_definition['type']);
     if (count($type_parts) == 1) {
       $type_parts[] = 'value';
     }
-    $schema = BaseFieldDefinition::create($type_parts[0])->getColumns();
-    return $schema[$type_parts[1]];
+    unset($id_definition['type']);
+
+    // Get the field storage definition.
+    $definition = BaseFieldDefinition::create($type_parts[0]);
+
+    // Get a list of setting keys belonging strictly to the field definition.
+    $default_field_settings = $definition->getSettings();
+    // Separate field definition settings from custom settings. Custom settings
+    // are settings passed in $id_definition that are not part of field storage
+    // definition settings.
+    $field_settings = array_intersect_key($id_definition, $default_field_settings);
+    $custom_settings = array_diff_key($id_definition, $default_field_settings);
+
+    // Resolve schema from field storage definition settings.
+    $schema = $definition
+      ->setSettings($field_settings)
+      ->getColumns()[$type_parts[1]];
+
+    // Merge back custom settings.
+    return $schema + $custom_settings;
   }
 
   /**
@@ -522,16 +537,56 @@ class Sql extends PluginBase implements MigrateIdMapInterface, ContainerFactoryP
    * {@inheritdoc}
    */
   public function lookupDestinationId(array $source_id_values) {
+    $results = $this->lookupDestinationIds($source_id_values);
+    return $results ? reset($results) : array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function lookupDestinationIds(array $source_id_values) {
     if (empty($source_id_values)) {
       return array();
     }
-    $query = $this->getDatabase()->select($this->mapTableName(), 'map')
-              ->fields('map', $this->destinationIdFields());
 
-    $query->condition(static::SOURCE_IDS_HASH, $this->getSourceIDsHash($source_id_values));
-    $result = $query->execute();
-    $destination_id = $result->fetchAssoc();
-    return array_values($destination_id ?: array());
+    // Canonicalize the keys into a hash of DB-field => value.
+    $is_associative = !isset($source_id_values[0]);
+    $conditions = [];
+    foreach ($this->sourceIdFields() as $field_name => $db_field) {
+      if ($is_associative) {
+        // Associative $source_id_values can have fields out of order.
+        if (isset($source_id_values[$field_name])) {
+          $conditions[$db_field] = $source_id_values[$field_name];
+          unset($source_id_values[$field_name]);
+        }
+      }
+      else {
+        // For non-associative $source_id_values, we assume they're the first
+        // few fields.
+        if (empty($source_id_values)) {
+          break;
+        }
+        $conditions[$db_field] = array_shift($source_id_values);
+      }
+    }
+
+    if (!empty($source_id_values)) {
+      throw new MigrateException("Extra unknown items in source IDs");
+    }
+
+    $query = $this->getDatabase()->select($this->mapTableName(), 'map')
+      ->fields('map', $this->destinationIdFields());
+    if (count($this->sourceIdFields()) === count($conditions)) {
+      // Optimization: Use the primary key.
+      $query->condition(self::SOURCE_IDS_HASH, $this->getSourceIDsHash(array_values($conditions)));
+    }
+    else {
+      foreach ($conditions as $db_field => $value) {
+        $query->condition($db_field, $value);
+      }
+    }
+
+    return $query->execute()->fetchAll(\PDO::FETCH_NUM);
   }
 
   /**
@@ -570,7 +625,7 @@ class Sql extends PluginBase implements MigrateIdMapInterface, ContainerFactoryP
       $this->message->display(t('Could not save to map table due to missing destination id values'), 'error');
       return;
     }
-    if ($this->migration->get('trackLastImported')) {
+    if ($this->migration->getTrackLastImported()) {
       $fields['last_imported'] = time();
     }
     $keys = [static::SOURCE_IDS_HASH => $this->getSourceIDsHash($source_id_values)];
@@ -810,7 +865,25 @@ class Sql extends PluginBase implements MigrateIdMapInterface, ContainerFactoryP
     if ($this->valid()) {
       $result = array();
       foreach ($this->destinationIdFields() as $destination_field_name => $idmap_field_name) {
-        $result[$destination_field_name] = $this->currentRow[$idmap_field_name];
+        if (!is_null($this->currentRow[$idmap_field_name])) {
+          $result[$destination_field_name] = $this->currentRow[$idmap_field_name];
+        }
+      }
+      return $result;
+    }
+    else {
+      return NULL;
+    }
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function currentSource() {
+    if ($this->valid()) {
+      $result = array();
+      foreach ($this->sourceIdFields() as $field_name => $source_id) {
+        $result[$field_name] = $this->currentKey[$source_id];
       }
       return $result;
     }

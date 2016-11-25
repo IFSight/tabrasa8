@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\language\ConfigurableLanguageManager.
- */
-
 namespace Drupal\language;
 
 use Drupal\Core\Language\LanguageInterface;
@@ -392,7 +387,7 @@ class ConfigurableLanguageManager extends LanguageManager implements Configurabl
       $type = 'language_fallback_candidates';
       $types = array();
       if (!empty($context['operation'])) {
-        $types[] = $type . '_' .  $context['operation'];
+        $types[] = $type . '_' . $context['operation'];
       }
       $types[] = $type;
       $this->moduleHandler->alter($types, $candidates, $context);

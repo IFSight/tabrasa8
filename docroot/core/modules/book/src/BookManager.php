@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\book\BookManager.
- */
-
 namespace Drupal\book;
 
 use Drupal\Component\Utility\Unicode;
@@ -143,7 +138,7 @@ class BookManager implements BookManagerInterface {
   /**
    * Determine the relative depth of the children of a given book link.
    *
-   * @param array
+   * @param array $book_link
    *   The book link.
    *
    * @return int
@@ -725,7 +720,7 @@ class BookManager implements BookManagerInterface {
    * @param array $flat
    *   A flat array of the menu links from $tree, passed by reference.
    *
-   * @see static::bookTreeGetFlat().
+   * @see static::bookTreeGetFlat()
    */
   protected function flatBookTree(array $tree, array &$flat) {
     foreach ($tree as $data) {
@@ -1050,7 +1045,6 @@ class BookManager implements BookManagerInterface {
    *
    * @return array
    *   Book tree.
-   *
    */
   protected function buildBookOutlineRecursive(&$links, $parents, $depth) {
     $tree = array();

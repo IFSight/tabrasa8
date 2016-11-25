@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Command\DbDumpCommand.
- */
-
 namespace Drupal\Core\Command;
 
 use Drupal\Component\Utility\Variable;
@@ -38,7 +33,7 @@ class DbDumpCommand extends DbCommandBase {
    *
    * @var array
    */
-  protected $excludeTables = ['simpletest.+'];
+  protected $excludeTables = ['test[0-9]+'];
 
   /**
    * {@inheritdoc}

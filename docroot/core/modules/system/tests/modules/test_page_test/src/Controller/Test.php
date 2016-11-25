@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\test_page_test\Controller\Test.
- */
-
 namespace Drupal\test_page_test\Controller;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -91,6 +86,16 @@ class Test {
     return [
       '#markup' => 'Content',
     ];
+  }
+
+  /**
+   * Renders a page with encoded markup.
+   *
+   * @return array
+   *   A render array as expected by drupal_render()
+   */
+  public function renderEncodedMarkup() {
+    return ['#plain_text' => 'Bad html <script>alert(123);</script>'];
   }
 
 }

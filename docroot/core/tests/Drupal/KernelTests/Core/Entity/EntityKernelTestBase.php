@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\KernelTests\Core\Entity\EntityKernelTestBase.
- */
-
 namespace Drupal\KernelTests\Core\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -194,8 +189,7 @@ abstract class EntityKernelTestBase extends KernelTestBase {
       // Drupal supported databases and is known to work for other databases
       // like SQL Server 2014 and Oracle 10 too.
       $id = $string ? $this->randomMachineName() : mt_rand(1, 0x7FFFFFFF);
-    }
-    while (isset($this->generatedIds[$id]));
+    } while (isset($this->generatedIds[$id]));
     $this->generatedIds[$id] = $id;
     return $id;
   }

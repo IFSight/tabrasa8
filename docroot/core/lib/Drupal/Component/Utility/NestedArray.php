@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Component\Utility\NestedArray.
- */
-
 namespace Drupal\Component\Utility;
 
 /**
@@ -354,7 +349,7 @@ class NestedArray {
    *
    * @param array $array
    *   The filtered nested array.
-   * @param callable|NULL $callable
+   * @param callable|null $callable
    *   The callable to apply for filtering.
    *
    * @return array

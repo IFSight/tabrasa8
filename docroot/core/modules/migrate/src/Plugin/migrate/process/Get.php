@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\migrate\Plugin\migrate\process\Get.
- */
-
 namespace Drupal\migrate\Plugin\migrate\process;
 
 use Drupal\migrate\ProcessPluginBase;
@@ -13,6 +8,8 @@ use Drupal\migrate\Row;
 
 /**
  * This plugin copies from the source to the destination.
+ *
+ * @link https://www.drupal.org/node/2135307 Online handbook documentation for get process plugin @endlink
  *
  * @MigrateProcessPlugin(
  *   id = "get"

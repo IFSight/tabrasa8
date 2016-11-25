@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\system\Tests\Update\UpdateScriptTest.
- */
-
 namespace Drupal\system\Tests\Update;
 
 use Drupal\Core\Url;
@@ -61,20 +56,38 @@ class UpdateScriptTest extends WebTestBase {
     $this->drupalGet($this->updateUrl, array('external' => TRUE));
     $this->assertResponse(403);
 
+    // Check that a link to the update page is not accessible to regular users.
+    $this->drupalGet('/update-script-test/database-updates-menu-item');
+    $this->assertNoLink('Run database updates');
+
     // Try accessing update.php as an anonymous user.
     $this->drupalLogout();
     $this->drupalGet($this->updateUrl, array('external' => TRUE));
     $this->assertResponse(403);
+
+    // Check that a link to the update page is not accessible to anonymous
+    // users.
+    $this->drupalGet('/update-script-test/database-updates-menu-item');
+    $this->assertNoLink('Run database updates');
 
     // Access the update page with the proper permission.
     $this->drupalLogin($this->updateUser);
     $this->drupalGet($this->updateUrl, array('external' => TRUE));
     $this->assertResponse(200);
 
+    // Check that a link to the update page is accessible to users with proper
+    // permissions.
+    $this->drupalGet('/update-script-test/database-updates-menu-item');
+    $this->assertLink('Run database updates');
+
     // Access the update page as user 1.
     $this->drupalLogin($this->rootUser);
     $this->drupalGet($this->updateUrl, array('external' => TRUE));
     $this->assertResponse(200);
+
+    // Check that a link to the update page is accessible to user 1.
+    $this->drupalGet('/update-script-test/database-updates-menu-item');
+    $this->assertLink('Run database updates');
   }
 
   /**
@@ -219,9 +232,9 @@ class UpdateScriptTest extends WebTestBase {
     $this->assertEqual($final_maintenance_mode, $initial_maintenance_mode, 'Maintenance mode should not have changed after database updates.');
   }
 
- /**
-  * Tests perfoming updates with update.php in a multilingual environment.
-  */
+  /**
+   * Tests perfoming updates with update.php in a multilingual environment.
+   */
   function testSuccessfulMultilingualUpdateFunctionality() {
     // Add some custom languages.
     foreach (array('aa', 'bb') as $language_code) {
@@ -229,7 +242,7 @@ class UpdateScriptTest extends WebTestBase {
           'id' => $language_code,
           'label' => $this->randomMachineName(),
         ))->save();
-     }
+    }
 
     $config = \Drupal::service('config.factory')->getEditable('language.negotiation');
     // Ensure path prefix is used to determine the language.
@@ -386,4 +399,5 @@ class UpdateScriptTest extends WebTestBase {
       ),
     );
   }
+
 }

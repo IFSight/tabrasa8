@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains \Drupal\Tests\migrate\Unit\process\GetTest.
@@ -114,4 +115,5 @@ class TestGet extends Get {
   public function setSource($source) {
     $this->configuration['source'] = $source;
   }
+
 }

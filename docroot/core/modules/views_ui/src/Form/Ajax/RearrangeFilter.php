@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\views_ui\Form\Ajax\RearrangeFilter.
- */
-
 namespace Drupal\views_ui\Form\Ajax;
 
 use Drupal\Component\Utility\Html;
@@ -336,7 +331,7 @@ class RearrangeFilter extends ViewsFormBase {
    *
    * For example array(0 => 'foo') would be array(1 => 'foo').
    *
-   * @param array
+   * @param array $array
    *   The array to increment keys on.
    *
    * @return array
@@ -357,4 +352,3 @@ class RearrangeFilter extends ViewsFormBase {
   }
 
 }
-

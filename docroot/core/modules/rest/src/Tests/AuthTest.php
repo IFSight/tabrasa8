@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rest\Tests\AuthTest.
- */
-
 namespace Drupal\rest\Tests;
 
 use Drupal\Core\Url;
@@ -21,7 +16,7 @@ class AuthTest extends RESTTestBase {
    *
    * @var array
    */
-  public static $modules = array('basic_auth', 'hal', 'rest', 'entity_test', 'comment');
+  public static $modules = array('basic_auth', 'hal', 'rest', 'entity_test');
 
   /**
    * Tests reading from an authenticated resource.
@@ -48,7 +43,6 @@ class AuthTest extends RESTTestBase {
     // resources via the REST API, but the request is authenticated
     // with session cookies.
     $permissions = $this->entityPermissions($entity_type, 'view');
-    $permissions[] = 'restful get entity:' . $entity_type;
     $account = $this->drupalCreateUser($permissions);
     $this->drupalLogin($account);
 
