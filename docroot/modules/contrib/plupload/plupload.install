@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Plupload module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function plupload_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'runtime') {
+    $requirements['plupload'] = array(
+      'title' => \Drupal::translation()->translate('Plupload library'),
+      'value' => \Drupal::translation()->translate('Unknown'),
+    );
+    $requirements['plupload']['severity'] = REQUIREMENT_OK;
+    $libraries = \Drupal::service('library.discovery')->getLibrariesByExtension('plupload');
+    $library = $libraries['plupload'];
+
+    // Check if Plupload library exists. Try to determine it's version
+    // if it does.
+    if (!_plupload_requirements_installed()) {
+      $message = 'The <a href="@url">@title</a> library (version @version or higher) is not installed.';
+      $args = array(
+        '@title' => $library['title'],
+        '@url' => $library['website'],
+        '@version' => $library['version'],
+      );
+
+      $requirements['plupload']['description'] = \Drupal::translation()->translate($message, $args);
+      $requirements['plupload']['severity'] = REQUIREMENT_ERROR;
+    }
+    elseif (($installed_version = _plupload_requirements_version()) === NULL) {
+      $requirements['plupload']['description'] = \Drupal::translation()->translate('Plupload version could not be determined.');
+      $requirements['plupload']['severity'] = REQUIREMENT_INFO;
+    }
+    elseif (!version_compare($library['version'], $installed_version, '<=')) {
+      $requirements['plupload']['description'] = \Drupal::translation()->translate('Plupload @version or higher is required.', array('@version' => $library['version']));
+      $requirements['plupload']['severity'] = REQUIREMENT_INFO;
+    }
+
+    $requirements['plupload']['value'] = empty($installed_version) ? \Drupal::translation()->translate('Not found') : $installed_version;
+
+    if (file_exists('libraries/plupload/examples/upload.php')) {
+      $requirements['plupload_examples'] = array(
+        'title' => \Drupal::translation()->translate('Plupload example folder'),
+        'value' => \Drupal::translation()->translate('Example folder found'),
+        'description' => \Drupal::translation()->translate('Plupload library contains example files, these could constitute a security risk to your site as per <a href="!url">PSA-2011-02</a>. Please remove the !path folder immediately.', array(
+          '!url' => 'http://drupal.org/node/1189632',
+          '!path' => 'libraries/plupload/examples'
+        )),
+        'severity' => REQUIREMENT_ERROR
+      );
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Checks wether Plupload library exists or not.
+ *
+ * @return boolean
+ *   TRUE if plupload library installed, FALSE otherwise.
+ */
+function _plupload_requirements_installed() {
+  $libraries = \Drupal::service('library.discovery')->getLibrariesByExtension('plupload');
+  $library = $libraries['plupload'];
+
+  // We grab the first file and check if it exists.
+  if (!file_exists($library['js'][0]['data'])) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Returns the version of the installed plupload library.
+ *
+ * @return string
+ *   The version of installed Plupload or NULL if unable to detect version.
+ */
+function _plupload_requirements_version() {
+  $libraries = \Drupal::service('library.discovery')->getLibrariesByExtension('plupload');
+  $library = $libraries['plupload'];
+
+  // Read contents of Plupload's javascript file.
+  $configcontents = @file_get_contents($library['js'][0]['data']);
+  if (!$configcontents) {
+    return NULL;
+  }
+
+  // Search for version string using a regular expression.
+  $matches = array();
+  if (preg_match("#Plupload.*v(\d+[\.\d+]*)#s", $configcontents, $matches)) {
+    return $matches[1];
+  }
+
+  return NULL;
+}

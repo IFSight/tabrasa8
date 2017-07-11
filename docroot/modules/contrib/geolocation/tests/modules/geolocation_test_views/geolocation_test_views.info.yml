@@ -1,0 +1,16 @@
+# core: '8.x'
+name: 'Geolocation Views Test'
+type: module
+description: 'Support module for Geolocation Views tests'
+package: Testing
+dependencies:
+  - geolocation
+  - views
+  - node
+  - field
+hidden: true
+# Information added by Drupal.org packaging script on 2017-02-27
+version: '8.x-1.10'
+core: '8.x'
+project: 'geolocation'
+datestamp: 1488214391

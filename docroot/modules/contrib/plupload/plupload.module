@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * @file
+ * Implementation of plupload.module.
+ */
+
+/**
+ * Implements hook_library_info_alter().
+ *
+ * Adds dynamic parts of library definition.
+ */
+function plupload_library_info_alter(&$library_definition, $extension) {
+  if ($extension == 'plupload') {
+    $library_definition['plupload']['settings']['plupload']['_default']['max_file_size'] = file_upload_max_size() . 'b';
+    $library_definition['plupload']['settings']['plupload']['_default']['chunk_size'] = Drupal\Component\Utility\Bytes::toInt(ini_get('post_max_size')) . 'b';
+    if (\Drupal::service('module_handler')->moduleExists('locale')) {
+      $library_definition['plupload']['js']['js/i18n.js'] = array('scope' => 'footer');
+    }
+  }
+}
+
+/**
+ * Fix the temporary filename provided by the plupload library.
+ *
+ * Newer versions of the plupload JavaScript library upload temporary files
+ * with names that contain the intended final prefix of the uploaded file
+ * (e.g., ".jpg" or ".png"). Older versions of the plupload library always use
+ * ".tmp" as the temporary file extension.
+ *
+ * We prefer the latter behavior, since although the plupload temporary
+ * directory where these files live is always expected to be private (and we
+ * protect it via .htaccess; see plupload_handle_uploads()), in case it ever
+ * isn't we don't want people to be able to upload files with an arbitrary
+ * extension into that directory.
+ *
+ * This function therefore fixes the plupload temporary filenames so that they
+ * will always use a ".tmp" extension.
+ *
+ * @param string $filename
+ *   The original temporary filename provided by the plupload library.
+ *
+ * @return string
+ *   The corrected temporary filename, with a ".tmp" extension replacing the
+ *   original one.
+ */
+function _plupload_fix_temporary_filename($filename) {
+  $pos = strpos($filename, '.');
+  if ($pos !== FALSE) {
+    $filename = substr_replace($filename, '.tmp', $pos);
+  }
+  return $filename;
+}
+
+/**
+ * Helper function to add defaults to $element['#upload_validators'].
+ */
+function _plupload_default_upload_validators() {
+  return array(
+    // See file_save_upload() for details.
+    'file_validate_extensions' => array('jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'),
+  );
+}

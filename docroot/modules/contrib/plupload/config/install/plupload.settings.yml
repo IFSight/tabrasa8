@@ -1,0 +1,3 @@
+# @todo library path is hardcoded ATM - make sure this config value is respected
+library_path: 'libraries/plupload'
+temporary_uri: 'temporary://'

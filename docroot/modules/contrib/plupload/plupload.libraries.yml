@@ -1,0 +1,22 @@
+plupload:
+  title: 'Plupload'
+  website: http://www.plupload.com
+  version: 2.1.1
+  js:
+    /libraries/plupload/js/plupload.full.min.js: {}
+    /libraries/plupload/js/jquery.plupload.queue/jquery.plupload.queue.min.js: {}
+    plupload.js: {}
+  css:
+    theme:
+      plupload.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+  settings:
+    plupload:
+      _default:
+        runtimes: 'html5,flash,html4'
+        unique_names: TRUE
+        flash_swf_url: /libraries/plupload/js/Moxie.swf
+        silverlight_xap_url: /libraries/plupload/js/Moxie.xap

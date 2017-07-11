@@ -1,0 +1,8 @@
+plupload.upload:
+  path: '/plupload-handle-uploads'
+  defaults:
+    _controller: '\Drupal\plupload\UploadController::handleUploads'
+    _title: 'Handles uploads'
+  requirements:
+    _permission: 'access content'
+    _csrf_token: 'TRUE'

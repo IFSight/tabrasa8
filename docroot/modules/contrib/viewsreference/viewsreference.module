@@ -1,0 +1,25 @@
+<?php
+/**
+ * @file module functions for viewsreference
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function viewsreference_theme($existing, $type, $theme, $path) {
+  return array(
+    'viewsreference__view_title' => array(
+      'template' => 'viewsreference--view-title',
+      'render element' => 'variables',
+    )
+  );
+}
+
+/**
+ * Implements HOOK_preprocess_HOOK().
+ * 
+ * @param $variables
+ */
+function viewsreference_preprocess_viewsreference__view_title(&$variables) {
+  $variables['title'] = $variables['variables']['#title'];
+}

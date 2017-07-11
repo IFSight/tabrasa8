@@ -1,0 +1,13 @@
+{#
+  When overriding this template, make sure to preserve
+  - CSS-classes
+  - parent - children hierarchy
+  - data-lng and data-lat attributes
+  or the attached Geolocation Javascript will fail.
+
+  Changing the HTML tags, adding classes or adding content around or within the existing structure is no problem.
+#}
+<div class="geolocation" data-lat="{{ position.lat }}" data-lng="{{ position.lng }}" {% if icon is not empty %} data-icon="{{ icon }}" {% endif %} {% if location_id is not empty %} data-location-id="{{ location_id }}" {% endif %}>
+    <h2 class="location-title">{{ title }}</h2>
+    <div class="location-content">{{ content }}</div>
+</div>

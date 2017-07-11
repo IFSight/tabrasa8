@@ -1,0 +1,13 @@
+geolocation_demo.widget_forms:
+  title: 'Available Field Widgets'
+  description: 'Geolocation field widgets'
+  route_name: geolocation_demo.widget_forms
+  weight: 100
+  menu_name: geolocation-demo
+
+geolocation_demo.formatters:
+  title: 'Available Field Formatters'
+  description: 'Geolocation field formatters'
+  route_name: geolocation_demo.formatters
+  weight: 101
+  menu_name: geolocation-demo

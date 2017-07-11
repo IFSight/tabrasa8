@@ -1,0 +1,15 @@
+name: Geolocation - Demo
+type: module
+description: Example views and pages for some more common use cases
+# core: 8.x
+package: Geolocation
+dependencies:
+  - geolocation
+  - views
+  - node
+  - field
+# Information added by Drupal.org packaging script on 2017-02-27
+version: '8.x-1.10'
+core: '8.x'
+project: 'geolocation'
+datestamp: 1488214391
