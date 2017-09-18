@@ -74,6 +74,7 @@ class WebformPluginHandlerController extends ControllerBase implements Container
           $definition['category'],
           (isset($excluded_handlers[$plugin_id])) ? $this->t('Yes') : $this->t('No'),
           ($definition['cardinality'] == -1) ? $this->t('Unlimited') : $definition['cardinality'],
+          $definition['conditions'] ? $this->t('Yes') : $this->t('No'),
           $definition['submission'] ? $this->t('Required') : $this->t('Optional'),
           $definition['results'] ? $this->t('Processed') : $this->t('Ignored'),
           $definition['provider'],
@@ -83,9 +84,27 @@ class WebformPluginHandlerController extends ControllerBase implements Container
         $rows[$plugin_id]['class'] = ['color-warning'];
       }
     }
-
     ksort($rows);
-    return [
+
+    $build = [];
+
+    // Settings
+    $build['settings'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Edit settings'),
+      '#url' => Url::fromRoute('webform.settings.handlers'),
+      '#attributes' => ['class' => ['button', 'button--small'], 'style' => 'float: right'],
+    ];
+
+    // Display info.
+    $build['info'] = [
+      '#markup' => $this->t('@total handlers', ['@total' => count($rows)]),
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+    ];
+
+    // Handlers.
+    $build['webform_handlers'] = [
       '#type' => 'table',
       '#header' => [
         $this->t('ID'),
@@ -94,6 +113,7 @@ class WebformPluginHandlerController extends ControllerBase implements Container
         $this->t('Category'),
         $this->t('Excluded'),
         $this->t('Cardinality'),
+        $this->t('Conditional'),
         $this->t('Database'),
         $this->t('Results'),
         $this->t('Provided by'),
@@ -101,6 +121,8 @@ class WebformPluginHandlerController extends ControllerBase implements Container
       '#rows' => $rows,
       '#sticky' => TRUE,
     ];
+
+    return $build;
   }
 
   /**
@@ -179,6 +201,8 @@ class WebformPluginHandlerController extends ControllerBase implements Container
         $row['operations']['data'] = [
           '#type' => 'operations',
           '#links' => $links,
+          '#prefix' => '<div class="webform-dropbutton">',
+          '#suffix' => '</div>',
         ];
       }
 

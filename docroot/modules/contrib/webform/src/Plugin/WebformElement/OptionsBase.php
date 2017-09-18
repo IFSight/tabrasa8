@@ -6,9 +6,11 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\OptGroup;
 use Drupal\webform\Utility\WebformArrayHelper;
+use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\Plugin\WebformElementEntityReferenceInterface;
+use Drupal\webform\WebformSubmissionConditionsValidator;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -24,6 +26,13 @@ abstract class OptionsBase extends WebformElementBase {
   protected $exportDelta = FALSE;
 
   /**
+   * The other option base element type.
+   *
+   * @var string
+   */
+  protected $otherOptionType;
+
+  /**
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
@@ -31,42 +40,77 @@ abstract class OptionsBase extends WebformElementBase {
 
     // Issue #2836374: Wrapper attributes are not supported by composite
     // elements, this includes radios, checkboxes, and buttons.
-    if (preg_match('/(radios|checkboxes|buttons|tableselect|tableselect_sort)$/', $this->getPluginId())) {
+    if (preg_match('/(radios|checkboxes|buttons|tableselect|tableselect_sort|table_sort)$/', $this->getPluginId())) {
       unset($default_properties['wrapper_attributes']);
     }
 
-    return $default_properties + [
+    if (preg_match('/(tableselect|tableselect_sort|table_sort)$/', $this->getPluginId())) {
+      unset($default_properties['title_display']);
+      unset($default_properties['help']);
+      unset($default_properties['description']);
+      unset($default_properties['description_display']);
+    }
+
+    $default_properties += [
       // Options settings.
       'options' => [],
       'options_randomize' => FALSE,
     ];
+
+    // Add other properties to elements that include the other text field.
+    if ($this->isOptionsOther()) {
+      $default_properties += [
+        'other__option_label' => $this->t('Other...'),
+        'other__type' => 'textfield',
+        'other__title' => '',
+        'other__placeholder' => $this->t('Enter other...'),
+        'other__description' => '',
+        // Text field or textarea.
+        'other__size' => '',
+        'other__maxlength' => '',
+        'other__field_prefix' => '',
+        'other__field_suffix' => '',
+        // Textarea.
+        'other__rows' => '',
+        // Number.
+        'other__min' => '',
+        'other__max' => '',
+        'other__step' => '',
+      ];
+    }
+
+    return $default_properties;
   }
 
   /**
-   * Get option (option) properties.
+   * Determine if the element plugin type includes an other option text field.
    *
-   * @return array
-   *   An associative array containing other (option) properties.
+   * @return bool
+   *   TRUE if the element plugin type includes an other option text field.
    */
-  public function getOtherProperties() {
-    return [
-      'other__option_label' => $this->t('Other...'),
-      'other__type' => 'textfield',
-      'other__title' => '',
-      'other__placeholder' => $this->t('Enter other...'),
-      'other__description' => '',
-      // Text field or textarea.
-      'other__size' => '',
-      'other__maxlength' => '',
-      'other__field_prefix' => '',
-      'other__field_suffix' => '',
-      // Textarea.
-      'other__rows' => '',
-      // Number.
-      'other__min' => '',
-      'other__max' => '',
-      'other__step' => '',
-    ];
+  protected function isOptionsOther() {
+    return $this->getOptionsOtherType() ? TRUE : FALSE;
+  }
+
+  /**
+   * Get the other option base element type.
+   *
+   * @return string|NULL
+   *   The base element type (select|radios|checkboxes|buttons).
+   */
+  protected function getOptionsOtherType() {
+    if (isset($this->otherOptionType)) {
+      return $this->otherOptionType;
+    }
+
+    if (preg_match('/webform_(select|radios|checkboxes|buttons)_other$/', $this->getPluginId(), $match)) {
+      $this->otherOptionType = $match[1];
+    }
+    else {
+      $this->otherOptionType = FALSE;
+    }
+
+    return $this->otherOptionType ;
   }
 
   /**
@@ -96,14 +140,7 @@ abstract class OptionsBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
-    parent::prepare($element, $webform_submission);
-
-    // Randomize options.
-    if (isset($element['#options']) && !empty($element['#options_randomize'])) {
-      $element['#options'] = WebformArrayHelper::shuffle($element['#options']);
-    }
-
-    $is_wrapper_fieldset = in_array($element['#type'], ['checkboxes', 'radios']);
+    $is_wrapper_fieldset = in_array($element['#type'], ['checkboxes', 'radios', 'webform_entity_checkboxes', 'webform_entity_radios', 'webform_term_checkboxes','webform_toggles', 'webform_buttons']);
     if ($is_wrapper_fieldset) {
       // Issue #2396145: Option #description_display for webform element fieldset
       // is not changing anything.
@@ -111,20 +148,42 @@ abstract class OptionsBase extends WebformElementBase {
       $is_description_display = (isset($element['#description_display'])) ? TRUE : FALSE;
       $has_description = (!empty($element['#description'])) ? TRUE : FALSE;
       if ($is_description_display && $has_description) {
+        $description = WebformElementHelper::convertToString($element['#description']);
         switch ($element['#description_display']) {
           case 'before':
             $element += ['#field_prefix' => ''];
-            $element['#field_prefix'] = '<div class="description">' . $element['#description'] . '</div>' . $element['#field_prefix'];
+            $element['#field_prefix'] = '<div class="description">' . $description . '</div>' . $element['#field_prefix'];
             unset($element['#description']);
+            unset($element['#description_display']);
+            break;
+
+          case 'tooltip':
+            $element += ['#field_suffix' => ''];
+            $element['#field_suffix'] .= '<div class="description visually-hidden">' . $description . '</div>';
+            // @see \Drupal\Core\Render\Element\CompositeFormElementTrait
+            // @see \Drupal\webform\Plugin\WebformElementBase::prepare
+            $element['#attributes']['class'][] = 'js-webform-tooltip-element';
+            $element['#attributes']['class'][] = 'webform-tooltip-element';
+            $element['#attached']['library'][] = 'webform/webform.tooltip';
+            unset($element['#description']);
+            unset($element['#description_display']);
             break;
 
           case 'invisible':
             $element += ['#field_suffix' => ''];
-            $element['#field_suffix'] .= '<div class="description visually-hidden">' . $element['#description'] . '</div>';
+            $element['#field_suffix'] .= '<div class="description visually-hidden">' . $description . '</div>';
             unset($element['#description']);
+            unset($element['#description_display']);
             break;
         }
       }
+    }
+
+    parent::prepare($element, $webform_submission);
+
+    // Randomize options.
+    if (isset($element['#options']) && !empty($element['#options_randomize'])) {
+      $element['#options'] = WebformArrayHelper::shuffle($element['#options']);
     }
 
     // If the element is #required and the #default_value is an empty string
@@ -183,6 +242,24 @@ abstract class OptionsBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
+  public function preview() {
+    $element = parent::preview();
+    if ($this->hasProperty('options')) {
+      $element['#options'] = [
+        'one' => 'One',
+        'two' => 'Two',
+        'three' => 'Three',
+      ];
+    }
+    if ($this->hasProperty('options_display')) {
+      $element['#options_display'] = 'side_by_side';
+    }
+    return $element;
+  }
+  
+  /**
+   * {@inheritdoc}
+   */
   public function getTableColumn(array $element) {
     $key = $element['#webform_key'];
     $columns = parent::getTableColumn($element);
@@ -195,7 +272,8 @@ abstract class OptionsBase extends WebformElementBase {
    */
   public function getExportDefaultOptions() {
     return [
-      'options_format' => 'compact',
+      'options_single_format' => 'compact',
+      'options_multiple_format' => 'compact',
       'options_item_format' => 'label',
     ];
   }
@@ -209,20 +287,42 @@ abstract class OptionsBase extends WebformElementBase {
       return;
     }
 
+    // Build format options with help.
+    $options_format_options = [
+      'compact' => [
+        'text' => ['#markup' => $this->t('Compact; with the option values delimited by commas in one column.')],
+        'help' => ['#type' => 'webform_help', '#help' => $this->t('Compact options are more suitable for importing data into other systems.')],
+      ],
+      'separate' => [
+        'text' => ['#markup' => $this->t('Separate; with each possible option value in its own column.')],
+        'help' => ['#type' => 'webform_help', '#help' => $this->t('Separate options are more suitable for building reports, graphs, and statistics in a spreadsheet application. Ranking will be included for sortable option elements.')],
+      ],
+    ];
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = \Drupal::service('renderer');
+    foreach ($options_format_options as $value => $text) {
+      $options_format_options[$value] = $renderer->render($text);
+    }
+
     $form['options'] = [
       '#type' => 'details',
       '#title' => $this->t('Select menu, radio buttons, and checkboxes options'),
       '#open' => TRUE,
       '#weight' => -10,
     ];
-    $form['options']['options_format'] = [
+    $form['options']['options_single_format'] = [
       '#type' => 'radios',
-      '#title' => $this->t('Options format'),
-      '#options' => [
-        'compact' => $this->t('Compact; with the option values delimited by commas in one column.') . '<div class="description">' . $this->t('Compact options are more suitable for importing data into other systems.') . '</div>',
-        'separate' => $this->t('Separate; with each possible option value in its own column.') . '<div class="description">' . $this->t('Separate options are more suitable for building reports, graphs, and statistics in a spreadsheet application. Ranking will be included for sortable option elements.') . '</div>',
-      ],
-      '#default_value' => $export_options['options_format'],
+      '#title' => $this->t('Options single value format'),
+      '#description' => $this->t('Elements that collect a single option value include select menus, radios, and buttons.'),
+      '#options' => $options_format_options,
+      '#default_value' => $export_options['options_single_format'],
+    ];
+    $form['options']['options_multiple_format'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Options multiple values format'),
+      '#description' => $this->t('Elements that collect multiple option values include multi-select, checkboxes, and toggles.'),
+      '#options' => $options_format_options,
+      '#default_value' => $export_options['options_multiple_format'],
     ];
     $form['options']['options_item_format'] = [
       '#type' => 'radios',
@@ -239,7 +339,8 @@ abstract class OptionsBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function buildExportHeader(array $element, array $options) {
-    if ($options['options_format'] == 'separate' && isset($element['#options'])) {
+    $options_format = ($element['#webform_multiple'] ? $options['options_multiple_format'] : $options['options_single_format']);
+    if ($options_format == 'separate' && isset($element['#options'])) {
       $header = [];
       foreach ($element['#options'] as $option_value => $option_text) {
         // Note: If $option_text is an array (typically a tableselect row)
@@ -258,10 +359,11 @@ abstract class OptionsBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function buildExportRecord(array $element, WebformSubmissionInterface $webform_submission, array $export_options) {
-    $value = $this->getValue($element, $webform_submission);
+    $element_options = (isset($element['#options'])) ? $element['#options'] : [];
+    $options_format = ($element['#webform_multiple'] ? $export_options['options_multiple_format'] : $export_options['options_single_format']);
+    if ($options_format == 'separate') {
+      $value = $this->getRawValue($element, $webform_submission);
 
-    $element_options = $element['#options'];
-    if ($export_options['options_format'] == 'separate') {
       $record = [];
       // Combine the values so that isset can be used instead of in_array().
       // http://stackoverflow.com/questions/13483219/what-is-faster-in-array-or-isset
@@ -348,6 +450,41 @@ abstract class OptionsBase extends WebformElementBase {
     else {
       $multiple = ($this->hasMultipleValues($element) && strpos($plugin_id, 'select') !== FALSE) ? '[]' : '';
       return [":input[name=\"$name$multiple\"]" => $title];
+    }
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorInputValue($selector, $trigger, array $element, WebformSubmissionInterface $webform_submission) {
+    if ($this->isOptionsOther()) {
+      $input_name = WebformSubmissionConditionsValidator::getSelectorInputName($selector);
+      $other_type = WebformSubmissionConditionsValidator::getInputNameAsArray($input_name, 1);
+      $value = $this->getRawValue($element, $webform_submission);
+      if ($other_type === 'other') {
+        if ($this->hasMultipleValues($element)) {
+          $other_value = array_diff($value, array_keys($element['#options']));
+          return ($other_value) ? implode( ', ', $other_value) : NULL;
+        }
+        else {
+          // Make sure other value is not valid option.
+          return ($value && !isset($element['#options'][$value])) ? $value : NULL;
+        }
+      }
+      else {
+        if ($this->hasMultipleValues($element)) {
+          // Return array of valid #options.
+          return array_intersect($value, array_keys($element['#options']));
+        }
+        else {
+          // Return valid #option.
+          return (isset($element['#options'][$value])) ? $value : NULL;
+        }
+      }
+    }
+    else {
+      return parent::getElementSelectorInputValue($selector, $trigger, $element, $webform_submission);
     }
   }
 

@@ -11,6 +11,7 @@ use Drupal\webform\WebformRequestInterface;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -159,7 +160,14 @@ class WebformController extends ControllerBase implements ContainerInjectionInte
       '#webform_submission' => $webform_submission,
     ];
 
+    // Add entities cacheable dependency.
     $this->renderer->addCacheableDependency($build, $webform);
+    if ($webform_submission) {
+      $this->renderer->addCacheableDependency($build, $webform_submission);
+    }
+    if ($source_entity) {
+      $this->renderer->addCacheableDependency($build, $source_entity);
+    }
 
     return $build;
   }
@@ -181,9 +189,13 @@ class WebformController extends ControllerBase implements ContainerInjectionInte
     $webform_storage = $this->entityTypeManager()->getStorage('webform');
 
     $query = $webform_storage->getQuery()
-      ->condition('title', $q, 'CONTAINS')
       ->range(0, 10)
       ->sort('title');
+    // Query title and id.
+    $or = $query->orConditionGroup()
+      ->condition('id', $q, 'CONTAINS')
+      ->condition('title', $q, 'CONTAINS');
+    $query->condition($or);
 
     // Limit query to templates.
     if ($templates) {

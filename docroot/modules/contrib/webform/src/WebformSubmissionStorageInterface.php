@@ -77,6 +77,23 @@ interface WebformSubmissionStorageInterface extends ContentEntityStorageInterfac
   public function checkFieldDefinitionAccess(WebformInterface $webform, array $definitions);
 
   /**
+   * Load submission using webform (secure) token.
+   *
+   * @param string $token
+   *   The submission (secure) token.
+   * @param \Drupal\webform\WebformInterface $webform
+   *   The webform that the submission token is associated with.
+   * @param \Drupal\Core\Entity\EntityInterface|null $source_entity
+   *   (optional) A webform submission source entity.
+   * @param \Drupal\Core\Session\AccountInterface|null $account
+   *   (optional) A user account.
+   *
+   * @return \Drupal\webform\WebformSubmissionInterface|null
+   *   A webform submission.
+   */
+  public function loadFromToken($token, WebformInterface $webform, EntityInterface $source_entity = NULL, AccountInterface $account = NULL);
+
+  /**
    * Delete all webform submissions.
    *
    * @param \Drupal\webform\WebformInterface|null $webform
@@ -393,6 +410,25 @@ interface WebformSubmissionStorageInterface extends ContentEntityStorageInterfac
    *   Amount of webform submissions to purge.
    */
   public function purge($count);
+
+  /****************************************************************************/
+  // Data handlers.
+  /****************************************************************************/
+
+  /**
+   * Save webform submission data to the 'webform_submission_data' table.
+   *
+   * This method is public the allow webform handler (ie remote posts) to
+   * update [webform:handler] tokens stored in the submission data.
+   *
+   * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
+   *   A webform submission.
+   * @param bool $delete_first
+   *   TRUE to delete any data first. For new submissions this is not needed.
+   *
+   * @see \Drupal\webform\Plugin\WebformHandler\RemotePostWebformHandler::remotePost
+   */
+  public function saveData(WebformSubmissionInterface $webform_submission, $delete_first = TRUE);
 
   /****************************************************************************/
   // Log methods.

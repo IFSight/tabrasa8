@@ -12,6 +12,7 @@ use Drupal\simpletest\WebTestBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
@@ -193,6 +194,33 @@ abstract class WebformTestBase extends WebTestBase {
       ->save();
   }
 
+  /**
+   * Add 'view own webform submission' permission to anonymous role.
+   *
+   * This allow submissions to be tracked via $_SESSION.
+   *
+   * @see \Drupal\webform\WebformSubmissionStorage::setAnonymousSubmission
+   */
+  protected function addViewWebformSubmissionOwnPermissionToAnonymous() {
+    /** @var \Drupal\user\RoleInterface $anonymous_role */
+    $anonymous_role = Role::load('anonymous');
+    $anonymous_role->grantPermission('view own webform submission')
+      ->save();
+  }
+
+
+  /**
+   * Revoke 'view own webform submission' permission from anonymous role.
+   *
+   * @see \Drupal\webform\WebformSubmissionStorage::setAnonymousSubmission
+   */
+  protected function revokeViewWebformSubmissionOwnPermissionToAnonymous() {
+    /** @var \Drupal\user\RoleInterface $anonymous_role */
+    $anonymous_role = Role::load('anonymous');
+    $anonymous_role->revokePermission('view own webform submission')
+      ->save();
+  }
+
   /****************************************************************************/
   // Block.
   /****************************************************************************/
@@ -269,27 +297,6 @@ abstract class WebformTestBase extends WebTestBase {
   }
 
   /****************************************************************************/
-  // Nodes.
-  /****************************************************************************/
-
-  /**
-   * Get nodes keyed by nid.
-   *
-   * @return \Drupal\node\NodeInterface[]
-   *   Associative array of nodes keyed by nid.
-   */
-  protected function getNodes() {
-    if (empty($this->nodes)) {
-      $this->drupalCreateContentType(['type' => 'page']);
-      for ($i = 0; $i < 3; $i++) {
-        $this->nodes[$i] = $this->drupalCreateNode(['type' => 'page', 'title' => 'Node ' . $i, 'status' => NodeInterface::PUBLISHED]);
-        $this->drupalGet('node/' . $this->nodes[$i]->id());
-      }
-    }
-    return $this->nodes;
-  }
-
-  /****************************************************************************/
   // Taxonomy.
   /****************************************************************************/
 
@@ -352,82 +359,6 @@ abstract class WebformTestBase extends WebTestBase {
     return $webform;
   }
 
-  /**
-   * Create a webform with submissions.
-   *
-   * @return array
-   *   Array containing the webform and submissions.
-   */
-  protected function createWebformWithSubmissions() {
-    // Load webform.
-    $webform = $this->loadWebform('test_results');
-
-    // Load nodes.
-    $nodes = $this->getNodes();
-
-    // Create some submissions.
-    $names = [
-      [
-        'George',
-        'Washington',
-        'Male',
-        '1732-02-22',
-        $nodes[0],
-        ['white'],
-        ['q1' => 1, 'q2' => 1, 'q3' => 1],
-        ['address' => '{Address}', 'city' => '{City}', 'state_province' => 'New York', 'country' => 'United States', 'postal_code' => '11111-1111'],
-      ],
-      [
-        'Abraham',
-        'Lincoln',
-        'Male',
-        '1809-02-12',
-        $nodes[1],
-        ['red', 'white', 'blue'],
-        ['q1' => 2, 'q2' => 2, 'q3' => 2],
-        ['address' => '{Address}', 'city' => '{City}', 'state_province' => 'New York', 'country' => 'United States', 'postal_code' => '11111-1111'],
-      ],
-      [
-        'Hillary',
-        'Clinton',
-        'Female',
-        '1947-10-26',
-        $nodes[2],
-        ['red'],
-        ['q1' => 2, 'q2' => 2, 'q3' => 2],
-        ['address' => '{Address}', 'city' => '{City}', 'state_province' => 'New York', 'country' => 'United States', 'postal_code' => '11111-1111'],
-      ],
-    ];
-    $sids = [];
-    foreach ($names as $name) {
-      $edit = [
-        'first_name' => $name[0],
-        'last_name' => $name[1],
-        'sex' => $name[2],
-        'dob' => $name[3],
-        'node' => $name[4]->label() . ' (' . $name[4]->id() . ')',
-      ];
-      foreach ($name[5] as $color) {
-        $edit["colors[$color]"] = $color;
-      }
-      foreach ($name[6] as $question => $answer) {
-        $edit["likert[$question]"] = $answer;
-      }
-      foreach ($name[7] as $composite_key => $composite_value) {
-        $edit["address[$composite_key]"] = $composite_value;
-      }
-      $sids[] = $this->postSubmission($webform, $edit);
-    }
-
-    // Change array keys to index instead of using entity ids.
-    $submissions = array_values(WebformSubmission::loadMultiple($sids));
-
-    $this->assert($webform instanceof Webform, 'Webform was created');
-    $this->assertEqual(count($submissions), 3, 'WebformSubmissions were created.');
-
-    return [$webform, $submissions];
-  }
-
   /****************************************************************************/
   // Submission.
   /****************************************************************************/
@@ -441,13 +372,15 @@ abstract class WebformTestBase extends WebTestBase {
    *   Submission values.
    * @param string $submit
    *   Value of the submit button whose click is to be emulated.
+   * @param array $options
+   *   Options to be forwarded to the url generator.
    *
    * @return int
    *   The created submission's sid.
    */
-  protected function postSubmission(WebformInterface $webform, array $edit = [], $submit = NULL) {
+  protected function postSubmission(WebformInterface $webform, array $edit = [], $submit = NULL, array $options = []) {
     $submit = $this->getWebformSubmitButtonLabel($webform, $submit);
-    $this->drupalPostForm('webform/' . $webform->id(), $edit, $submit);
+    $this->drupalPostForm('webform/' . $webform->id(), $edit, $submit, $options);
     return $this->getLastSubmissionId($webform);
   }
 

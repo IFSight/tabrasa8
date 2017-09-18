@@ -27,6 +27,7 @@ class Textarea extends TextBase {
     return [
       'title' => '',
       // General settings.
+      'help' => '',
       'description' => '',
       'default_value' => '',
       // Form display.
@@ -87,6 +88,15 @@ class Textarea extends TextBase {
 
     return [
       '#markup' => nl2br(new HtmlEscapedText($value)),
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return parent::preview() + [
+      '#rows' => 2,
     ];
   }
 

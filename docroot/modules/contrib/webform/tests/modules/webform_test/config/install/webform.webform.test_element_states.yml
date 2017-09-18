@@ -53,6 +53,14 @@ elements: |
       selector_01: 'Selector 01 (selector_01)'
       selector_02: 'Selector 02 (selector_02)'
       selector_03: 'Selector 03 (selector_03)'
+  states_single:
+    '#type': webform_element_states
+    '#title': 'States single'
+    '#selector_options':
+      selector_01: 'Selector 01 (selector_01)'
+      selector_02: 'Selector 02 (selector_02)'
+      selector_03: 'Selector 03 (selector_03)'
+    '#multiple': false
   states_unsupported_operator:
     '#type': webform_element_states
     '#title': 'States unsupport operator'
@@ -60,7 +68,7 @@ elements: |
       required:
         - custom_selector:
             value: 'Yes'
-        - xor
+        - xxx
         - custom_selector:
             value: 'Yes'
   states_unsupported_nesting:
@@ -96,6 +104,7 @@ settings:
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
+  form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_unsaved: false
@@ -117,6 +126,7 @@ settings:
   preview_message: ''
   preview_attributes: {  }
   preview_excluded_elements: {  }
+  preview_exclude_empty: true
   draft: none
   draft_multiple: false
   draft_auto_save: false
@@ -147,32 +157,41 @@ access:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   view_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   purge_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   view_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_own:
     roles: {  }
     users: {  }
+    permissions: {  }
 handlers:
   debug:
     id: debug
     label: Debug
     handler_id: debug
     status: true
+    conditions: {  }
     weight: 0
     settings: {  }

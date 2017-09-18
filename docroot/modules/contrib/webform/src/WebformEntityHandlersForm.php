@@ -94,9 +94,13 @@ class WebformEntityHandlersForm extends EntityForm {
 
       $row['summary'] = $handler->getSummary();
 
-      $row['status'] = [
-        'data' => ['#markup' => ($handler->isEnabled()) ? $this->t('Enabled') : $this->t('Disabled')],
-      ];
+      if ($handler->isDisabled()) {
+        $status = $this->t('Disabled');
+      }
+      else {
+        $status = ($handler->supportsConditions() && $handler->getConditions()) ? $this->t('Conditional') : $this->t('Enabled');
+      }
+      $row['status'] = ['data' => ['#markup' => $status]];
 
       $row['weight'] = [
         '#type' => 'weight',
@@ -139,42 +143,48 @@ class WebformEntityHandlersForm extends EntityForm {
       $row['operations'] = [
         '#type' => 'operations',
         '#links' => $operations,
+        '#prefix' => '<div class="webform-dropbutton">',
+        '#suffix' => '</div>',
       ];
 
       $rows[$handler_id] = $row;
     }
-
-    // Must manually add local actions to the webform because we can't alter local
-    // actions and add the needed dialog attributes.
-    // @see https://www.drupal.org/node/2585169
-    $dialog_attributes = WebformDialogHelper::getModalDialogAttributes(
-      800,
-      ['button', 'button-action', 'button--primary', 'button--small']
-    );
 
     // Filter add handler by excluded_handlers.
     $handler_definitions = $this->handlerManager->getDefinitions();
     $handler_definitions = $this->handlerManager->removeExcludeDefinitions($handler_definitions);
     unset($handler_definitions['broken']);
 
-    $form['local_actions'] = [];
+
+    // Must manually add local actions to the webform because we can't alter local
+    // actions and add the needed dialog attributes.
+    // @see https://www.drupal.org/node/2585169
+    $local_actions = [];
     if (isset($handler_definitions['email'])) {
-      $form['local_actions']['add_email'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Add email'),
-        '#url' => new Url('entity.webform.handler.add_form', ['webform' => $webform->id(), 'webform_handler' => 'email']),
-        '#attributes' => $dialog_attributes,
+      $local_actions['add_email'] = [
+        '#theme' => 'menu_local_action',
+        '#link' => [
+          'title' => $this->t('Add email'),
+          'url' => new Url('entity.webform.handler.add_form', ['webform' => $webform->id(), 'webform_handler' => 'email']),
+          'attributes' => WebformDialogHelper::getModalDialogAttributes(800),
+        ]
       ];
     }
     unset($handler_definitions['email']);
     if ($handler_definitions) {
-      $form['local_actions']['add_handler'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Add handler'),
-        '#url' => new Url('entity.webform.handlers', ['webform' => $webform->id()]),
-        '#attributes' => $dialog_attributes,
+      $local_actions['add_handler'] = [
+        '#theme' => 'menu_local_action',
+        '#link' => [
+          'title' => $this->t('Add handler'),
+          'url' => new Url('entity.webform.handler', ['webform' => $webform->id()]),
+          'attributes' => WebformDialogHelper::getModalDialogAttributes(800),
+        ]
       ];
     }
+    $form['local_actions'] = [
+      '#prefix' => '<ul class="action-links">',
+      '#suffix' => '</ul>',
+    ] + $local_actions;
 
     // Build the list of existing webform handlers for this webform.
     $form['handlers'] = [
@@ -231,7 +241,7 @@ class WebformEntityHandlersForm extends EntityForm {
 
     $context = [
       '@label' => $webform->label(),
-      'link' => $webform->toLink($this->t('Edit'), 'handlers-form')->toString()
+      'link' => $webform->toLink($this->t('Edit'), 'handlers')->toString()
     ];
     $this->logger('webform')->notice('Webform @label handler saved.', $context);
 

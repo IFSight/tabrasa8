@@ -18,12 +18,15 @@ use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\webform\Element\WebformHtmlEditor;
 use Drupal\webform\Entity\WebformOptions;
 use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformLibrariesManagerInterface;
+use Drupal\webform\WebformSubmissionConditionsValidator;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform\WebformTokenManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -180,6 +183,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $properties = [
       // Element settings.
       'title' => '',
+      'help' => '',
       'description' => '',
       'default_value' => '',
       // Form display.
@@ -224,10 +228,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       // Element access.
       'access_create_roles' => ['anonymous', 'authenticated'],
       'access_create_users' => [],
+      'access_create_permissions' => [],
       'access_update_roles' => ['anonymous', 'authenticated'],
       'access_update_users' => [],
+      'access_update_permissions' => [],
       'access_view_roles' => ['anonymous', 'authenticated'],
       'access_view_users' => [],
+      'access_view_permissions' => [],
     ];
   }
 
@@ -238,6 +245,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     return [
       'title',
       'label',
+      'help',
       'description',
       'field_prefix',
       'field_suffix',
@@ -316,6 +324,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    */
   public function getTypeName() {
     return $this->pluginDefinition['id'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultKey() {
+    return (isset($this->pluginDefinition['default_key'])) ? $this->pluginDefinition['default_key'] : NULL;
   }
 
   /**
@@ -498,6 +513,11 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     if (isset($element['#options'])) {
       $element['#options'] = WebformOptions::getElementOptions($element);
     }
+
+    // Set #admin_title to #title without any HTML markup.
+    if (!empty($element['#title']) && empty($element['#admin_title'])) {
+      $element['#admin_title'] = strip_tags($element['#title']);
+    }
   }
 
   /**
@@ -547,8 +567,15 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
     // Add inline title display support.
     if (isset($element['#title_display']) && $element['#title_display'] == 'inline') {
+      // Store reference to unset #title_display.
+      $element['#_title_display'] = $element['#title_display'];
       unset($element['#title_display']);
       $element['#wrapper_attributes']['class'][] = 'webform-element--title-inline';
+    }
+
+    // Check description markup.
+    if (isset($element['#description'])) {
+      $element['#description'] = WebformHtmlEditor::checkMarkup($element['#description']);
     }
 
     // Add default description display.
@@ -658,18 +685,57 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       return FALSE;
     }
 
-    if (!$account) {
-      $account = $this->currentUser;
+    $account = $account ?: $this->currentUser;
+    return $this->checkAccessRule($element, $operation, $account);
+  }
+
+  /**
+   * Checks an access rule against a user account's roles and id.
+   *
+   * @param array $element
+   *   The element.
+   * @param $operation
+   *   The operation
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user session for which to check access.
+   *
+   * @return bool
+   *   The access result. Returns a TRUE if access is allowed.
+   *
+   * @see \Drupal\webform\Entity\Webform::checkAccessRule
+   */
+  protected function checkAccessRule(array $element, $operation, AccountInterface $account) {
+    // If no access rules are set return TRUE.
+    // @see \Drupal\webform\Plugin\WebformElementBase::getDefaultBaseProperties
+    if (!isset($element['#access_' . $operation . '_roles'])
+      && !isset($element['#access_' . $operation . '_users'])
+      && !isset($element['#access_' . $operation . '_permissions'])) {
+      return TRUE;
     }
 
-    if (isset($element['#access_' . $operation . '_roles']) && !array_intersect($element['#access_' . $operation . '_roles'], $account->getRoles())) {
-      return FALSE;
+    // If access roles are not set then use the anonymous and authenticated
+    // roles from the element's default properties.
+    // @see \Drupal\webform\Plugin\WebformElementBase::getDefaultBaseProperties
+    if (!isset($element['#access_' . $operation . '_roles'])) {
+      $element['#access_' . $operation . '_roles'] = $this->getDefaultProperty('access_' . $operation . '_roles') ?: [];
     }
-    elseif (isset($element['#access_' . $operation . '_users']) && !in_array($account->id(), $element['#access_' . $operation . '_users'])) {
-      return FALSE;
+    if (array_intersect($element['#access_' . $operation . '_roles'], $account->getRoles())) {
+      return TRUE;
     }
 
-    return TRUE;
+    if (isset($element['#access_' . $operation . '_users']) && in_array($account->id(), $element['#access_' . $operation . '_users'])) {
+      return TRUE;
+    }
+
+    if (isset($element['#access_' . $operation . '_permissions'])) {
+      foreach ($element['#access_' . $operation . '_permissions'] as $permission) {
+        if ($account->hasPermission($permission)) {
+          return TRUE;
+        }
+      }
+    }
+
+    return FALSE;
   }
 
   /**
@@ -751,7 +817,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $t_args = [
       '%title' => $this->getLabel($element),
       '%type' => $this->getPluginLabel(),
-      ':href' => Url::fromRoute('webform.settings')->setOption('fragment', 'edit-elements')->toString(),
+      ':href' => Url::fromRoute('webform.settings.elements')->toString(),
     ];
     if ($this->currentUser->hasPermission('administer webform')) {
       $message = $this->t('%title is a %type element, which has been disabled and will not be rendered. Go to the <a href=":href">admin settings</a> page to enable this element.', $t_args);
@@ -829,13 +895,23 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    *   A render array representing an element as text or HTML.
    */
   protected function build($format, array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    $options += [
+      'exclude_empty' => TRUE,
+    ];
     $options['multiline'] = $this->isMultiline($element);
     $format_function = 'format' . ucfirst($format);
     $formatted_value = $this->$format_function($element, $webform_submission, $options);
 
-    // Return NULL for empty formatted value.
+    // Handle empty value.
     if ($formatted_value === '') {
-      return NULL;
+      // Return NULL for empty formatted value.
+      if (!empty($options['exclude_empty'])) {
+        return NULL;
+      }
+      // Else set the formatted value to empty message/placeholder.
+      else {
+        $formatted_value = $this->configFactory->get('webform.settings')->get('element.empty_message');
+      }
     }
 
     // Convert string to renderable #markup.
@@ -1101,6 +1177,10 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
     $webform_key = (isset($options['webform_key'])) ? $options['webform_key'] : $element['#webform_key'];
     $value = $webform_submission->getData($webform_key);
+    // Is value is NULL and there is a #default_value, then use it.
+    if ($value === NULL && isset($element['#default_value'])) {
+      $value = $element['#default_value'];
+    }
 
     // Return multiple (delta) value or composite (composite_key) value.
     if (is_array($value)) {
@@ -1118,6 +1198,14 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     }
 
     return $value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRawValue(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    $element['#format'] = 'raw';
+    return $this->getValue($element, $webform_submission, $options);
   }
 
   /**
@@ -1185,6 +1273,20 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     else {
       return $this->getItemsDefaultFormat();
     }
+  }
+
+  /****************************************************************************/
+  // Preview method.
+  /****************************************************************************/
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return [
+      '#type' => $this->getTypeName(),
+      '#title' => $this->getPluginLabel(),
+    ];
   }
 
   /****************************************************************************/
@@ -1276,7 +1378,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       $prefix = $this->getAdminLabel($element) . $export_options['header_prefix_label_delimiter'];
     }
     else {
-      $prefix = $this->getKey($element) . $export_options['header_prefix_key_delimiter'];;
+      $prefix = $this->getKey($element) . $export_options['header_prefix_key_delimiter'];
     }
 
     foreach ($header as $index => $column) {
@@ -1411,7 +1513,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     // Set default states that apply to the element/container and sub elements.
     $states += [
       'visible' => $this->t('Visible'),
-      'invisible' => $this->t('Invisible'),
+      'invisible' => $this->t('Hidden'),
       'enabled' => $this->t('Enabled'),
       'disabled' => $this->t('Disabled'),
       'required' => $this->t('Required'),
@@ -1476,6 +1578,25 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorInputValue($selector, $trigger, array $element, WebformSubmissionInterface $webform_submission) {
+    if ($this->isComposite()) {
+      $input_name = WebformSubmissionConditionsValidator::getSelectorInputName($selector);
+      $composite_key = WebformSubmissionConditionsValidator::getInputNameAsArray($input_name, 1);
+      if ($composite_key) {
+        return $this->getRawValue($element, $webform_submission, ['composite_key' => $composite_key]);
+      }
+      else {
+        return NULL;
+      }
+    }
+    else {
+      return $this->getRawValue($element, $webform_submission);
+    }
+  }
+
   /****************************************************************************/
   // Operation methods.
   /****************************************************************************/
@@ -1527,6 +1648,10 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $form_object = $form_state->getFormObject();
     $webform = $form_object->getWebform();
 
+    // Check if inline help is enabled and set inline form attributes.
+    $help_enabled = $this->configFactory->get('webform.settings')->get('ui.description_help');
+    $form_inline_input_attributes = ($help_enabled) ? ['class' => ['form--inline', 'clearfix', 'webform-ui-element-form-inline--input']] : [];
+
     /* Element settings */
 
     $form['element'] = [
@@ -1541,6 +1666,18 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#description' => $this->t('This is used as a descriptive label when displaying this webform element.'),
       '#required' => TRUE,
       '#attributes' => ['autofocus' => 'autofocus'],
+    ];
+    $form['element']['help'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Help text'),
+      '#description' => $this->t('A tooltip displayed after the title.'),
+      '#states' => [
+        'invisible' => [
+          [':input[name="properties[title_display]"]' => ['value' => 'invisible']],
+          'or',
+          [':input[name="properties[title_display]"]' => ['value' => 'attribute']],
+        ]
+      ]
     ];
     $form['element']['description'] = [
       '#type' => 'webform_html_editor',
@@ -1582,11 +1719,8 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
         ],
       ],
     ];
-    $form['element']['multiple__header'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Display elements in table columns'),
-      '#description' => $this->t("If checked composite elements titles will be displayed in table column headers."),
-      '#return_value' => TRUE,
+    $form['element']['multiple__header_container'] = [
+      '#type' => 'container',
       '#states' => [
         'invisible' => [
           ':input[name="properties[multiple][container][cardinality]"]' => ['!value' => -1],
@@ -1594,16 +1728,16 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
         ],
       ],
     ];
-    $form['element']['multiple__header_label'] = [
+    $form['element']['multiple__header_container']['multiple__header'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Display elements in table columns'),
+      '#description' => $this->t("If checked composite elements titles will be displayed in table column headers."),
+      '#return_value' => TRUE,
+    ];
+    $form['element']['multiple__header_container']['multiple__header_label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Table header label'),
       '#description' => $this->t('This is used as the table header for this webform element when display multiple values.'),
-      '#states' => [
-        'invisible' => [
-          ':input[name="properties[multiple][container][cardinality]"]' => ['!value' => -1],
-          ':input[name="properties[multiple][container][cardinality_number]"]' => ['value' => 1],
-        ],
-      ],
     ];
     if ($this->hasProperty('multiple')) {
       $form['element']['default_value']['#description'] .= ' ' . $this->t('For multiple options, use commas to separate multiple defaults.');
@@ -1615,7 +1749,11 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#type' => 'details',
       '#title' => $this->t('Form display'),
     ];
-    $form['form']['title_display'] = [
+    $form['form']['display_container'] = [
+      '#type' => 'container',
+      '#attributes' => $form_inline_input_attributes,
+    ];
+    $form['form']['display_container']['title_display'] = [
       '#type' => 'select',
       '#title' => $this->t('Title display'),
       '#options' => [
@@ -1628,7 +1766,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       ],
       '#description' => $this->t('Determines the placement of the title.'),
     ];
-    $form['form']['description_display'] = [
+    $form['form']['display_container']['description_display'] = [
       '#type' => 'select',
       '#title' => $this->t('Description display'),
       '#options' => [
@@ -1640,40 +1778,52 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       ],
       '#description' => $this->t('Determines the placement of the description.'),
     ];
-    $form['form']['field_prefix'] = [
+    $form['form']['field_container'] = [
+      '#type' => 'container',
+      '#attributes' => $form_inline_input_attributes,
+    ];
+    $form['form']['field_container']['field_prefix'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Field prefix'),
       '#description' => $this->t('Text or code that is placed directly in front of the input. This can be used to prefix an input with a constant string. Examples: $, #, -.'),
       '#size' => 10,
     ];
-    $form['form']['field_suffix'] = [
+    $form['form']['field_container']['field_suffix'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Field suffix'),
       '#description' => $this->t('Text or code that is placed directly after the input. This can be used to add a unit to an input. Examples: lb, kg, %.'),
       '#size' => 10,
     ];
-    $form['form']['size'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Size'),
-      '#description' => $this->t('Leaving blank will use the default size.'),
-      '#min' => 1,
-      '#size' => 4,
+    $form['form']['length_container'] = [
+      '#type' => 'container',
+      '#attributes' => $form_inline_input_attributes,
     ];
-    $form['form']['maxlength'] = [
+    $form['form']['length_container']['maxlength'] = [
       '#type' => 'number',
       '#title' => $this->t('Maxlength'),
       '#description' => $this->t('Leaving blank will use the default maxlength.'),
       '#min' => 1,
       '#size' => 4,
     ];
-    $form['form']['minlength'] = [
+    $form['form']['length_container']['minlength'] = [
       '#type' => 'number',
       '#title' => $this->t('Minlength'),
       '#description' => $this->t('The element may still be empty unless it is required.'),
       '#min' => 1,
       '#size' => 4,
     ];
-    $form['form']['rows'] = [
+    $form['form']['size_container'] = [
+      '#type' => 'container',
+      '#attributes' => $form_inline_input_attributes,
+    ];
+    $form['form']['size_container']['size'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Size'),
+      '#description' => $this->t('Leaving blank will use the default size.'),
+      '#min' => 1,
+      '#size' => 4,
+    ];
+    $form['form']['size_container']['rows'] = [
       '#type' => 'number',
       '#title' => $this->t('Rows'),
       '#description' => $this->t('Leaving blank will use the default rows.'),
@@ -1697,7 +1847,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $form['form']['disabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Disabled'),
-      '#description' => $this->t('Make this field non-editable. Useful for displaying default value. Changeable via JavaScript or developer tools.'),
+      '#description' => $this->t('Make this element non-editable. Useful for displaying default value. Changeable via JavaScript.'),
       '#return_value' => TRUE,
     ];
     $form['form']['open'] = [
@@ -1762,12 +1912,14 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
           'line-aero' => $this->t('Line: Aero'),
         ],
       ],
-      '#access' => $this->librariesManager->isIncluded('jquery.icheck'),
     ];
+    if ($this->librariesManager->isExcluded('jquery.icheck')) {
+      $form['form']['icheck']['#access'] = FALSE;
+    }
     if ($default_icheck) {
       $icheck_options = OptGroup::flattenOptions($form['form']['icheck']['#options']);
-      $form['form']['icheck']['#description'] .= '<br />' . $this->t("Leave blank to use the default iCheck style. Select 'None' to display the default HTML element.");
-      $form['form']['icheck']['#description'] .= '<br />' . $this->t('Defaults to: %value', ['%value' => $icheck_options[$default_icheck]]);
+      $form['form']['icheck']['#description'] .= '<br /><br />' . $this->t("Leave blank to use the default iCheck style. Select 'None' to display the default HTML element.");
+      $form['form']['icheck']['#description'] .= '<br /><br />' . $this->t('Defaults to: %value', ['%value' => $icheck_options[$default_icheck]]);
       $form['form']['icheck']['#options']['none'] = $this->t('None');
     }
 
@@ -1782,7 +1934,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $form['flex']['flex'] = [
       '#type' => 'select',
       '#title' => $this->t('Flex'),
-      '#description' => $this->t('The flex property specifies the length of the item, relative to the rest of the flexible items inside the same container.') . '<br />' .
+      '#description' => $this->t('The flex property specifies the length of the item, relative to the rest of the flexible items inside the same container.') . '<br /><br />' .
       $this->t('Defaults to: %value', ['%value' => 1]),
       '#options' => [0 => $this->t('0 (none)')] + array_combine($flex_range, $flex_range),
     ];
@@ -1822,15 +1974,18 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#type' => 'details',
       '#title' => $this->t('Form validation'),
     ];
-    $form['validation']['required'] = [
+    $form['validation']['required_container'] = [
+      '#type' => 'container',
+    ];
+    $form['validation']['required_container']['required'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Required'),
       '#description' => $this->t('Check this option if the user must enter a value.'),
       '#return_value' => TRUE,
     ];
-    $form['validation']['required_error'] = [
+    $form['validation']['required_container']['required_error'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Custom required error message'),
+      '#title' => $this->t('Required message'),
       '#description' => $this->t('If set, this message will be used when a required webform element is empty, instead of the default "Field x is required." message.'),
       '#states' => [
         'visible' => [
@@ -1838,15 +1993,18 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
         ],
       ],
     ];
-    $form['validation']['unique'] = [
+    $form['validation']['unique_container'] = [
+      '#type' => 'container',
+    ];
+    $form['validation']['unique_container']['unique'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Unique'),
       '#description' => $this->t('Check that all entered values for this element are unique. The same value is not allowed to be used twice.'),
       '#return_value' => TRUE,
     ];
-    $form['validation']['unique_error'] = [
+    $form['validation']['unique_container']['unique_error'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Custom unique error message'),
+      '#title' => $this->t('Unique message'),
       '#description' => $this->t('If set, this message will be used when an element\'s value is not unique, instead of the default "@message" message.', ['@message' => $this->t('The value %value has already been submitted once for the %name element. You may have already submitted this webform, or you need to use a different value.')]),
       '#states' => [
         'visible' => [
@@ -1857,11 +2015,11 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
     /* Conditional logic */
 
-    $form['conditional'] = [
-      '#type' => 'details',
+    $form['conditional_logic'] = [
+      '#type' => 'fieldset',
       '#title' => $this->t('Conditional logic'),
     ];
-    $form['conditional']['states'] = [
+    $form['conditional_logic']['states'] = [
       '#type' => 'webform_element_states',
       '#state_options' => $this->getElementStateOptions(),
       '#selector_options' => $webform->getElementsSelectorOptions(),
@@ -1873,13 +2031,17 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#type' => 'details',
       '#title' => $this->t('Submission display'),
     ];
-    $form['display']['format'] = [
+    $form['display']['display_container'] = [
+      '#type' => 'container',
+      '#attributes' => $form_inline_input_attributes,
+    ];
+    $form['display']['display_container']['format'] = [
       '#type' => 'select',
       '#title' => $this->t('Item format'),
       '#description' => $this->t('Select how a single value is displayed.'),
       '#options' => $this->getItemFormats(),
     ];
-    $form['display']['format_items'] = [
+    $form['display']['display_container']['format_items'] = [
       '#type' => 'select',
       '#title' => $this->t('Items format'),
       '#description' => $this->t('Select how multiple values are displayed.'),
@@ -1893,29 +2055,31 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       ],
     ];
 
-    /* Element access */
+    /* Access */
 
     $operations = [
       'create' => [
         '#title' => $this->t('Create webform submission'),
         '#description' => $this->t('Select roles and users that should be able to populate this element when creating a new submission.'),
+        '#open' => TRUE,
       ],
       'update' => [
         '#title' => $this->t('Update webform submission'),
         '#description' => $this->t('Select roles and users that should be able to update this element when updating an existing submission.'),
+        '#open' => FALSE,
       ],
       'view' => [
         '#title' => $this->t('View webform submission'),
         '#description' => $this->t('Select roles and users that should be able to view this element when viewing a submission.'),
+        '#open' => FALSE,
       ],
     ];
 
     $form['access'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Element access'),
+      '#type' => 'container',
     ];
     if (!$this->currentUser->hasPermission('administer webform') && !$this->currentUser->hasPermission('administer webform element access')) {
-      $form['access'] = FALSE;
+      $form['access']['#access'] = FALSE;
     }
     foreach ($operations as $operation => $operation_element) {
       $form['access']['access_' . $operation] = $operation_element + [
@@ -1928,6 +2092,12 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       $form['access']['access_' . $operation]['access_' . $operation . '_users'] = [
         '#type' => 'webform_users',
         '#title' => $this->t('Users'),
+      ];
+      $form['access']['access_' . $operation]['access_' . $operation . '_permissions'] = [
+        '#type' => 'webform_permissions',
+        '#title' => $this->t('Permissions'),
+        '#multiple' => TRUE,
+        '#select2' => TRUE,
       ];
     }
 
@@ -1947,7 +2117,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $form['admin']['admin_title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Admin title'),
-      '#description' => $this->t('The admin title will be displayed when managing elements and viewing & downloading submissions.'),
+      '#description' => $this->t('The admin title will always be displayed when managing elements and viewing & downloading submissions.') .
+        '<br/>' .
+        $this->t("If an element's title is hidden, the element's admin title will be displayed when viewing a submission."),
     ];
 
     // Disable #multiple if the element has submission data.
@@ -2032,8 +2204,8 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#mode' => 'yaml',
       '#title' => $this->t('Custom properties'),
       '#description' => $this->t('Properties do not have to be prepended with a hash (#) character, the hash character will be automatically added upon submission.') .
-      '<br />' .
-      $this->t('These properties and callbacks are not allowed: @properties', ['@properties' => WebformArrayHelper::toString(WebformArrayHelper::addPrefix(WebformElementHelper::$ignoredProperties))]),
+        '<br /><br />' .
+        $this->t('These properties and callbacks are not allowed: @properties', ['@properties' => WebformArrayHelper::toString(WebformArrayHelper::addPrefix(WebformElementHelper::$ignoredProperties))]),
       '#default_value' => $custom_properties ,
       '#parents' => ['properties', 'custom'],
     ];
@@ -2045,7 +2217,49 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     // and alter this information using webform alteration hooks.
     $form_state->set('custom_properties', $custom_properties);
 
-    return $form;
+    return $this->buildConfigurationFormTabs($form, $form_state);
+  }
+
+  /**
+   * Build configuration form tabs.
+   *
+   * @param array $form
+   *   An associative array containing the initial structure of the plugin form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return array
+   *   The plugin form with tabs.
+   */
+  protected function buildConfigurationFormTabs(array $form, FormStateInterface $form_state) {
+    $tabs = [
+      'conditions' => [
+        'title' => $this->t('Conditions'),
+        'elements' => [
+          'conditional_logic',
+        ],
+        'weight' => 10,
+      ],
+      'advanced' =>  [
+        'title' => $this->t('Advanced'),
+        'elements' => [
+          'wrapper_attributes',
+          'element_attributes',
+          'display',
+          'admin',
+          'custom',
+        ],
+        'weight' => 20,
+      ],
+      'access' =>  [
+        'title' => $this->t('Access'),
+        'elements' => [
+          'access',
+        ],
+        'weight' => 30,
+      ],
+    ];
+    return WebformFormHelper::buildTabs($form, $tabs);
   }
 
   /**
@@ -2081,6 +2295,8 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
       // Determine if the property element is an input using the webform element
       // manager.
+      // Note: #access is used to protect inputs and containers that should always
+      // be visible.
       $is_input = $this->elementManager->getElementInstance($property_element)->isInput($property_element);
       if ($is_input) {
         if (isset($element_properties[$property_name])) {
@@ -2088,15 +2304,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
           $this->setConfigurationFormDefaultValue($form, $element_properties, $property_element, $property_name);
           $has_input = TRUE;
         }
-        else {
+        elseif (empty($form[$property_name]['#access'])) {
           // Else completely remove the property element from the webform.
           unset($form[$property_name]);
         }
       }
       else {
         // Recurse down this container and see if it's children have inputs.
-        // Note: #access is used to protect containers that should always
-        // be visible.
         $container_has_input = $this->setConfigurationFormDefaultValueRecursive($property_element, $element_properties);
         if ($container_has_input) {
           $has_input = TRUE;

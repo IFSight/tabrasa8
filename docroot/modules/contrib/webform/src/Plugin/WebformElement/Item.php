@@ -25,6 +25,7 @@ class Item extends WebformMarkup {
     return parent::getDefaultProperties() + [
       'title' => '',
       // General settings.
+      'help' => '',
       'description' => '',
       // Form display.
       'title_display' => '',
@@ -52,4 +53,15 @@ class Item extends WebformMarkup {
     $form_state->unsetValue($name);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return parent::preview() + [
+      '#markup' => '{markup}',
+      '#field_prefix' => '{field_prefix}',
+      '#field_suffix' => '{field_suffix}',
+    ];
+  }
+  
 }

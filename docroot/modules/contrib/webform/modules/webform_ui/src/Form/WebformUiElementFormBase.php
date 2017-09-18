@@ -11,7 +11,7 @@ use Drupal\Core\Url;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Form\WebformDialogFormTrait;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
-use Drupal\webform\WebformEntityElementsValidator;
+use Drupal\webform\WebformEntityElementsValidatorInterface;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -121,10 +121,10 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
    *   The entity field manager.
    * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
    *   The webform element manager.
-   * @param \Drupal\webform\WebformEntityElementsValidator $elements_validator
+   * @param \Drupal\webform\WebformEntityElementsValidatorInterface $elements_validator
    *   Webform element validator.
    */
-  public function __construct(RendererInterface $renderer, EntityFieldManagerInterface $entity_field_manager, WebformElementManagerInterface $element_manager, WebformEntityElementsValidator $elements_validator) {
+  public function __construct(RendererInterface $renderer, EntityFieldManagerInterface $entity_field_manager, WebformElementManagerInterface $element_manager, WebformEntityElementsValidatorInterface $elements_validator) {
     $this->renderer = $renderer;
     $this->entityFieldManager = $entity_field_manager;
     $this->elementManager = $element_manager;
@@ -146,7 +146,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, WebformInterface $webform = NULL, $key = NULL, $parent_key = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, WebformInterface $webform = NULL, $key = NULL, $parent_key = NULL, $type = NULL) {
     $this->webform = $webform;
     $this->key = $key;
     $this->parentKey = $parent_key;
@@ -211,7 +211,6 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       $reserved_keys = ['form_build_id', 'form_token', 'form_id', 'data', 'op'];
       $reserved_keys = array_merge($reserved_keys, array_keys($this->entityFieldManager->getBaseFieldDefinitions('webform_submission')));
       $form['#attached']['drupalSettings']['webform_ui']['reserved_keys'] = $reserved_keys;
-      $form['#attached']['library'][] = 'webform_ui/webform_ui.element';
       $form['properties']['element']['key_warning'] = [
         '#type' => 'webform_message',
         '#message_type' => 'warning',
@@ -235,8 +234,8 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       '#disabled' => ($key) ? TRUE : FALSE,
       // Allow key to populated using query string parameter.
       // Use by 'Edit submit button(s)'.
-      // @see \Drupal\webform_ui\WebformUiEntityForm::editForm
-      '#default_value' => ($this->getRequest()->get('key')) ? $this->getRequest()->get('key') : $key,
+      // @see \Drupal\webform_ui\WebformUiEntityEditForm::editForm
+      '#default_value' => $this->getRequest()->get('key') ?: $key ?: $webform_element->getDefaultKey(),
       '#weight' => -98,
     ];
     // Remove the key's help text (aka description) once it has been set.
@@ -254,6 +253,8 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
     if (isset($form['properties']['flex']) && !$this->isParentElementFlexbox($key, $parent_key)) {
       $form['properties']['flex']['#access'] = FALSE;
     }
+    
+    $form['#attached']['library'][] = 'webform_ui/webform_ui';
 
     // Set actions.
     $form['actions'] = ['#type' => 'actions'];
@@ -360,7 +361,6 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
     // Still set the redirect URL just to be safe.
     $form_state->setRedirectUrl($this->webform->toUrl('edit-form', ['query' => ['update' => $this->key]]));
   }
-
 
   /**
    * Determines if the webform element key already exists.

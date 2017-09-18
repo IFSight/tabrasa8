@@ -50,8 +50,8 @@ class WebformNodeTest extends WebformNodeTestBase {
 
     // Check table names.
     $this->assertEqual(WebformEntityReferenceItem::getTableNames(), [
-      "{$this->databasePrefix}node__webform" => 'webform',
-      "{$this->databasePrefix}node_revision__webform" => 'webform',
+      "node__webform" => 'webform',
+      "node_revision__webform" => 'webform',
     ]);
 
     /**************************************************************************/
@@ -60,7 +60,7 @@ class WebformNodeTest extends WebformNodeTestBase {
 
     // Check contact webform.
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw('id="webform-submission-contact-node-' . $node->id() . '-form"');
+    $this->assertRaw('id="webform-submission-contact-node-' . $node->id() . '-add-form"');
     $this->assertNoFieldByName('name', 'John Smith');
 
     // Check contact webform with default data.

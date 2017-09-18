@@ -29,6 +29,7 @@ class WebformAjaxJavaScriptTest extends JavascriptTestBase {
     'test_ajax',
     'test_ajax_confirmation_inline',
     'test_ajax_confirmation_message',
+    'test_ajax_confirmation_modal',
     'test_ajax_confirmation_page',
     'test_ajax_confirmation_url',
     'test_ajax_confirmation_url_msg',
@@ -111,6 +112,19 @@ class WebformAjaxJavaScriptTest extends JavascriptTestBase {
     $assert_session->responseContains('This webform will display a confirmation message when submitted.');
 
     /**************************************************************************/
+    // Test Ajax confirmation message. (test_ajax_confirmation_modal)
+    /**************************************************************************/
+
+    $webform_ajax_confirmation_modal = Webform::load('test_ajax_confirmation_modal');
+
+    // Submit form.
+    $this->drupalPostForm($webform_ajax_confirmation_modal->toUrl(), [], t('Submit'));
+    $assert_session->waitForElementVisible('css', '.ui-dialog.webform-confirmation-modal');
+
+    // Check confirmation modal.
+    $assert_session->responseContains('This is a <b>custom</b> confirmation modal.');
+
+    /**************************************************************************/
     // Test Ajax confirmation page. (test_ajax_confirmation_page)
     /**************************************************************************/
 
@@ -127,7 +141,7 @@ class WebformAjaxJavaScriptTest extends JavascriptTestBase {
     // Test Ajax confirmation url. (test_ajax_confirmation_url)
     /**************************************************************************/
 
-    $webform_ajax_confirmation_url  = Webform::load('test_ajax_confirmation_url');
+    $webform_ajax_confirmation_url = Webform::load('test_ajax_confirmation_url');
 
     // Submit form.
     $this->drupalPostForm($webform_ajax_confirmation_url->toUrl(), [], t('Submit'));
@@ -140,7 +154,7 @@ class WebformAjaxJavaScriptTest extends JavascriptTestBase {
     // Test Ajax confirmation url with message. (test_ajax_confirmation_url_msg)
     /**************************************************************************/
 
-    $webform_ajax_confirmation_url_msg  = Webform::load('test_ajax_confirmation_url_msg');
+    $webform_ajax_confirmation_url_msg = Webform::load('test_ajax_confirmation_url_msg');
 
     // Submit form.
     $this->drupalPostForm($webform_ajax_confirmation_url_msg->toUrl(), [], t('Submit'));

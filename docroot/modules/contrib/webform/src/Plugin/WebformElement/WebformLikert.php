@@ -32,6 +32,7 @@ class WebformLikert extends WebformElementBase {
     return [
       'title' => '',
       // General settings.
+      'help' => '',
       'description' => '',
       'default_value' => [],
       // Form display.
@@ -323,7 +324,25 @@ class WebformLikert extends WebformElementBase {
       return $this->formatHtml($element, $webform_submission);
     }
   }
-
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return parent::preview() + [
+      '#questions' => [
+        'q1' => $this->t('Please answer question 1?'),
+        'q2' => $this->t('How about now answering question 2?'),
+        'q3' => $this->t('Finally, here is question 3?'),
+      ],
+      '#answers' => [
+        '1' => '1',
+        '2' => '2',
+        '3' => '3',
+      ],
+    ];
+  }
+  
   /**
    * {@inheritdoc}
    */

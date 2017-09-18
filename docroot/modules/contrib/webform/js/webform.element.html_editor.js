@@ -23,7 +23,7 @@
         return;
       }
 
-      $(context).find('.js-form-type-webform-html-editor textarea').once('webform-html-editor').each(function () {
+      $(context).find('textarea.js-html-editor').once('webform-html-editor').each(function () {
         var $textarea = $(this);
 
         var allowedContent = drupalSettings['webform']['html_editor']['allowedContent'];
@@ -56,7 +56,7 @@
           format_tags: 'p;h2;h3;h4;h5;h6',
           // Autogrow.
           extraPlugins: 'autogrow',
-          autoGrow_minHeight: 100,
+          autoGrow_minHeight: 60,
           autoGrow_maxHeight: 300
         };
 

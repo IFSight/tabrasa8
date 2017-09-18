@@ -13,53 +13,39 @@ use Drupal\webform\Entity\WebformSubmission;
 class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
 
   /**
+   * Modules to enable.
+   *
+   * @var array
+   */
+  public static $modules = ['file', 'webform'];
+
+  /**
    * Webforms to load.
    *
    * @var array
    */
-  protected static $testWebforms = ['test_element_managed_file', 'test_element_media_file'];
+  protected static $testWebforms = ['test_element_managed_file'];
 
   /**
    * Test single and multiple file upload.
    */
   public function testFileUpload() {
-    $this->checkFileUpload('single', $this->files[0], $this->files[1]);
-    $this->checkFileUpload('multiple', $this->files[2], $this->files[3]);
-  }
+    /* Element rendering */
+    $this->drupalGet('webform/test_element_managed_file');
 
-  /**
-   * Test media file upload elements.
-   */
-  public function testMediaFileUpload() {
+    // Check single file upload button.
+    $this->assertRaw('<label for="edit-managed-file-single-button-upload-button--2" class="button button-action webform-file-button">Choose file</label>');
+
+    // Check multiple file upload button.
+    $this->assertRaw('<label for="edit-managed-file-multiple-button-upload-button--2" class="button button-action webform-file-button">Choose files</label>');
+
+    // Check single custom file upload button.
+    $this->assertRaw('<label for="edit-managed-file-single-button-custom-upload">managed_file_single_button</label>');
+
     /* Element processing */
 
-    // Get test webform.
-    $this->drupalGet('webform/test_element_media_file');
-
-    // Check document file.
-    $this->assertRaw('<input data-drupal-selector="edit-document-file-upload" type="file" id="edit-document-file-upload" name="files[document_file]" size="22" class="js-form-file form-file" />');
-
-    // Check audio file.
-    $this->assertRaw('<input data-drupal-selector="edit-audio-file-upload" accept="audio/*" type="file" id="edit-audio-file-upload" name="files[audio_file]" size="22" class="js-form-file form-file" />');
-
-    // Check image file.
-    $this->assertRaw('<input data-drupal-selector="edit-image-file-upload" accept="image/*" type="file" id="edit-image-file-upload" name="files[image_file]" size="22" class="js-form-file form-file" />');
-
-    // Check video file.
-    $this->assertRaw('<input data-drupal-selector="edit-video-file-upload" accept="video/*" type="file" id="edit-video-file-upload" name="files[video_file]" size="22" class="js-form-file form-file" />');
-
-    // Get test webform preview with test values.
-    $this->drupalLogin($this->rootUser);
-    $this->drupalPostForm('webform/test_element_media_file/test', [], t('Preview'));
-
-    // Check audio file preview.
-    $this->assertRaw('<source src="' . $this->getAbsoluteUrl('/system/files/webform/test_element_media_file/_sid_/audio_file_mp3.mp3') . '" type="audio/mpeg">');
-
-    // Check image file preview.
-    $this->assertRaw('<img src="' . $this->getAbsoluteUrl('/system/files/webform/test_element_media_file/_sid_/image_file_jpg.jpg') . '" class="webform-image-file" />');
-
-    // Check video file preview.
-    $this->assertRaw('<source src="' . $this->getAbsoluteUrl('/system/files/webform/test_element_media_file/_sid_/video_file_mp4.mp4') . '" type="video/mp4">');
+    $this->checkFileUpload('single', $this->files[0], $this->files[1]);
+    $this->checkFileUpload('multiple', $this->files[2], $this->files[3]);
   }
 
   /****************************************************************************/
@@ -111,7 +97,8 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
     // Check managed file formatting.
     $this->drupalGet('/admin/structure/webform/manage/test_element_managed_file/submission/' . $sid);
     if ($type == 'multiple') {
-      $this->assertRaw('<b>managed_file (multiple)</b><br /><div class="item-list"><ul><li>');
+      $this->assertRaw('<label>managed_file_multiple</label>');
+      $this->assertRaw('<div class="item-list">');
     }
     $this->assertRaw('<span class="file file--mime-text-plain file--text"> <a href="' . file_create_url($file->getFileUri()) . '" type="text/plain; length=' . $file->getSize() . '">' . $file->getFilename() . '</a></span>');
 

@@ -45,23 +45,26 @@ abstract class WebformCompositeBase extends WebformElementBase {
    */
   public function getDefaultProperties() {
     $properties = [
-        'title' => '',
-        'multiple' => FALSE,
-        'multiple__header' => FALSE,
-        'multiple__header_label' => '',
-        // General settings.
-        'description' => '',
-        'default_value' => [],
-        // Form display.
-        'title_display' => 'invisible',
-        'description_display' => '',
-        'disabled' => FALSE,
-        // Form validation.
-        'required' => FALSE,
-        'required_error' => '',
-        // Flex box.
-        'flexbox' => '',
-      ] + $this->getDefaultBaseProperties();
+      'title' => '',
+      'multiple' => FALSE,
+      'multiple__header' => FALSE,
+      'multiple__header_label' => '',
+      // General settings.
+      'help' => '',
+      'description' => '',
+      'default_value' => [],
+      // Form display.
+      'title_display' => 'invisible',
+      'description_display' => '',
+      'disabled' => FALSE,
+      // Form validation.
+      'required' => FALSE,
+      'required_error' => '',
+      // Flex box.
+      'flexbox' => '',
+      // Attributes.
+      'wrapper_attributes' => [],
+    ] + $this->getDefaultBaseProperties();
 
     $composite_elements = $this->getCompositeElements();
     foreach ($composite_elements as $composite_key => $composite_element) {
@@ -632,6 +635,10 @@ abstract class WebformCompositeBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function getTestValues(array $element, WebformInterface $webform, array $options = []) {
+    if (empty($element['#webform_composite_elements'])) {
+      $this->initialize($element);
+    }
+
     /** @var \Drupal\webform\WebformSubmissionGenerateInterface $generate */
     $generate = \Drupal::service('webform_submission.generate');
 
@@ -654,6 +661,15 @@ abstract class WebformCompositeBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildConfigurationForm($form, $form_state);
+    $form['custom']['properties']['#description'] .= '<br /><br />' .
+      $this->t("You can set sub-element properties using a double underscore between the sub-element's key and sub-element's property (subelement__property). For example, you can add custom attributes or states (conditional logic) to the title sub-element using 'title__attributes' and 'title__states'.");
+    return $form;
+  }
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
@@ -661,10 +677,10 @@ abstract class WebformCompositeBase extends WebformElementBase {
     $form['element']['default_value']['#description'] = $this->t("The default value of the composite webform element as YAML.");
 
     // Update #required label.
-    $form['validation']['required']['#description'] .= '<br />' . $this->t("Checking this option only displays the required indicator next to this element's label. Please chose which elements should be required below.");
+    $form['validation']['required_container']['required']['#description'] .= '<br /><br />' . $this->t("Checking this option only displays the required indicator next to this element's label. Please chose which elements should be required below.");
 
     // Update '#multiple__header_label'.
-    $form['element']['multiple__header_label']['#states']['visible'][':input[name="properties[multiple__header]"]'] = ['checked' => FALSE];
+    $form['element']['multiple__header_container']['multiple__header_label']['#states']['visible'][':input[name="properties[multiple__header]"]'] = ['checked' => FALSE];
 
     $form['composite'] = [
       '#type' => 'fieldset',

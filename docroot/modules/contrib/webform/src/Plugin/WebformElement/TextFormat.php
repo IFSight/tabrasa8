@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\webform\Plugin\WebformElementBase;
+use Drupal\webform\WebformSubmissionConditionsValidator;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -33,7 +34,16 @@ class TextFormat extends WebformElementBase {
       'allowed_formats' => [],
       'hide_help' => FALSE,
     ];
-    unset($default_properties['disabled']);
+    unset(
+      $default_properties['disabled'],
+      $default_properties['attributes'],
+      $default_properties['wrapper_attributes'],
+      $default_properties['title_display'],
+      $default_properties['description_display'],
+      $default_properties['field_prefix'],
+      $default_properties['field_suffix'],
+      $default_properties['help']
+    );
     return $default_properties;
   }
 
@@ -77,7 +87,7 @@ class TextFormat extends WebformElementBase {
       // Display tips in a modal.
       $element['format']['help']['about']['#attributes']['class'][] = 'use-ajax';
       $element['format']['help']['about']['#attributes'] += [
-        'data-dialog-type' => 'modal',
+        'data-dialog-type' => 'dialog',
         'data-dialog-options' => Json::encode([
           'dialogClass' => 'webform-text-format-help-dialog',
           'width' => 800,
@@ -177,6 +187,13 @@ class TextFormat extends WebformElementBase {
       'value' => $title . ' [' . t('Textarea') . ']',
       'format' => $title . ' [' . t('Select') . ']',
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preview() {
+    return (\Drupal::moduleHandler()->moduleExists('filter')) ? parent::preview() : [];
   }
 
   /**

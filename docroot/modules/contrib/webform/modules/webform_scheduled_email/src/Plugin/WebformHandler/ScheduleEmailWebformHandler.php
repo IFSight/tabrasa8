@@ -239,7 +239,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
         $this->t("Multiple handlers can be used to schedule multiple emails."),
         $this->t('Deleting this handler will unschedule all scheduled emails.'),
         ['#markup' => $this->t('Scheduled emails are automatically sent starting at midnight using <a href=":href">cron</a>, which is executed at predefined interval.', [':href' => 'https://www.drupal.org/docs/7/setting-up-cron/overview'])],
-      ]
+      ],
     ];
 
     $form['scheduled']['token_tree_link'] = $this->tokenManager->buildTreeLink();
@@ -247,7 +247,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
     $form = parent::buildConfigurationForm($form, $form_state);
 
     // Change 'Send email' to 'Scheduled email'.
-    $form['settings']['states']['#title'] = $this->t('Scheduled email');
+    $form['settings']['states']['#title'] = $this->t('Schedule email');
 
     return $form;
   }
@@ -365,9 +365,9 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
         drupal_set_message($this->t('%submission: Email <b>not scheduled</b> for %handler handler because %send is not a valid date/token.', $t_args), 'warning', TRUE);
       }
       $context = $t_args + [
-        'link' => $this->getWebform()->toLink($this->t('Edit'), 'handlers-form')->toString(),
+        'link' => $this->getWebform()->toLink($this->t('Edit'), 'handlers')->toString(),
       ];
-      $this->logger->warning('%submission: Email <b>not scheduled</b> for %handler handler because %send is not a valid date/token.', $context);
+      $this->getLogger()->warning('%submission: Email <b>not scheduled</b> for %handler handler because %send is not a valid date/token.', $context);
       return FALSE;
     }
 

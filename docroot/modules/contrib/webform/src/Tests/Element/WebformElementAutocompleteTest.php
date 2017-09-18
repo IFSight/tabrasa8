@@ -19,9 +19,20 @@ class WebformElementAutocompleteTest extends WebformTestBase {
   protected static $testWebforms = ['test_element_autocomplete'];
 
   /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+
+    // Add view own submission to anonymous so the submissions can be be
+    // converted to authenticated.
+    $this->addViewWebformSubmissionOwnPermissionToAnonymous();
+  }
+
+  /**
    * Tests autocomplete element.
    */
-  public function testWebformElementAutocomplete() {
+  public function testAutocomplete() {
     global $base_path;
 
     /* Test #autocomplete property */

@@ -29,6 +29,10 @@
   max-width: 100%;
 }
 
+.webform-states-table--condition input[type="text"] {
+  margin-top: 4px;
+}
+
 .webform-states-table .image-button {
   margin: 0;
 }
@@ -37,7 +41,6 @@
 .webform-states-table td:last-child {
   padding: 0 2px;
   vertical-align: middle;
-  text-align: center;
 }
 
 .webform-states-table td:last-child input {

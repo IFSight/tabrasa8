@@ -5,7 +5,6 @@ namespace Drupal\webform\Element;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
-use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase as WebformManagedFileBasePlugin;
 
 /**
@@ -13,7 +12,6 @@ use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase as WebformManage
  */
 abstract class WebformCompositeBase extends FormElement {
 
-  use CompositeFormElementTrait;
 
   /**
    * {@inheritdoc}
@@ -29,7 +27,6 @@ abstract class WebformCompositeBase extends FormElement {
       '#pre_render' => [
         [$class, 'preRenderCompositeFormElement'],
       ],
-      '#theme_wrappers' => ['container'],
       '#title_display' => 'invisible',
       '#required' => FALSE,
       '#flexbox' => TRUE,
@@ -74,7 +71,9 @@ abstract class WebformCompositeBase extends FormElement {
    * {@inheritdoc}
    */
   public static function preRenderCompositeFormElement($element) {
-    $element = CompositeFormElementTrait::preRenderCompositeFormElement($element);
+    $element['#theme_wrappers'][] = 'form_element';
+    $element['#wrapper_attributes']['id'] = $element['#id'] . '--wrapper';
+    $element['#wrapper_attributes']['class'][] = 'form-composite';
 
     // Add class name to wrapper attributes.
     $class_name = str_replace('_', '-', $element['#type']);
@@ -99,6 +98,13 @@ abstract class WebformCompositeBase extends FormElement {
           $composite_property_key = str_replace('#' . $composite_key . '__', '#', $property_key);
           $composite_element[$composite_property_key] = $property_value;
         }
+      }
+
+      // Make sure to remove any #options reference on textfields
+      // To prevnnt "An illegal choice has been detected." error
+      // @see FormValidator::performRequiredValidation()
+      if ($composite_element['#type'] == 'textfield') {
+        unset($composite_element['#options']);
       }
 
       // Initialize, prepare, and populate composite sub-element.
@@ -175,25 +181,27 @@ abstract class WebformCompositeBase extends FormElement {
     // @see \Drupal\webform\Element\WebformOtherBase::validateWebformOther
     $value = NestedArray::getValue($form_state->getValues(), $element['#parents']);
 
-    // Only validate composite elements that are visible.
-    $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
-    if (!$has_access) {
-      return;
-    }
-
     /************************************************************************/
     // @todo Remove below code once WebformElement integration is completed.
     /************************************************************************/
 
-    // Validate required composite elements.
-    $composite_elements = static::getCompositeElements();
-    foreach ($composite_elements as $composite_key => $composite_element) {
-      if (!empty($element[$composite_key]['#required']) && $value[$composite_key] == '') {
-        if (isset($element[$composite_key]['#title'])) {
-          $form_state->setError($element[$composite_key], t('@name field is required.', ['@name' => $element[$composite_key]['#title']]));
+    // Only validate composite elements that are visible.
+    $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
+    if ($has_access) {
+      // Validate required composite elements.
+      $composite_elements = static::getCompositeElements();
+      foreach ($composite_elements as $composite_key => $composite_element) {
+        if (!empty($element[$composite_key]['#required']) && $value[$composite_key] == '') {
+          if (isset($element[$composite_key]['#title'])) {
+            $form_state->setError($element[$composite_key], t('@name field is required.', ['@name' => $element[$composite_key]['#title']]));
+          }
         }
       }
     }
-  }
 
+    // Clear empty composites value.
+    if (empty(array_filter($value))) {
+      $form_state->setValueForElement($element, NULL);
+    }
+  }
 }

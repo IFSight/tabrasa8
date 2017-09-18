@@ -325,7 +325,7 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
       '#type' => 'link',
       '#title' => $this->t('Customize'),
       '#url' => Url::fromRoute($route_name, $route_parameters, $route_options),
-      '#attributes' => WebformDialogHelper::getModalDialogAttributes(800, ['button', 'button-action', 'button--small', 'button-webform-setting']),
+      '#attributes' => WebformDialogHelper::getModalDialogAttributes(800, ['button', 'button-action', 'button--small', 'button-webform-table-setting']),
     ];
   }
 
@@ -563,6 +563,16 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  public function buildOperations(EntityInterface $entity) {
+    return parent::buildOperations($entity) + [
+        '#prefix' => '<div class="webform-dropbutton">',
+        '#suffix' => '</div>',
+      ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getDefaultOperations(EntityInterface $entity) {
     $route_options = ['query' => \Drupal::destination()->getAsArray()];
 
@@ -776,7 +786,6 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
       case self::STATE_COMPLETED:
         $query->condition('in_draft', 0);
         break;
-
     }
 
     return $query;

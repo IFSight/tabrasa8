@@ -28,6 +28,7 @@ class WebformLocation extends WebformCompositeBase {
   public function getDefaultProperties() {
     $properties = [
       'multiple' => FALSE,
+      'help' => '',
       'title' => '',
       // General settings.
       'description' => '',
@@ -39,6 +40,8 @@ class WebformLocation extends WebformCompositeBase {
       // Form validation.
       'required' => FALSE,
       'required_error' => '',
+      // Attributes.
+      'wrapper_attributes' => [],
       // Location settings.
       'geolocation' => FALSE,
       'hidden' => FALSE,
@@ -133,6 +136,17 @@ class WebformLocation extends WebformCompositeBase {
   /**
    * {@inheritdoc}
    */
+  public function preview() {
+    return parent::preview() + [
+      '#map' => TRUE,
+      '#geolocation' => TRUE,
+      '#format' => 'map',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
@@ -176,13 +190,13 @@ class WebformLocation extends WebformCompositeBase {
     ];
     $default_api_key = \Drupal::config('webform.settings')->get('element.default_google_maps_api_key');
     if ($default_api_key) {
-      $form['composite']['api_key']['#description'] .= '<br />' . $this->t('Defaults to: %value', ['%value' => $default_api_key]);
+      $form['composite']['api_key']['#description'] .= '<br /><br />' . $this->t('Defaults to: %value', ['%value' => $default_api_key]);
     }
     else {
       $form['composite']['api_key']['#required'] = TRUE;
       if (\Drupal::currentUser()->hasPermission('administer webform')) {
-        $t_args = [':href' => UrlGenerator::fromRoute('webform.settings')->toString()];
-        $form['composite']['api_key']['#description'] .= '<br />' . $this->t('You can either enter an element specific API key here or set the <a href=":href">default site-wide API key</a>.', $t_args);
+        $t_args = [':href' => UrlGenerator::fromRoute('webform.settings.elements')->toString()];
+        $form['composite']['api_key']['#description'] .= '<br /><br />' . $this->t('You can either enter an element specific API key here or set the <a href=":href">default site-wide API key</a>.', $t_args);
       }
     }
 

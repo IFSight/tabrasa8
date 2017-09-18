@@ -34,6 +34,7 @@ settings:
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
+  form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_unsaved: false
@@ -55,6 +56,7 @@ settings:
   preview_message: ''
   preview_attributes: {  }
   preview_excluded_elements: {  }
+  preview_exclude_empty: true
   draft: all
   draft_multiple: false
   draft_auto_save: false
@@ -85,33 +87,42 @@ access:
       - anonymous
       - authenticated
     users: {  }
+    permissions: {  }
   view_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   purge_any:
     roles: {  }
     users: {  }
+    permissions: {  }
   view_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   update_own:
     roles: {  }
     users: {  }
+    permissions: {  }
   delete_own:
     roles: {  }
     users: {  }
+    permissions: {  }
 handlers:
   email_draft:
     id: email
     label: 'Draft saved'
     handler_id: email_draft
     status: true
+    conditions: {  }
     weight: 0
     settings:
       states:
@@ -129,6 +140,7 @@ handlers:
       body: default
       excluded_elements: {  }
       ignore_access: false
+      exclude_empty: true
       html: true
       attachments: false
       debug: true
@@ -139,6 +151,7 @@ handlers:
     label: 'Submission converted'
     handler_id: email_converted
     status: true
+    conditions: {  }
     weight: 0
     settings:
       states:
@@ -156,6 +169,7 @@ handlers:
       body: default
       excluded_elements: {  }
       ignore_access: false
+      exclude_empty: true
       html: true
       attachments: false
       debug: true
@@ -166,6 +180,7 @@ handlers:
     label: 'Submission completed'
     handler_id: email_completed
     status: true
+    conditions: {  }
     weight: 1
     settings:
       states:
@@ -183,6 +198,7 @@ handlers:
       body: default
       excluded_elements: {  }
       ignore_access: false
+      exclude_empty: true
       html: true
       attachments: false
       debug: true
@@ -193,6 +209,7 @@ handlers:
     label: 'Submission updated'
     handler_id: email_updated
     status: true
+    conditions: {  }
     weight: 2
     settings:
       states:
@@ -210,6 +227,7 @@ handlers:
       body: default
       excluded_elements: {  }
       ignore_access: false
+      exclude_empty: true
       html: true
       attachments: false
       debug: true
@@ -220,6 +238,7 @@ handlers:
     label: 'Submission deleted'
     handler_id: email_deleted
     status: true
+    conditions: {  }
     weight: 2
     settings:
       states:
@@ -237,6 +256,7 @@ handlers:
       body: default
       excluded_elements: {  }
       ignore_access: false
+      exclude_empty: true
       html: true
       attachments: false
       debug: true

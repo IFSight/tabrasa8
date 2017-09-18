@@ -5,12 +5,17 @@ namespace Drupal\webform;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Helper class webform entity methods.
- */
-/**
  * Provides an interface defining a webform request handler.
  */
 interface WebformRequestInterface {
+
+  /**
+   * Determine if the current request is a webform admin route.
+   *
+   * @return bool
+   *   TRUE if the current request is a webform admin route.
+   */
+  public function isWebformAdminRoute();
 
   /**
    * Get the current request's source entity.

@@ -219,7 +219,12 @@ class WebformPluginElementController extends ControllerBase implements Container
             $dependencies ? ['data' => ['#markup' => '• ' . implode('<br />• ', $dependencies)], 'nowrap' => 'nowrap'] : '',
             $element_plugin_definition['provider'],
             $webform_element_plugin_definition['provider'],
-            $operations ? ['data' => ['#type' => 'operations', '#links' => $operations]] : '',
+            $operations ? ['data' => [
+              '#type' => 'operations',
+              '#links' => $operations,
+              '#prefix' => '<div class="webform-dropbutton">',
+              '#suffix' => '</div>',
+            ]] : '',
           ],
         ];
         if (isset($excluded_elements[$element_plugin_id])) {
@@ -250,13 +255,21 @@ class WebformPluginElementController extends ControllerBase implements Container
       ],
     ];
 
-    // Display info.
-    $build['info'] = [
-      '#markup' => $this->t('@total elements', ['@total' => count($webform_form_element_rows)]),
-      '#prefix' => '<div>',
-      '#suffix' => '</div>',
+    // Settings
+    $build['settings'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Edit settings'),
+      '#url' => Url::fromRoute('webform.settings.elements'),
+      '#attributes' => ['class' => ['button', 'button--small'], 'style' => 'float: right'],
     ];
 
+    // Display info.
+    $build['info'] = [
+      '#markup' => $this->t('@total exporters', ['@total' => count($webform_form_element_rows)]),
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+    ];
+    
     ksort($webform_form_element_rows);
     $build['webform_elements'] = [
       '#type' => 'table',

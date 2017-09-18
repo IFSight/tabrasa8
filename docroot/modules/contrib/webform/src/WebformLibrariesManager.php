@@ -75,7 +75,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
    * {@inheritdoc}
    */
   public function requirements($cli = FALSE) {
-    $cdn = $this->configFactory->get('webform.settings')->get('libraries.cdn', FALSE);
+    $cdn = $this->configFactory->get('webform.settings')->get('libraries.cdn') ?: FALSE;
 
     $status = [];
     $libraries = $this->getLibraries();
@@ -91,8 +91,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         ':homepage_href' => $library['homepage_url']->toString(),
         ':external_href' => 'https://www.drupal.org/docs/8/theming-drupal-8/adding-stylesheets-css-and-javascript-js-to-a-drupal-8-theme#external',
         ':install_href' => ($this->moduleHandler->moduleExists('help')) ? Url::fromRoute('help.page', ['name' => 'webform'], ['fragment' => 'libraries'])->toString() : 'https://www.drupal.org/docs/8/modules/webform/webform-libraries',
-        ':settings_libraries_href' => Url::fromRoute('webform.settings', [], ['fragment' => 'edit-libraries'])->toString(),
-        ':settings_elements_href' => Url::fromRoute('webform.settings', [], ['fragment' => 'edit-elements'])->toString(),
+        ':settings_libraries_href' => Url::fromRoute('webform.settings.libraries')->toString(),
+        ':settings_elements_href' => Url::fromRoute('webform.settings.elements')->toString(),
       ];
 
       if ($this->isExcluded($library_name)) {
@@ -218,8 +218,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'title' => $this->t('CKEditor: Fakeobjects'),
       'description' => $this->t('Utility required by CKEditor link plugin.'),
       'notes' => $this->t('Allows CKEditor to use basic image and link dialog'),
-      'homepage_url' => Url::fromUri('http://ckeditor.com/addon/fakeobjects'),
-      'download_url' => Url::fromUri("http://download.ckeditor.com/fakeobjects/releases/fakeobjects_$ckeditor_version.zip"),
+      'homepage_url' => Url::fromUri('https://ckeditor.com/addon/fakeobjects'),
+      'download_url' => Url::fromUri("https://download.ckeditor.com/fakeobjects/releases/fakeobjects_$ckeditor_version.zip"),
       'version' => $ckeditor_version,
       'optional' => TRUE,
     ];
@@ -227,8 +227,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'title' => $this->t('CKEditor: Image'),
       'description' => $this->t('Provides a basic image dialog for CKEditor.'),
       'notes' => $this->t('Allows CKEditor to use basic image dialog, which is not included in Drupal core.'),
-      'homepage_url' => Url::fromUri('http://ckeditor.com/addon/image'),
-      'download_url' => Url::fromUri("http://download.ckeditor.com/image/releases/image_$ckeditor_version.zip"),
+      'homepage_url' => Url::fromUri('https://ckeditor.com/addon/image'),
+      'download_url' => Url::fromUri("https://download.ckeditor.com/image/releases/image_$ckeditor_version.zip"),
       'version' => $ckeditor_version,
       'optional' => TRUE,
     ];
@@ -236,8 +236,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'title' => $this->t('CKEditor: Link'),
       'description' => $this->t('Provides a basic link dialog for CKEditor.'),
       'notes' => $this->t('Allows CKEditor to use basic link dialog, which is not included in Drupal core.'),
-      'homepage_url' => Url::fromUri('http://ckeditor.com/addon/link'),
-      'download_url' => Url::fromUri('http://download.ckeditor.com/link/releases/link_4.6.2.zip'),
+      'homepage_url' => Url::fromUri('https://ckeditor.com/addon/link'),
+      'download_url' => Url::fromUri('https://download.ckeditor.com/link/releases/link_4.6.2.zip'),
       'version' => '4.6.2',
       'optional' => TRUE,
     ];
@@ -246,8 +246,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('Code Mirror is a versatile text editor implemented in JavaScript for the browser.'),
       'notes' => $this->t('Code Mirror is used to provide a text editor for YAML, HTML, CSS, and JavaScript configuration settings and messages.'),
       'homepage_url' => Url::fromUri('http://codemirror.net/'),
-      'download_url' => Url::fromUri('https://github.com/components/codemirror/archive/5.25.2.zip'),
-      'version' => '5.25.2',
+      'download_url' => Url::fromUri('https://github.com/components/codemirror/archive/5.27.4.zip'),
+      'version' => '5.27.4',
       'optional' => TRUE,
     ];
     $libraries['jquery.geocomplete'] = [
@@ -282,8 +282,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('Input masks ensures a predefined format is entered. This can be useful for dates, numerics, phone numbers, etc...'),
       'notes' => $this->t('Input masks are used to ensure predefined and custom formats for text fields.'),
       'homepage_url' => Url::fromUri('https://robinherbots.github.io/Inputmask/'),
-      'download_url' => Url::fromUri('https://github.com/RobinHerbots/jquery.inputmask/archive/3.3.4.zip'),
-      'version' => '3.3.4',
+      'download_url' => Url::fromUri('https://github.com/RobinHerbots/jquery.inputmask/archive/3.3.7.zip'),
+      'version' => '3.3.7',
       'optional' => TRUE,
     ];
     $libraries['jquery.intl-tel-input'] = [
@@ -291,8 +291,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t("A jQuery plugin for entering and validating international telephone numbers. It adds a flag dropdown to any input, detects the user's country, displays a relevant placeholder and provides formatting/validation methods."),
       'notes' => $this->t('International Telephone Input is used by the Telephone element.'),
       'homepage_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input'),
-      'download_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input/archive/v11.0.12.zip'),
-      'version' => '11.0.12',
+      'download_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input/archive/v12.0.0.zip'),
+      'version' => '12.0.0',
       'optional' => TRUE,
     ];
     $libraries['jquery.rateit'] = [
@@ -327,8 +327,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('A lightweight, customizable javascript timepicker plugin for jQuery, inspired by Google Calendar.'),
       'notes' => $this->t('Timepicker is used to provide a polyfill for HTML 5 time elements.'),
       'homepage_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker'),
-      'download_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker/archive/1.11.10.zip'),
-      'version' => '1.11.10',
+      'download_url' => Url::fromUri('https://github.com/jonthornton/jquery-timepicker/archive/1.11.11.zip'),
+      'version' => '1.11.11 ',
       'optional' => TRUE,
     ];
     $libraries['jquery.toggles'] = [
@@ -345,8 +345,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('The jQuery word and character counter plug-in allows you to count characters or words'),
       'notes' => $this->t('Word or character counting, with server-side validation, is available for text fields and text areas.'),
       'homepage_url' => Url::fromUri('https://github.com/qwertypants/jQuery-Word-and-Character-Counter-Plugin'),
-      'download_url' => Url::fromUri('https://github.com/qwertypants/jQuery-Word-and-Character-Counter-Plugin/archive/2.3.5.zip'),
-      'version' => '2.3.5',
+      'download_url' => Url::fromUri('https://github.com/qwertypants/jQuery-Word-and-Character-Counter-Plugin/archive/2.5.1.zip'),
+      'version' => '2.5.1',
       'optional' => TRUE,
     ];
     $libraries['progress-tracker'] = [
@@ -363,8 +363,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t("Signature Pad is a JavaScript library for drawing smooth signatures. It is HTML5 canvas based and uses variable width Bézier curve interpolation. It works in all modern desktop and mobile browsers and doesn't depend on any external libraries."),
       'notes' => $this->t('Signature Pad is used to provide a signature element.'),
       'homepage_url' => Url::fromUri('https://github.com/szimek/signature_pad'),
-      'download_url' => Url::fromUri('https://github.com/szimek/signature_pad/archive/v1.5.3.zip'),
-      'version' => '1.5.3',
+      'download_url' => Url::fromUri('https://github.com/szimek/signature_pad/archive/v2.3.0.zip'),
+      'version' => '2.3.0',
       'elements' => ['webform_signature'],
     ];
     return $libraries;
