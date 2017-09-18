@@ -2,11 +2,6 @@
 
 namespace Drupal\Tests\scheduler\Functional;
 
-// This file has been renamed from .php to .txt to stop it being run, because
-// the tests fail due to Rules code problems. These tests will be reinstated
-// when Rules is fixed. See Scheduler issue https://www.drupal.org/node/2851618
-// and Rules issue https://www.drupal.org/node/2854481.
-// @TODO Revert the filename and delete this comment when Rules module runs OK.
 use Drupal\rules\Context\ContextConfig;
 
 /**
@@ -32,11 +27,11 @@ class SchedulerRulesConditionsTest extends SchedulerBrowserTestBase {
     $this->rulesStorage = $this->container->get('entity_type.manager')->getStorage('rules_reaction_rule');
     $this->expressionManager = $this->container->get('plugin.manager.rules_expression');
 
-    // Create a published page node.
+    // Create a published node.
     $this->node = $this->drupalCreateNode([
       'title' => 'Rules Test Node',
       'type' => $this->type,
-      'uid' => $this->adminUser->id(),
+      'uid' => $this->schedulerUser->id(),
       'status' => TRUE,
     ]);
   }
@@ -224,13 +219,13 @@ class SchedulerRulesConditionsTest extends SchedulerBrowserTestBase {
     ]);
     $config_entity->save();
 
-    $this->drupalLogin($this->adminUser);
+    $this->drupalLogin($this->schedulerUser);
 
     // Edit the node but do not enter any scheduling dates.
     $edit = [
       'body[0][value]' => $this->randomString(30),
     ];
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save'));
 
     $this->assertText($message5, '"' . $message5 . '" is shown');
     $this->assertText($message6, '"' . $message6 . '" is shown');
@@ -242,7 +237,7 @@ class SchedulerRulesConditionsTest extends SchedulerBrowserTestBase {
       'publish_on[0][value][date]' => date('Y-m-d', strtotime('+1 day', REQUEST_TIME)),
       'publish_on[0][value][time]' => date('H:i:s', strtotime('+1 day', REQUEST_TIME)),
     ];
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save and unpublish'));
+    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save'));
 
     $this->assertNoText($message5, '"' . $message5 . '" is not shown');
     $this->assertText($message6, '"' . $message6 . '" is shown');
@@ -254,7 +249,7 @@ class SchedulerRulesConditionsTest extends SchedulerBrowserTestBase {
       'unpublish_on[0][value][date]' => date('Y-m-d', strtotime('+2 day', REQUEST_TIME)),
       'unpublish_on[0][value][time]' => date('H:i:s', strtotime('+2 day', REQUEST_TIME)),
     ];
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save and keep unpublished'));
+    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save'));
 
     $this->assertNoText($message5, '"' . $message5 . '" is not shown');
     $this->assertNoText($message6, '"' . $message6 . '" is not shown');

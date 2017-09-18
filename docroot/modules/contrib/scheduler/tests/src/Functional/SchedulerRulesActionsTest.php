@@ -2,11 +2,6 @@
 
 namespace Drupal\Tests\scheduler\Functional;
 
-// This file has been renamed from .php to .txt to stop it being run, because
-// the tests fail due to Rules code problems. These tests will be reinstated
-// when Rules is fixed. See Scheduler issue https://www.drupal.org/node/2851618
-// and Rules issue https://www.drupal.org/node/2854481.
-// @TODO Revert the filename and delete this comment when Rules module runs OK.
 use Drupal\rules\Context\ContextConfig;
 
 /**
@@ -32,11 +27,11 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
     $this->rulesStorage = $this->container->get('entity_type.manager')->getStorage('rules_reaction_rule');
     $this->expressionManager = $this->container->get('plugin.manager.rules_expression');
 
-    // Create a published page node.
+    // Create a published node.
     $this->node = $this->drupalCreateNode([
       'title' => 'Initial Test Node',
       'type' => $this->type,
-      'uid' => $this->adminUser->id(),
+      'uid' => $this->schedulerUser->id(),
       'status' => TRUE,
     ]);
   }
@@ -78,7 +73,7 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
     ]);
     $config_entity->save();
 
-    // Create rule 2 to remove the publishing date and publish the node.
+    // Create rule 2 to remove the publishing date and publish the node now.
     $rule2 = $this->expressionManager->createRule();
     $rule2->addCondition('scheduler_condition_publishing_is_enabled',
       ContextConfig::create()
@@ -111,14 +106,14 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
     ]);
     $config_entity->save();
 
-    $this->drupalLogin($this->adminUser);
+    $this->drupalLogin($this->schedulerUser);
     $node = $this->node;
 
     // Edit node without changing title.
     $edit = [
       'body[0][value]' => $this->randomString(30),
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->nodeStorage->resetCache([$node->id()]);
     $node = $this->nodeStorage->load($node->id());
     // Check that neither of the rules are triggered, no publish and unpublish
@@ -134,7 +129,7 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
       'title[0][value]' => 'Trigger Action Rule 1',
       'body[0][value]' => $this->randomString(30),
     ];
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save'));
     $this->nodeStorage->resetCache([$this->node->id()]);
     $node = $this->nodeStorage->load($this->node->id());
     // Check that rule 1 is triggered and rule 2 is not. Check that a publishing
@@ -150,7 +145,7 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
       'title[0][value]' => 'Trigger Action Rule 2',
       'body[0][value]' => $this->randomString(30),
     ];
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save and publish'));
+    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save'));
     $this->nodeStorage->resetCache([$this->node->id()]);
     $node = $this->nodeStorage->load($this->node->id());
     // Check that rule 2 is triggered and rule 1 is not. Check that the
@@ -233,14 +228,14 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
     ]);
     $config_entity->save();
 
-    $this->drupalLogin($this->adminUser);
+    $this->drupalLogin($this->schedulerUser);
     $node = $this->node;
 
     // Edit node without changing title.
     $edit = [
       'body[0][value]' => $this->randomString(30),
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->nodeStorage->resetCache([$node->id()]);
     $node = $this->nodeStorage->load($node->id());
     // Check that neither of the rules are triggered, no publish and unpublish
@@ -256,7 +251,7 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
       'title[0][value]' => 'Trigger Action Rule 3',
       'body[0][value]' => $this->randomString(30),
     ];
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save'));
     $this->nodeStorage->resetCache([$this->node->id()]);
     $node = $this->nodeStorage->load($this->node->id());
     // Check that rule 3 is triggered and rule 4 is not. Check that an
@@ -272,7 +267,7 @@ class SchedulerRulesActionsTest extends SchedulerBrowserTestBase {
       'title[0][value]' => 'Trigger Action Rule 4',
       'body[0][value]' => $this->randomString(30),
     ];
-    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $this->node->id() . '/edit', $edit, t('Save'));
     $this->nodeStorage->resetCache([$this->node->id()]);
     $node = $this->nodeStorage->load($this->node->id());
     // Check that rule 4 is triggered and rule 3 is not. Check that the
