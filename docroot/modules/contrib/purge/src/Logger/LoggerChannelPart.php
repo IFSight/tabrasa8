@@ -14,6 +14,25 @@ use Drupal\purge\Logger\LoggerChannelPart;
 class LoggerChannelPart implements LoggerChannelPartInterface {
 
   /**
+   * Access levels for each RFC 5424 log type.
+   *
+   * The constructor changes the granted levels to TRUE so that $grants
+   * doesn't have to be searched/iterated each and every time.
+   *
+   * @var bool[]
+   */
+  protected $access = [
+    RfcLogLevel::EMERGENCY => FALSE,
+    RfcLogLevel::ALERT => FALSE,
+    RfcLogLevel::CRITICAL => FALSE,
+    RfcLogLevel::ERROR => FALSE,
+    RfcLogLevel::WARNING => FALSE,
+    RfcLogLevel::NOTICE => FALSE,
+    RfcLogLevel::INFO => FALSE,
+    RfcLogLevel::DEBUG => FALSE,
+  ];
+
+  /**
    * The identifier of the channel part.
    *
    * @var string
@@ -41,6 +60,9 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
     $this->id = $id;
     $this->grants = $grants;
     $this->loggerChannelPurge = $logger_channel_purge;
+    foreach ($grants as $grant) {
+      $this->access[$grant] = TRUE;
+    }
   }
 
   /**
@@ -53,8 +75,15 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
   /**
    * {@inheritdoc}
    */
+  public function isDebuggingEnabled() {
+    return $this->access[RfcLogLevel::DEBUG];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function emergency($message, array $context = []) {
-    if (in_array(RfcLogLevel::EMERGENCY, $this->grants)) {
+    if ($this->access[RfcLogLevel::EMERGENCY]) {
       $this->log(LogLevel::EMERGENCY, $message, $context);
     }
   }
@@ -63,7 +92,7 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
    * {@inheritdoc}
    */
   public function alert($message, array $context = []) {
-    if (in_array(RfcLogLevel::ALERT, $this->grants)) {
+    if ($this->access[RfcLogLevel::ALERT]) {
       $this->log(LogLevel::ALERT, $message, $context);
     }
   }
@@ -72,7 +101,7 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
    * {@inheritdoc}
    */
   public function critical($message, array $context = []) {
-    if (in_array(RfcLogLevel::CRITICAL, $this->grants)) {
+    if ($this->access[RfcLogLevel::CRITICAL]) {
       $this->log(LogLevel::CRITICAL, $message, $context);
     }
   }
@@ -81,7 +110,7 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
    * {@inheritdoc}
    */
   public function error($message, array $context = []) {
-    if (in_array(RfcLogLevel::ERROR, $this->grants)) {
+    if ($this->access[RfcLogLevel::ERROR]) {
       $this->log(LogLevel::ERROR, $message, $context);
     }
   }
@@ -90,7 +119,7 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
    * {@inheritdoc}
    */
   public function warning($message, array $context = []) {
-    if (in_array(RfcLogLevel::WARNING, $this->grants)) {
+    if ($this->access[RfcLogLevel::WARNING]) {
       $this->log(LogLevel::WARNING, $message, $context);
     }
   }
@@ -99,7 +128,7 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
    * {@inheritdoc}
    */
   public function notice($message, array $context = []) {
-    if (in_array(RfcLogLevel::NOTICE, $this->grants)) {
+    if ($this->access[RfcLogLevel::NOTICE]) {
       $this->log(LogLevel::NOTICE, $message, $context);
     }
   }
@@ -108,7 +137,7 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
    * {@inheritdoc}
    */
   public function info($message, array $context = []) {
-    if (in_array(RfcLogLevel::INFO, $this->grants)) {
+    if ($this->access[RfcLogLevel::INFO]) {
       $this->log(LogLevel::INFO, $message, $context);
     }
   }
@@ -117,7 +146,7 @@ class LoggerChannelPart implements LoggerChannelPartInterface {
    * {@inheritdoc}
    */
   public function debug($message, array $context = []) {
-    if (in_array(RfcLogLevel::DEBUG, $this->grants)) {
+    if ($this->access[RfcLogLevel::DEBUG]) {
       $this->log(LogLevel::DEBUG, $message, $context);
     }
   }

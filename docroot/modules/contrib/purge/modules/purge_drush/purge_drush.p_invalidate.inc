@@ -8,6 +8,7 @@
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\purge\Plugin\Purge\Invalidation\Exception\InvalidExpressionException;
 use Drupal\purge\Plugin\Purge\Invalidation\Exception\MissingExpressionException;
+use Drupal\purge\Plugin\Purge\Invalidation\Exception\TypeUnsupportedException;
 use Drupal\purge\Plugin\Purge\Invalidation\InvalidationsServiceInterface;
 use Drupal\purge\Plugin\Purge\Invalidation\InvStatesInterface;
 use Drupal\purge\Plugin\Purge\Processor\ProcessorsServiceInterface;
@@ -63,8 +64,25 @@ function purge_drush_p_invalidate($format, InvalidationsServiceInterface $purgeI
   catch (InvalidExpressionException $e) {
     return $return_exception($e);
   }
+  catch (TypeUnsupportedException $e) {
+    return $return_exception(
+      $e,
+      dt("There is no purger supporting '@type', please install one!", ['@type' => $type])
+    );
+  }
   catch (MissingExpressionException $e) {
     return $return_exception($e);
+  }
+
+  // Prevent users from accidentally harming their website.
+  if (($format === 'string') && ($type === 'everything')) {
+    drush_print("Invalidating everything will mass-clear potentially thousands"
+      . " of pages, which could temporarily make your site really slow as"
+      . " external caches will have to warm up again.\n");
+    if (!drush_confirm("Are you really sure?")) {
+      drush_user_abort();
+      return;
+    }
   }
 
   // Attempt the cache invalidation and deal with errors.

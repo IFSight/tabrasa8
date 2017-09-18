@@ -98,7 +98,7 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
    * @param \Drupal\purge\Plugin\Purge\Purger\PurgersServiceInterface $purge_purgers
    *   The purgers service.
    */
-  public function __construct(PluginManagerInterface $plugin_manager, LoggerServiceInterface $purge_logger, ConfigFactoryInterface $config_factory, TxBufferInterface $purge_queue_txbuffer, StatsTrackerInterface $purge_queue_stats,InvalidationsServiceInterface $purge_invalidation_factory, PurgersServiceInterface $purge_purgers) {
+  public function __construct(PluginManagerInterface $plugin_manager, LoggerServiceInterface $purge_logger, ConfigFactoryInterface $config_factory, TxBufferInterface $purge_queue_txbuffer, StatsTrackerInterface $purge_queue_stats, InvalidationsServiceInterface $purge_invalidation_factory, PurgersServiceInterface $purge_purgers) {
     $this->pluginManager = $plugin_manager;
     $this->purgeLogger = $purge_logger;
     $this->configFactory = $config_factory;
@@ -118,9 +118,8 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
         $this->buffer->set($invalidation, TxBuffer::ADDING);
       }
     }
-    $this->purgeQueueStats->total()->increment($count = count($invalidations));
     $this->logger->debug("@queuer: added @no items.", [
-      '@queuer' => $queuer->getPluginId(), '@no' => $count]);
+      '@queuer' => $queuer->getPluginId(), '@no' => count($invalidations)]);
   }
 
   /**
@@ -147,17 +146,28 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
       $lease_time = $claims * $lease_time;
     }
 
+    // Define a closure that syncs the ::numberOfItems() statistic if needed.
+    $syncNumberOfItems = function() {
+      $stat = $this->purgeQueueStats->numberOfItems();
+      if ($stat->getInteger() !== ($queue_count = $this->numberOfItems())) {
+        $this->logger->warning("synced ::numberOfItems() to @n.", ['@n' => $queue_count]);
+        $stat->set($queue_count);
+      }
+    };
+
     // Claim one or several items out of the queue or finish the call.
     $this->initializeQueue();
     if ($claims === 1) {
       if (!($item = $this->queue->claimItem($lease_time))) {
         $this->logger->debug("attempt to claim 1 item failed.");
+        $syncNumberOfItems();
         return [];
       }
       $items = [$item];
     }
     elseif (!($items = $this->queue->claimItemMultiple($claims, $lease_time))) {
       $this->logger->debug("attempt to claim @no items failed.", ['@no' => $claims]);
+      $syncNumberOfItems();
       return [];
     }
 
@@ -175,8 +185,8 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
       $this->buffer->setProperty($inv, 'created', $item->created);
       $items[$i] = $inv;
     }
-    $this->purgeQueueStats->claimed()->increment($count = count($items));
-    $this->logger->debug("claimed @no items.", ['@no' => $count]);
+
+    $this->logger->debug("claimed @no items.", ['@no' => count($items)]);
     return $items;
   }
 
@@ -197,7 +207,7 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
    */
   private function commitAdding() {
     $items = $this->buffer->getFiltered(TxBuffer::ADDING);
-    if (empty($items)) {
+    if (!($items_count = count($items))) {
       return;
     }
 
@@ -212,7 +222,7 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
     };
 
     // Add just one item to the queue using createItem() on the queue.
-    if (count($items) === 1) {
+    if ($items_count === 1) {
       $invalidation = current($items);
       if (!($id = $this->queue->createItem($getProxiedData($invalidation)))) {
         throw new UnexpectedServiceConditionException("The queue returned FALSE on createItem().");
@@ -245,6 +255,8 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
         }
       }
     }
+
+    $this->purgeQueueStats->updateTotals($items);
   }
 
   /**
@@ -252,11 +264,11 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
    */
   private function commitReleasing() {
     $items = $this->buffer->getFiltered(TxBuffer::RELEASING);
-    if (empty($items)) {
+    if (!($items_count = count($items))) {
       return;
     }
     $this->initializeQueue();
-    if (count($items) === 1) {
+    if ($items_count === 1) {
       $invalidation = current($items);
       $this->queue->releaseItem(new ProxyItem($invalidation, $this->buffer));
       $this->buffer->set($invalidation, TxBuffer::RELEASED);
@@ -269,6 +281,8 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
       $this->queue->releaseItemMultiple($proxyitems);
       $this->buffer->set($items, TxBuffer::RELEASED);
     }
+
+    $this->purgeQueueStats->updateTotals($items);
   }
 
   /**
@@ -276,11 +290,11 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
    */
   private function commitDeleting() {
     $items = $this->buffer->getFiltered(TxBuffer::DELETING);
-    if (empty($items)) {
+    if (!($items_count = count($items))) {
       return;
     }
     $this->initializeQueue();
-    if (count($items) === 1) {
+    if ($items_count === 1) {
       $invalidation = current($items);
       $this->queue->deleteItem(new ProxyItem($invalidation, $this->buffer));
       $this->buffer->delete($invalidation);
@@ -293,6 +307,8 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
       $this->queue->deleteItemMultiple($proxyitems);
       $this->buffer->delete($items);
     }
+
+    $this->purgeQueueStats->updateTotals($items);
   }
 
   /**
@@ -301,8 +317,6 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
   public function delete(array $invalidations) {
     $this->buffer->set($invalidations, TxBuffer::DELETING);
     $count = count($invalidations);
-    $this->purgeQueueStats->claimed()->decrement($count);
-    $this->purgeQueueStats->deleted()->increment($count);
     $this->logger->debug("deleting @no items.", ['@no' => $count]);
   }
 
@@ -327,7 +341,7 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
     $this->initializeQueue();
     $this->buffer->deleteEverything();
     $this->queue->deleteQueue();
-    $this->purgeQueueStats->wipe();
+    $this->purgeQueueStats->numberOfItems()->set(0);
     $this->logger->debug("emptied the queue.");
   }
 
@@ -411,29 +425,28 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
       // Mark succeeded objects as deleting in the buffer.
       if ($invalidation->getState() === InvalidationInterface::SUCCEEDED) {
         $this->buffer->set($invalidation, TxBuffer::DELETING);
-        $this->purgeQueueStats->deleted()->increment();
-        $this->purgeQueueStats->claimed()->decrement();
         $counters['succeeded']++;
       }
       // FRESH, PROCESSING, FAILED and NOT_SUPPORTED all go back to the queue.
       else {
         if (!$this->buffer->has($invalidation)) {
           $this->buffer->set($invalidation, TxBuffer::ADDING);
-          $this->purgeQueueStats->total()->increment();
           $counters['new']++;
         }
         else {
           $this->buffer->set($invalidation, TxBuffer::RELEASING);
-          $this->purgeQueueStats->claimed()->decrement();
           $counters['failed']++;
         }
       }
     }
 
     // Log what happened (but only if info logging is enabled).
-    $this->logger->debug(
-      "handled @no returned items: @results",
-      ['@no' => count($invalidations), '@results' => json_encode($counters)]);
+    if ($this->logger->isDebuggingEnabled()) {
+      $this->logger->debug(
+        "handled @no returned items: @results",
+        ['@no' => count($invalidations), '@results' => json_encode($counters)]
+      );
+    }
   }
 
   /**
@@ -442,7 +455,11 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
   public function numberOfItems() {
     $this->commit();
     $this->initializeQueue();
-    return $this->queue->numberOfItems();
+    $this->purgeQueueStats
+      ->numberOfItems()
+      ->set($number = $this->queue->numberOfItems()
+    );
+    return $number;
   }
 
   /**
@@ -450,8 +467,7 @@ class QueueService extends ServiceBase implements QueueServiceInterface, Destruc
    */
   public function release(array $invalidations) {
     $this->buffer->set($invalidations, TxBuffer::RELEASING);
-    $this->purgeQueueStats->claimed()->decrement($no = count($invalidations));
-    $this->logger->debug("deleting @no items.", ['@no' => $no]);
+    $this->logger->debug("deleting @no items.", ['@no' => count($invalidations)]);
   }
 
   /**

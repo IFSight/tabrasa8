@@ -5,25 +5,25 @@
  * Administrative Drush commands for Purge - Command File.
  */
 
-use Drupal\purge\Plugin\Purge\Purger\PurgersServiceInterface;
+use Drupal\purge\Plugin\Purge\Processor\ProcessorsServiceInterface;
 
 /**
- * List all plugin IDs for which purgers can be created.
+ * List available processor plugin IDs that can be added.
  *
  * @param string $format
  *   The default or selected output format of the command.
- * @param \Drupal\purge\Plugin\Purge\Purger\PurgersServiceInterface $purgePurgers
- *   The purge purgers service.
+ * @param \Drupal\purge\Plugin\Purge\Processor\ProcessorsServiceInterface $purgeProcessors
+ *   The purge processors service.
  *
  * @return array
  *   Drush render/format array.
  */
-function purge_drush_p_purgers_available($format, PurgersServiceInterface $purgePurgers) {
-  $definitions = $purgePurgers->getPlugins();
-  $available = $purgePurgers->getPluginsAvailable();
+function purge_drush_p_processor_lsa($format, ProcessorsServiceInterface $purgeProcessors) {
+  $definitions = $purgeProcessors->getPlugins();
+  $available = $purgeProcessors->getPluginsAvailable();
   $output = [];
 
-  // Return a simple listing of each purger plugin ID.
+  // Return a simple listing of each processor plugin ID.
   if ($format == 'list') {
     foreach ($available as $plugin_id) {
       $output[] = $plugin_id;

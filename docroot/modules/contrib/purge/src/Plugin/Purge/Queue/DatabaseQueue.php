@@ -82,7 +82,7 @@ class DatabaseQueue extends CoreDatabaseQueue implements QueueInterface {
     }
 
     // Insert all of them using just one multi-row query.
-    $query = db_insert(static::TABLE_NAME)->fields(['data', 'created']);
+    $query = $this->connection->insert(static::TABLE_NAME, [])->fields(['data', 'created']);
     foreach ($records as $record) {
       $query->values($record);
     }
@@ -108,7 +108,7 @@ class DatabaseQueue extends CoreDatabaseQueue implements QueueInterface {
    * {@inheritdoc}
    */
   public function numberOfItems() {
-    return (int) $this->connection->query('SELECT COUNT(item_id) FROM {' . static::TABLE_NAME . '}')
+    return (int) $this->connection->query('SELECT COUNT(*) FROM {' . static::TABLE_NAME . '}')
       ->fetchField();
   }
 

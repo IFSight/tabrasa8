@@ -13,22 +13,34 @@ not least, it enforces a separation of concerns and should be seen as a
 ##### Drush commands
 The ``purge_drush`` module adds the following commands for Drush administration:
 
-| Command                     | Alias    | Description                                                  |
-|-----------------------------|----------|--------------------------------------------------------------|
-| **``p-diagnostics``**       | ``pdia`` | Generate a diagnostic self-service report.                   |
-| **``p-invalidate``**        | ``pinv`` | Directly invalidate an item without going through the queue. |
-| **``p-processors``**        | ``ppro`` | List all enabled processors.                                 |
-| **``p-purgers``**           | ``ppu``  | List all configured purgers in order of execution.           |
-| **``p-purgers-available``** | ``ppua`` | List all plugin IDs for which purgers can be created.        |
-| **``p-purger-add``**        | ``ppa``  | Create a new purger instance.                                |
-| **``p-purger-rm``**         | ``ppr``  | Remove a purger instance.                                    |
-| **``p-queue-add``**         | ``pqa``  | Schedule an item for later processing.                       |
-| **``p-queue-browse``**      | ``pqb``  | Inspect what is in the queue by paging through it.           |
-| **``p-queue-empty``**       | ``pqe``  | Clear the queue and reset all statistics.                    |
-| **``p-queue-stats``**       | ``pqs``  | Retrieve the queue statistics.                               |
-| **``p-queue-work``**        | ``pqw``  | Claim a chunk of items from the queue and process them.      |
-| **``p-queuers``**           | ``pqrs`` | List all enabled queuers.                                    |
-| **``p-types``**             | ``ptyp`` | List all supported cache invalidation types.                 |
+| Command                         | Alias    | Description                                                  |
+|---------------------------------|----------|--------------------------------------------------------------|
+| **``cache-rebuild-external``**  | ``pddis``| Invalidate 'everything' using the Purge framework.           |
+| **``p-debug-dis``**             | ``pddis``| Disable debugging for all of Purge's log channels.           |
+| **``p-debug-en``**              | ``pden`` | Enable debugging for all of Purge's log channels.            |
+| **``p-diagnostics``**           | ``pdia`` | Generate a diagnostic self-service report.                   |
+| **``p-invalidate``**            | ``pinv`` | Directly invalidate an item without going through the queue. |
+| **``p-processor-add``**         | ``pradd``| Add a new processor.                                         |
+| **``p-processor-ls``**          | ``prls`` | List all enabled processors.                                 |
+| **``p-processor-lsa``**         | ``prlsa``| List available processor plugin IDs that can be added.       |
+| **``p-processor-rm``**          | ``prrm`` | Remove a processor.                                          |
+| **``p-purger-add``**            | ``ppadd``| Create a new purger instance.                                |
+| **``p-purger-ls``**             | ``ppls`` | List all configured purgers in order of execution.           |
+| **``p-purger-lsa``**            | ``pplsa``| List available plugin IDs for which purgers can be added.    |
+| **``p-purger-mvd``**            | ``ppmvd``| Move the given purger DOWN in the execution order.           |
+| **``p-purger-mvu``**            | ``ppmvu``| Move the given purger UP in the execution order.             |
+| **``p-purger-rm``**             | ``pprm`` | Remove a purger instance.                                    |
+| **``p-queue-add``**             | ``pqa``  | Add one or more items to the queue for later processing.     |
+| **``p-queue-browse``**          | ``pqb``  | Inspect what is in the queue by paging through it.           |
+| **``p-queue-empty``**           | ``pqe``  | Empty the entire queue.                                      |
+| **``p-queue-stats``**           | ``pqs``  | View the queue statistics.                                   |
+| **``p-queue-volume``**          | ``pqv``  | Count how many items currently sit in the queue.             |
+| **``p-queue-work``**            | ``pqw``  | Claim a chunk of items from the queue and process them.      |
+| **``p-queuer-add``**            | ``puadd``| Add a new queuer.                                            |
+| **``p-queuer-ls``**             | ``puls`` | List all enabled queuers.                                    |
+| **``p-queuer-lsa``**            | ``pulsa``| List available queuer plugin IDs that can be added.          |
+| **``p-queuer-rm``**             | ``purm`` | Remove a queuer.                                             |
+| **``p-types``**                 | ``ptyp`` | List all supported cache invalidation types.                 |
 
 Several commands understand the ``--format`` parameter allowing you to integrate
 the commands in external scripts with JSON or YAML output. See the respective
@@ -153,12 +165,15 @@ content has been updated.
 * **``lateruntime``** purges items from the queue on every request (**SLOW**).
 
 #### Tags Headers
-By default, Purge sends a response header ``Purge-Cache-Tags`` on all pages to
-allow reverse proxies and CDNs to save these _tags_. These headers are not
-standardized across the web and different systems can require differently named
-headers or with specialized formatting. Therefore Purge allows the creation of
-tiny plugins that can set their own header name and override the tag formatting
-if required.
+By default, no HTTP response headers with cache tags are added when you install
+just ``purge``. Since there is no RFC coverage for this relatively new way of
+cache invalidation, every module providing a **purger** is expected to define
+its own header and _most importantly_: unset that header too. This means that
+if your CDN supports it, its expected that the CDN doesn't render the tags
+header to end-users since you likely don't want to leak it. These plugins are
+very simple and relies basically only on annotation. If you need to support a
+reverse caching layer that isn't supported yet, the ``purge_purger_http``
+project provides you with a ``Purge-Cache-Tags`` header.
 
 API examples
 ------------------------------------------------------------------------------

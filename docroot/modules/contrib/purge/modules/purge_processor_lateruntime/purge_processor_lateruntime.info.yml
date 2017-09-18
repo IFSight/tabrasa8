@@ -6,8 +6,8 @@ package: "Purge - processors"
 dependencies:
   - purge
 
-# Information added by Drupal.org packaging script on 2016-10-26
-version: '8.x-3.0-beta6'
+# Information added by Drupal.org packaging script on 2017-08-14
+version: '8.x-3.0-beta8'
 core: '8.x'
 project: 'purge'
-datestamp: 1477484645
+datestamp: 1502719148

@@ -362,6 +362,10 @@ class PurgersService extends ServiceBase implements PurgersServiceInterface {
     // Without this, the tests will throw "failed to instantiate user-supplied
     // statement class: CREATE TABLE {cache_config}".
     $this->configFactory = \Drupal::configFactory();
+    // Drush commands appreciate it when the config cache gets cleared.
+    if (php_sapi_name() === 'cli') {
+      \Drupal::cache('config')->deleteAll();
+    }
     $this->purgers = NULL;
     $this->labels = NULL;
     $this->types = NULL;
@@ -399,6 +403,16 @@ class PurgersService extends ServiceBase implements PurgersServiceInterface {
     // Perform various (exception-throwing) pre-flight checks before we start.
     if (!$this->checksBeforeTakeoff($invalidations)) {
       return;
+    }
+
+    // Remove states from old purgers that got uninstalled.
+    $purger_ids = array_keys($this->getPluginsEnabled());
+    foreach ($invalidations as $invalidation) {
+      foreach ($invalidation->getStateContexts() as $purger_id) {
+        if (!in_array($purger_id, $purger_ids)) {
+          $invalidation->removeStateContext($purger_id);
+        }
+      }
     }
 
     // Discover types in need of processing and - just to be sure - reset state.
