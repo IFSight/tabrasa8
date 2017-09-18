@@ -5,6 +5,7 @@ namespace Drupal\twig_tweak;
 use Drupal\Core\Block\TitleBlockPluginInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
 use Drupal\image\Entity\ImageStyle;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
@@ -36,6 +37,7 @@ class TwigExtension extends \Twig_Extension {
       // suitable for Twig template.
       new \Twig_SimpleFunction('drupal_set_message', [$this, 'drupalSetMessage']),
       new \Twig_SimpleFunction('drupal_title', [$this, 'drupalTitle']),
+      new \Twig_SimpleFunction('drupal_url', [$this, 'drupalUrl']),
     ];
   }
 
@@ -47,6 +49,8 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('token_replace', [$this, 'tokenReplaceFilter']),
       new \Twig_SimpleFilter('preg_replace', [$this, 'pregReplaceFilter']),
       new \Twig_SimpleFilter('image_style', [$this, 'imageStyle']),
+      new \Twig_SimpleFilter('transliterate', [$this, 'transliterate']),
+      new \Twig_SimpleFilter('check_markup', [$this, 'checkMarkup']),
     ];
     // PHP filter should be enabled in settings.php file.
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -334,6 +338,26 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
+   * Generates a URL from internal path.
+   *
+   * @param string $user_input
+   *   User input for a link or path.
+   * @param array $options
+   *   (optional) An array of options.
+   *
+   * @return \Drupal\Core\Url
+   *   A new Url object based on user input.
+   *
+   * @see \Drupal\Core\Url::fromUserInput()
+   */
+  public function drupalUrl($user_input, array $options = []) {
+    if (!in_array($user_input[0], ['/', '#', '?'])) {
+      $user_input = '/' . $user_input;
+    }
+    return Url::fromUserInput($user_input, $options);
+  }
+
+  /**
    * Replaces all tokens in a given string with appropriate values.
    *
    * @param string $text
@@ -360,7 +384,12 @@ class TwigExtension extends \Twig_Extension {
    *   The new text if matches are found, otherwise unchanged text.
    */
   public function pregReplaceFilter($text, $pattern, $replacement) {
-    return preg_replace("/$pattern/", $replacement, $text);
+    // BC layer. Before version 8.x-1.8 the pattern was without delimiters.
+    // @todo Remove this in Drupal 9.
+    if (strpos($pattern, '/') !== 0) {
+      return preg_replace("/$pattern/", $replacement, $text);
+    }
+    return preg_replace($pattern, $replacement, $text);
   }
 
   /**
@@ -380,6 +409,53 @@ class TwigExtension extends \Twig_Extension {
     if ($image_style = ImageStyle::load($style)) {
       return file_url_transform_relative($image_style->buildUrl($path));
     }
+  }
+
+  /**
+   * Transliterates text from Unicode to US-ASCII.
+   *
+   * @param string $string
+   *   The string to transliterate.
+   * @param string $langcode
+   *   (optional) The language code of the language the string is in. Defaults
+   *   to 'en' if not provided. Warning: this can be unfiltered user input.
+   * @param string $unknown_character
+   *   (optional) The character to substitute for characters in $string without
+   *   transliterated equivalents. Defaults to '?'.
+   * @param int $max_length
+   *   (optional) If provided, return at most this many characters, ensuring
+   *   that the transliteration does not split in the middle of an input
+   *   character's transliteration.
+   *
+   * @return string
+   *   $string with non-US-ASCII characters transliterated to US-ASCII
+   *   characters, and unknown characters replaced with $unknown_character.
+   */
+  public function transliterate($string, $langcode = 'en', $unknown_character = '?', $max_length = NULL) {
+    return \Drupal::transliteration()->transliterate($string, $langcode, $unknown_character, $max_length);
+  }
+
+  /**
+   * Runs all the enabled filters on a piece of text.
+   *
+   * @param string $text
+   *   The text to be filtered.
+   * @param string|null $format_id
+   *   (optional) The machine name of the filter format to be used to filter the
+   *   text. Defaults to the fallback format. See filter_fallback_format().
+   * @param string $langcode
+   *   (optional) The language code of the text to be filtered.
+   * @param array $filter_types_to_skip
+   *   (optional) An array of filter types to skip, or an empty array (default)
+   *   to skip no filter types.
+   *
+   * @return \Drupal\Component\Render\MarkupInterface
+   *   The filtered text.
+   *
+   * @see check_markup()
+   */
+  public function checkMarkup($text, $format_id = NULL, $langcode = '', array $filter_types_to_skip = []) {
+    return check_markup($text, $format_id, $langcode, $filter_types_to_skip);
   }
 
   /**
