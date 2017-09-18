@@ -536,7 +536,7 @@ class ProximityField extends NumericField implements ContainerFactoryPluginInter
     // #weight will be stripped from 'output' in preRender callback.
     // Offset negatively to compensate.
     foreach (Element::children($form) as $key) {
-      if (empty($child['#weight'])) {
+      if (isset($form[$key]['#weight'])) {
         $form[$key]['#weight'] = $form[$key]['#weight'] - 2;
       }
       else {

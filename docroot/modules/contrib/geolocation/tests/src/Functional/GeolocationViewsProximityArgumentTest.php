@@ -126,4 +126,26 @@ class GeolocationViewsProximityArgumentTest extends BrowserTestBase {
     $this->assertSession()->responseContains('Proximity 4');
   }
 
+  /**
+   * Tests to ensure views argument is parsed correctly (d.o #2856948)
+   */
+  public function testArgumentParse() {
+    $entity_test_storage = \Drupal::entityTypeManager()->getStorage('node');
+
+    $entity_test_storage->create([
+      'title' => 'Proximity 5',
+      'body' => 'test test',
+      'type' => 'geolocation_default_article',
+      'field_geolocation_demo_single' => [
+        'lat' => 51.4545,
+        'lng' => -2.5879,
+      ],
+    ])->save();
+
+    $this->drupalGet($this->viewsPath . '/52.5,-0.5<=5000');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $this->assertSession()->responseContains('Proximity 5');
+  }
+
 }

@@ -14,9 +14,9 @@
  * @property {String} marker_icon_path
  * @property {String} height
  * @property {String} width
- * @property {String} zoom
- * @property {String} maxZoom
- * @property {String} minZoom
+ * @property {Number} zoom
+ * @property {Number} maxZoom
+ * @property {Number} minZoom
  * @property {String} type
  * @property {Boolean} scrollwheel
  * @property {Boolean} preferScrollingToZooming
@@ -88,6 +88,7 @@
  * @property {GoogleMap} map
  * @property {string} title
  * @property {string} [icon]
+ * @property {string} [label]
  *
  * Settings from Geolocation module:
  * @property {string} [infoWindowContent]
@@ -100,6 +101,7 @@
  * @property {Function} setMap
  * @property {Function} setIcon
  * @property {Function} setTitle
+ * @property {Function} setLabel
  * @property {Function} addListener
  */
 
@@ -186,6 +188,13 @@
  * @property {GoogleInfoWindow} infoWindow
  */
 
+/**
+ * Callback when map fully loaded.
+ *
+ * @callback geolocationMapLoadedCallback
+ * @param {GeolocationMap} map - Google map.
+ */
+
 (function ($, _, Drupal, drupalSettings) {
   'use strict';
 
@@ -202,36 +211,30 @@
    */
   Drupal.geolocation = Drupal.geolocation || {};
 
+  Drupal.geolocation.maps = Drupal.geolocation.maps || [];
+
   // Google Maps are loaded lazily. In some situations load_google() is called twice, which results in
   // "You have included the Google Maps API multiple times on this page. This may cause unexpected errors." errors.
   // This flag will prevent repeat $.getScript() calls.
   Drupal.geolocation.maps_api_loading = false;
 
-  /**
-   * Gets the default settings for the Google Map.
-   *
-   * @return {{GoogleMapSettings}}.
-   */
-  Drupal.geolocation.defaultSettings = function () {
-    return {
-      google_map_settings: {
-        scrollwheel: false,
-        panControl: false,
-        mapTypeControl: true,
-        scaleControl: false,
-        streetViewControl: false,
-        overviewMapControl: false,
-        rotateControl: false,
-        fullscreenControl: false,
-        zoomControl: true,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        zoom: 2,
-        maxZoom: 0,
-        minZoom: 18,
-        style: [],
-        gestureHandling: 'auto'
-      }
-    };
+  /** {GoogleMapSettings} **/
+  Drupal.geolocation.defaultMapSettings = {
+    scrollwheel: false,
+    panControl: false,
+    mapTypeControl: true,
+    scaleControl: false,
+    streetViewControl: false,
+    overviewMapControl: false,
+    rotateControl: false,
+    fullscreenControl: false,
+    zoomControl: true,
+    mapTypeId: 'roadmap',
+    zoom: 2,
+    maxZoom: 0,
+    minZoom: 18,
+    style: [],
+    gestureHandling: 'auto'
   };
 
   /**
@@ -300,6 +303,13 @@
    * @return {object} - The Google Map object.
    */
   Drupal.geolocation.addMap = function (map) {
+
+    if (typeof map.id === 'undefined') {
+      map.id = 'map' + Math.floor(Math.random() * 10000);
+    }
+
+    map.mapMarkers = map.mapMarkers || [];
+
     // Set the container size.
     map.container.css({
       height: map.settings.google_map_settings.height,
@@ -309,15 +319,22 @@
     // Get the center point.
     var center = new google.maps.LatLng(map.lat, map.lng);
 
-    /**
+    // Add any missing settings.
+    map.settings.google_map_settings = $.extend(Drupal.geolocation.defaultMapSettings, map.settings.google_map_settings);
+
+    map.settings.google_map_settings.zoom = parseInt(map.settings.google_map_settings.zoom) || Drupal.geolocation.defaultMapSettings.zoom;
+    map.settings.google_map_settings.maxZoom = parseInt(map.settings.google_map_settings.maxZoom) || Drupal.geolocation.defaultMapSettings.maxZoom;
+    map.settings.google_map_settings.minZoom = parseInt(map.settings.google_map_settings.minZoom) || Drupal.geolocation.defaultMapSettings.minZoom;
+
+     /**
      * Create the map object and assign it to the map.
      *
      * @type {GoogleMap} map.googleMap
      */
     map.googleMap = new google.maps.Map(map.container.get(0), {
-      zoom: parseInt(map.settings.google_map_settings.zoom),
-      maxZoom: parseInt(map.settings.google_map_settings.maxZoom),
-      minZoom: parseInt(map.settings.google_map_settings.minZoom),
+      zoom: map.settings.google_map_settings.zoom,
+      maxZoom: map.settings.google_map_settings.maxZoom,
+      minZoom: map.settings.google_map_settings.minZoom,
       center: center,
       mapTypeId: google.maps.MapTypeId[map.settings.google_map_settings.type],
       mapTypeControlOptions: {
@@ -342,10 +359,6 @@
       gestureHandling: map.settings.google_map_settings.gestureHandling
     });
 
-    if (!Drupal.geolocation.hasOwnProperty('maps')) {
-      Drupal.geolocation.maps = [];
-    }
-
     if (map.settings.google_map_settings.scrollwheel && map.settings.google_map_settings.preferScrollingToZooming) {
       map.googleMap.setOptions({scrollwheel: false});
       map.googleMap.addListener('click', function () {
@@ -354,6 +367,10 @@
     }
 
     Drupal.geolocation.maps.push(map);
+
+    google.maps.event.addListenerOnce(map.googleMap, 'tilesloaded', function () {
+      Drupal.geolocation.mapLoadedCallback(map, map.id);
+    });
 
     return map.googleMap;
   };
@@ -385,7 +402,6 @@
       // Set the info popup text.
       var currentInfoWindow = new google.maps.InfoWindow({
         content: markerSettings.infoWindowContent,
-        maxWidth: 200,
         disableAutoPan: map.settings.google_map_settings.disableAutoPan
       });
 
@@ -417,6 +433,8 @@
    * @param {GeolocationMap} map - The settings object that contains all of the necessary metadata for this map.
    */
   Drupal.geolocation.removeMapMarker = function (map) {
+    map.mapMarkers = map.mapMarkers || [];
+
     $.each(
       map.mapMarkers,
 
@@ -425,9 +443,10 @@
        * @param {GoogleMarker} item - Current marker.
        */
       function (index, item) {
-        item.setMap();
+        item.setMap(null);
       }
     );
+    map.mapMarkers = [];
   };
 
   /**
@@ -474,6 +493,49 @@
         circle.setMap(null);
       }
     }
+  };
+
+  /**
+   * Provides the callback that is called when map is fully loaded.
+   *
+   * @param {GeolocationMap} map - fully loaded map
+   * @param {string} mapId - Source ID.
+   */
+  Drupal.geolocation.mapLoadedCallback = function (map, mapId) {
+    Drupal.geolocation.mapLoadedCallbacks = Drupal.geolocation.mapLoadedCallbacks || [];
+    $.each(Drupal.geolocation.mapLoadedCallbacks, function (index, callbackContainer) {
+      if (callbackContainer.mapId === mapId) {
+        callbackContainer.callback(map);
+      }
+    });
+  };
+
+  /**
+   * Adds a callback that will be called when map is fully loaded.
+   *
+   * @param {geolocationMapLoadedCallback} callback - The callback
+   * @param {string} mapId - Map ID.
+   */
+  Drupal.geolocation.addMapLoadedCallback = function (callback, mapId) {
+    if (typeof mapId === 'undefined') {
+      return;
+    }
+    Drupal.geolocation.mapLoadedCallbacks = Drupal.geolocation.mapLoadedCallbacks || [];
+    Drupal.geolocation.mapLoadedCallbacks.push({callback: callback, mapId: mapId});
+  };
+
+  /**
+   * Remove a callback that will be called when map is fully loaded.
+   *
+   * @param {string} mapId - Identify the source
+   */
+  Drupal.geolocation.removeMapLoadedCallback = function (mapId) {
+    Drupal.geolocation.mapLoadedCallbacks = Drupal.geolocation.geocoder.resultCallbacks || [];
+    $.each(Drupal.geolocation.mapLoadedCallbacks, function (index, callback) {
+      if (callback.mapId === mapId) {
+        Drupal.geolocation.mapLoadedCallbacks.splice(index, 1);
+      }
+    });
   };
 
 })(jQuery, _, Drupal, drupalSettings);

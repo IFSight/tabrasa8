@@ -84,7 +84,19 @@ trait GeolocationItemTokenTrait {
       ],
     ];
 
-    if (\Drupal::service('module_handler')->moduleExists('token')) {
+    $element['token_items'][] = [
+      'token' => [
+        '#plain_text' => '[geolocation_current_item:data:?]',
+      ],
+      'description' => [
+        '#plain_text' => $this->t('Data stored with the field item'),
+      ],
+    ];
+
+    if (
+      \Drupal::service('module_handler')->moduleExists('token')
+      && method_exists($this->fieldDefinition, 'getTargetEntityTypeId')
+    ) {
       // Add the token UI from the token module if present.
       $element['token_help'] = [
         '#theme' => 'token_tree_link',
@@ -121,11 +133,26 @@ trait GeolocationItemTokenTrait {
       $replacements['[geolocation_current_item:lat_cos]'] = $item->get('lat_cos')->getValue();
       $replacements['[geolocation_current_item:lng_rad]'] = $item->get('lng_rad')->getValue();
 
-      // TODO: Deprecated. Remove at some point.
-      $replacements[':lat'] = $item->get('lat')->getValue();
-      $replacements['%lat'] = $item->get('lat')->getValue();
-      $replacements[':lng'] = $item->get('lng')->getValue();
-      $replacements['%lng'] = $item->get('lng')->getValue();
+      // Handle data tokens.
+      $metadata = $item->get('data')->getValue();
+      if (is_array($metadata) || ($metadata instanceof \Traversable)) {
+        foreach ($metadata as $key => $value) {
+          try {
+            // Maybe there is values inside the values.
+            if (is_array($value) || ($value instanceof \Traversable)) {
+              foreach ($value as $deepkey => $deepvalue) {
+                $replacements['[geolocation_current_item:data:' . $key . ':' . $deepkey . ']'] = (string) $deepvalue;
+              }
+            }
+            else {
+              $replacements['[geolocation_current_item:data:' . $key . ']'] = (string) $value;
+            }
+          }
+          catch (\Exception $e) {
+            watchdog_exception('geolocation', $e);
+          }
+        }
+      }
     }
   }
 

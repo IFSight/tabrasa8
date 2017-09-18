@@ -198,7 +198,8 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
     else {
       $value_element = &$form;
     }
-    $value_element[$this->field]['#weight'] = 30;
+
+    $value_element[$identifier]['#weight'] = 30;
 
     if ($this->options['proximity_units'] == 'exposed') {
       $value_element[$this->options['expose']['identifier'] . '-units'] = [
@@ -341,7 +342,7 @@ class ProximityFilter extends NumericFilter implements ContainerFactoryPluginInt
           }
         }
       }
-      else {
+      elseif (!$this->isAGroup()) {
         // Proximity source set to "expose ins & retrieve from exposed form".
         $this->value[$this->options['expose']['identifier'] . '-lat'] = $input[$this->options['expose']['identifier'] . '-lat'];
         $this->value[$this->options['expose']['identifier'] . '-lng'] = $input[$this->options['expose']['identifier'] . '-lng'];

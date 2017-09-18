@@ -36,6 +36,7 @@
 
 /**
  * @property {function(CommonMapUpdateSettings)} GeolocationMap.updateDrupalView
+ * @property {Object} GeolocationMap.markerClusterer
  */
 
 (function ($, window, Drupal, drupalSettings) {
@@ -115,10 +116,10 @@
         // Hide the graceful-fallback HTML list; map will propably work now.
         // Map-container is not hidden by default in case of graceful-fallback.
         if (typeof commonMapSettings.showRawLocations === 'undefined') {
-          mapWrapper.children('.geolocation-common-map-locations').hide();
+          mapWrapper.find('.geolocation-common-map-locations').hide();
         }
         else if (!commonMapSettings.showRawLocations) {
-          mapWrapper.children('.geolocation-common-map-locations').hide();
+          mapWrapper.find('.geolocation-common-map-locations').hide();
         }
 
         /**
@@ -126,13 +127,15 @@
          */
         var geolocationMap = {};
 
+        geolocationMap.id = mapId;
+
         /*
          * Check for map already created (i.e. after AJAX)
          */
         if (typeof Drupal.geolocation.maps !== 'undefined') {
           $.each(Drupal.geolocation.maps, function (index, map) {
             if (typeof map.container !== 'undefined') {
-              if (map.container.is(mapWrapper.children('.geolocation-common-map-container'))) {
+              if (map.container.is(mapWrapper.find('.geolocation-common-map-container'))) {
                 geolocationMap = map;
               }
             }
@@ -181,7 +184,7 @@
           geolocationMap.settings = {};
           geolocationMap.settings.google_map_settings = commonMapSettings.settings.google_map_settings;
 
-          geolocationMap.container = mapWrapper.children('.geolocation-common-map-container');
+          geolocationMap.container = mapWrapper.find('.geolocation-common-map-container').first();
           geolocationMap.container.show();
 
           if (
@@ -305,40 +308,39 @@
         /**
          * Client location handling.
          */
-        if (typeof mapWrapper.data('clientlocation') !== 'undefined') {
-          // Only act when location still unknown.
-          if (typeof mapWrapper.data('centre-lat') === 'undefined' || typeof mapWrapper.data('centre-lng') === 'undefined') {
-            if (
-              mapWrapper.data('geolocationAjaxProcessed') !== 1
-              && navigator.geolocation
-              && typeof commonMapSettings.client_location !== 'undefined'
-              && commonMapSettings.client_location.enable === true
-            ) {
-              navigator.geolocation.getCurrentPosition(function (position) {
-                mapWrapper.data('centre-lat', position.coords.latitude);
-                mapWrapper.data('centre-lng', position.coords.longitude);
+        if (typeof mapWrapper.data('clientlocation') !== 'undefined' && !mapWrapper.hasClass('clientlocation-processed')) {
+          mapWrapper.addClass('clientlocation-processed');
+          if (
+            mapWrapper.data('geolocationAjaxProcessed') !== 1
+            && navigator.geolocation
+            && typeof commonMapSettings.client_location !== 'undefined'
+            && commonMapSettings.client_location.enable === true
+          ) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              mapWrapper.data('centre-lat', position.coords.latitude);
+              mapWrapper.data('centre-lng', position.coords.longitude);
 
-                var newLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+              var newLocation = new google.maps.LatLng(parseFloat(position.coords.latitude), parseFloat(position.coords.longitude));
 
+              skipMapIdleEventHandler = true;
+              geolocationMap.googleMap.setCenter(newLocation);
+              if (skipMapIdleEventHandler !== true) {
                 skipMapIdleEventHandler = true;
-                geolocationMap.googleMap.setCenter(newLocation);
-                if (skipMapIdleEventHandler !== true) {
-                  skipMapIdleEventHandler = true;
-                }
-                geolocationMap.googleMap.setZoom(parseInt(geolocationMap.settings.zoom));
+              }
 
-                Drupal.geolocation.drawAccuracyIndicator(newLocation, position.coords.accuracy, geolocationMap.googleMap);
+              geolocationMap.googleMap.setZoom(geolocationMap.settings.google_map_settings.zoom);
 
-                if (
-                  typeof commonMapSettings.client_location.update_map !== 'undefined'
-                  && commonMapSettings.client_location.update_map === true
-                  && typeof commonMapSettings.dynamic_map !== 'undefined'
-                ) {
-                  skipMapIdleEventHandler = true;
-                  geolocationMap.updateDrupalView(commonMapSettings.dynamic_map);
-                }
-              });
-            }
+              Drupal.geolocation.drawAccuracyIndicator(newLocation, parseInt(position.coords.accuracy), geolocationMap.googleMap);
+
+              if (
+                typeof commonMapSettings.client_location.update_map !== 'undefined'
+                && commonMapSettings.client_location.update_map === true
+                && typeof commonMapSettings.dynamic_map !== 'undefined'
+              ) {
+                skipMapIdleEventHandler = true;
+                geolocationMap.updateDrupalView(commonMapSettings.dynamic_map);
+              }
+            });
           }
         }
 
@@ -366,13 +368,17 @@
           var markerConfig = {
             position: position,
             map: geolocationMap.googleMap,
-            title: location.children('h2').text(),
+            title: location.children('.location-title').html(),
             infoWindowContent: location.html(),
             infoWindowSolitary: true
           };
 
           if (typeof location.data('icon') !== 'undefined') {
             markerConfig.icon = location.data('icon');
+          }
+
+          if (typeof location.data('markerLabel') !== 'undefined') {
+            markerConfig.label = location.data('markerLabel').toString();
           }
 
           var skipInfoWindow = false;
@@ -408,7 +414,7 @@
           && commonMapSettings.contextPopupContent.enable
         ) {
 
-          /** jQuery */
+          /** @type {jQuery} */
           var contextContainer = jQuery('<div class="geolocation-context-popup"></div>');
           contextContainer.hide();
           contextContainer.appendTo(geolocationMap.container);
@@ -482,7 +488,7 @@
             imagePath = commonMapSettings.markerClusterer.imagePath;
           }
           else {
-            imagePath = 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m';
+            imagePath = 'https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/images/m';
           }
 
           var markerClustererStyles = '';
@@ -490,7 +496,7 @@
             markerClustererStyles = commonMapSettings.markerClusterer.styles;
           }
 
-          new MarkerClusterer(
+          geolocationMap.markerClusterer = new MarkerClusterer(
             geolocationMap.googleMap,
             geolocationMap.mapMarkers,
             {

@@ -70,6 +70,9 @@ geolocation.settings:
     google_map_api_key:
       type: string
       label: 'Google Maps API Key'
+    google_map_api_server_key:
+      type: string
+      label: 'Google Maps API Key'
     google_map_custom_url_parameters:
       type: mapping
       label: 'Additional Google Maps API parameters'
@@ -86,12 +89,18 @@ geolocation.settings:
         client:
           type: string
           label: 'Client ID'
+        channel:
+          type: string
+          label: 'Channel'
         libraries:
           type: sequence
           label: 'Libraries'
           sequence:
             type: string
             label: 'Library name'
+    use_current_language:
+      type: boolean
+      label: 'Use site language for Google Map'
 
 views.style.maps_common:
   type: views_style
@@ -115,6 +124,9 @@ views.style.maps_common:
     marker_scroll_to_result:
       type: integer
       label: 'Scroll instead of open bubble'
+    marker_row_number:
+      type: integer
+      label: 'Use row number as marker label'
     id_field:
       type: string
       label: 'ID field'
@@ -281,24 +293,30 @@ views.filter.geolocation_filter_proximity:
     proximity_lng:
       type: string
       label: 'Proximity Longitude'
-    proximity_argument:
-      type: string
-      label: 'Proximity Argument'
-    boundary_filter:
-      type: string
-      label: 'Boundary Filter'
-    entity_id_argument:
-      type: string
-      label: 'Proximity Entity ID argument'
     proximity_units:
       type: string
       label: 'Proximity Units'
+    proximity_argument:
+      type: string
+      label: 'Proximity Argument'
+    entity_id_argument:
+      type: string
+      label: 'Proximity Entity ID argument'
+    boundary_filter:
+      type: string
+      label: 'Boundary Filter'
     client_location:
       type: boolean
       label: 'Ask client for location first'
     value:
       type: views.filter_value.numeric
       label: 'Proximity Value'
+
+views.filter.group_item.geolocation_filter_proximity:
+  type: views_filter_group_item
+  mapping:
+    value:
+      type: views.filter_value.numeric
 
 views.sort.geolocation_sort_proximity:
   type: views_sort

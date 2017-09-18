@@ -49,6 +49,8 @@
        * @param {GeolocationMap} map - Single map settings Object
        */
       function (mapId, map) {
+        map.id = mapId;
+
         // Get the map container.
         /** @type {jQuery} */
         var mapWrapper = $('#' + mapId, context).first();
@@ -88,14 +90,18 @@
              * Add the locations to the map.
              */
             mapWrapper.find('.geolocation-common-map-locations .geolocation').each(function (index, location) {
+
+              /** @type {jQuery} */
               location = $(location);
               var position = new google.maps.LatLng(Number(location.data('lat')), Number(location.data('lng')));
 
               bounds.extend(position);
 
-              /**
-               * @type {GoogleMarkerSettings}
-               */
+              if (location.data('set-marker') === 'false') {
+                return;
+              }
+
+              /** @type {GoogleMarkerSettings} */
               var markerConfig = {
                 position: position,
                 map: map.googleMap,
@@ -115,10 +121,9 @@
             map.googleMap.fitBounds(bounds);
 
             if (map.settings.google_map_settings.zoom) {
-              var zoomSetting = parseInt(map.settings.google_map_settings.zoom);
               google.maps.event.addListenerOnce(map.googleMap, 'zoom_changed', function () {
-                if (zoomSetting < map.googleMap.getZoom()) {
-                  map.googleMap.setZoom(zoomSetting);
+                if (map.settings.google_map_settings.zoom < map.googleMap.getZoom()) {
+                  map.googleMap.setZoom(map.settings.google_map_settings.zoom);
                 }
               });
             }

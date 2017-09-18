@@ -67,6 +67,11 @@ class GeolocationTokenFormatterTest extends JavascriptTestBase {
       'field_geolocation' => [
         'lat' => 52,
         'lng' => 47,
+        'data' => [
+          'title' => 'My home',
+          // Not used, just to check interference with other values.
+          'extraconfig' => 'myvalue',
+        ],
       ],
     ])->save();
   }
@@ -82,7 +87,7 @@ class GeolocationTokenFormatterTest extends JavascriptTestBase {
       ->setComponent('field_geolocation', [
         'type' => 'geolocation_token',
         'settings' => [
-          'tokenized_text' => '<div class="testing">[geolocation_current_item:lat]/[geolocation_current_item:lng]</div>',
+          'tokenized_text' => '<h1 class="testingtitle">[geolocation_current_item:data:title]</h1><div class="testing">[geolocation_current_item:lat]/[geolocation_current_item:lng]</div>',
         ],
         'weight' => 1,
       ])
@@ -90,6 +95,7 @@ class GeolocationTokenFormatterTest extends JavascriptTestBase {
 
     $this->drupalGet('node/1');
     $this->assertSession()->responseContains('<div class="testing">52/47</div>');
+    $this->assertSession()->responseContains('<h1 class="testingtitle">My home</h1>');
   }
 
 }

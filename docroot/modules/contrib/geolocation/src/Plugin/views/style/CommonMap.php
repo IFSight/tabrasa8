@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\geolocation\Plugin\views\field\GeolocationField;
 use Drupal\geolocation\GoogleMapsDisplayTrait;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\Core\Url;
 
 /**
  * Allow to display several field items on a common map.
@@ -117,7 +118,8 @@ class CommonMap extends StylePluginBase {
     $map_id = $this->view->dom_id;
 
     $build = [
-      '#theme' => 'geolocation_common_map_display',
+      '#theme' => $this->view->buildThemeFunctions('geolocation_common_map_display'),
+      '#view' => $this->view,
       '#id' => $map_id,
       '#attached' => [
         'library' => [
@@ -135,6 +137,10 @@ class CommonMap extends StylePluginBase {
         ],
       ],
     ];
+
+    // Add cache dependency for the view.
+    $renderer = $this->getRenderer();
+    $renderer->addCacheableDependency($build, $this->view->storage);
 
     if (!empty($this->options['show_raw_locations'])) {
       $build['#attached']['drupalSettings']['geolocation']['commonMap'][$map_id]['showRawLocations'] = TRUE;
@@ -197,24 +203,32 @@ class CommonMap extends StylePluginBase {
       }
     }
 
+    $this->renderFields($this->view->result);
+
     /*
      * Add locations to output.
      */
-    foreach ($this->view->result as $row) {
+    foreach ($this->view->result as $row_number => $row) {
       if (!empty($title_field)) {
-        $title_field_handler = $this->view->field[$title_field];
-        $title_build = [
-          '#theme' => $title_field_handler->themeFunctions(),
-          '#view' => $title_field_handler->view,
-          '#field' => $title_field_handler,
-          '#row' => $row,
-        ];
+        if (!empty($this->rendered_fields[$row_number][$title_field])) {
+          $title_build = $this->rendered_fields[$row_number][$title_field];
+        }
+        elseif (!empty($this->view->field[$title_field])) {
+          $title_build = $this->view->field[$title_field]->render($row);
+        }
       }
 
       if ($this->view->field[$geo_field] instanceof GeolocationField) {
         /** @var \Drupal\geolocation\Plugin\views\field\GeolocationField $geolocation_field */
         $geolocation_field = $this->view->field[$geo_field];
-        $geo_items = $geolocation_field->getItems($row);
+        $entity = $geolocation_field->getEntity($row);
+        if (isset($entity->{$geolocation_field->definition['field_name']})) {
+          /** @var \Drupal\Core\Field\FieldItemListInterface $field_item_list */
+          $geo_items = $entity->{$geolocation_field->definition['field_name']};
+        }
+        else {
+          $geo_items = [];
+        }
       }
       else {
         return $build;
@@ -229,6 +243,7 @@ class CommonMap extends StylePluginBase {
         }
       }
 
+      $icon_url = NULL;
       if (!empty($icon_field)) {
         /** @var \Drupal\views\Plugin\views\field\Field $icon_field_handler */
         $icon_field_handler = $this->view->field[$icon_field];
@@ -237,26 +252,27 @@ class CommonMap extends StylePluginBase {
           if (!empty($image_items[0])) {
             /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
             $item = $image_items[0]['rendered']['#item'];
-            /** @var \Drupal\image\Entity\ImageStyle $style */
-            $style = ImageStyle::load($image_items[0]['rendered']['#image_style']);
-            if (!empty($style)) {
-              $icon_url = $style->buildUrl($item->entity->getFileUri());
+            if (!empty($item->entity)) {
+              $file_uri = $item->entity->getFileUri();
+
+              /** @var \Drupal\image\Entity\ImageStyle $style */
+              $style = ImageStyle::load($image_items[0]['rendered']['#image_style']);
+              if (!empty($style)) {
+                $icon_url = $style->buildUrl($file_uri);
+              }
+              else {
+                $icon_url = file_url_transform_relative(file_create_url($file_uri));
+              }
             }
-            else {
-              $icon_url = file_create_url($item->entity->getFileUri());
-            }
-          }
-          else {
-            $icon_url = NULL;
           }
         }
       }
 
+      /** @var \Drupal\geolocation\Plugin\Field\FieldType\GeolocationItem $item */
       foreach ($geo_items as $delta => $item) {
-        $geolocation = $item['raw'];
         $position = [
-          'lat' => $geolocation->lat,
-          'lng' => $geolocation->lng,
+          'lat' => $item->get('lat')->getValue(),
+          'lng' => $item->get('lng')->getValue(),
         ];
 
         $location = [
@@ -269,8 +285,37 @@ class CommonMap extends StylePluginBase {
         if (!empty($icon_url)) {
           $location['#icon'] = $icon_url;
         }
+        else {
+          if (
+            !empty($this->options['google_map_settings']['marker_icon_path'])
+            && !empty($this->rowTokens[$row_number])
+          ) {
+            $icon_token_uri = $this->viewsTokenReplace($this->options['google_map_settings']['marker_icon_path'], $this->rowTokens[$row_number]);
+            $icon_token_url = file_create_url($icon_token_uri);
+
+            if ($icon_token_url) {
+              $location['#icon'] = $icon_token_url;
+            }
+            else {
+              try {
+                $icon_token_url = Url::fromUri($icon_token_uri);
+                if ($icon_token_url) {
+                  $location['#icon'] = $icon_token_url->setAbsolute(TRUE)
+                    ->toString();
+                }
+              }
+              catch (\Exception $e) {
+                // User entered mal-formed URL, but that doesn't matter.
+                // We hereby skip it anyway.
+              }
+            }
+          }
+        }
         if (!empty($location_id)) {
           $location['#location_id'] = $location_id;
+        }
+        if ($this->options['marker_row_number']) {
+          $location['#marker_label'] = (int) $row_number + 1;
         }
 
         $build['#locations'][] = $location;
@@ -407,6 +452,7 @@ class CommonMap extends StylePluginBase {
     $options['title_field'] = ['default' => ''];
     $options['icon_field'] = ['default' => ''];
     $options['marker_scroll_to_result'] = ['default' => 0];
+    $options['marker_row_number'] = ['default' => FALSE];
     $options['id_field'] = ['default' => ''];
     $options['marker_clusterer'] = ['default' => 0];
     $options['marker_clusterer_image_path'] = ['default' => ''];
@@ -709,6 +755,7 @@ class CommonMap extends StylePluginBase {
         '#empty_value' => 'none',
         '#process' => [
           ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
+          ['\Drupal\Core\Render\Element\Select', 'processSelect'],
         ],
         '#pre_render' => [
           ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
@@ -738,12 +785,20 @@ class CommonMap extends StylePluginBase {
         ],
         '#process' => [
           ['\Drupal\Core\Render\Element\RenderElement', 'processGroup'],
+          ['\Drupal\Core\Render\Element\Select', 'processSelect'],
         ],
         '#pre_render' => [
           ['\Drupal\Core\Render\Element\RenderElement', 'preRenderGroup'],
         ],
       ];
     }
+
+    $form['marker_row_number'] = [
+      '#group' => 'style_options][advanced_settings',
+      '#title' => $this->t('Show views result row number in marker'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->options['marker_row_number'],
+    ];
 
     $form['context_popup_content'] = [
       '#group' => 'style_options][advanced_settings',

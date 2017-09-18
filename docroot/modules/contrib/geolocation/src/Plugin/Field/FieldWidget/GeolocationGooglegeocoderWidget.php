@@ -184,7 +184,7 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
 
       $element['explicite_actions_address_field'] = [
         '#type' => 'checkbox',
-        '#title' => $this->t('Use explicite push/locate buttons to interact with address field widget'),
+        '#title' => $this->t('Use explicit push/locate buttons to interact with address field widget'),
         '#default_value' => $settings['explicite_actions_address_field'],
         '#states' => [
           'visible' => [
@@ -242,9 +242,11 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $settings = $this->getGoogleMapsSettings($this->getSettings()) + $this->getSettings();
 
-    // Get the geolocation value for this element.
-    $lat = $items[$delta]->lat;
-    $lng = $items[$delta]->lng;
+    if (!$items->isEmpty()) {
+      // Get the geolocation value for this element.
+      $lat = $items[$delta]->lat;
+      $lng = $items[$delta]->lng;
+    }
 
     $default_field_values = [
       'lat' => '',
@@ -420,7 +422,7 @@ class GeolocationGooglegeocoderWidget extends WidgetBase implements ContainerFac
 
     if ($settings['populate_address_field']) {
       $element['map_canvas']['#attached']['drupalSettings']['geolocation']['widgetSettings'][$canvas_id]['addressFieldTarget'] = $settings['target_address_field'];
-      $element['map_canvas']['#attached']['drupalSettings']['geolocation']['widgetSettings'][$canvas_id]['addressFieldExpliciteActions'] = $settings['explicite_actions_address_field'];
+      $element['map_canvas']['#attached']['drupalSettings']['geolocation']['widgetSettings'][$canvas_id]['addressFieldExpliciteActions'] = (bool) $settings['explicite_actions_address_field'];
     }
 
     if ($settings['allow_override_map_settings']) {

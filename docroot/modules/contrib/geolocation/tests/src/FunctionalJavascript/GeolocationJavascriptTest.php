@@ -28,6 +28,8 @@ class GeolocationJavascriptTest extends JavascriptTestBase {
     'views_test_config',
     'geolocation',
     'geolocation_test_views',
+    'locale',
+    'language',
   ];
 
   /**
@@ -128,6 +130,54 @@ class GeolocationJavascriptTest extends JavascriptTestBase {
         ],
       ],
     ])->save();
+  }
+
+  /**
+   * Tests the Use Current Language option from the settings.
+   *
+   * Changes the language to French, checking for the French map.
+   */
+  public function testGoogleMapUsingCurrentLanguage() {
+    // Log in as an administrator and change geolocation and language settings.
+    $admin_user = $this->drupalCreateUser([
+      'configure geolocation',
+      'administer languages',
+      'access administration pages',
+    ]);
+    $this->drupalLogin($admin_user);
+
+    // Get the geolocation configuration settings page.
+    $this->drupalGet('admin/config/services/geolocation');
+
+    // Enable the checkbox to use current language.
+    $edit = ['use_current_language' => 1];
+    $this->drupalPostForm(NULL, $edit, t('Save configuration'));
+
+    // Add and set French as the language. See from LanguageSwitchingTest.
+    $edit = ['predefined_langcode' => 'fr'];
+    $this->drupalPostForm('admin/config/regional/language/add', $edit, t('Add language'));
+
+    \Drupal::service('language.config_factory_override')
+      ->getOverride('fr', 'language.entity.fr')
+      ->set('label', 'français')
+      ->save();
+
+    // Enable URL language detection and selection.
+    $edit = ['language_interface[enabled][language-url]' => '1'];
+    $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));
+
+    $this->drupalGet('fr/node/4');
+    $this->assertSession()->elementExists('css', 'html[lang="fr"]');
+
+    $anchor = $this->assertSession()->waitForElement('css', 'a[href^="https://maps.google.com"][href*="hl="]', 3000);
+    // To control the test messages, search inside the anchor's href.
+    // This is achieved by looking for the "hl" parameter in an anchor's href:
+    // https://maps.google.com/maps?ll=54,49&z=10&t=m&hl=fr&gl=US&mapclient=apiv3
+    $contains_french_link = strpos($anchor->getAttribute('href'), 'hl=fr');
+
+    if ($contains_french_link === FALSE) {
+      $this->fail('Did not find expected parameters from Google Maps link for French translation.');
+    }
   }
 
   /**

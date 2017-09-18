@@ -131,15 +131,6 @@
 
           /**
            *
-           * Settings setup.
-           *
-           */
-
-          // Add any missing settings.
-          map.settings = $.extend(Drupal.geolocation.defaultSettings(), map.settings);
-
-          /**
-           *
            * Initialize map.
            *
            */
@@ -153,8 +144,8 @@
           };
 
           if (
-            typeof fieldValues.lat == 'undefined'
-            && typeof fieldValues.lng == 'undefined'
+            typeof fieldValues.lat === 'undefined'
+            && typeof fieldValues.lng === 'undefined'
           ) {
             fieldValues.lat = '';
             fieldValues.lng = '';
@@ -173,7 +164,7 @@
             setInitialMarker = true;
           }
           // If requested in settings, try to override map center by user location.
-          else if (typeof (drupalSettings.geolocation.widgetSettings[mapId].autoClientLocation) != 'undefined') {
+          else if (typeof (drupalSettings.geolocation.widgetSettings[mapId].autoClientLocation) !== 'undefined') {
             if (
               drupalSettings.geolocation.widgetSettings[mapId].autoClientLocation
               && navigator.geolocation
@@ -192,7 +183,7 @@
                 );
 
                 // If requested, also use location as value.
-                if (typeof (drupalSettings.geolocation.widgetSettings[mapId].autoClientLocationMarker) != 'undefined') {
+                if (typeof (drupalSettings.geolocation.widgetSettings[mapId].autoClientLocationMarker) !== 'undefined') {
                   if (drupalSettings.geolocation.widgetSettings[mapId].autoClientLocationMarker) {
 
                     // Map most likely already initialized.
@@ -706,7 +697,10 @@
           return;
         }
 
-        if (settings.extraData._drupal_ajax && settings.extraData._triggering_element_name === targetField + '[0][country_code]') {
+        if (
+          settings.extraData._drupal_ajax
+          && settings.extraData._triggering_element_name === targetField + '[0][address][country_code]'
+        ) {
           // Populate the address fields, once they have been added to the DOM.
           addressDetails.find('.organization').val(premise);
           addressDetails.find('.address-line1').val(addressLine1);

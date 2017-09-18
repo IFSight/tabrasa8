@@ -11,3 +11,17 @@ geolocation_demo.formatters:
   route_name: geolocation_demo.formatters
   weight: 101
   menu_name: geolocation-demo
+
+geolocation_demo.render_elements:
+  title: 'Available RenderElements'
+  description: 'Geolocation elements'
+  route_name: geolocation_demo.render_elements
+  weight: 102
+  menu_name: geolocation-demo
+
+geolocation_demo.form_elements:
+  title: 'Available FormElements'
+  description: 'Geolocation elements'
+  route_name: geolocation_demo.form_elements
+  weight: 103
+  menu_name: geolocation-demo

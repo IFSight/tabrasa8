@@ -156,7 +156,7 @@ class GeolocationGoogleGeocoderWidgetTest extends JavascriptTestBase {
 
     $page = $this->getSession()->getPage();
     $page->findField('Title')->setValue('I am new');
-    $page->pressButton('Save and publish');
+    $page->pressButton('Save');
 
     /** @var \Drupal\node\NodeInterface $new_node */
     $new_node = \Drupal::entityTypeManager()->getStorage('node')->load(5);

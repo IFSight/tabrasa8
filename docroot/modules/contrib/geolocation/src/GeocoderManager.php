@@ -95,7 +95,7 @@ class GeocoderManager extends DefaultPluginManager {
    *
    * @param array $form
    *   Form.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current From State.
    *
    * @return array|false

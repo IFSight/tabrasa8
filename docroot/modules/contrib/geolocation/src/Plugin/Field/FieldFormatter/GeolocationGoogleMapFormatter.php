@@ -2,7 +2,6 @@
 
 namespace Drupal\geolocation\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -26,13 +25,6 @@ class GeolocationGoogleMapFormatter extends FormatterBase {
 
   use GoogleMapsDisplayTrait;
   use GeolocationItemTokenTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
-  }
 
   /**
    * {@inheritdoc}
@@ -156,6 +148,10 @@ class GeolocationGoogleMapFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+    if ($items->count() == 0) {
+      return [];
+    }
+
     $settings = $this->getSettings();
     $map_settings = $this->getGoogleMapsSettings($this->getSettings());
 
@@ -184,8 +180,10 @@ class GeolocationGoogleMapFormatter extends FormatterBase {
 
       $unique_id = uniqid("map-canvas-");
 
-      $single_map['#latitude'] = $items->get(0)->getValue()['lat'];
-      $single_map['#longitude'] = $items->get(0)->getValue()['lng'];
+      if ($single_center = $items->get(0)) {
+        $single_map['#latitude'] = $items->get(0)->getValue()['lat'];
+        $single_map['#longitude'] = $items->get(0)->getValue()['lng'];
+      }
       $single_map['#uniqueid'] = $unique_id;
       $single_map['#attached']['drupalSettings']['geolocation']['maps'][$unique_id] = [
         'settings' => $map_settings,
@@ -205,11 +203,17 @@ class GeolocationGoogleMapFormatter extends FormatterBase {
     foreach ($items as $delta => $item) {
       $token_context['geolocation_current_item'] = $item;
 
-      $title = \Drupal::token()->replace($settings['title'], $token_context, ['callback' => [$this, 'geolocationItemTokens']]);
+      $title = \Drupal::token()->replace($settings['title'], $token_context, [
+        'callback' => [$this, 'geolocationItemTokens'],
+        'clear' => TRUE,
+      ]);
       if (empty($title)) {
         $title = $item->lat . ', ' . $item->lng;
       }
-      $content = \Drupal::token()->replace($settings['info_text'], $token_context, ['callback' => [$this, 'geolocationItemTokens']]);
+      $content = \Drupal::token()->replace($settings['info_text'], $token_context, [
+        'callback' => [$this, 'geolocationItemTokens'],
+        'clear' => TRUE,
+      ]);
 
       $location = [
         '#theme' => 'geolocation_common_map_location',

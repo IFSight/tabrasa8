@@ -98,6 +98,7 @@ geolocation.commonmap:
     - core/jquery.once
     - geolocation/geolocation.googlemapsapi
 
+# External marker clusterer.
 geolocation.markerclusterer:
   remote: https://github.com/googlemaps/js-marker-clusterer
   version: 1.x
@@ -106,4 +107,11 @@ geolocation.markerclusterer:
     url: http://www.apache.org/licenses/LICENSE-2.0
     gpl-compatible: true
   js:
-    https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js: { type: external }
+    https://cdn.rawgit.com/googlemaps/js-marker-clusterer/gh-pages/src/markerclusterer.js: { type: external }
+
+# Form element library.
+geolocation.google_map_form_element:
+  js:
+    js/geolocation-google-map-form-element.js: {}
+  dependencies:
+    - geolocation/geolocation.googlemapsapi

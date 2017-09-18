@@ -25,17 +25,23 @@ class GeolocationLatlngWidget extends WidgetBase {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 
+    $element['#type'] = 'fieldset';
+
     $element['lat'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Latitude'),
-      '#empty_value' => '',
       '#default_value' => (isset($items[$delta]->lat)) ? $items[$delta]->lat : NULL,
+      '#empty_value' => '',
       '#maxlength' => 255,
       '#required' => $this->fieldDefinition->isRequired(),
     ];
-    if (!empty($element['lat']['#default_value'])) {
-      $element['lat']['#description'] = $this->t('<span>Sexagesimal/DMS notation value: %sexagesimal</span>', ['%sexagesimal' => GeolocationCore::decimalToSexagesimal($element['lat']['#default_value'])]);
-    }
+
+    $lat_example = $element['lat']['#default_value'] ?: '51.47879';
+
+    $element['lat']['#description'] = $this->t('Enter either in decimal %decimal or sexagesimal format %sexagesimal', [
+      '%decimal' => $lat_example,
+      '%sexagesimal' => GeolocationCore::decimalToSexagesimal($lat_example),
+    ]);
 
     $element['lng'] = [
       '#type' => 'textfield',
@@ -45,9 +51,13 @@ class GeolocationLatlngWidget extends WidgetBase {
       '#maxlength' => 255,
       '#required' => $this->fieldDefinition->isRequired(),
     ];
-    if (!empty($element['lng']['#default_value'])) {
-      $element['lng']['#description'] = $this->t('<span>Sexagesimal/DMS notation value: %sexagesimal</span>', ['%sexagesimal' => GeolocationCore::decimalToSexagesimal($element['lng']['#default_value'])]);
-    }
+
+    $lng_example = $element['lng']['#default_value'] ?: '-0.010677';
+
+    $element['lng']['#description'] = $this->t('Enter either in decimal %decimal or sexagesimal format %sexagesimal', [
+      '%decimal' => $lng_example,
+      '%sexagesimal' => GeolocationCore::decimalToSexagesimal($lng_example),
+    ]);
 
     return $element;
   }

@@ -13,3 +13,19 @@ geolocation_demo.formatters:
     _title: 'Formatters offered by geolocation'
   requirements:
     _permission: 'access content'
+
+geolocation_demo.render_elements:
+  path: '/geolocation-demo/elements/render'
+  defaults:
+    _controller: '\Drupal\geolocation_demo\Controller\DemoRenderElementController::renderElementDemo'
+    _title: 'RenderElements offered by geolocation'
+  requirements:
+    _permission: 'access content'
+
+geolocation_demo.form_elements:
+  path: '/geolocation-demo/elements/form'
+  defaults:
+    _form: '\Drupal\geolocation_demo\Form\DemoFormElement'
+    _title: 'FormElements offered by geolocation'
+  requirements:
+    _permission: 'access content'
