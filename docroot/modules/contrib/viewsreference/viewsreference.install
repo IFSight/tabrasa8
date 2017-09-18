@@ -5,86 +5,21 @@
  * Viewsreference install functions.
  */
 
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+
 /**
  * Update node fields already created with argument field.
  */
 function viewsreference_update_8100() {
-  $types = array(
-    'node',
-    'taxonomy_term',
-    'user',
-  );
-  $fieldManager = \Drupal::service('entity_field.manager');
-  $entityManager = \Drupal::service('entity.manager');
-  foreach ($types as $type) {
-    $bundles = $entityManager->getBundleInfo($type);
-    foreach ($bundles as $bundle => $label) {
-      $fields = $fieldManager->getFieldDefinitions($type, $bundle);
-      foreach ($fields as $field) {
-        if ($field->getType() == 'viewsreference') {
-          $field_name = $field->getName();
-          $definition = $field->getFieldStorageDefinition();
-          $schema = $definition->getSchema();
-          $id = $definition->id();
-          $table = str_replace('.', '__', $id);
-          if (!db_field_exists($table, $field_name . '_argument')) {
-            db_add_field($table, $field_name . '_argument', $schema['columns']['argument']);
-          }
-
-          if ($type == 'node') {
-            $table = 'node_revision__' . $field_name;
-            if (!db_field_exists($table, $field_name . '_argument')) {
-              db_add_field($table, $field_name . '_argument', $schema['columns']['argument']);
-            }
-
-          }
-
-        }
-      }
-    }
-  }
+  viewsreference_update_viewsreference_fields('argument');
 }
 
 /**
  * Update node fields already created with title field.
  */
 function viewsreference_update_8101() {
-  $types = array(
-    'node',
-    'taxonomy_term',
-    'user',
-  );
-  $fieldManager = \Drupal::service('entity_field.manager');
-  $entityManager = \Drupal::service('entity.manager');
-  foreach ($types as $type) {
-    $bundles = $entityManager->getBundleInfo($type);
-    foreach ($bundles as $bundle => $label) {
-      $fields = $fieldManager->getFieldDefinitions($type, $bundle);
-      foreach ($fields as $field) {
-        if ($field->getType() == 'viewsreference') {
-          $field_name = $field->getName();
-          $definition = $field->getFieldStorageDefinition();
-          $schema = $definition->getSchema();
-          $id = $definition->id();
-          $table = str_replace('.', '__', $id);
-          if (!db_field_exists($table, $field_name . '_title')) {
-            db_add_field($table, $field_name . '_title', $schema['columns']['title']);
-          }
-
-          if ($type == 'node') {
-            $table = 'node_revision__' . $field_name;
-            if (!db_field_exists($table, $field_name . '_title')) {
-              db_add_field($table, $field_name . '_title', $schema['columns']['title']);
-            }
-
-          }
-
-        }
-      }
-    }
-  }
+  viewsreference_update_viewsreference_fields('title');
 }
-
 
 /**
  * Update node fields already created with data field.
@@ -92,15 +27,19 @@ function viewsreference_update_8101() {
 function viewsreference_update_8102() {
   viewsreference_update_viewsreference_fields('data');
 }
+
 /**
- * Update all instances using viewsreference field type with new field. This is
- * called from hook_update_N() when new fields are added to the schema.
+ * Update all instances using viewsreference field type with new field.
  *
- * @param string $new_field_name The name of the new field to be added.
+ * This is called from hook_update_N() when new fields are added to the schema.
+ *
+ * @param string $new_field_name
+ *   The name of the new field to be added.
  */
 function viewsreference_update_viewsreference_fields($new_field_name) {
 
-  // Caches have to be cleared first to ensure new fields are detected in the code
+  // Caches have to be cleared first to ensure new fields
+  // are detected in the code.
   drupal_flush_all_caches();
 
   // Retrieve list of all viewsreference fields mapped by entity type.
@@ -112,7 +51,7 @@ function viewsreference_update_viewsreference_fields($new_field_name) {
     foreach (array_keys($fields) as $field_name) {
       $field_storage_definition = $manager->getFieldStorageDefinition($field_name, $entity_type_id);
       $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
-      if ($storage instanceof \Drupal\Core\Entity\Sql\SqlContentEntityStorage) {
+      if ($storage instanceof SqlContentEntityStorage) {
         $table_mapping = $storage->getTableMapping([
           $field_name => $field_storage_definition,
         ]);

@@ -36,19 +36,19 @@ class ViewsReferenceItem extends EntityReferenceItem implements
    * {@inheritdoc}
    */
   public static function defaultStorageSettings() {
-    return array(
+    return [
       'target_type' => 'view',
-    ) + parent::defaultStorageSettings();
+    ] + parent::defaultStorageSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public static function defaultFieldSettings() {
-    return array(
-      'plugin_types' => array('block' => 'block'),
-      'preselect_views' => array(),
-    ) + parent::defaultFieldSettings();
+    return [
+      'plugin_types' => ['block' => 'block'],
+      'preselect_views' => [],
+    ] + parent::defaultFieldSettings();
   }
 
   /**
@@ -79,54 +79,39 @@ class ViewsReferenceItem extends EntityReferenceItem implements
   /**
    * {@inheritdoc}
    */
-  public static function mainPropertyName() {
-    return parent::mainPropertyName();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
     $target_type = $field_definition->getSetting('target_type');
     $target_type_info = \Drupal::entityTypeManager()->getDefinition($target_type);
-    $properties = static::propertyDefinitions($field_definition)['target_id'];
-    $schema['columns']['display_id'] = array(
+    $schema['columns']['display_id'] = [
       'description' => 'The ID of the display.',
       'type' => 'varchar_ascii',
       // If the target entities act as bundles for another entity type,
       // their IDs should not exceed the maximum length for bundles.
       'length' => $target_type_info->getBundleOf() ? EntityTypeInterface::BUNDLE_MAX_LENGTH : 255,
-    );
+    ];
 
-    $schema['columns']['argument'] = array(
+    $schema['columns']['argument'] = [
       'description' => 'An optional argument.',
       'type' => 'varchar_ascii',
       'length' => 255,
-    );
+    ];
 
-    $schema['columns']['title'] = array(
+    $schema['columns']['title'] = [
       'description' => 'Include title.',
       'type' => 'int',
       'length' => 11,
-    );
+    ];
 
-    $schema['columns']['data'] = array(
+    $schema['columns']['data'] = [
       'description' => 'Serialized data.',
       'type' => 'text',
-      'size' => 'big'
-    );
+      'size' => 'big',
+    ];
 
-    $schema['indexes']['display_id'] = array('display_id');
+    $schema['indexes']['display_id'] = ['display_id'];
 
     return $schema;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getConstraints() {
-    return parent::getConstraints();
   }
 
   /**
@@ -148,22 +133,13 @@ class ViewsReferenceItem extends EntityReferenceItem implements
   /**
    * {@inheritdoc}
    */
-  public function getValue() {
-    return parent::getValue();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function onChange($property_name, $notify = TRUE) {
-    return parent::onChange($property_name, $notify);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
-    return parent::storageSettingsForm($form, $form_state, $has_data);
+  public function isEmpty() {
+    $return = parent::isEmpty();
+    // Avoid loading the entity by first checking the 'display_id'.
+    if ($this->display_id === NULL || $this->display_id == '') {
+      return TRUE;
+    }
+    return $return;
   }
 
   /**
@@ -172,8 +148,8 @@ class ViewsReferenceItem extends EntityReferenceItem implements
   public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
     $form = parent::fieldSettingsForm($form, $form_state);
     $settings = $this->getSettings();
-    $preselect_views = $settings['preselect_views'];
-    $default_plugins = $settings['plugin_types'];
+    $preselect_views = isset($settings['preselect_views']) ? $settings['preselect_views'] : [];
+    $default_plugins = isset($settings['plugin_types']) ? $settings['plugin_types'] : [];
     $display_options = $this->getAllPluginList();
     $view_list = $this->getAllViewsNames();
     $form['plugin_types'] = [
@@ -184,13 +160,13 @@ class ViewsReferenceItem extends EntityReferenceItem implements
       '#weight' => 1,
     ];
 
-    $form['preselect_views'] = array(
+    $form['preselect_views'] = [
       '#type' => 'checkboxes',
       '#title' => t('Preselect View Options'),
       '#options' => $view_list,
       '#default_value' => $preselect_views,
       '#weight' => 2,
-    );
+    ];
 
     return $form;
   }
@@ -213,7 +189,7 @@ class ViewsReferenceItem extends EntityReferenceItem implements
    * {@inheritdoc}
    */
   public static function getPreconfiguredOptions() {
-    return array();
+    return [];
 
   }
 
@@ -222,7 +198,7 @@ class ViewsReferenceItem extends EntityReferenceItem implements
    */
   private function getAllPluginList() {
     $types = Views::pluginList();
-    $options = array();
+    $options = [];
     foreach ($types as $key => $type) {
       if ($type['type'] == 'display') {
         $options[str_replace('display:', '', $key)] = $type['title']->render();
@@ -236,7 +212,7 @@ class ViewsReferenceItem extends EntityReferenceItem implements
    */
   private function getAllViewsNames() {
     $views = Views::getEnabledViews();
-    $options = array();
+    $options = [];
     foreach ($views as $view) {
       $options[$view->get('id')] = $view->get('label');
     }

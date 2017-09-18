@@ -33,10 +33,10 @@ class ViewsReferenceSelectWidget extends OptionsSelectWidget {
     $select_element['target_id']['#multiple'] = FALSE;
     if (!$this->isDefaultValueWidget($form_state)) {
       $selected_views = $items->getSetting('preselect_views');
-      $selected_views = array_diff($selected_views, array("0"));
+      $selected_views = array_diff($selected_views, ["0"]);
       $selected_views = $this->getViewNames($selected_views);
       if (count($selected_views) >= 1) {
-        $first_option = array("- None -");
+        $first_option = ["- None -"];
         $select_element['target_id']['#options'] = array_merge($first_option, $selected_views);
       }
       else {
@@ -45,6 +45,15 @@ class ViewsReferenceSelectWidget extends OptionsSelectWidget {
     }
 
     return $select_element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
+    // Options creates an array which we need to flatten.
+    $values = $this->massageValues($values, $form, $form_state);
+    return $values;
   }
 
 }

@@ -24,7 +24,7 @@ class ViewsReferenceFieldFormatter extends FormatterBase {
   public static function defaultSettings() {
     $options = parent::defaultSettings();
 
-    $options['plugin_types'] = array('block');
+    $options['plugin_types'] = ['block'];
     return $options;
   }
 
@@ -35,7 +35,7 @@ class ViewsReferenceFieldFormatter extends FormatterBase {
     $form = parent::settingsForm($form, $form_state);
 
     $types = Views::pluginList();
-    $options = array();
+    $options = [];
     foreach ($types as $key => $type) {
       if ($type['type'] == 'display') {
         $options[str_replace('display:', '', $key)] = $type['title']->render();
@@ -56,16 +56,16 @@ class ViewsReferenceFieldFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
     $settings = $this->getSettings();
 
-    $allowed = array();
+    $allowed = [];
     foreach ($settings['plugin_types'] as $type) {
       if ($type) {
         $allowed[] = $type;
       }
     }
-    $summary[] = t('Allowed plugins: @view', array('@view' => implode(', ', $allowed)));
+    $summary[] = $this->t('Allowed plugins: @view', ['@view' => implode(', ', $allowed)]);
     return $summary;
   }
 
@@ -73,7 +73,12 @@ class ViewsReferenceFieldFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = [];
+
+    $elements = [
+      '#cache' => [
+        'max-age' => 0,
+      ],
+    ];
 
     foreach ($items as $delta => $item) {
       $view_name = $item->getValue()['target_id'];
@@ -85,23 +90,32 @@ class ViewsReferenceFieldFormatter extends FormatterBase {
       if (!is_object($view)) {
         continue;
       }
-      $arguments = [$argument];
-      if (preg_match('/\//', $argument)) {
-        $arguments = explode('/', $argument);
-      }
-
-      $node = \Drupal::routeMatch()->getParameter('node');
-      $token_service = \Drupal::token();
-      if (is_array($arguments)) {
-        foreach ($arguments as $index => $argument) {
-          if (!empty($token_service->scan($argument))) {
-            $arguments[$index] = $token_service->replace($argument, ['node' => $node]);
-          }
-        }
+      // No access.
+      if (!$view->access($display_id)) {
+        continue;
       }
 
       $view->setDisplay($display_id);
-      $view->setArguments($arguments);
+
+      if ($argument) {
+        $arguments = [$argument];
+        if (preg_match('/\//', $argument)) {
+          $arguments = explode('/', $argument);
+        }
+
+        $node = \Drupal::routeMatch()->getParameter('node');
+        $token_service = \Drupal::token();
+        if (is_array($arguments)) {
+          foreach ($arguments as $index => $argument) {
+            if (!empty($token_service->scan($argument))) {
+              $arguments[$index] = $token_service->replace($argument, ['node' => $node]);
+            }
+          }
+        }
+
+        $view->setArguments($arguments);
+      }
+
       $view->build($display_id);
       $view->preExecute();
       $view->execute($display_id);
@@ -109,10 +123,11 @@ class ViewsReferenceFieldFormatter extends FormatterBase {
       if (!empty($view->result) || !empty($view->empty)) {
         if ($title) {
           $title = $view->getTitle();
-          $title_render_array = array(
-            '#theme' => 'viewsreference__view_title',
-            '#title' => $this->t($title),
-          );
+          $title_render_array = [
+            '#theme' => $view->buildThemeFunctions('viewsreference__view_title'),
+            '#title' => $title,
+            '#view' => $view,
+          ];
         }
 
         if ($this->getSetting('plugin_types')) {

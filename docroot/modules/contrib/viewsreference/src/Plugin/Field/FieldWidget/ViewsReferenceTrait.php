@@ -20,12 +20,12 @@ trait ViewsReferenceTrait {
     switch ($element['target_id']['#type']) {
 
       case 'select':
-        $test = array('!value' => '_none');
+        $test = ['!value' => '_none'];
         $event = 'change';
         break;
 
       default:
-        $test = array('filled' => TRUE);
+        $test = ['filled' => TRUE];
         $event = 'viewsreference-select';
         break;
 
@@ -36,14 +36,14 @@ trait ViewsReferenceTrait {
 
     $element['target_id']['#target_type'] = 'view';
 
-    $element['target_id']['#ajax'] = array(
-      'callback' => array($this, 'getDisplayIds'),
+    $element['target_id']['#ajax'] = [
+      'callback' => [$this, 'getDisplayIds'],
       'event' => $event,
-      'progress' => array(
+      'progress' => [
         'type' => 'throbber',
         'message' => t('Getting display Ids...'),
-      ),
-    );
+      ],
+    ];
 
     $default_value = isset($items[$delta]->getValue()['display_id']) ? $items[$delta]->getValue()['display_id'] : '';
     if ($default_value == '') {
@@ -53,53 +53,62 @@ trait ViewsReferenceTrait {
       $options = $this->getViewDisplayIds($items[$delta]->getValue()['target_id']);
     }
 
-    // We build a unique class name from field elements and any parent elements that might exist
+    // We build a unique class name from field elements
+    // And any parent elements that might exist
     // Which will be used to render the display id options in our ajax function.
     $class = !empty($element['target_id']['#field_parents']) ? implode('-',
         $element['target_id']['#field_parents']) . '-' : '';
     $class .= $field_name . '-' . $delta . '-display-id';
 
-    $element['display_id'] = array(
+    $element['display_id'] = [
       '#title' => 'Display Id',
       '#type' => 'select',
       '#options' => $options,
       '#default_value' => $default_value,
       '#weight' => 10,
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           $class,
-        ),
-      ),
-      '#states' => array(
-        'visible' => array(
+          'viewsreference-display-id',
+        ],
+      ],
+      '#states' => [
+        'visible' => [
           ':input[name="' . $name . '"]' => $test,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
-    $element['title'] = array(
+    $element['options'] = [
+      '#type' => 'details',
+      '#title' => t('Options'),
+      '#weight' => 10,
+    ];
+
+    // Title and argument are the original options included in this module.
+    $element['options']['title'] = [
       '#title' => 'Include View Title',
       '#type' => 'checkbox',
       '#default_value' => isset($items[$delta]->getValue()['title']) ? $items[$delta]->getValue()['title'] : '',
       '#weight' => 20,
-      '#states' => array(
-        'visible' => array(
+      '#states' => [
+        'visible' => [
           ':input[name="' . $name . '"]' => $test,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
-    $element['argument'] = array(
+    $element['options']['argument'] = [
       '#title' => 'Argument',
       '#type' => 'textfield',
       '#default_value' => isset($items[$delta]->getValue()['argument']) ? $items[$delta]->getValue()['argument'] : '',
       '#weight' => 21,
-      '#states' => array(
-        'visible' => array(
+      '#states' => [
+        'visible' => [
           ':input[name="' . $name . '"]' => $test,
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     $element['#attached']['library'][] = 'viewsreference/viewsreference';
 
@@ -128,7 +137,8 @@ trait ViewsReferenceTrait {
         $entity_id = $this->getEntityId($values[$field_name], $parents);
     }
 
-    // The following is relevant if our field is nested inside other fields, eg paragraph or field collection.
+    // The following is relevant if our field is nested inside other fields
+    // e.g. paragraph or field collection.
     if (count($parents) > 2) {
       $field_name = $parents[count($parents) - 3];
     }
@@ -153,7 +163,9 @@ trait ViewsReferenceTrait {
   }
 
   /**
-   * Helper function to get the current entity_id value from the values array based on parent array.
+   * Helper function to get the current entity_id value.
+   *
+   * The value is taken from the values array based on parent array.
    *
    * @param array $values
    *   Field array.
@@ -163,7 +175,7 @@ trait ViewsReferenceTrait {
    * @return array|bool
    *   The entity id.
    */
-  protected function getEntityId($values, $parents) {
+  protected function getEntityId(array $values, array $parents) {
     $key = array_shift($parents);
     $values = $values[$key];
     if (is_array($values)) {
@@ -174,7 +186,9 @@ trait ViewsReferenceTrait {
   }
 
   /**
-   * Helper function to get the current entity_id value from the values array based on:
+   * Helper function to get the current entity_id value.
+   *
+   * The value is taken from the values array based on:
    * Parent array for select element.
    * Select adds an extra array level.
    *
@@ -225,7 +239,7 @@ trait ViewsReferenceTrait {
    */
   protected function getAllViewsDisplayIds() {
     $views = Views::getAllViews();
-    $options = array();
+    $options = [];
     foreach ($views as $view) {
       foreach ($view->get('display') as $display) {
         $options[$display['id']] = $display['display_title'];
@@ -239,8 +253,8 @@ trait ViewsReferenceTrait {
    */
   protected function getViewDisplayIds($entity_id) {
     $views = Views::getAllViews();
-    $options = array();
-    $view_plugins = $this->getFieldSetting('plugin_types');
+    $options = [];
+    $view_plugins = array_diff($this->getFieldSetting('plugin_types'), ["0"]);
     foreach ($views as $view) {
       if ($view->get('id') == $entity_id) {
         foreach ($view->get('display') as $display) {
@@ -262,6 +276,21 @@ trait ViewsReferenceTrait {
       $views_list[$view->storage->id()] = $view->storage->label();
     }
     return $views_list;
+  }
+
+  /**
+   * Helper function to flatten options array.
+   */
+  public function massageValues(array $values, array $form, FormStateInterface $form_state) {
+    foreach ($values as $key => $value) {
+      if (is_array($value['options'])) {
+        foreach ($value['options'] as $ind => $option) {
+          $values[$key][$ind] = $option;
+        }
+        unset($value['options']);
+      }
+    }
+    return $values;
   }
 
 }
