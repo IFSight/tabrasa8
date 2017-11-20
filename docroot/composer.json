@@ -7,7 +7,13 @@
         "composer/installers": "^1.0.24",
         "wikimedia/composer-merge-plugin": "~1.4",
         "cweagans/composer-patches": "^1.6",
-        "drupal/core": "~8.4"
+        "drupal/core": "~8.4",
+        "drupal/embed": "~1.0",
+        "drupal/entity_browser": "^2.0@alpha",
+        "drupal/entity_embed": "^1.0@beta",
+        "drupal/media_entity": "^1.7",
+        "drupal/media_entity_image": "^1.2",
+        "drupal/video_embed_field": "^1.5"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -39,6 +45,11 @@
             "drush/contrib/{$name}": ["type:drupal-drush"],
             "modules/custom/{$name}": ["type:drupal-custom-module"],
             "themes/custom/{$name}": ["type:drupal-custom-theme"]
+        },
+        "patches" : {
+            "drupal/media_entity_image": {
+                "Adds Media Image Formatter": "https://www.drupal.org/files/issues/add_image_formatter-2850169-5.patch"
+            }
         }
     },
     "autoload": {

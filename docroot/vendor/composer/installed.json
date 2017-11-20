@@ -4732,5 +4732,528 @@
         ],
         "description": "Symfony PHPUnit Bridge",
         "homepage": "https://symfony.com"
+    },
+    {
+        "name": "drupal/entity_browser",
+        "version": "2.0.0-alpha1",
+        "version_normalized": "2.0.0.0-alpha1",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/entity_browser",
+            "reference": "8.x-2.0-alpha1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/entity_browser-8.x-2.0-alpha1.zip",
+            "reference": "8.x-2.0-alpha1",
+            "shasum": "f9053d4ab947a4870dcf90946e730b2a3a1e22d4"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "require-dev": {
+            "drupal/ctools": "*",
+            "drupal/inline_entity_form": "*",
+            "drupal/paragraphs": "*",
+            "drupal/token": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-2.x": "2.x-dev",
+                "dev-8.x-1.x": "8.1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-2.0-alpha1",
+                "datestamp": "1507712945",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Alpha releases are not covered by Drupal security advisories."
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Janez Urevc",
+                "homepage": "https://github.com/slashrsm",
+                "role": "Maintainer"
+            },
+            {
+                "name": "Primoz Hmeljak",
+                "homepage": "https://github.com/primsi",
+                "role": "Maintainer"
+            },
+            {
+                "name": "See other contributors",
+                "homepage": "https://www.drupal.org/node/1943336/committers",
+                "role": "contributor"
+            },
+            {
+                "name": "Primsi",
+                "homepage": "https://www.drupal.org/user/282629"
+            },
+            {
+                "name": "marcingy",
+                "homepage": "https://www.drupal.org/user/77320"
+            },
+            {
+                "name": "samuel.mortenson",
+                "homepage": "https://www.drupal.org/user/2582268"
+            },
+            {
+                "name": "slashrsm",
+                "homepage": "https://www.drupal.org/user/744628"
+            }
+        ],
+        "description": "Entity browsing and selecting component.",
+        "homepage": "http://drupal.org/project/entity_browser",
+        "support": {
+            "source": "http://cgit.drupalcode.org/entity_browser",
+            "issues": "http://drupal.org/project/issues/entity_browser",
+            "irc": "irc://irc.freenode.org/drupal-contribute"
+        }
+    },
+    {
+        "name": "drupal/embed",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/embed",
+            "reference": "8.x-1.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/embed-8.x-1.0.zip",
+            "reference": "8.x-1.0",
+            "shasum": "cc746ad807260e01c7788dd82110dcebbb4d678a"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.0",
+                "datestamp": "1490755685",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Dave Reid",
+                "homepage": "https://www.drupal.org/user/53892"
+            },
+            {
+                "name": "Devin Carlson",
+                "homepage": "https://www.drupal.org/user/290182"
+            },
+            {
+                "name": "Drupal Media Team",
+                "homepage": "https://www.drupal.org/user/3260690"
+            },
+            {
+                "name": "cs_shadow",
+                "homepage": "https://www.drupal.org/user/2828287"
+            },
+            {
+                "name": "slashrsm",
+                "homepage": "https://www.drupal.org/user/744628"
+            }
+        ],
+        "description": "Provide a framework for various different types of embeds in WYSIWYG editors, common functionality, interfaces, and standards.",
+        "homepage": "https://www.drupal.org/project/embed",
+        "support": {
+            "source": "http://cgit.drupalcode.org/embed",
+            "issues": "https://www.drupal.org/project/issues/embed",
+            "irc": "irc://irc.freenode.org/drupal-media"
+        }
+    },
+    {
+        "name": "drupal/entity_embed",
+        "version": "1.0.0-beta2",
+        "version_normalized": "1.0.0.0-beta2",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/entity_embed",
+            "reference": "8.x-1.0-beta2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/entity_embed-8.x-1.0-beta2.zip",
+            "reference": "8.x-1.0-beta2",
+            "shasum": "21cdeb2b058efce461683aed9a8951053512dca7"
+        },
+        "require": {
+            "drupal/core": "*",
+            "drupal/embed": "*"
+        },
+        "require-dev": {
+            "drupal/entity_browser": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.0-beta2",
+                "datestamp": "1476698339",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Beta releases are not covered by Drupal security advisories."
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Dave Reid",
+                "homepage": "https://www.drupal.org/user/53892"
+            },
+            {
+                "name": "Devin Carlson",
+                "homepage": "https://www.drupal.org/user/290182"
+            },
+            {
+                "name": "Drupal Media Team",
+                "homepage": "https://www.drupal.org/user/3260690"
+            },
+            {
+                "name": "cs_shadow",
+                "homepage": "https://www.drupal.org/user/2828287"
+            },
+            {
+                "name": "slashrsm",
+                "homepage": "https://www.drupal.org/user/744628"
+            }
+        ],
+        "description": "Allows any entity to be embedded within a text area using a WYSIWYG editor.",
+        "homepage": "https://www.drupal.org/project/entity_embed",
+        "support": {
+            "source": "http://cgit.drupalcode.org/entity_embed",
+            "issues": "https://www.drupal.org/project/issues/entity_embed",
+            "irc": "irc://irc.freenode.org/drupal-media"
+        }
+    },
+    {
+        "name": "drupal/entity",
+        "version": "1.0.0-beta1",
+        "version_normalized": "1.0.0.0-beta1",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/entity",
+            "reference": "8.x-1.0-beta1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/entity-8.x-1.0-beta1.zip",
+            "reference": "8.x-1.0-beta1",
+            "shasum": "6965349818de8cb820113b6841076162190c1a4c"
+        },
+        "require": {
+            "drupal/core": "~8.3"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.0-beta1",
+                "datestamp": "1505895844",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Beta releases are not covered by Drupal security advisories."
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Berdir",
+                "homepage": "https://www.drupal.org/user/214652"
+            },
+            {
+                "name": "bojanz",
+                "homepage": "https://www.drupal.org/user/86106"
+            },
+            {
+                "name": "dawehner",
+                "homepage": "https://www.drupal.org/user/99340"
+            },
+            {
+                "name": "dixon_",
+                "homepage": "https://www.drupal.org/user/239911"
+            },
+            {
+                "name": "fago",
+                "homepage": "https://www.drupal.org/user/16747"
+            }
+        ],
+        "description": "Provides expanded entity APIs, which will be moved to Drupal core one day.",
+        "homepage": "http://drupal.org/project/entity",
+        "support": {
+            "source": "http://cgit.drupalcode.org/entity"
+        }
+    },
+    {
+        "name": "drupal/media_entity",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/media_entity",
+            "reference": "8.x-1.7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/media_entity-8.x-1.7.zip",
+            "reference": "8.x-1.7",
+            "shasum": "5f7ccdf1db07732f3c94e642e60d88746e73cc86"
+        },
+        "require": {
+            "drupal/core": "*",
+            "drupal/entity": "*"
+        },
+        "require-dev": {
+            "drupal/entity": "*",
+            "drupal/inline_entity_form": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.7",
+                "datestamp": "1510737185",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Berdir",
+                "homepage": "https://www.drupal.org/user/214652"
+            },
+            {
+                "name": "Dave Reid",
+                "homepage": "https://www.drupal.org/user/53892"
+            },
+            {
+                "name": "Drupal Media Team",
+                "homepage": "https://www.drupal.org/user/3260690"
+            },
+            {
+                "name": "Drupal media CI",
+                "homepage": "https://www.drupal.org/user/3057985"
+            },
+            {
+                "name": "Primsi",
+                "homepage": "https://www.drupal.org/user/282629"
+            },
+            {
+                "name": "boztek",
+                "homepage": "https://www.drupal.org/user/134410"
+            },
+            {
+                "name": "chr.fritsch",
+                "homepage": "https://www.drupal.org/user/2103716"
+            },
+            {
+                "name": "jcisio",
+                "homepage": "https://www.drupal.org/user/210762"
+            },
+            {
+                "name": "katzilla",
+                "homepage": "https://www.drupal.org/user/260398"
+            },
+            {
+                "name": "marcoscano",
+                "homepage": "https://www.drupal.org/user/1288796"
+            },
+            {
+                "name": "phenaproxima",
+                "homepage": "https://www.drupal.org/user/205645"
+            },
+            {
+                "name": "seanB",
+                "homepage": "https://www.drupal.org/user/545912"
+            },
+            {
+                "name": "slashrsm",
+                "homepage": "https://www.drupal.org/user/744628"
+            }
+        ],
+        "description": "Media entity API.",
+        "homepage": "https://www.drupal.org/project/media_entity",
+        "support": {
+            "source": "http://cgit.drupalcode.org/media_entity"
+        }
+    },
+    {
+        "name": "drupal/video_embed_field",
+        "version": "1.5.0",
+        "version_normalized": "1.5.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/video_embed_field",
+            "reference": "8.x-1.5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/video_embed_field-8.x-1.5.zip",
+            "reference": "8.x-1.5",
+            "shasum": "f54d470ef7f863604e51e6ae98cd40ef25de5f79"
+        },
+        "require": {
+            "drupal/core": "*"
+        },
+        "require-dev": {
+            "drupal/colorbox": "*",
+            "drupal/media_entity": "*",
+            "drupal/media_entity_embeddable_video": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.x",
+                "datestamp": "1493246342",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                },
+                "package": "Field types"
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Sam152",
+                "homepage": "https://www.drupal.org/user/1485048"
+            },
+            {
+                "name": "jec006",
+                "homepage": "https://www.drupal.org/user/855980"
+            },
+            {
+                "name": "plopesc",
+                "homepage": "https://www.drupal.org/user/282415"
+            }
+        ],
+        "description": "A pluggable field type for storing videos from external video hosts such as Vimeo and YouTube.",
+        "homepage": "https://www.drupal.org/project/video_embed_field",
+        "support": {
+            "source": "http://cgit.drupalcode.org/video_embed_field"
+        }
+    },
+    {
+        "name": "drupal/media_entity_image",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/media_entity_image",
+            "reference": "8.x-1.2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/media_entity_image-8.x-1.2.zip",
+            "reference": "8.x-1.2",
+            "shasum": "d02d1d793a50ea3b9cb5a3219472fdd27980f4f3"
+        },
+        "require": {
+            "drupal/core": "~8.1",
+            "drupal/media_entity": "~1.0 || ~8.1.0"
+        },
+        "require-dev": {
+            "drupal/entity_browser": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.2",
+                "datestamp": "1470170939",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            },
+            "patches_applied": {
+                "Adds Media Image Formatter": "https://www.drupal.org/files/issues/add_image_formatter-2850169-5.patch"
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Drupal Media Team",
+                "homepage": "https://www.drupal.org/user/3260690"
+            },
+            {
+                "name": "Primsi",
+                "homepage": "https://www.drupal.org/user/282629"
+            },
+            {
+                "name": "slashrsm",
+                "homepage": "https://www.drupal.org/user/744628"
+            }
+        ],
+        "description": "Local images integration for Drupal Media entity.",
+        "homepage": "https://www.drupal.org/project/media_entity_image",
+        "keywords": [
+            "Drupal",
+            "image",
+            "media"
+        ],
+        "support": {
+            "source": "https://www.drupal.org/project/media_entity_image",
+            "issues": "https://www.drupal.org/project/issues/media_entity_image"
+        }
     }
 ]
