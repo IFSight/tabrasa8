@@ -1,0 +1,8 @@
+name: IF Varnish Purger Tags
+type: module
+description: 'Cache-Tags response header to support tag-based invalidation, add boundries around cache-tag value so that Varnish can perform a regex with spaces.'
+package: "Purge - reverse proxies & CDNs"
+core: 8.x
+dependencies:
+  - purge
+  - varnish_purger
