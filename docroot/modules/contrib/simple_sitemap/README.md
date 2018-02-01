@@ -13,7 +13,8 @@ CONTENTS OF THIS FILE
 INTRODUCTION
 ------------
 
-Author and maintainer: Pawel Ginalski (gbyte.co) https://www.drupal.org/u/gbyte.co
+Author and maintainer: Pawel Ginalski (gbyte.co)
+https://www.drupal.org/u/gbyte.co
 
 The module generates a multilingual XML sitemap which adheres to Google's new
 hreflang standard. Out of the box the sitemap is able to index most of Drupal's
@@ -56,10 +57,11 @@ be configured on a per-bundle basis, e.g.
 
 When including an entity type or bundle into the sitemap, the priority setting
 can be set which will set the 'priority' parameter for all entities of that
-type. See https://en.wikipedia.org/wiki/Sitemaps to learn more about this
-parameter.
+type. Same goes for the 'changefreq' setting. All Images referenced by the
+entities can be indexed as well. See https://en.wikipedia.org/wiki/Sitemaps to
+learn more about these parameters.
 
-Inclusion and priority settings of bundles can be overridden on a per-entity
+Inclusion settings of bundles can be overridden on a per-entity
 basis. Just head over to a bundle instance edit form (e.g. node/1/edit) to
 override its sitemap settings.
 
@@ -68,7 +70,8 @@ If you wish for the sitemap to reflect the new configuration instantly, check
 in the settings has been detected.
 
 As the sitemap is accessible to anonymous users, bear in mind that only links
-will be included which are accessible to anonymous users.
+will be included which are accessible to anonymous users. There are no access
+checks for links added through the module's hooks (see below).
 
 To include custom links into the sitemap, visit
 /admin/config/search/simplesitemap/custom.
@@ -82,8 +85,9 @@ USAGE
 
 The sitemap is accessible to the whole world under /sitemap.xml.
 
-If the cron generation is turned on, the sitemap will be regenerated on every
-cron run.
+If the cron generation is turned on, the sitemap will be regenerated according
+to the 'Sitemap generation interval' setting ranging from 'On every cron run' to
+'Once a week'.
 
 A manual generation is possible on admin/config/search/simplesitemap.
 
@@ -96,7 +100,59 @@ EXTENDING THE MODULE
 
 It is possible to hook into link generation by implementing
 hook_simple_sitemap_links_alter(&$links){} in a custom module and altering the
-link array.
+link array shortly before it is transformed to XML.
+
+Adding arbitrary links is possible through the use of
+hook_simple_sitemap_arbitrary_links_alter(&$arbitrary_links){}. There are no
+checks performed on these links (i.e. if they are internal/valid/accessible)
+and parameters like priority/lastmod/changefreq have to be added manually.
+
+Altering sitemap attributes and sitemap index attributes is possible through the
+use of hook_simple_sitemap_attributes_alter(&$attributes){} and
+hook_simple_sitemap_index_attributes_alter(&$index_attributes){}.
+
+Altering URL generator plugins is possible through
+the use of hook_simple_sitemap_url_generators_alter(&$generators){}.
+
+In case this module's URL generators do not cover your use case, it is possible
+to implement new generator plugins in a custom module. To do it, simply extend
+the Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorBase
+class. See the generator plugins included in this module and check the API docs
+(https://www.drupal.org/docs/8/api/plugin-api/plugin-api-overview) to learn how
+to implement plugins.
+
+There are API methods for altering stored inclusion settings, status queries and
+programmatic sitemap generation. These include:
+
+ * getSetting()
+ * saveSetting()
+ * getSitemap()
+ * generateSitemap()
+ * getGeneratedAgo()
+ * enableEntityType()
+ * disableEntityType()
+ * setBundleSettings()
+ * getBundleSettings()
+ * setEntityInstanceSettings()
+ * getEntityInstanceSettings()
+ * removeEntityInstanceSettings()
+ * bundleIsIndexed()
+ * entityTypeIsEnabled()
+ * addCustomLink()
+ * getCustomLinks()
+ * getCustomLink()
+ * removeCustomLink()
+ * removeCustomLinks()
+
+These service methods can be chained like so:
+
+\Drupal::service('simple_sitemap.generator')
+  ->saveSetting('remove_duplicates', TRUE)
+  ->enableEntityType('node')
+  ->setBundleSettings('node', 'page', ['index' => TRUE, 'priority' = 0.5])
+  ->removeCustomLinks()
+  ->addCustomLink('/some/view/page', ['priority' = 0.5])
+  ->generateSitemap();
 
 
 HOW CAN YOU CONTRIBUTE?
@@ -119,4 +175,3 @@ MAINTAINERS
 
 Current maintainers:
  * Pawel Ginalski (gbyte.co) - https://www.drupal.org/u/gbyte.co
- * Sam Becker (Sam152) - https://www.drupal.org/u/sam152

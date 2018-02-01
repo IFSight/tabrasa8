@@ -2,11 +2,11 @@
 
 namespace Drupal\simple_sitemap\Form;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\simple_sitemap\EntityHelper;
 use Drupal\simple_sitemap\Simplesitemap;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Form\FormState;
 
 /**
  * Class FormHelper
@@ -40,14 +40,9 @@ class FormHelper {
   protected $formState;
 
   /**
-   * @var bool
-   */
-  protected $alteringForm = TRUE;
-
-  /**
    * @var string|null
    */
-  protected $entityCategory = NULL;
+  protected $entityCategory;
 
   /**
    * @var string
@@ -71,9 +66,21 @@ class FormHelper {
     'register',
   ];
 
+  protected static $changefreqValues = [
+    'always',
+    'hourly',
+    'daily',
+    'weekly',
+    'monthly',
+    'yearly',
+    'never',
+  ];
+
   protected static $valuesToCheck = [
     'simple_sitemap_index_content',
     'simple_sitemap_priority',
+    'simple_sitemap_changefreq',
+    'simple_sitemap_include_images',
     'simple_sitemap_regenerate_now',
   ];
 
@@ -94,21 +101,14 @@ class FormHelper {
   }
 
   /**
-   * @param \Drupal\Core\Form\FormState $form_state
-   * @return $this
-   */
-  public function processForm(FormState $form_state) {
-    $this->formState = $form_state;
-    $this->getEntityDataFromFormEntity();
-    $this->assertAlteringForm();
-    return $this;
-  }
-
-  /**
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    * @return bool
    */
-  public function alteringForm() {
-    return $this->alteringForm;
+  public function processForm(FormStateInterface $form_state) {
+    $this->formState = $form_state;
+    $this->cleanUpFormInfo();
+    $this->getEntityDataFromFormEntity();
+    return $this->supports();
   }
 
   /**
@@ -176,31 +176,33 @@ class FormHelper {
   }
 
   /**
-   *
+   * @return bool
    */
-  protected function assertAlteringForm() {
+  protected function supports() {
 
     // Do not alter the form if user lacks certain permissions.
     if (!$this->currentUser->hasPermission('administer sitemap settings')) {
-      $this->alteringForm = FALSE;
+      return FALSE;
     }
 
     // Do not alter the form if it is irrelevant to sitemap generation.
     elseif (empty($this->getEntityCategory())) {
-      $this->alteringForm = FALSE;
+      return FALSE;
     }
 
     // Do not alter the form if entity is not enabled in sitemap settings.
     elseif (!$this->generator->entityTypeIsEnabled($this->getEntityTypeId())) {
-      $this->alteringForm = FALSE;
+      return FALSE;
     }
 
     // Do not alter the form, if sitemap is disabled for the entity type of this
     // entity instance.
     elseif ($this->getEntityCategory() == 'instance'
       && !$this->generator->bundleIsIndexed($this->getEntityTypeId(), $this->getBundleName())) {
-      $this->alteringForm = FALSE;
+      return FALSE;
     }
+
+    return TRUE;
   }
 
   /**
@@ -214,7 +216,7 @@ class FormHelper {
       '#default_value' => FALSE,
     ];
     if ($this->generator->getSetting('cron_generate')) {
-      $form_fragment['simple_sitemap_regenerate_now']['#description'] .= '</br>' . $this->t('Otherwise the sitemap will be regenerated on the next cron run.');
+      $form_fragment['simple_sitemap_regenerate_now']['#description'] .= '</br>' . $this->t('Otherwise the sitemap will be regenerated during a future cron run.');
     }
   }
 
@@ -226,47 +228,84 @@ class FormHelper {
   public function displayEntitySettings(&$form_fragment, $multiple = FALSE) {
     $prefix = $multiple ? $this->getEntityTypeId() . '_' : '';
 
-    if ($this->getEntityCategory() == 'instance') {
+    if ($this->getEntityCategory() === 'instance') {
       $bundle_settings = $this->generator->getBundleSettings($this->getEntityTypeId(), $this->getBundleName());
-      $settings = NULL !== $this->getInstanceId() ? $this->generator->getEntityInstanceSettings($this->getEntityTypeId(), $this->getInstanceId()) : $bundle_settings;
+      $settings = NULL !== $this->getInstanceId()
+        ? $this->generator->getEntityInstanceSettings($this->getEntityTypeId(), $this->getInstanceId())
+        : $bundle_settings;
     }
     else {
       $settings = $this->generator->getBundleSettings($this->getEntityTypeId(), $this->getBundleName());
     }
-    $index = isset($settings['index']) ? $settings['index'] : 0;
-    $priority = isset($settings['priority']) ? $settings['priority'] : self::PRIORITY_DEFAULT;
+    Simplesitemap::supplementDefaultSettings('entity', $settings, ['index' => 0]);
+
     $bundle_name = !empty($this->getBundleName()) ? $this->getBundleName() : $this->t('undefined');
 
+    // Index
     if (!$multiple) {
       $form_fragment[$prefix . 'simple_sitemap_index_content'] = [
         '#type' => 'radios',
-        '#default_value' => $index,
+        '#default_value' => $settings['index'],
         '#options' => [
-          0 => $this->getEntityCategory() == 'instance' ? $this->t('Do not index this @bundle entity', ['@bundle' => $bundle_name]) : $this->t('Do not index entities of this type'),
-          1 => $this->getEntityCategory() == 'instance' ? $this->t('Index this @bundle entity', ['@bundle' => $bundle_name]) : $this->t('Index entities of this type'),
+          0 => $this->getEntityCategory() === 'instance'
+            ? $this->t('Do not index this @bundle entity', ['@bundle' => $bundle_name])
+            : $this->t('Do not index entities of this type'),
+          1 => $this->getEntityCategory() === 'instance'
+            ? $this->t('Index this @bundle entity', ['@bundle' => $bundle_name])
+            : $this->t('Index entities of this type'),
         ],
       ];
-      if ($this->getEntityCategory() == 'instance' && isset($bundle_settings['index'])) {
-        $form_fragment[$prefix . 'simple_sitemap_index_content']['#options'][$bundle_settings['index']] .= ' <em>(' . $this->t('Default') . ')</em>';
+
+      if ($this->getEntityCategory() === 'instance' && isset($bundle_settings['index'])) {
+        $form_fragment[$prefix . 'simple_sitemap_index_content']['#options'][$bundle_settings['index']] .= ' <em>(' . $this->t('default') . ')</em>';
       }
     }
 
-    if ($this->getEntityCategory() == 'instance') {
-      $priority_description = $this->t('The priority this @bundle entity will have in the eyes of search engine bots.', ['@bundle' => $bundle_name]);
-    }
-    else {
-      $priority_description = $this->t('The priority entities of this type will have in the eyes of search engine bots.');
-    }
+    // Priority
     $form_fragment[$prefix . 'simple_sitemap_priority'] = [
       '#type' => 'select',
       '#title' => $this->t('Priority'),
-      '#description' => $priority_description,
-      '#default_value' => $priority,
+      '#description' => $this->getEntityCategory() === 'instance'
+        ? $this->t('The priority this @bundle entity will have in the eyes of search engine bots.', ['@bundle' => $bundle_name])
+        : $this->t('The priority entities of this type will have in the eyes of search engine bots.'),
+      '#default_value' => $settings['priority'],
       '#options' => $this->getPrioritySelectValues(),
     ];
-    if ($this->getEntityCategory() == 'instance' && isset($bundle_settings['priority'])) {
-      $form_fragment[$prefix . 'simple_sitemap_priority']['#options'][$this->formatPriority($bundle_settings['priority'])] .= ' (' . $this->t('Default') . ')';
+
+    if ($this->getEntityCategory() === 'instance' && isset($bundle_settings['priority'])) {
+      $form_fragment[$prefix . 'simple_sitemap_priority']['#options'][$this->formatPriority($bundle_settings['priority'])] .= ' (' . $this->t('default') . ')';
     }
+
+    // Changefreq
+    $form_fragment[$prefix . 'simple_sitemap_changefreq'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Change frequency'),
+      '#description' => $this->getEntityCategory() === 'instance'
+      ? $this->t('The frequency with which this @bundle entity changes. Search engine bots may take this as an indication of how often to index it.', ['@bundle' => $bundle_name])
+      : $this->t('The frequency with which entities of this type change. Search engine bots may take this as an indication of how often to index them.'),
+      '#default_value' => $settings['changefreq'],
+      '#options' => $this->getChangefreqSelectValues(),
+    ];
+
+    if ($this->getEntityCategory() === 'instance' && isset($bundle_settings['changefreq'])) {
+      $form_fragment[$prefix . 'simple_sitemap_changefreq']['#options'][$bundle_settings['changefreq']] .= ' (' . $this->t('default') . ')';
+    }
+
+    // Images
+    $form_fragment[$prefix . 'simple_sitemap_include_images'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Include images'),
+      '#description' => $this->getEntityCategory() === 'instance'
+        ? $this->t('Determines if images referenced by this @bundle entity should be included in the sitemap.', ['@bundle' => $bundle_name])
+        : $this->t('Determines if images referenced by entities of this type should be included in the sitemap.'),
+      '#default_value' => $settings['include_images'],
+      '#options' => [0 => $this->t('No'), 1 => $this->t('Yes')],
+    ];
+
+    if ($this->getEntityCategory() === 'instance' && isset($bundle_settings['include_images'])) {
+      $form_fragment[$prefix . 'simple_sitemap_include_images']['#options'][$bundle_settings['include_images']] .= ' (' . $this->t('default') . ')';
+    }
+
     return $this;
   }
 
@@ -278,62 +317,79 @@ class FormHelper {
    *   TRUE if this is a bundle or bundle instance form, FALSE otherwise.
    */
   protected function getEntityDataFromFormEntity() {
-    $form_entity = $this->getFormEntity();
-    if ($form_entity !== FALSE) {
-      $entity_type_id = $form_entity->getEntityTypeId();
-      $sitemap_entity_types = $this->entityHelper->getSitemapEntityTypes();
-      if (isset($sitemap_entity_types[$entity_type_id])) {
-        $this->setEntityCategory('instance');
-      }
-      else {
-        foreach ($sitemap_entity_types as $sitemap_entity) {
-          if ($sitemap_entity->getBundleEntityType() == $entity_type_id) {
-            $this->setEntityCategory('bundle');
-            break;
-          }
+    if (FALSE === $form_entity = $this->getFormEntity()) {
+      return FALSE;
+    }
+
+    $entity_type_id = $form_entity->getEntityTypeId();
+    $sitemap_entity_types = $this->entityHelper->getSupportedEntityTypes();
+    if (isset($sitemap_entity_types[$entity_type_id])) {
+      $this->setEntityCategory('instance');
+    }
+    else {
+      /**
+       * @var \Drupal\Core\Entity\EntityType $sitemap_entity_type
+       */
+      foreach ($sitemap_entity_types as $sitemap_entity_type) {
+        if ($sitemap_entity_type->getBundleEntityType() === $entity_type_id) {
+          $this->setEntityCategory('bundle');
+          break;
         }
       }
-
-      // Menu fix.
-      $this->setEntityCategory(NULL === $this->getEntityCategory() && $entity_type_id == 'menu' ? 'bundle' : $this->getEntityCategory());
-
-      switch ($this->getEntityCategory()) {
-        case 'bundle':
-          $this->setEntityTypeId($this->entityHelper->getBundleEntityTypeId($form_entity));
-          $this->setBundleName($form_entity->id());
-          $this->setInstanceId(NULL);
-          break;
-
-        case 'instance':
-          $this->setEntityTypeId($entity_type_id);
-          $this->setBundleName($this->entityHelper->getEntityInstanceBundleName($form_entity));
-          // New menu link's id is '' instead of NULL, hence checking for empty.
-          $this->setInstanceId(!empty($form_entity->id()) ? $form_entity->id() : NULL);
-          break;
-
-        default:
-          return FALSE;
-      }
-      return TRUE;
     }
-    return FALSE;
+
+    // Menu fix.
+    $this->setEntityCategory(NULL === $this->getEntityCategory() && $entity_type_id == 'menu' ? 'bundle' : $this->getEntityCategory());
+
+    switch ($this->getEntityCategory()) {
+      case 'bundle':
+        $this->setEntityTypeId($this->entityHelper->getBundleEntityTypeId($form_entity));
+        $this->setBundleName($form_entity->id());
+        $this->setInstanceId(NULL);
+        break;
+
+      case 'instance':
+        $this->setEntityTypeId($entity_type_id);
+        $this->setBundleName($this->entityHelper->getEntityInstanceBundleName($form_entity));
+        // New menu link's id is '' instead of NULL, hence checking for empty.
+        $this->setInstanceId(!empty($form_entity->id()) ? $form_entity->id() : NULL);
+        break;
+
+      default:
+        return FALSE;
+    }
+    return TRUE;
   }
 
   /**
    * Gets the object entity of the form if available.
    *
-   * @return object|false
+   * @return \Drupal\Core\Entity\Entity|false
    *   Entity or FALSE if non-existent or if form operation is
    *   'delete'.
    */
   protected function getFormEntity() {
     $form_object = $this->formState->getFormObject();
     if (NULL !== $form_object
+      && method_exists($form_object, 'getOperation')
       && method_exists($form_object, 'getEntity')
       && in_array($form_object->getOperation(), self::$allowedFormOperations)) {
       return $form_object->getEntity();
     }
     return FALSE;
+  }
+
+  /**
+   * Removes gathered form information from service object.
+   *
+   * Needed because this service may contain form info from the previous
+   * operation when revived from the container.
+   */
+  protected function cleanUpFormInfo() {
+    $this->entityCategory = NULL;
+    $this->entityTypeId = NULL;
+    $this->bundleName = NULL;
+    $this->instanceId = NULL;
   }
 
   /**
@@ -370,6 +426,7 @@ class FormHelper {
    * Gets the values needed to display the priority dropdown setting.
    *
    * @return array
+   *   Select options.
    */
   public function getPrioritySelectValues() {
     $options = [];
@@ -378,6 +435,27 @@ class FormHelper {
       $options[$value] = $value;
     }
     return $options;
+  }
+
+  /**
+   * Gets the values needed to display the changefreq dropdown setting.
+   *
+   * @return array
+   *   Select options.
+   */
+  public function getChangefreqSelectValues() {
+    $options = ['' => t('- Not specified -')];
+    foreach (self::$changefreqValues as $setting) {
+      $options[$setting] = t($setting);
+    }
+    return $options;
+  }
+
+  /**
+   * @return array
+   */
+  public static function getChangefreqOptions() {
+    return self::$changefreqValues;
   }
 
   /**
@@ -394,5 +472,13 @@ class FormHelper {
    */
   public static function isValidPriority($priority) {
     return is_numeric($priority) && $priority >= 0 && $priority <= 1;
+  }
+
+  /**
+   * @param string $changefreq
+   * @return bool
+   */
+  public static function isValidChangefreq($changefreq) {
+    return in_array($changefreq, self::$changefreqValues);
   }
 }

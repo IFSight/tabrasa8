@@ -13,7 +13,7 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'simple_sitemap_entities_form';
   }
 
@@ -27,14 +27,14 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
     $form['simple_sitemap_entities']['entities'] = [
       '#title' => $this->t('Sitemap entities'),
       '#type' => 'fieldset',
-      '#markup' => '<p>' . $this->t("Simple XML sitemap settings will be added only to entity forms of entity types enabled here. For all entity types featuring bundles (e.g. <em>node</em>) sitemap settings have to be set on their bundle pages (e.g. <em>page</em>).") . '</p>',
+      '#markup' => '<p>' . $this->t('Simple XML sitemap settings will be added only to entity forms of entity types enabled here. For all entity types featuring bundles (e.g. <em>node</em>) sitemap settings have to be set on their bundle pages (e.g. <em>page</em>).') . '</p>',
     ];
 
     $form['#attached']['library'][] = 'simple_sitemap/sitemapEntities';
     $form['#attached']['drupalSettings']['simple_sitemap'] = ['all_entities' => [], 'atomic_entities' => []];
 
     $entity_type_labels = [];
-    foreach ($this->entityHelper->getSitemapEntityTypes() as $entity_type_id => $entity_type) {
+    foreach ($this->entityHelper->getSupportedEntityTypes() as $entity_type_id => $entity_type) {
       $entity_type_labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
     }
     asort($entity_type_labels);
@@ -60,9 +60,9 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
 
       if ($form['simple_sitemap_entities']['entities'][$entity_type_id][$entity_type_id . '_enabled']['#default_value']) {
         $form['simple_sitemap_entities']['entities'][$entity_type_id][$entity_type_id . '_enabled']['#suffix']
-          = "<div id='warning-$css_entity_type_id'>"
+          = '<div id="warning-' . $css_entity_type_id . '">'
           . $this->t("<strong>Warning:</strong> This entity type's sitemap settings including per-entity overrides will be deleted after hitting <em>Save</em>.")
-          . "</div>";
+          . '</div>';
       }
 
       $form['#attached']['drupalSettings']['simple_sitemap']['all_entities'][] = $css_entity_type_id;
@@ -96,6 +96,8 @@ class SimplesitemapEntitiesForm extends SimplesitemapFormBase {
             $this->generator->setBundleSettings($entity_type_id, $entity_type_id, [
               'index' => TRUE,
               'priority' => $values[$entity_type_id . '_simple_sitemap_priority'],
+              'changefreq' => $values[$entity_type_id . '_simple_sitemap_changefreq'],
+              'include_images' => $values[$entity_type_id . '_simple_sitemap_include_images'],
             ]);
           }
         }

@@ -7,26 +7,34 @@ services:
       - '@simple_sitemap.entity_helper'
       - '@config.factory'
       - '@database'
-      - '@entity.query'
       - '@entity_type.manager'
       - '@path.validator'
       - '@date.formatter'
+      - '@datetime.time'
+      - '@simple_sitemap.batch'
+      - '@plugin.manager.simple_sitemap.url_generator'
 
   simple_sitemap.sitemap_generator:
     class: Drupal\simple_sitemap\SitemapGenerator
-    public: false
+    public: true
     arguments:
-      - '@simple_sitemap.batch'
       - '@simple_sitemap.entity_helper'
       - '@database'
       - '@module_handler'
       - '@language_manager'
+      - '@datetime.time'
+      - '@simple_sitemap.sitemap_writer'
+
+  simple_sitemap.sitemap_writer:
+    class: Drupal\simple_sitemap\SitemapWriter
+    public: false
 
   simple_sitemap.entity_helper:
     class: Drupal\simple_sitemap\EntityHelper
     public: true
     arguments:
       - '@entity_type.manager'
+      - '@database'
 
   simple_sitemap.form_helper:
     class: Drupal\simple_sitemap\Form\FormHelper
@@ -37,24 +45,12 @@ services:
       - '@current_user'
 
   simple_sitemap.batch:
-    class: Drupal\simple_sitemap\Batch\Batch
+    class: Drupal\simple_sitemap\Batch
     public: false
-
-  simple_sitemap.batch_url_generator:
-    class: Drupal\simple_sitemap\Batch\BatchUrlGenerator
-    public: true
-    arguments:
-      - '@simple_sitemap.generator'
-      - '@simple_sitemap.sitemap_generator'
-      - '@language_manager'
-      - '@entity_type.manager'
-      - '@path.validator'
-      - '@entity.query'
-      - '@simple_sitemap.logger'
 
   simple_sitemap.logger:
     class: Drupal\simple_sitemap\Logger
-    public: false
+    public: true
     arguments:
       - '@logger.channel.simple_sitemap'
       - '@current_user'
@@ -64,3 +60,7 @@ services:
     public: false
     arguments:
       - simple_sitemap
+
+  plugin.manager.simple_sitemap.url_generator:
+    class: Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager
+    parent: default_plugin_manager
