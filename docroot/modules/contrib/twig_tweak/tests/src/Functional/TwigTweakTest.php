@@ -65,13 +65,17 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath .= '/div[@class = "view-content"]//ul[count(./li) = 1]/li';
     $this->assertByXpath($xpath . '//a[contains(@href, "/node/1") and text() = "Alpha"]');
 
-    // Test block.
+    // Test view result.
+    $xpath = '//div[@class = "tt-view-result" and text() = 3]';
+    $this->assertByXpath($xpath);
+
+    // Test block plugin.
     $xpath = '//div[@class = "tt-block"]';
-    $xpath .= '/div[@id="block-classy-powered-by-drupal"]/span[contains(., "Powered by Drupal")]';
+    $xpath .= '/img[contains(@src, "/core/themes/classy/logo.svg") and @alt="Home"]';
     $this->assertByXpath($xpath);
 
     // Test region.
-    $xpath = '//div[@class = "tt-region"]';
+    $xpath = '//div[@class = "tt-region"]/div[@class = "region region-sidebar-first"]';
     $xpath .= '/div[contains(@class, "block-page-title-block") and h1[@class="page-title" and text() = "Log in"]]';
     $xpath .= '/following-sibling::div[@class="messages messages--warning" and contains(., "Hi!")]';
     $xpath .= '/following-sibling::div[contains(@class, "block-system-powered-by-block")]/span[. = "Powered by Drupal"]';
@@ -149,10 +153,6 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Test preg replacement.
     $xpath = '//div[@class = "tt-preg-replace" and text() = "FOO-bar"]';
-    $this->assertByXpath($xpath);
-
-    // Test preg replacement (legacy).
-    $xpath = '//div[@class = "tt-preg-replace-legacy" and text() = "foo-bar"]';
     $this->assertByXpath($xpath);
 
     // Test image style.

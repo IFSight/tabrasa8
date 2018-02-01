@@ -1,0 +1,12 @@
+name: 'Advanced CSS/JS Aggregation'
+description: 'Aggregates multiple CSS/JS files in a way that prevents 404 from happening when accessing a CSS or JS file.'
+package: 'Advanced CSS/JS Aggregation'
+# core: 8.x
+type: module
+configure: advagg.settings
+
+# Information added by Drupal.org packaging script on 2017-10-18
+version: '8.x-3.4'
+core: '8.x'
+project: 'advagg'
+datestamp: 1508369048

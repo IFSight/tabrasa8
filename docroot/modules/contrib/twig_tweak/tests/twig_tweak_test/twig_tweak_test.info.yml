@@ -7,8 +7,8 @@ dependencies:
   - drupa:twig_tweak
   - drupal:node
 
-# Information added by Drupal.org packaging script on 2017-09-15
-version: '8.x-1.9'
+# Information added by Drupal.org packaging script on 2017-12-04
+version: '8.x-2.0-rc2'
 core: '8.x'
 project: 'twig_tweak'
-datestamp: 1505464447
+datestamp: 1512379988

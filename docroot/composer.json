@@ -13,7 +13,10 @@
         "drupal/entity_embed": "^1.0@beta",
         "drupal/media_entity": "^1.7",
         "drupal/media_entity_image": "^1.2",
-        "drupal/video_embed_field": "^1.5"
+        "drupal/video_embed_field": "^1.5",
+        "drupal/ultimate_cron": "^2.0@alpha",
+        "drupal/advagg": "^3.0",
+        "drupal/twig_tweak": "^2.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

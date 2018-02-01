@@ -3,7 +3,6 @@
 namespace Drupal\twig_tweak;
 
 use Drupal\Core\Block\TitleBlockPluginInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\image\Entity\ImageStyle;
@@ -12,8 +11,7 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 /**
  * Twig extension with some useful functions and filters.
  *
- * As version 1.7 all dependencies are instantiated on demand for performance
- * reasons.
+ * Dependency injection is not used for performance reason.
  */
 class TwigExtension extends \Twig_Extension {
 
@@ -23,6 +21,7 @@ class TwigExtension extends \Twig_Extension {
   public function getFunctions() {
     return [
       new \Twig_SimpleFunction('drupal_view', 'views_embed_view'),
+      new \Twig_SimpleFunction('drupal_view_result', 'views_get_view_result'),
       new \Twig_SimpleFunction('drupal_block', [$this, 'drupalBlock']),
       new \Twig_SimpleFunction('drupal_region', [$this, 'drupalRegion']),
       new \Twig_SimpleFunction('drupal_entity', [$this, 'drupalEntity']),
@@ -67,21 +66,22 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Builds the render array for the provided block.
+   * Builds the render array for the provided block plugin.
    *
    * @param mixed $id
-   *   The ID of the block to render.
-   * @param bool $check_access
-   *   (Optional) Indicates that access check is required.
+   *   The ID of block plugin to render.
+   * @param array $configuration
+   *   (Optional) Pass on any configuration to the plugin block.
    *
    * @return null|array
    *   A render array for the block or NULL if the block does not exist.
    */
-  public function drupalBlock($id, $check_access = TRUE) {
-    $entity_type_manager = \Drupal::entityTypeManager();
-    $block = $entity_type_manager->getStorage('block')->load($id);
-    if ($block && (!$check_access || $this->entityAccess($block))) {
-      return $entity_type_manager->getViewBuilder('block')->view($block);
+  public function drupalBlock($id, array $configuration = []) {
+    /** @var \Drupal\Core\Block\BlockPluginInterface $block_plugin */
+    $block_plugin = \Drupal::service('plugin.manager.block')
+      ->createInstance($id, $configuration);
+    if ($block_plugin->access(\Drupal::currentUser())) {
+      return $block_plugin->build();
     }
   }
 
@@ -110,7 +110,7 @@ class TwigExtension extends \Twig_Extension {
 
     /* @var $blocks \Drupal\block\BlockInterface[] */
     foreach ($blocks as $id => $block) {
-      if ($this->entityAccess($block)) {
+      if ($block->access('view')) {
         $block_plugin = $block->getPlugin();
         if ($block_plugin instanceof TitleBlockPluginInterface) {
           $request = \Drupal::request();
@@ -120,6 +120,11 @@ class TwigExtension extends \Twig_Extension {
         }
         $build[$id] = $view_builder->view($block);
       }
+    }
+
+    if ($build) {
+      $build['#region'] = $region;
+      $build['#theme_wrappers'] = ['region'];
     }
 
     return $build;
@@ -137,16 +142,18 @@ class TwigExtension extends \Twig_Extension {
    * @param string $langcode
    *   (optional) For which language the entity should be rendered, defaults to
    *   the current content language.
+   * @param bool $check_access
+   *   (Optional) Indicates that access check is required.
    *
    * @return null|array
    *   A render array for the entity or NULL if the entity does not exist.
    */
-  public function drupalEntity($entity_type, $id = NULL, $view_mode = NULL, $langcode = NULL) {
+  public function drupalEntity($entity_type, $id = NULL, $view_mode = NULL, $langcode = NULL, $check_access = TRUE) {
     $entity_type_manager = \Drupal::entityTypeManager();
     $entity = $id
       ? $entity_type_manager->getStorage($entity_type)->load($id)
       : \Drupal::routeMatch()->getParameter($entity_type);
-    if ($entity && $this->entityAccess($entity)) {
+    if ($entity && (!$check_access || $entity->access('view'))) {
       $render_controller = $entity_type_manager->getViewBuilder($entity_type);
       return $render_controller->view($entity, $view_mode, $langcode);
     }
@@ -165,16 +172,18 @@ class TwigExtension extends \Twig_Extension {
    *   (optional) The view mode that should be used to render the field.
    * @param string $langcode
    *   (optional) Language code to load translation.
+   * @param bool $check_access
+   *   (Optional) Indicates that access check is required.
    *
    * @return null|array
    *   A render array for the field or NULL if the value does not exist.
    */
-  public function drupalField($field_name, $entity_type, $id = NULL, $view_mode = 'default', $langcode = NULL) {
+  public function drupalField($field_name, $entity_type, $id = NULL, $view_mode = 'default', $langcode = NULL, $check_access = TRUE) {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = $id
       ? \Drupal::entityTypeManager()->getStorage($entity_type)->load($id)
       : \Drupal::routeMatch()->getParameter($entity_type);
-    if ($entity && $this->entityAccess($entity)) {
+    if ($entity && (!$check_access || $entity->access('view'))) {
       if ($langcode && $entity->hasTranslation($langcode)) {
         $entity = $entity->getTranslation($langcode);
       }
@@ -234,8 +243,7 @@ class TwigExtension extends \Twig_Extension {
    */
   public function drupalForm($form_id) {
     $form_builder = \Drupal::formBuilder();
-    $args = func_get_args();
-    return call_user_func_array([$form_builder, 'getForm'], $args);
+    return call_user_func_array([$form_builder, 'getForm'], func_get_args());
   }
 
   /**
@@ -279,6 +287,9 @@ class TwigExtension extends \Twig_Extension {
 
   /**
    * Dumps information about variables.
+   *
+   * @param mixed $var
+   *   The variable to dump.
    */
   public function drupalDump($var) {
     $var_dumper = '\Symfony\Component\VarDumper\VarDumper';
@@ -293,10 +304,13 @@ class TwigExtension extends \Twig_Extension {
   /**
    * An alias for self::drupalDump().
    *
+   * @param mixed $var
+   *   The variable to dump.
+   *
    * @see \Drupal\twig_tweak\TwigExtension::drupalDump();
    */
-  public function dd() {
-    $this->drupalDump(func_get_args());
+  public function dd($var) {
+    $this->drupalDump($var);
   }
 
   /**
@@ -384,11 +398,6 @@ class TwigExtension extends \Twig_Extension {
    *   The new text if matches are found, otherwise unchanged text.
    */
   public function pregReplaceFilter($text, $pattern, $replacement) {
-    // BC layer. Before version 8.x-1.8 the pattern was without delimiters.
-    // @todo Remove this in Drupal 9.
-    if (strpos($pattern, '/') !== 0) {
-      return preg_replace("/$pattern/", $replacement, $text);
-    }
     return preg_replace($pattern, $replacement, $text);
   }
 
@@ -475,23 +484,6 @@ class TwigExtension extends \Twig_Extension {
     $output = ob_get_contents();
     ob_end_clean();
     return $output;
-  }
-
-  /**
-   * Checks view access to a given entity.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   Entity to check access.
-   *
-   * @return bool
-   *   The access check result.
-   *
-   * @TODO Remove "check_access" option in 9.x.
-   */
-  protected function entityAccess(EntityInterface $entity) {
-    // Prior version 8.x-1.7 entity access was not checked. The "check_access"
-    // option provides a workaround for possible BC issues.
-    return !Settings::get('twig_tweak_check_access', TRUE) || $entity->access('view');
   }
 
 }

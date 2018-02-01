@@ -5255,5 +5255,205 @@
             "source": "https://www.drupal.org/project/media_entity_image",
             "issues": "https://www.drupal.org/project/issues/media_entity_image"
         }
+    },
+    {
+        "name": "drupal/ultimate_cron",
+        "version": "2.0.0-alpha2",
+        "version_normalized": "2.0.0.0-alpha2",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/ultimate_cron",
+            "reference": "8.x-2.0-alpha2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/ultimate_cron-8.x-2.0-alpha2.zip",
+            "reference": "8.x-2.0-alpha2",
+            "shasum": "adfebde3e4c13b99c6edbf0f4b994b9e91ce7ef7"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-2.x": "2.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-2.0-alpha2",
+                "datestamp": "1503075545",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Alpha releases are not covered by Drupal security advisories."
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Berdir",
+                "homepage": "https://www.drupal.org/user/214652"
+            },
+            {
+                "name": "Dane Powell",
+                "homepage": "https://www.drupal.org/user/339326"
+            },
+            {
+                "name": "arnested",
+                "homepage": "https://www.drupal.org/user/245635"
+            },
+            {
+                "name": "gielfeldt",
+                "homepage": "https://www.drupal.org/user/366993"
+            },
+            {
+                "name": "miro_dietiker",
+                "homepage": "https://www.drupal.org/user/227761"
+            }
+        ],
+        "description": "Cron",
+        "homepage": "https://www.drupal.org/project/ultimate_cron",
+        "support": {
+            "source": "http://cgit.drupalcode.org/ultimate_cron"
+        }
+    },
+    {
+        "name": "drupal/advagg",
+        "version": "3.4.0",
+        "version_normalized": "3.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/advagg",
+            "reference": "8.x-3.4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/advagg-8.x-3.4.zip",
+            "reference": "8.x-3.4",
+            "shasum": "be9621106bae46e1cc2e078ae5c7ec19aea85b42"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-3.x": "3.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-3.4",
+                "datestamp": "1508369043",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Mike Carper (mikeytown2)",
+                "homepage": "https://www.drupal.org/u/mikeytown2",
+                "role": "Creator, Maintainer"
+            },
+            {
+                "name": "Nick Wilde (nickwilde)",
+                "homepage": "https://www.drupal.org/u/nickwilde",
+                "email": "design@briarmoon.ca",
+                "role": "Drupal 8 Port/maintainer"
+            },
+            {
+                "name": "doublejosh",
+                "homepage": "https://www.drupal.org/user/199720"
+            },
+            {
+                "name": "iamcarrico",
+                "homepage": "https://www.drupal.org/user/1300542"
+            },
+            {
+                "name": "markcarver",
+                "homepage": "https://www.drupal.org/user/501638"
+            },
+            {
+                "name": "mikeytown2",
+                "homepage": "https://www.drupal.org/user/282446"
+            },
+            {
+                "name": "rupl",
+                "homepage": "https://www.drupal.org/user/411999"
+            }
+        ],
+        "description": "Improved aggregation of CSS/JS files to speed up page load times.",
+        "homepage": "https://drupal.org/project/advagg",
+        "support": {
+            "source": "https://cgit.drupalcode.org/advagg",
+            "issues": "https://drupal.org/project/issues/advagg",
+            "irc": "irc://irc.freenode.org/drupal-contribute"
+        }
+    },
+    {
+        "name": "drupal/twig_tweak",
+        "version": "2.0.0-rc2",
+        "version_normalized": "2.0.0.0-RC2",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/twig_tweak",
+            "reference": "8.x-2.0-rc2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/twig_tweak-8.x-2.0-rc2.zip",
+            "reference": "8.x-2.0-rc2",
+            "shasum": "4eee47706d3f79d293fde2d594b12f0e17a3d591"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "suggest": {
+            "symfony/var-dumper": "better dump() function for debugging Twig variables"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-2.x": "2.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-2.0-rc2",
+                "datestamp": "1512379985",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "RC releases are not covered by Drupal security advisories."
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Chi",
+                "homepage": "https://www.drupal.org/user/556138"
+            }
+        ],
+        "description": "A Twig extension with some useful functions and filters for Drupal development.",
+        "homepage": "https://www.drupal.org/project/twig_tweak",
+        "keywords": [
+            "Drupal",
+            "Twig"
+        ],
+        "support": {
+            "source": "http://cgit.drupalcode.org/twig_tweak",
+            "issues": "https://www.drupal.org/project/issues/twig_tweak"
+        }
     }
 ]
