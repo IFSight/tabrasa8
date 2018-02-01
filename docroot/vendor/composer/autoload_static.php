@@ -85,6 +85,7 @@ class ComposerStaticInitDrupal8
         ),
         'D' => 
         array (
+            'Drupal\\redis\\' => 13,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\Composer\\' => 21,
             'Drupal\\Core\\' => 12,
@@ -268,6 +269,10 @@ class ComposerStaticInitDrupal8
         'Goutte\\' => 
         array (
             0 => __DIR__ . '/..' . '/fabpot/goutte/Goutte',
+        ),
+        'Drupal\\redis\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/modules/contrib/redis/src',
         ),
         'Drupal\\Driver\\' => 
         array (
