@@ -1,10 +1,12 @@
-name: Varnish Purger Tags
+name: Varnish Image Purge
 type: module
-description: 'Cache-Tags response header to support tag-based invalidation.'
-package: "Purge - reverse proxies & CDNs"
+description: Purge image styles after entity update
 # core: 8.x
+package: "Purge - reverse proxies & CDNs"
+configure: varnish_image_purge.configuration
 dependencies:
   - varnish_purger
+  - purge
 
 # Information added by Drupal.org packaging script on 2018-01-26
 version: '8.x-1.10'

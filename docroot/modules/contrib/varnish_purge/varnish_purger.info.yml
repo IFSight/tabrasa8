@@ -4,11 +4,11 @@ description: 'Purger for varnish. Purges page caches from varnish. Works togethe
 package: "Purge - reverse proxies & CDNs"
 # core: 8.x
 dependencies:
-  - purge
-  - purge_tokens
+  - purge:purge
+  - purge:purge_tokens
 
-# Information added by Drupal.org packaging script on 2017-05-18
-version: '8.x-1.5'
+# Information added by Drupal.org packaging script on 2018-01-26
+version: '8.x-1.10'
 core: '8.x'
 project: 'varnish_purge'
-datestamp: 1495108691
+datestamp: 1516954991

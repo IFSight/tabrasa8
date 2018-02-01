@@ -143,7 +143,7 @@ abstract class VarnishPurgerBase extends PurgerBase implements PurgerInterface {
       'headers' => $this->getHeaders($token_data),
     ];
     if ($this->settings->scheme === 'https') {
-      $opt['verify'] = $this->settings->verify;
+      $opt['verify'] = (bool) $this->settings->verify;
     }
     return $opt;
   }

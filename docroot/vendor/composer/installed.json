@@ -7544,5 +7544,62 @@
             "issues": "https://drupal.org/project/issues/simple_sitemap",
             "irc": "irc://irc.freenode.org/drupal-contribute"
         }
+    },
+    {
+        "name": "drupal/varnish_purge",
+        "version": "1.10.0",
+        "version_normalized": "1.10.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupal.org/project/varnish_purge",
+            "reference": "8.x-1.10"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/varnish_purge-8.x-1.10.zip",
+            "reference": "8.x-1.10",
+            "shasum": "ab7ea1bd933856fc759dc0e1d53018cc5dee2718"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "require-dev": {
+            "drupal/purge": "*",
+            "drupal/purge_tokens": "*",
+            "drupal/varnish_purger": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.10",
+                "datestamp": "1516954984",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "MiSc",
+                "homepage": "https://www.drupal.org/user/382892"
+            },
+            {
+                "name": "deadbeef",
+                "homepage": "https://www.drupal.org/user/93644"
+            }
+        ],
+        "homepage": "https://www.drupal.org/project/varnish_purge",
+        "support": {
+            "source": "http://cgit.drupalcode.org/varnish_purge"
+        }
     }
 ]
