@@ -2,7 +2,6 @@
 
 namespace Drupal\metatag\Normalizer;
 
-use Drupal\metatag\Plugin\Field\MetatagEntityFieldItemList;
 use Drupal\serialization\Normalizer\NormalizerBase;
 
 /**
@@ -11,25 +10,27 @@ use Drupal\serialization\Normalizer\NormalizerBase;
 class MetatagNormalizer extends NormalizerBase {
 
   /**
-   * The interface or class that this Normalizer supports.
-   *
-   * @var string
+   * {@inheritdoc}
    */
   protected $supportedInterfaceOrClass = 'Drupal\metatag\Plugin\Field\MetatagEntityFieldItemList';
 
   /**
-   * {@inheritdoc}}
-   *
-   * @see metatag_get_tags_from_route();
+   * {@inheritdoc}
    */
   public function normalize($field_item, $format = NULL, array $context = []) {
-
+    // @see metatag_get_tags_from_route()
     $entity = $field_item->getEntity();
 
     $tags = metatag_get_tags_from_route($entity);
 
     foreach ($tags['#attached']['html_head'] as $tag) {
-      $normalized['value'][$tag[1]] = $tag[0]['#attributes']['content'];
+      // @todo Work out a proper, long-term fix for this.
+      if (isset($tag[0]['#attributes']['content'])) {
+        $normalized['value'][$tag[1]] = $tag[0]['#attributes']['content'];
+      }
+      elseif (isset($tag[0]['#attributes']['href'])) {
+        $normalized['value'][$tag[1]] = $tag[0]['#attributes']['href'];
+      }
     }
 
     if (isset($context['langcode'])) {
