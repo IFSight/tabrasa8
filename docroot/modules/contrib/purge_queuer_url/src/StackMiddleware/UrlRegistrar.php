@@ -124,9 +124,11 @@ class UrlRegistrar implements HttpKernelInterface {
 
     // Check if there are blacklisted patterns in the URL.
     $url = $this->generateUrlOrPathToRegister($request);
-    foreach ($this->blacklist as $needle) {
-      if (strpos($url, $needle) !== FALSE) {
-        return NULL;
+    if (is_array($this->blacklist)) {
+      foreach ($this->blacklist as $needle) {
+        if (strpos($url, $needle) !== FALSE) {
+          return NULL;
+        }
       }
     }
 

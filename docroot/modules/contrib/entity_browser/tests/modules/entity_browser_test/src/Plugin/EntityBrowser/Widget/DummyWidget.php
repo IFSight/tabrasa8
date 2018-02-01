@@ -2,7 +2,6 @@
 
 namespace Drupal\entity_browser_test\Plugin\EntityBrowser\Widget;
 
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\WidgetBase;
 
@@ -54,21 +53,6 @@ class DummyWidget extends WidgetBase {
    */
   protected function prepareEntities(array $form, FormStateInterface $form_state) {
     return $form_state->getValue('dummy_entities', []);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function access() {
-    if (\Drupal::state()->get('eb_test_dummy_widget_access', TRUE)) {
-      $access = AccessResult::allowed();
-      $access->addCacheContexts(['eb_dummy']);
-    }
-    else {
-      $access = AccessResult::forbidden();
-      $access->addCacheContexts(['eb_dummy']);
-    }
-    return $access;
   }
 
 }

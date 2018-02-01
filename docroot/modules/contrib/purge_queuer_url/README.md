@@ -26,6 +26,17 @@ pagers (``/news/?page=10``), RSS or Json views (``/rss.xml``) and any view or
 view block, like that one dynamic block placed on ``/contact`` that shows
 corporate press releases.
 
+## Very important warning!
+This module isn't suited for everyone and *can bring your site down* if you're not careful!
+
+Because it stores URLs for all of your traffic, sites with thousands of content items can end up creating a unsustainable large registry with *database strain* as ultimate consequence. If you're noticing that queries coming from this module are severely slowing down your website, the only alternatives you have are:
+
+1. Switch to a CDN that does support tag-based cache invalidation.
+2. Stay with the CDN, but:
+  * Uninstall and stop using ``purge_queuer_url``.
+  * Configure the CDN to override your caching policy at the edge.
+  * The override should set a reasonably short cache policy for all CDN-to-browser delivery.
+
 ## Getting started
 
 * Setup the [Purge module](https://www.drupal.org/project/purge).

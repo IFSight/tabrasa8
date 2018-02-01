@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
+use Drupal\purge\Plugin\Purge\Invalidation\Exception\TypeUnsupportedException;
 
 /**
  * Queues URLs or paths when Drupal invalidates cache tags.
@@ -99,6 +100,10 @@ class UrlAndPathQueuer implements CacheTagsInvalidatorInterface, ContainerAwareI
           try {
             $invalidations[] = $this->purgeInvalidationFactory
               ->get($invalidation_type, $url_or_path);
+          }
+          catch (TypeUnsupportedException $e) {
+            // When there's no purger enabled for it, don't bother queuing URLs.
+            return;
           }
           catch (PluginNotFoundException $e) {
             // When Drupal uninstalls Purge, rebuilds plugin caches it might

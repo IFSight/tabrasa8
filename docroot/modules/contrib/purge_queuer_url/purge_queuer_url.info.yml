@@ -6,8 +6,8 @@ package: "Purge - queuers"
 dependencies:
   - purge
 
-# Information added by Drupal.org packaging script on 2017-05-23
-version: '8.x-1.0-beta6'
+# Information added by Drupal.org packaging script on 2017-09-05
+version: '8.x-1.0-rc1'
 core: '8.x'
 project: 'purge_queuer_url'
-datestamp: 1495548792
+datestamp: 1504610051
