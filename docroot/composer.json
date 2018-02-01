@@ -50,6 +50,7 @@
         "drupal/ultimate_cron": "^2.0@alpha",
         "drupal/varnish_purge": "^1.0",
         "drupal/video_embed_field": "^1.5",
+        "drupal/viewsreference": "^1.2",
         "drupal/youtube": "^1.0@beta"
     },
     "minimum-stability": "dev",

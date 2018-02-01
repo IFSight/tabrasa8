@@ -57,3 +57,12 @@ Fix incorrectly applied patch at https://www.drupal.org/node/2857697
 
 8.x-1.0-rc3
 Coding standards applied
+
+8.x-1.0
+Title theme suggestions: https://www.drupal.org/node/2901356
+
+8.x-1.1
+Remove cache setting: https://www.drupal.org/node/2912148
+Attachment areas fix: https://www.drupal.org/node/2910824
+Remove view build step: https://www.drupal.org/project/viewsreference/issues/2923740
+Fix #states visibility: https://www.drupal.org/project/viewsreference/issues/2897999
