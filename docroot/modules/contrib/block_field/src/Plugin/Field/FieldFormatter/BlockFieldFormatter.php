@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\block_field\Plugin\Field\FieldFormatter\BlockFieldFormatter.
- */
-
 namespace Drupal\block_field\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
@@ -45,7 +40,6 @@ class BlockFieldFormatter extends FormatterBase {
         '#plugin_id' => $block_instance->getPluginId(),
         '#base_plugin_id' => $block_instance->getBaseId(),
         '#derivative_plugin_id' => $block_instance->getDerivativeId(),
-        '#id' => $item->plugin_id,
         'content' => $block_instance->build(),
       ];
 

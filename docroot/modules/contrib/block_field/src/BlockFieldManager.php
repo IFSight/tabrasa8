@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\block_field\BlockFieldManager.
- */
-
 namespace Drupal\block_field;
 
 use \Drupal\Core\Block\BlockManagerInterface;

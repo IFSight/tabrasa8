@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\block_field\Plugin\Field\FieldWidget\BlockFieldWidget.
- */
-
 namespace Drupal\block_field\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;

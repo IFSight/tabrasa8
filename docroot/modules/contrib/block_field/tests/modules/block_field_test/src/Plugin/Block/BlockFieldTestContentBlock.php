@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\block_field_test\Plugin\Block\BlockFieldTestContentBlock.
- */
-
 namespace Drupal\block_field_test\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;

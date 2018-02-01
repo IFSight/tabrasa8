@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\block_field\BlockFieldItemInterface.
- */
-
 namespace Drupal\block_field;
 
 use Drupal\Core\Field\FieldItemInterface;
