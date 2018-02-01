@@ -124,8 +124,8 @@ class Crawler implements \Countable, \IteratorAggregate
     /**
      * Adds HTML/XML content.
      *
-     * If the charset is not set via the content type, it is assumed
-     * to be ISO-8859-1, which is the default charset defined by the
+     * If the charset is not set via the content type, it is assumed to be UTF-8,
+     * or ISO-8859-1 as a fallback, which is the default charset defined by the
      * HTTP 1.1 specification.
      *
      * @param string      $content A string to parse as HTML/XML
@@ -158,7 +158,7 @@ class Crawler implements \Countable, \IteratorAggregate
         }
 
         if (null === $charset) {
-            $charset = 'ISO-8859-1';
+            $charset = preg_match('//u', $content) ? 'UTF-8' : 'ISO-8859-1';
         }
 
         if ('x' === $xmlMatches[1]) {
@@ -691,8 +691,8 @@ class Crawler implements \Countable, \IteratorAggregate
      */
     public function filter($selector)
     {
-        if (!class_exists('Symfony\\Component\\CssSelector\\CssSelectorConverter')) {
-            throw new \RuntimeException('Unable to filter with a CSS selector as the Symfony CssSelector 2.8+ is not installed (you can use filterXPath instead).');
+        if (!class_exists(CssSelectorConverter::class)) {
+            throw new \RuntimeException('To filter with a CSS selector, install the CssSelector component ("composer require symfony/css-selector"). Or use filterXpath instead.');
         }
 
         $converter = new CssSelectorConverter($this->isHtml);
