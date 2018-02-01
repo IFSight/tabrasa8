@@ -5,10 +5,16 @@ namespace Drupal\webform\Element;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Render\Element\Textarea;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\Twig\TwigExtension;
 use Drupal\webform\Utility\WebformYaml;
 
 /**
- * Provides a webform element for HTML, YAML, or Plain text using CodeMirror.
+ * Provides a webform element for using CodeMirror.
+ *
+ * Known Issues/Feature Requests:
+ *
+ * - Mixed Twig Mode #3292
+ *   https://github.com/codemirror/CodeMirror/issues/3292
  *
  * @FormElement("webform_codemirror")
  */
@@ -22,10 +28,12 @@ class WebformCodeMirror extends Textarea {
   protected static $modes = [
     'css' => 'text/css',
     'html' => 'text/html',
+    'htmlmixed' => 'htmlmixed',
     'javascript' => 'text/javascript',
     'text' => 'text/plain',
     'yaml' => 'text/x-yaml',
     'php' => 'text/x-php',
+    'twig' => 'twig',
   ];
 
   /**
@@ -81,6 +89,19 @@ class WebformCodeMirror extends Textarea {
       $element['#mode'] = 'text';
     }
 
+    // Check edit Twig template permission and complete disable editing.
+    if ($element['#mode'] == 'twig') {
+      if (!TwigExtension::hasEditTwigAccess()) {
+        $element['#disable'] = TRUE;
+        $element['#attributes']['disabled'] = 'disabled';
+        $element['#field_prefix'] = [
+          '#type' => 'webform_message',
+          '#message_type' => 'warning',
+          '#message_message' => t("Only webform administrators and user's assigned the 'Edit webform Twig templates' permission are allowed to edit this Twig template."),
+        ];
+      }
+    }
+
     // Set validation.
     if (isset($element['#element_validate'])) {
       $element['#element_validate'] = array_merge([[get_called_class(), 'validateWebformCodeMirror']], $element['#element_validate']);
@@ -114,6 +135,12 @@ class WebformCodeMirror extends Textarea {
    * Webform element validation handler for #type 'webform_codemirror'.
    */
   public static function validateWebformCodeMirror(&$element, FormStateInterface $form_state, &$complete_form) {
+    // If element is disabled then use the #default_value.
+    if (!empty($element['#disable'])) {
+      $element['#value'] = $element['#default_value'];
+      $form_state->setValueForElement($element, $element['#default_value']);
+    }
+
     if ($errors = static::getErrors($element, $form_state, $complete_form)) {
       $build = [
         'title' => [
@@ -175,6 +202,20 @@ class WebformCodeMirror extends Textarea {
           if (!is_array($data) && $value) {
             throw new \Exception(t('YAML must contain an associative array of elements.'));
           }
+          return NULL;
+        }
+        catch (\Exception $exception) {
+          return [$exception->getMessage()];
+        }
+
+      case 'twig':
+        try {
+          $build = [
+            '#type' => 'inline_template',
+            '#template' => $element['#value'],
+            '#context' => [],
+          ];
+          \Drupal::service('renderer')->renderPlain($build);
           return NULL;
         }
         catch (\Exception $exception) {

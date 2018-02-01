@@ -41,7 +41,7 @@ interface WebformLibrariesManagerInterface {
    * Get excluded libraries.
    *
    * @return array
-   *   A keyey array of excluded libraries.
+   *   A keyed array of excluded libraries.
    */
   public function getExcludedLibraries();
 
@@ -51,7 +51,7 @@ interface WebformLibrariesManagerInterface {
    * @param string $name
    *   The name of the library.
    *
-   * @return boolean
+   * @return bool
    *   TRUE if library is excluded.
    */
   public function isExcluded($name);

@@ -2,14 +2,12 @@
 
 namespace Drupal\webform\Tests\Element;
 
-use Drupal\webform\Tests\WebformTestBase;
-
 /**
  * Tests for webform autocomplete element.
  *
  * @group Webform
  */
-class WebformElementAutocompleteTest extends WebformTestBase {
+class WebformElementAutocompleteTest extends WebformElementTestBase {
 
   /**
    * Webforms to load.
@@ -19,21 +17,12 @@ class WebformElementAutocompleteTest extends WebformTestBase {
   protected static $testWebforms = ['test_element_autocomplete'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Add view own submission to anonymous so the submissions can be be
-    // converted to authenticated.
-    $this->addViewWebformSubmissionOwnPermissionToAnonymous();
-  }
-
-  /**
    * Tests autocomplete element.
    */
   public function testAutocomplete() {
     global $base_path;
+
+    $this->drupalLogin($this->rootUser);
 
     /* Test #autocomplete property */
 

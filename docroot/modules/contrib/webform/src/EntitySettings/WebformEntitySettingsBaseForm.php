@@ -15,7 +15,8 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $default_settings = $this->config('webform.settings')->get('settings');
+    $default_settings = $form_state->get('default_settings') ?: $this->config('webform.settings')->get('settings');
+
     $this->appendDefaultValueToElementDescriptions($form, $default_settings);
 
     return parent::form($form, $form_state);
@@ -71,7 +72,7 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
           $element['#description'] = '';
         }
         $element['#description'] .= ($element['#description'] ? '<br /><br />' : '');
-        // @todo: Stop quotes from being encoded. (ie "Submit" => &quot;Submit&quote;)
+        // @todo: Stop quotes from being encoded. (i.e. "Submit" => &quot;Submit&quote;)
         $value = $default_settings["default_$key"];
         $element['#description'] .= $this->t('Defaults to: %value', ['%value' => $value]);
       }

@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Tests\Element;
 
-use Drupal\webform\Tests\WebformTestBase;
 use Drupal\webform\Entity\Webform;
 
 /**
@@ -10,7 +9,7 @@ use Drupal\webform\Entity\Webform;
  *
  * @group Webform
  */
-class WebformElementDateTest extends WebformTestBase {
+class WebformElementDateTest extends WebformElementTestBase {
 
   /**
    * Webforms to load.
@@ -25,6 +24,10 @@ class WebformElementDateTest extends WebformTestBase {
   public function testDateElement() {
     $webform = Webform::load('test_element_date');
 
+    /**************************************************************************/
+    // Render date elements.
+    /**************************************************************************/
+
     $this->drupalGet('webform/test_element_date');
 
     // Check '#format' values.
@@ -32,9 +35,11 @@ class WebformElementDateTest extends WebformTestBase {
 
     // Check dynamic date picker.
     $min = date('D, m/d/Y', strtotime('-1 year'));
+    $min_year = date('Y', strtotime('-1 year'));
     $max = date('D, m/d/Y', strtotime('+1 year'));
+    $max_year = date('Y', strtotime('+1 year'));
     $default_value = date('D, m/d/Y', strtotime('now'));
-    $this->assertRaw('<input min="' . $min . '" max="' . $max . '" type="text" data-drupal-date-format="D, m/d/Y" data-drupal-selector="edit-date-datepicker-min-max-dynamic" aria-describedby="edit-date-datepicker-min-max-dynamic--description" id="edit-date-datepicker-min-max-dynamic" name="date_datepicker_min_max_dynamic" value="' . $default_value . '" class="form-text" />');
+    $this->assertRaw('<input min="' . $min . '" data-min-year="' . $min_year . '" max="' . $max . '" data-max-year="' . $max_year . '" type="text" data-drupal-date-format="D, m/d/Y" data-drupal-selector="edit-date-datepicker-min-max-dynamic" aria-describedby="edit-date-datepicker-min-max-dynamic--description" id="edit-date-datepicker-min-max-dynamic" name="date_datepicker_min_max_dynamic" value="' . $default_value . '" class="form-text" />');
 
     // Check 'datelist' and 'datetime' #default_value.
     $form = $webform->getSubmissionForm();
@@ -53,9 +58,26 @@ class WebformElementDateTest extends WebformTestBase {
     // Check dynamic date.
     $this->drupalGet('webform/test_element_date');
     $min = \Drupal::service('date.formatter')->format(strtotime('-1 year'), 'html_date');
+    $min_year = date('Y', strtotime('-1 year'));
     $max = \Drupal::service('date.formatter')->format(strtotime('+1 year'), 'html_date');
+    $max_year = date('Y', strtotime('+1 year'));
     $default_value = \Drupal::service('date.formatter')->format(strtotime('now'), 'html_date');
-    $this->assertRaw('<input min="' . $min . '" max="' . $max . '" type="date" data-drupal-selector="edit-date-min-max-dynamic" aria-describedby="edit-date-min-max-dynamic--description" data-drupal-date-format="Y-m-d" id="edit-date-min-max-dynamic" name="date_min_max_dynamic" value="' . $default_value . '" class="form-date" />');
+    $this->assertRaw('<input min="' . $min . '" data-min-year="' . $min_year . '" max="' . $max . '" data-max-year="' . $max_year . '" type="date" data-drupal-selector="edit-date-min-max-dynamic" aria-describedby="edit-date-min-max-dynamic--description" data-drupal-date-format="Y-m-d" id="edit-date-min-max-dynamic" name="date_min_max_dynamic" value="' . $default_value . '" class="form-date" />');
+
+    /**************************************************************************/
+    // Format date elements.
+    /**************************************************************************/
+
+    $this->drupalPostForm('webform/test_element_date', [], t('Preview'));
+
+    // Check date formats.
+    $this->assertElementPreview('date_default', '2009-08-18');
+    $this->assertElementPreview('date_custom', '18-Aug-2009');
+    $this->assertElementPreview('date_min_max', '2009-08-18');
+    $this->assertElementPreview('date_min_max_dynamic', date('Y-m-d', strtotime('now')));
+    $this->assertElementPreview('date_datepicker', 'Tue, 08/18/2009');
+    $this->assertElementPreview('date_datepicker_custom', 'Tuesday, August 18, 2009');
+    $this->assertElementPreview('date_datepicker_min_max_dynamic', date('D, m/d/Y', strtotime('now')));
   }
 
 }

@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Url;
 use Drupal\webform\Entity\WebformOptions as WebformOptionsEntity;
+use Drupal\webform\Utility\WebformElementHelper;
 
 /**
  * Provides a webform element for managing webform element options.
@@ -28,6 +29,7 @@ class WebformElementOptions extends FormElement {
     $class = get_class($this);
     return [
       '#input' => TRUE,
+      '#yaml' => FALSE,
       '#likert' => FALSE,
       '#process' => [
         [$class, 'processWebformElementOptions'],
@@ -35,6 +37,7 @@ class WebformElementOptions extends FormElement {
       ],
       '#theme_wrappers' => ['form_element'],
       '#custom__type' => 'webform_options',
+      '#options_description' => FALSE,
     ];
   }
 
@@ -86,7 +89,7 @@ class WebformElementOptions extends FormElement {
       '#type' => 'select',
       '#description' => t('Please select <a href=":href">predefined @type</a> or enter custom @type.', $t_args),
       '#options' => [
-        self::CUSTOM_OPTION => t('Custom...'),
+        self::CUSTOM_OPTION => t('Custom @type...', $t_args),
       ] + $options,
 
       '#attributes' => [
@@ -114,6 +117,7 @@ class WebformElementOptions extends FormElement {
     else {
       $element['custom'] = [
         '#type' => 'webform_options',
+        '#yaml' => $element['#yaml'],
         '#title' => $element['#title'],
         '#title_display' => 'invisible',
         '#label' => ($element['#likert']) ? t('answer') : t('option'),
@@ -124,6 +128,7 @@ class WebformElementOptions extends FormElement {
           ],
         ],
         '#error_no_message' => TRUE,
+        '#options_description' => $element['#options_description'],
         '#default_value' => (isset($element['#default_value']) && !is_string($element['#default_value'])) ? $element['#default_value'] : [],
       ];
     }
@@ -157,15 +162,7 @@ class WebformElementOptions extends FormElement {
 
     $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
     if ($element['#required'] && empty($value) && $has_access) {
-      if (isset($element['#required_error'])) {
-        $form_state->setError($element, $element['#required_error']);
-      }
-      elseif (isset($element['#title'])) {
-        $form_state->setError($element, t('@name field is required.', ['@name' => $element['#title']]));
-      }
-      else {
-        $form_state->setError($element);
-      }
+      WebformElementHelper::setRequiredError($element, $form_state);
     }
 
     $form_state->setValueForElement($element['options'], NULL);

@@ -8,15 +8,16 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformInterface;
+use Drupal\webform\WebformMessageManagerInterface;
 use Drupal\webform\WebformSubmissionConditionsValidatorInterface;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform\WebformTokenManagerInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -56,13 +57,21 @@ class RemotePostWebformHandler extends WebformHandlerBase {
   protected $tokenManager;
 
   /**
+   * The webform message manager.
+   *
+   * @var \Drupal\webform\WebformMessageManagerInterface
+   */
+  protected $messageManager;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, WebformSubmissionConditionsValidatorInterface $conditions_validator, ModuleHandlerInterface $module_handler, ClientInterface $http_client, WebformTokenManagerInterface $token_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, WebformSubmissionConditionsValidatorInterface $conditions_validator, ModuleHandlerInterface $module_handler, ClientInterface $http_client, WebformTokenManagerInterface $token_manager, WebformMessageManagerInterface $message_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger_factory, $config_factory, $entity_type_manager, $conditions_validator);
     $this->moduleHandler = $module_handler;
     $this->httpClient = $http_client;
     $this->tokenManager = $token_manager;
+    $this->messageManager = $message_manager;
   }
 
   /**
@@ -79,7 +88,8 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       $container->get('webform_submission.conditions_validator'),
       $container->get('module_handler'),
       $container->get('http_client'),
-      $container->get('webform.token_manager')
+      $container->get('webform.token_manager'),
+      $container->get('webform.message_manager')
     );
   }
 
@@ -110,6 +120,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     $field_names = array_keys(\Drupal::service('entity_field.manager')->getBaseFieldDefinitions('webform_submission'));
     $excluded_data = array_combine($field_names, $field_names);
     return [
+      'method' => 'POST',
       'type' => 'x-www-form-urlencoded',
       'excluded_data' => $excluded_data,
       'custom_data' => '',
@@ -135,7 +146,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $webform = $this->getWebform();
 
-    // States
+    // States.
     $states = [
       WebformSubmissionInterface::STATE_COMPLETED => [
         'state' => $this->t('completed'),
@@ -174,7 +185,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       $t_args = [
         '@state' => $state_item['state'],
         '@title' => $state_item['label'],
-        '@url' => 'http://www.mycrm.com/form_' . $state . '_handler.php'
+        '@url' => 'http://www.mycrm.com/form_' . $state . '_handler.php',
       ];
       $form[$state] = [
         '#type' => 'details',
@@ -186,7 +197,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       $form[$state][$state_url] = [
         '#type' => 'url',
         '#title' => $this->t('@title URL', $t_args),
-        '#description' => $this->t('The full URL to POST to when an existing webform submission is @state. E.g. @url', $t_args),
+        '#description' => $this->t('The full URL to POST to when an existing webform submission is @state. (e.g. @url)', $t_args),
         '#required' => ($state === WebformSubmissionInterface::STATE_COMPLETED),
         '#parents' => ['settings', $state_url],
         '#default_value' => $this->configuration[$state_url],
@@ -203,7 +214,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       if ($state === WebformSubmissionInterface::STATE_COMPLETED) {
         $form[$state]['token'] = [
           '#type' => 'webform_message',
-          '#message_message' => $this->t('Response data can be passed to submission data using [webform:handler:{machine_name}:{state}:{key}] tokens. (ie [webform:handler:remote_post:completed:confirmation_number])'),
+          '#message_message' => $this->t('Response data can be passed to the submission data using [webform:handler:{machine_name}:{state}:{key}] tokens. (i.e. [webform:handler:remote_post:completed:confirmation_number])'),
           '#message_type' => 'info',
         ];
       }
@@ -214,6 +225,18 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       '#type' => 'fieldset',
       '#title' => $this->t('Additional settings'),
     ];
+    $form['additional']['method'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Method'),
+      '#description' => $this->t('The <b>POST</b> request method requests that a web server accept the data enclosed in the body of the request message. It is often used when uploading a file or when submitting a completed webform. In contrast, the HTTP <b>GET</b> request method retrieves information from the server.'),
+      '#required' => TRUE,
+      '#options' => [
+        'POST' => 'POST',
+        'GET' => 'GET',
+      ],
+      '#parents' => ['settings', 'method'],
+      '#default_value' => $this->configuration['method'],
+    ];
     $form['additional']['type'] = [
       '#type' => 'select',
       '#title' => $this->t('Post type'),
@@ -222,8 +245,11 @@ class RemotePostWebformHandler extends WebformHandlerBase {
         'x-www-form-urlencoded' => $this->t('x-www-form-urlencoded'),
         'json' => $this->t('JSON'),
       ],
-      '#required' => TRUE,
       '#parents' => ['settings', 'type'],
+      '#states' => [
+        'visible' => [':input[name="settings[method]"]' => ['value' => 'POST']],
+        'required' => [':input[name="settings[method]"]' => ['value' => 'POST']],
+      ],
       '#default_value' => $this->configuration['type'],
     ];
     $form['additional']['custom_data'] = [
@@ -282,12 +308,13 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
-    $values = $form_state->getValues();
-    foreach ($this->configuration as $name => $value) {
-      if (isset($values[$name])) {
-        $this->configuration[$name] = $values[$name];
-      }
+    $this->applyFormStateToConfiguration($form_state);
+    if ($this->configuration['method'] === 'GET') {
+      $this->configuration['type'] = '';
     }
+
+    // Cast debug.
+    $this->configuration['debug'] = (bool) $this->configuration['debug'];
   }
 
   /**
@@ -320,39 +347,46 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       return;
     }
 
+    $this->messageManager->setWebformSubmission($webform_submission);
+
     $request_url = $this->configuration[$state . '_url'];
-    $request_type = $this->configuration['type'];
+    $request_method = (!empty($this->configuration['method'])) ? $this->configuration['method'] : 'POST';
+    $request_type = ($request_method == 'POST') ? $this->configuration['type'] : NULL;
     $request_options = (!empty($this->configuration['custom_options'])) ? Yaml::decode($this->configuration['custom_options']) : [];
-    $request_options[($request_type == 'json' ? 'json' :'form_params')] = $this->getRequestData($state, $webform_submission);
 
     try {
-      $response = $this->httpClient->post($request_url, $request_options);
+      if ($request_method === 'GET') {
+        // Append data as query string to the request URL.
+        $query = $this->getRequestData($state, $webform_submission);
+        $request_url = Url::fromUri($request_url, ['query' => $query])->toString();
+        $response = $this->httpClient->get($request_url, $request_options);
+      }
+      else {
+        $request_options[($request_type == 'json' ? 'json' : 'form_params')] = $this->getRequestData($state, $webform_submission);
+        $response = $this->httpClient->post($request_url, $request_options);
+      }
     }
     catch (RequestException $request_exception) {
-      $message = $request_exception->getMessage();
       $response = $request_exception->getResponse();
 
       // Encode HTML entities to prevent broken markup from breaking the page.
+      $message = $request_exception->getMessage();
       $message = nl2br(htmlentities($message));
 
-      // If debugging is enabled, display the error message on screen.
-      $this->debug($message, $state, $request_url, $request_type, $request_options, $response, 'error');
+      $this->handleError($state, $message, $request_url, $request_method, $request_type, $request_options, $response);
+      return;
+    }
 
-      // Log error message.
-      $context = [
-        '@form' => $this->getWebform()->label(),
-        '@state' => $state,
-        '@type' => $request_type,
-        '@url' => $request_url,
-        '@message' => $message,
-        'link' => $this->getWebform()->toLink($this->t('Edit'), 'handlers')->toString(),
-      ];
-      $this->getLogger()->error('@form webform remote @type post (@state) to @url failed. @message', $context);
+    // Display submission exception if response code is not 2xx.
+    $status_code = $response->getStatusCode();
+    if ($status_code < 200 || $status_code >= 300) {
+      $message = $this->t('Remote post request return @status_code status code.', ['@status_code' => $status_code]);
+      $this->handleError($state, $message, $request_url, $request_method, $request_type, $request_options, $response);
       return;
     }
 
     // If debugging is enabled, display the request and response.
-    $this->debug(t('Remote post successful!'), $state, $request_url, $request_type, $request_options, $response, 'warning');
+    $this->debug(t('Remote post successful!'), $state, $request_url, $request_method, $request_type, $request_options, $response, 'warning');
 
     // Replace [webform:handler] tokens in submission data.
     // Data structured for [webform:handler:remote_post:completed:key] tokens.
@@ -363,10 +397,10 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       $token_data = ['webform_handler' => [$this->getHandlerId() => [$state => $response_data]]];
       $submission_data = $this->tokenManager->replace($submission_data, $webform_submission, $token_data);
       $webform_submission->setData($submission_data);
-      // Save changes to the submission data without invoking any hooks
+      // Resave changes to the submission data without invoking any hooks
       // or handlers.
       if ($this->isResultsEnabled()) {
-        $this->submissionStorage->saveData($webform_submission);
+        $webform_submission->resave();
       }
     }
   }
@@ -413,23 +447,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
   }
 
   /**
-   * Authentication remote post options and authentication tokens
-   *
-   * @param array $options
-   *   Request options including the form_params or json and the request header.
-   *
-   * @return array
-   *   The request options with authentication tokens add to the
-   *   parameters or header.
-   *
-   */
-  protected function authenticate(array $options) {
-    // Here you can set a custom authentication token to the remote post options.
-    return $options;
-  }
-
-  /**
-   * Get response data
+   * Get response data.
    *
    * @param \Psr\Http\Message\ResponseInterface $response
    *   The response returned by the remote server.
@@ -441,134 +459,6 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     $body = (string) $response->getBody();
     $data = json_decode($body, TRUE);
     return (json_last_error() === JSON_ERROR_NONE) ? $data : $body;
-  }
-
-  /**
-   * Display debugging information.
-   *
-   * @param string $message
-   *   Message to be displayed.
-   * @param string $state
-   *   The state of the webform submission.
-   *   Either STATE_NEW, STATE_DRAFT, STATE_COMPLETED, STATE_UPDATED, or
-   *   STATE_CONVERTED depending on the last save operation performed.
-   * @param string $request_url
-   *   The remote URL the request is being posted to.
-   * @param string $request_type
-   *   The type of remote post.
-   * @param string $request_options
-   *   The requests options including the submission data..
-   * @param \Psr\Http\Message\ResponseInterface|null $response
-   *   The response returned by the remote server.
-   * @param string $type
-   *   The type of message to be displayed to the end use.
-   */
-  protected function debug($message, $state, $request_url, $request_type, $request_options, ResponseInterface $response = NULL, $type = 'warning') {
-    if (empty($this->configuration['debug'])) {
-      return;
-    }
-
-    $build = [
-      '#type' => 'details',
-      '#title' => $this->t('Debug: Remote post: @title [@state]', ['@title' => $this->label(), '@state' => $state]),
-    ];
-
-    // State.
-    $build['state'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Submission state/operation:'),
-      '#markup' => $state,
-      '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
-    ];
-
-    // Request.
-    $build['request'] = ['#markup' => '<hr />'];
-    $build['request_url'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Request URL'),
-      '#markup' => $request_url,
-      '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
-    ];
-    $build['request_type'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Request type:'),
-      '#markup' => $request_type,
-      '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
-    ];
-    $build['request_options'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Request options:'),
-      '#wrapper_attributes' => ['style' => 'margin: 0'],
-      'data' => [
-        '#markup' => htmlspecialchars(Yaml::encode($request_options)),
-        '#prefix' => '<pre>',
-        '#suffix' => '</pre>',
-      ],
-    ];
-
-    // Response.
-    $build['response'] = ['#markup' => '<hr />'];
-    if ($response) {
-      $build['response_code'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Response status code:'),
-        '#markup' => $response->getStatusCode(),
-        '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
-      ];
-      $build['response_header'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Response header:'),
-        '#wrapper_attributes' => ['style' => 'margin: 0'],
-        'data' => [
-          '#markup' => htmlspecialchars(Yaml::encode($response->getHeaders())),
-          '#prefix' => '<pre>',
-          '#suffix' => '</pre>',
-        ],
-      ];
-      $build['response_body'] = [
-        '#type' => 'item',
-        '#wrapper_attributes' => ['style' => 'margin: 0'],
-        '#title' => $this->t('Response body:'),
-        'data' => [
-          '#markup' => htmlspecialchars($response->getBody()),
-          '#prefix' => '<pre>',
-          '#suffix' => '</pre>',
-        ],
-      ];
-      $response_data = $this->getResponseData($response);
-      if ($tokens = $this->getResponseTokens($response_data, ['webform', 'handler', $this->getHandlerId(), $state])) {
-        asort($tokens);
-        $build['response_tokens'] = [
-          '#type' => 'item',
-          '#wrapper_attributes' => ['style' => 'margin: 0'],
-          '#title' => $this->t('Response tokens:'),
-          'description' => ['#markup' => $this->t('Below tokens can ONLY be used to insert response data into value and hidden elements.')],
-          'data' => [
-            '#markup' => implode(PHP_EOL, $tokens),
-            '#prefix' => '<pre>',
-            '#suffix' => '</pre>',
-          ],
-        ];
-      }
-    }
-    else {
-      $build['response_code'] = [
-        '#markup' => t('No response. Please see the recent log messages.'),
-        '#prefix' => '<p>',
-        '#suffix' => '</p>',
-      ];
-    }
-
-    // Message.
-    $build['message'] = ['#markup' => '<hr />'];
-    $build['message_message'] = [
-      '#type' => 'item',
-      '#wrapper_attributes' => ['style' => 'margin: 0'],
-      '#title' => $this->t('Message:'),
-      '#markup' => $message,
-    ];
-
-    drupal_set_message(\Drupal::service('renderer')->renderPlain($build), $type);
   }
 
   /**
@@ -623,6 +513,203 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    */
   protected function isConvertEnabled() {
     return $this->isDraftEnabled() && ($this->getWebform()->getSetting('form_convert_anonymous') === TRUE);
+  }
+
+  /****************************************************************************/
+  // Debug and exception handlers.
+  /****************************************************************************/
+
+  /**
+   * Display debugging information.
+   *
+   * @param string $message
+   *   Message to be displayed.
+   * @param string $state
+   *   The state of the webform submission.
+   *   Either STATE_NEW, STATE_DRAFT, STATE_COMPLETED, STATE_UPDATED, or
+   *   STATE_CONVERTED depending on the last save operation performed.
+   * @param string $request_url
+   *   The remote URL the request is being posted to.
+   * @param string $request_method
+   *   The method of remote post.
+   * @param string $request_type
+   *   The type of remote post.
+   * @param string $request_options
+   *   The requests options including the submission data..
+   * @param \Psr\Http\Message\ResponseInterface|null $response
+   *   The response returned by the remote server.
+   * @param string $type
+   *   The type of message to be displayed to the end use.
+   */
+  protected function debug($message, $state, $request_url, $request_method, $request_type, $request_options, ResponseInterface $response = NULL, $type = 'warning') {
+    if (empty($this->configuration['debug'])) {
+      return;
+    }
+
+    $build = [
+      '#type' => 'details',
+      '#title' => $this->t('Debug: Remote post: @title [@state]', ['@title' => $this->label(), '@state' => $state]),
+    ];
+
+    // State.
+    $build['state'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Submission state/operation:'),
+      '#markup' => $state,
+      '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
+    ];
+
+    // Request.
+    $build['request'] = ['#markup' => '<hr />'];
+    $build['request_url'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Request URL'),
+      '#markup' => $request_url,
+      '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
+    ];
+    $build['request_method'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Request method'),
+      '#markup' => $request_method,
+      '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
+    ];
+    $build['request_type'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Request type'),
+      '#markup' => $request_type,
+      '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
+    ];
+    $build['request_options'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Request options'),
+      '#wrapper_attributes' => ['style' => 'margin: 0'],
+      'data' => [
+        '#markup' => htmlspecialchars(Yaml::encode($request_options)),
+        '#prefix' => '<pre>',
+        '#suffix' => '</pre>',
+      ],
+    ];
+
+    // Response.
+    $build['response'] = ['#markup' => '<hr />'];
+    if ($response) {
+      $build['response_code'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Response status code:'),
+        '#markup' => $response->getStatusCode(),
+        '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
+      ];
+      $build['response_header'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Response header:'),
+        '#wrapper_attributes' => ['style' => 'margin: 0'],
+        'data' => [
+          '#markup' => htmlspecialchars(Yaml::encode($response->getHeaders())),
+          '#prefix' => '<pre>',
+          '#suffix' => '</pre>',
+        ],
+      ];
+      $build['response_body'] = [
+        '#type' => 'item',
+        '#wrapper_attributes' => ['style' => 'margin: 0'],
+        '#title' => $this->t('Response body:'),
+        'data' => [
+          '#markup' => htmlspecialchars($response->getBody()),
+          '#prefix' => '<pre>',
+          '#suffix' => '</pre>',
+        ],
+      ];
+      $response_data = $this->getResponseData($response);
+      if ($response_data) {
+        $build['response_data'] = [
+          '#type' => 'item',
+          '#wrapper_attributes' => ['style' => 'margin: 0'],
+          '#title' => $this->t('Response data:'),
+          'data' => [
+            '#markup' => Yaml::encode($response_data),
+            '#prefix' => '<pre>',
+            '#suffix' => '</pre>',
+          ],
+        ];
+
+      }
+      if ($tokens = $this->getResponseTokens($response_data, ['webform', 'handler', $this->getHandlerId(), $state])) {
+        asort($tokens);
+        $build['response_tokens'] = [
+          '#type' => 'item',
+          '#wrapper_attributes' => ['style' => 'margin: 0'],
+          '#title' => $this->t('Response tokens:'),
+          'description' => ['#markup' => $this->t('Below tokens can ONLY be used to insert response data into value and hidden elements.')],
+          'data' => [
+            '#markup' => implode(PHP_EOL, $tokens),
+            '#prefix' => '<pre>',
+            '#suffix' => '</pre>',
+          ],
+        ];
+      }
+    }
+    else {
+      $build['response_code'] = [
+        '#markup' => t('No response. Please see the recent log messages.'),
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+      ];
+    }
+
+    // Message.
+    $build['message'] = ['#markup' => '<hr />'];
+    $build['message_message'] = [
+      '#type' => 'item',
+      '#wrapper_attributes' => ['style' => 'margin: 0'],
+      '#title' => $this->t('Message:'),
+      '#markup' => $message,
+    ];
+
+    drupal_set_message(\Drupal::service('renderer')->renderPlain($build), $type);
+  }
+
+  /**
+   * Handle error by logging and display debugging and/or exception message.
+   *
+   * @param string $message
+   *   Message to be displayed.
+   * @param string $state
+   *   The state of the webform submission.
+   *   Either STATE_NEW, STATE_DRAFT, STATE_COMPLETED, STATE_UPDATED, or
+   *   STATE_CONVERTED depending on the last save operation performed.
+   * @param string $request_url
+   *   The remote URL the request is being posted to.
+   * @param string $request_method
+   *   The method of remote post.
+   * @param string $request_type
+   *   The type of remote post.
+   * @param string $request_options
+   *   The requests options including the submission data..
+   * @param \Psr\Http\Message\ResponseInterface|null $response
+   *   The response returned by the remote server.
+   * @param string $type
+   *   The type of message to be displayed to the end use.
+   */
+  protected function handleError($state, $message, $request_url, $request_method, $request_type, $request_options, $response) {
+    // If debugging is enabled, display the error message on screen.
+    $this->debug($message, $state, $request_url, $request_method, $request_type, $request_options, $response, 'error');
+
+    // Log error message.
+    $context = [
+      '@form' => $this->getWebform()->label(),
+      '@state' => $state,
+      '@type' => $request_type,
+      '@url' => $request_url,
+      '@message' => $message,
+      'link' => $this->getWebform()
+        ->toLink($this->t('Edit'), 'handlers')
+        ->toString(),
+    ];
+    $this->getLogger()
+      ->error('@form webform remote @type post (@state) to @url failed. @message', $context);
+
+    // Display submission exception message.
+    $this->messageManager->display(WebformMessageManagerInterface::SUBMISSION_EXCEPTION, 'error');
   }
 
 }

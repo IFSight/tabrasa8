@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
+use Drupal\webform\WebformInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -43,7 +44,7 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $type = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, WebformInterface $webform = NULL, $key = NULL, $parent_key = NULL, $type = NULL) {
     // Create a temp webform.
     $this->webform = Webform::create(['id' => '_webform_ui_temp_form']);
 
@@ -57,11 +58,11 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
       $this->element = $element;
     }
     else {
-      $element = ['#type' => $type] + $this->getWebformElement()->preview();
+      $element = ['#type' => $type] + $this->getWebformElementPlugin()->preview();
       $this->element = $element;
     }
 
-    $webform_element = $this->getWebformElement();
+    $webform_element = $this->getWebformElementPlugin();
     $form['#title'] = $this->t('Test %type element', ['%type' => $type]);
 
     if ($element) {
@@ -127,7 +128,7 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
       '#value' => '',
     ];
 
-    $form['properties'] = $webform_element->buildConfigurationForm([], $form_state);
+    $form['properties'] = $webform_element->buildConfigurationForm(['#tabs' => FALSE], $form_state);
     $form['properties']['#tree'] = TRUE;
     $form['properties']['custom']['#open'] = TRUE;
 
@@ -175,14 +176,14 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
     // Rebuild is throwing the below error.
     // LogicException: Settings can not be serialized.
     // $form_state->setRebuild();
-    // @todo Determine what object is being serialized with webform.
-
+    // @todo Determine what object is being serialized with webform
+    //
     // The webform element configuration is stored in the 'properties' key in
     // the webform, pass that through for submission.
     $element_form_state = clone $form_state;
     $element_form_state->setValues($form_state->getValue('properties'));
 
-    $properties = $this->getWebformElement()->getConfigurationFormProperties($form, $element_form_state);
+    $properties = $this->getWebformElementPlugin()->getConfigurationFormProperties($form, $element_form_state);
 
     // Set #default_value using 'test' element value.
     if ($element_value = $form_state->getValue('element')) {
@@ -233,12 +234,12 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getWebformElement() {
+  public function getWebformElementPlugin() {
     if (empty($this->element)) {
       return $this->elementManager->getElementInstance(['#type' => $this->type]);
     }
     else {
-      return parent::getWebformElement();
+      return parent::getWebformElementPlugin();
     }
   }
 

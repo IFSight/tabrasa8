@@ -5,13 +5,13 @@ namespace Drupal\webform\Plugin\Block;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\webform\Element\WebformHtmlEditor;
 use Drupal\webform\Entity\Webform;
+use Drupal\webform\Utility\WebformDateHelper;
 use Drupal\webform\WebformRequestInterface;
 use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -118,17 +118,17 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
    */
   public function blockForm($form, FormStateInterface $form_state) {
     $form['type'] = [
-      '#title' => $this->t('Display limit and total submissions for'),
+      '#title' => $this->t('Display limit and total submissions for the'),
       '#type' => 'select',
       '#options' => [
-        'webform' => $this->t('Webform'),
+        'webform' => $this->t('Current webform'),
         'user' => $this->t('Current user'),
       ],
       '#ajax' => self::getTokenAjaxSettings(),
       '#default_value' => $this->configuration['type'],
     ];
     $form['source_entity'] = [
-      '#title' => $this->t('Restrict limit and total submissions to current or specified source entity.'),
+      '#title' => $this->t('Restrict limit and total submissions to current or specified source entity'),
       '#type' => 'checkbox',
       '#return_value' => TRUE,
       '#ajax' => self::getTokenAjaxSettings(),
@@ -187,7 +187,7 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
     $form['advanced']['entity_type'] = [
       '#type' => 'select',
       '#title' => 'Source entity type',
-      '#empty_option' => '',
+      '#empty_option' => $this->t('- None -'),
       '#options' => $entity_type_options,
       '#default_value' => $this->configuration['entity_type'],
       '#states' => [
@@ -224,7 +224,7 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
         $form_state->setError($form['advanced']['entity_id'], $this->t('An %label id is required.', $t_args));
       }
       elseif (!$this->entityTypeManager->getStorage($values['entity_type'])->load($values['entity_id'])) {
-        $form_state->setError($form['advanced']['entity_id'], $this->t('A valid %label is required.', $t_args ));
+        $form_state->setError($form['advanced']['entity_id'], $this->t('A valid %label is required.', $t_args));
       }
     }
   }
@@ -255,7 +255,7 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
       $limit = $this->getLimit();
       $build['progress_bar'] = [
         '#theme' => 'progress_bar',
-        '#percent' => round(($total/$limit) * 100),
+        '#percent' => round(($total / $limit) * 100),
       ];
       if ($message = $this->configuration['progress_bar_message']) {
         $build['progress_bar']['#message']['#markup'] = $this->replaceTokens($message);
@@ -321,6 +321,11 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
       $text = str_replace('[limit]', $this->getLimit(), $text);
     }
 
+    // Replace [interval] token.
+    if (strpos($text, '[interval]') !== FALSE) {
+      $text = str_replace('[interval]', $this->getIntervalText(), $text);
+    }
+
     // Replace webform tokens.
     return $this->tokenManager->replace($text, $this->getWebform());
   }
@@ -338,6 +343,28 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
   }
 
   /**
+   * Get submission limit interval.
+   *
+   * @return int|bool
+   *   The submission limit interval or FALSE if not submission limit is defined.
+   */
+  protected function getInterval() {
+    $name = ($this->configuration['source_entity']) ? 'entity_' : '';
+    $name .= ($this->configuration['type'] == 'user') ? 'limit_user_interval' : 'limit_total_interval';
+    return $this->getWebform()->getSetting($name);
+  }
+
+  /**
+   * Get submission limit interval text.
+   *
+   * @return string
+   *   The submission limit interval or FALSE if not submission limit is defined.
+   */
+  protected function getIntervalText() {
+    return WebformDateHelper::getIntervalText($this->getInterval());
+  }
+
+  /**
    * Get total number of submissions for selected limit type.
    *
    * @return int
@@ -347,7 +374,8 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
     return $this->entityTypeManager->getStorage('webform_submission')->getTotal(
       $this->getWebform(),
       $this->getSourceEntity(),
-      $this->getCurrentUser()
+      $this->getCurrentUser(),
+      ['interval' => $this->getInterval()]
     );
   }
 
@@ -372,7 +400,7 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
   /**
    * Get the source entity.
    *
-   * @return EntityInterface|bool|null
+   * @return \Drupal\Core\Entity\EntityInterface|bool|null
    *   The source entity, NULL the if source entity is not applicable,
    *   or FALSE if the source entity is not available.
    */
@@ -433,7 +461,7 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
    *
    * @param string $type
    *   The submission type which can be 'webform' or 'user'.
-   * @param $source_entity
+   * @param string $source_entity
    *   Flag indicating if source entity should be included in available tokens.
    *
    * @return array
@@ -445,14 +473,14 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
     $token_info = webform_token_info();
     $tokens = $token_info['tokens']['webform_submission'];
 
-    $token_types = ['limit', 'total'];
+    $token_types = ['limit', 'interval', 'total'];
     $token_items = [];
     foreach ($token_types as $token_type) {
       $token_name = self::getTokenName($token_type, $type, $source_entity);
       $args = [
         '@type' => $token_type,
-        '@name'=> $tokens[$token_name]['name'],
-        '@description'=> $tokens[$token_name]['description'],
+        '@name' => $tokens[$token_name]['name'],
+        '@description' => $tokens[$token_name]['description'],
       ];
       $token_items[$token_type] = [
         '#markup' => new FormattableMarkup('[@type] =&gt; @name<br/><em>@description</em>', $args),
@@ -472,14 +500,14 @@ class WebformSubmissionLimitBlock extends BlockBase implements ContainerFactoryP
    * Get token name.
    *
    * @param string $prefix
-   *   Token prefix which can be 'total' or 'limit',
+   *   Token prefix which can be 'total' or 'limit'.
    * @param string $type
    *   The submission type which can be 'webform' or 'user'.
-   * @param $source_entity
+   * @param bool $source_entity
    *   Flag indicating if source entity should be included in available tokens.
    *
    * @return string
-   *   A token name
+   *   A token name.
    */
   protected static function getTokenName($prefix = 'limit', $type, $source_entity = FALSE) {
     $parts = [$prefix, $type];

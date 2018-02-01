@@ -76,6 +76,9 @@ class WebformAccessCheckTest extends UnitTestCase {
       ->method('access')
       ->with('submission_update_any')
       ->will($this->returnValue(TRUE));
+    $email_webform->expects($this->any())
+      ->method('hasMessageHandler')
+      ->will($this->returnValue(TRUE));
 
     $webform_submission = $this->getMock('Drupal\webform\WebformSubmissionInterface');
     $webform_submission->expects($this->any())
@@ -98,9 +101,9 @@ class WebformAccessCheckTest extends UnitTestCase {
     $this->assertEquals(AccessResult::neutral(), WebformAccountAccess::checkOverviewAccess($account));
     $this->assertEquals(AccessResult::allowed(), WebformAccountAccess::checkOverviewAccess($submission_manager_account));
 
-    // Check email access.
-    $this->assertEquals(AccessResult::forbidden(), WebformSubmissionAccess::checkEmailAccess($webform_submission, $account));
-    $this->assertEquals(AccessResult::allowed(), WebformSubmissionAccess::checkEmailAccess($email_webform_submission, $submission_manager_account));
+    // Check resend (email) message access.
+    $this->assertEquals(AccessResult::forbidden(), WebformSubmissionAccess::checkResendAccess($webform_submission, $account));
+    $this->assertEquals(AccessResult::allowed(), WebformSubmissionAccess::checkResendAccess($email_webform_submission, $submission_manager_account));
 
     // @todo Fix below access check which is looping through the node's fields.
     // Check entity results access.

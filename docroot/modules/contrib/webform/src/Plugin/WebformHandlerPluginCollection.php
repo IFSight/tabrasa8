@@ -3,18 +3,12 @@
 namespace Drupal\webform\Plugin;
 
 use Drupal\Core\Plugin\DefaultLazyPluginCollection;
+use Drupal\webform\Plugin\WebformHandler\BrokenWebformHandler;
 
 /**
  * A collection of webform handlers.
  */
 class WebformHandlerPluginCollection extends DefaultLazyPluginCollection {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function &get($instance_id) {
-    return parent::get($instance_id);
-  }
 
   /**
    * {@inheritdoc}
@@ -27,6 +21,22 @@ class WebformHandlerPluginCollection extends DefaultLazyPluginCollection {
     }
 
     return ($a_weight < $b_weight) ? -1 : 1;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function initializePlugin($instance_id) {
+    parent::initializePlugin($instance_id);
+
+    // If the initialized handler is broken preserve the original
+    // handler's plugin ID.
+    // @see \Drupal\webform\Plugin\WebformHandler\BrokenWebformHandler::setPluginId
+    $plugin = $this->get($instance_id);
+    if ($plugin instanceof BrokenWebformHandler) {
+      $original_id = $this->configurations[$instance_id]['id'];
+      $plugin->setPluginId($original_id);
+    }
   }
 
 }

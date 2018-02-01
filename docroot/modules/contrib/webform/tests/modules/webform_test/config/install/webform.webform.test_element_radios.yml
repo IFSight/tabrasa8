@@ -28,11 +28,19 @@ elements: |
     '#open': true
     radios_required_conditional_trigger:
       '#type': checkbox
-      '#title': 'Required the below radio button'
+      '#title': 'Require the below radio button'
       '#default_value': true
     radios_required_conditions:
       '#type': radios
       '#title': radios_required
+      '#options': yes_no
+      '#states':
+        required:
+          ':input[name="radios_required_conditional_trigger"]':
+            checked: true
+    radios_other_required_conditions:
+      '#type': webform_radios_other
+      '#title': radios_other_required
       '#options': yes_no
       '#states':
         required:
@@ -54,10 +62,47 @@ elements: |
         required:
           ':input[name="buttons_required_conditional_trigger"]':
             checked: true
+  radios_descriptions_example:
+    '#type': details
+    '#title': 'Radios descriptions'
+    '#open': true
+    radios_description:
+      '#type': radios
+      '#title': radios_description
+      '#options_description_display': description
+      '#options':
+        one: 'One -- This is a description'
+        two: 'Two -- This is a description'
+        three: 'Three -- This is a description'
+    radios_help:
+      '#type': radios
+      '#title': radios_help
+      '#options_description_display': help
+      '#options':
+        one: 'One -- This is a description'
+        two: 'Two -- This is a description'
+        three: 'Three -- This is a description'
+  radios_inline_title_example:
+    '#type': details
+    '#title': 'Radios inline title'
+    '#open': true
+    radios_inline_title:
+      '#type': radios
+      '#title': radios_inline_title
+      '#title_display': inline
+      '#options': yes_no
+      '#options_display': side_by_side
+    radios_other_inline_title:
+      '#type': webform_radios_other
+      '#title': radios_other_inline_title
+      '#title_display': inline
+      '#options': yes_no
+      '#options_display': side_by_side
 css: ''
 javascript: ''
 settings:
   ajax: false
+  ajax_scroll_top: form
   page: true
   page_submit_path: ''
   page_confirm_path: ''
@@ -76,20 +121,32 @@ settings:
   form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
+  form_required: false
   form_unsaved: false
   form_disable_back: false
+  form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
+  form_login: false
+  form_login_message: ''
   submission_label: ''
   submission_log: false
   submission_user_columns: {  }
+  submission_login: false
+  submission_login_message: ''
+  submission_exception_message: ''
+  submission_locked_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_start_label: ''
-  wizard_complete: true
-  wizard_complete_label: ''
-  preview: 0
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_track: ''
+  preview: 1
   preview_label: ''
   preview_title: ''
   preview_message: ''
@@ -110,14 +167,18 @@ settings:
   confirmation_back_label: ''
   confirmation_back_attributes: {  }
   limit_total: null
+  limit_total_interval: null
   limit_total_message: ''
   limit_user: null
+  limit_user_interval: null
   limit_user_message: ''
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
   purge: none
   purge_days: null
-  entity_limit_total: null
-  entity_limit_user: null
-  results_disabled: true
+  results_disabled: false
   results_disabled_ignore: false
   token_update: false
 access:

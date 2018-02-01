@@ -38,7 +38,7 @@ class WebformUiElementTypeChangeForm extends WebformUiElementTypeFormBase {
     $definitions = $this->getDefinitions();
 
     $form = parent::buildForm($form, $form_state, $webform);
-    
+
     $form['elements'] = [
       '#type' => 'table',
       '#header' => $this->getHeader(),
@@ -51,7 +51,7 @@ class WebformUiElementTypeChangeForm extends WebformUiElementTypeFormBase {
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
-      '#attributes' => WebformDialogHelper::getModalDialogAttributes(800, ['button']),
+      '#attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button']),
       '#url' => Url::fromRoute('entity.webform_ui.element.edit_form', ['webform' => $webform->id(), 'key' => $key]),
     ];
 

@@ -6,8 +6,8 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\user\Entity\User;
 use Drupal\webform\Plugin\WebformElementBase;
-use Drupal\webform\WebformSubmissionConditionsValidator;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -29,22 +29,22 @@ class TextFormat extends WebformElementBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    $default_properties = parent::getDefaultProperties() + [
+    $properties = parent::getDefaultProperties() + [
       // Text format settings.
       'allowed_formats' => [],
       'hide_help' => FALSE,
     ];
     unset(
-      $default_properties['disabled'],
-      $default_properties['attributes'],
-      $default_properties['wrapper_attributes'],
-      $default_properties['title_display'],
-      $default_properties['description_display'],
-      $default_properties['field_prefix'],
-      $default_properties['field_suffix'],
-      $default_properties['help']
+      $properties['disabled'],
+      $properties['attributes'],
+      $properties['wrapper_attributes'],
+      $properties['title_display'],
+      $properties['description_display'],
+      $properties['field_prefix'],
+      $properties['field_suffix'],
+      $properties['help']
     );
-    return $default_properties;
+    return $properties;
   }
 
   /**
@@ -122,16 +122,19 @@ class TextFormat extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function formatHtmlItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  protected function formatHtmlItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
     $value = $this->getValue($element, $webform_submission, $options);
 
-    $value = (isset($value['value'])) ? $value['value'] : $value;
     $format = (isset($value['format'])) ? $value['format'] : $this->getItemFormat($element);
+    $value = (isset($value['value'])) ? $value['value'] : $value;
     switch ($format) {
       case 'raw':
         return $value;
 
       case 'value':
+        $default_format = filter_default_format(User::load($webform_submission->getOwnerId()));
+        return check_markup($value, $default_format);
+
       default:
         return check_markup($value, $format);
     }
@@ -140,10 +143,11 @@ class TextFormat extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function formatTextItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  protected function formatTextItem(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
     $value = $this->getValue($element, $webform_submission, $options);
 
     $format = (isset($value['format'])) ? $value['format'] : $this->getItemFormat($element);
+    $value = (isset($value['value'])) ? $value['value'] : $value;
     switch ($format) {
       case 'raw':
         return $value;
@@ -162,13 +166,6 @@ class TextFormat extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getItemDefaultFormat() {
-    return (function_exists('filter_default_format')) ? filter_default_format() : parent::getItemDefaultFormat();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getItemFormats() {
     $formats = parent::getItemFormats();
     $filters = (class_exists('\Drupal\filter\Entity\FilterFormat')) ? FilterFormat::loadMultiple() : [];
@@ -176,6 +173,14 @@ class TextFormat extends WebformElementBase {
       $formats[$filter->id()] = $filter->label();
     }
     return $formats;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildExportRecord(array $element, WebformSubmissionInterface $webform_submission, array $export_options) {
+    $element['#format_items'] = $export_options['multiple_delimiter'];
+    return [$this->formatHtml($element, $webform_submission, $export_options)];
   }
 
   /**
@@ -246,4 +251,5 @@ class TextFormat extends WebformElementBase {
     $elements = $this->getCompositeElements();
     return (isset($elements[$key])) ? TRUE : FALSE;
   }
+
 }

@@ -48,5 +48,5 @@ class WebformAccountAccess {
   public static function checkSubmissionAccess(AccountInterface $account) {
     return AccessResult::allowedIf($account->hasPermission('administer webform') || $account->hasPermission('administer webform submission') || $account->hasPermission('view any webform submission'));
   }
-}
 
+}

@@ -28,21 +28,14 @@ class WebformHandlerRemotePostTest extends WebformTestBase {
   protected static $testWebforms = ['test_handler_remote_post'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Add view own submission to anonymous so the submissions can be be
-    // converted to authenticated.
-    $this->addViewWebformSubmissionOwnPermissionToAnonymous();
-  }
-
-  /**
    * Test remote post handler.
    */
   public function testRemotePostHandler() {
     $this->drupalLogin($this->rootUser);
+
+    /**************************************************************************/
+    // POST.
+    /**************************************************************************/
 
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_remote_post');
@@ -60,7 +53,7 @@ class WebformHandlerRemotePostTest extends WebformTestBase {
 
     // Check confirmation number is set via the
     // [webform:handler:remote_post:completed:confirmation_number] token.
-    $this->assertRaw('Your confirmation number is ' . $webform_submission->getData('confirmation_number') . '.');
+    $this->assertRaw('Your confirmation number is ' . $webform_submission->getElementData('confirmation_number') . '.');
 
     // Check custom header.
     $this->assertRaw('{&quot;custom_header&quot;:&quot;true&quot;}');
@@ -112,6 +105,7 @@ class WebformHandlerRemotePostTest extends WebformTestBase {
   last_name: Smith
   response_type: '200'");
     $this->assertRaw('Processed converted request.');
+    $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
 
     // Check excluded data.
     $handler = $webform->getHandler('remote_post');
@@ -125,16 +119,19 @@ class WebformHandlerRemotePostTest extends WebformTestBase {
     $this->assertRaw('first_name: John');
     $this->assertNoRaw('last_name: Smith');
     $this->assertRaw("sid: '$sid'");
+    $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
 
     // Check 500 Internal Server Error.
     $this->postSubmission($webform, ['response_type' => '500']);
     $this->assertRaw('Failed to process completed request.');
+    $this->assertRaw('Unable to process this submission. Please contact the site administrator.');
 
     // Check 404 Not Found.
     $this->postSubmission($webform, ['response_type' => '404']);
     $this->assertRaw('File not found');
+    $this->assertRaw('Unable to process this submission. Please contact the site administrator.');
 
-    // Disable saving of results
+    // Disable saving of results.
     $webform->setSetting('results_disabled', TRUE);
     $webform->save();
 
@@ -142,7 +139,26 @@ class WebformHandlerRemotePostTest extends WebformTestBase {
     $sid = $this->postSubmission($webform);
     $this->assertNull($sid);
 
-    // Get confiramtion number from JSON packet.
+    // Get confirmation number from JSON packet.
+    preg_match('/&quot;confirmation_number&quot;:&quot;([a-zA-z0-9]+)&quot;/', $this->getRawContent(), $match);
+    $this->assertRaw('Your confirmation number is ' . $match[1] . '.');
+
+    /**************************************************************************/
+    // GET.
+    /**************************************************************************/
+
+    /** @var \Drupal\webform\WebformInterface $webform */
+    $webform = Webform::load('test_handler_remote_get');
+
+    $this->postSubmission($webform);
+
+    // Check request URL contains query string.
+    $this->assertRaw("http://webform-test-handler-remote-post/completed?custom_completed=1&amp;custom_data=1&amp;response_type=200&amp;first_name=John&amp;last_name=Smith");
+
+    // Check response data.
+    $this->assertRaw("message: 'Processed completed?custom_completed=1&amp;custom_data=1&amp;response_type=200&amp;first_name=John&amp;last_name=Smith request.'");
+
+    // Get confirmation number from JSON packet.
     preg_match('/&quot;confirmation_number&quot;:&quot;([a-zA-z0-9]+)&quot;/', $this->getRawContent(), $match);
     $this->assertRaw('Your confirmation number is ' . $match[1] . '.');
   }

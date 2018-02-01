@@ -41,21 +41,22 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler {
     $is_owner = ($account->isAuthenticated() && $account->id() == $uid);
     // Check if 'update' or 'delete' of 'own' or 'any' webform is allowed.
     if ($account->isAuthenticated()) {
+      $has_administer = $entity->checkAccessRules('administer', $account);
       switch ($operation) {
         case 'update':
-          if ($account->hasPermission('edit any webform') || ($account->hasPermission('edit own webform') && $is_owner)) {
+          if ($has_administer || $account->hasPermission('edit any webform') || ($account->hasPermission('edit own webform') && $is_owner)) {
             return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity);
           }
           break;
 
         case 'duplicate':
-          if ($entity->isTemplate() || ($account->hasPermission('edit any webform') || ($account->hasPermission('edit own webform') && $is_owner))) {
+          if ($has_administer || $account->hasPermission('create webform') && ($entity->isTemplate() || ($account->hasPermission('edit any webform') || ($account->hasPermission('edit own webform') && $is_owner)))) {
             return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity);
           }
           break;
 
         case 'delete':
-          if ($account->hasPermission('delete any webform') || ($account->hasPermission('delete own webform') && $is_owner)) {
+          if ($has_administer || $account->hasPermission('delete any webform') || ($account->hasPermission('delete own webform') && $is_owner)) {
             return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity);
           }
           break;
@@ -64,8 +65,14 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler {
 
     // Check submission_* operation.
     if (strpos($operation, 'submission_') === 0) {
-      // Allow users with 'view any webform submission' to view all submissions.
-      if ($operation == 'submission_view_any' && $account->hasPermission('view any webform submission')) {
+      // Allow users with 'view any webform submission' or
+      // 'administer webform submission' to view all submissions.
+      if ($operation == 'submission_view_any' && ($account->hasPermission('view any webform submission') || $account->hasPermission('administer webform submission'))) {
+        return AccessResult::allowed();
+      }
+
+      // Allow users with 'view own webform submission' to view own submissions.
+      if ($account->hasPermission('view own webform submission') && $is_owner) {
         return AccessResult::allowed();
       }
 

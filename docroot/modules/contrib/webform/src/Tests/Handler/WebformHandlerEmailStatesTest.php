@@ -20,17 +20,6 @@ class WebformHandlerEmailStatesTest extends WebformTestBase {
   protected static $testWebforms = ['test_handler_email_states'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Add view own submission to anonymous so the submissions can be be
-    // converted to authenticated.
-    $this->addViewWebformSubmissionOwnPermissionToAnonymous();
-  }
-
-  /**
    * Test email states handler.
    */
   public function testEmailStates() {
@@ -48,12 +37,24 @@ class WebformHandlerEmailStatesTest extends WebformTestBase {
 
     // Check converted email.
     $email = $this->getLastEmail();
-    $this->assertEqual($email['id'], 'webform_email_email_converted');
+    $this->assertEqual($email['id'], 'webform_test_handler_email_states_email_converted');
 
     // Check updated email.
     $this->drupalPostForm("/admin/structure/webform/manage/test_handler_email_states/submission/$sid/edit", [], t('Save'));
+
+    /**************************************************************************/
     // @todo Fix random test failure that can't be reproduced locally.
     // $this->assertRaw('Debug: Email: Submission updated');
+    /**************************************************************************/
+
+    // Check that custom (aka no states) is only visible on the 'Resend' tab.
+    $this->drupalGet("/admin/structure/webform/manage/test_handler_email_states/submission/$sid/resend");
+    $this->assertRaw('<b>Subject:</b> Draft saved<br />');
+    $this->assertRaw('<b>Subject:</b> Submission converted<br />');
+    $this->assertRaw('<b>Subject:</b> Submission completed<br />');
+    $this->assertRaw('<b>Subject:</b> Submission updated<br />');
+    $this->assertRaw('<b>Subject:</b> Submission deleted<br />');
+    $this->assertRaw('<b>Subject:</b> Submission custom<br />');
 
     // Check deleted email.
     $this->drupalPostForm("/admin/structure/webform/manage/test_handler_email_states/submission/$sid/delete", [], t('Delete'));
@@ -61,7 +62,7 @@ class WebformHandlerEmailStatesTest extends WebformTestBase {
 
     // Check that 'Send when...' is visible.
     $this->drupalGet('admin/structure/webform/manage/test_handler_email_states/handlers/email_draft/edit');
-    $this->assertRaw('<span class="fieldset-legend js-form-required form-required">Send email</span>');
+    $this->assertRaw('<span class="fieldset-legend">Send email</span>');
 
     // Check states hidden when results are disabled.
     $webform->setSetting('results_disabled', TRUE)->save();
@@ -74,6 +75,7 @@ class WebformHandlerEmailStatesTest extends WebformTestBase {
     $this->assertRaw('Debug: Email: Submission completed');
     $this->assertNoRaw('Debug: Email: Submission updated');
     $this->assertNoRaw('Debug: Email: Submission deleted');
+    $this->assertNoRaw('Debug: Email: Submission custom');
 
     // Check that resave draft handler automatically switches
     // states to completed.
@@ -83,7 +85,7 @@ class WebformHandlerEmailStatesTest extends WebformTestBase {
     $this->assertRaw('Debug: Email: Submission completed');
     $this->assertNoRaw('Debug: Email: Submission updated');
     $this->assertNoRaw('Debug: Email: Submission deleted');
-
+    $this->assertNoRaw('Debug: Email: Submission custom');
   }
 
 }

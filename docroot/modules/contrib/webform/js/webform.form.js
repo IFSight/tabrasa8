@@ -28,12 +28,13 @@
    *
    * @prop {Drupal~behaviorAttach} attach
    *   Attaches the behavior for disabling webform autosubmit.
+   *   Wizard pages need to be progressed with the Previous or Next buttons, not by pressing Enter.
    */
   Drupal.behaviors.webformDisableAutoSubmit = {
     attach: function (context) {
       // @see http://stackoverflow.com/questions/11235622/jquery-disable-form-submit-on-enter
       $(context).find('.webform-submission-form.js-webform-disable-autosubmit input')
-        .not(':button, :input[type="image"], :input[type="file"]')
+        .not(':button, :submit, :reset, :image, :file')
         .once('webform-disable-autosubmit')
         .on('keyup keypress', function (e) {
           var keyCode = e.keyCode || e.which;
@@ -109,22 +110,6 @@
   };
 
   /**
-   * Disable validate when save draft submit button is clicked.
-   *
-   * @type {Drupal~behavior}
-   *
-   * @prop {Drupal~behaviorAttach} attach
-   *   Attaches the behavior for the webform draft submit button.
-   */
-  Drupal.behaviors.webformDraft = {
-    attach: function (context) {
-      $(context).find('#edit-draft').once('webform-draft').on('click', function () {
-        $(this.form).attr('novalidate', 'novalidate');
-      });
-    }
-  };
-
-  /**
    * Filters the webform element list by a text input search string.
    *
    * The text input will have the selector `input.webform-form-filter-text`.
@@ -192,7 +177,7 @@
       }
 
       if ($table.length) {
-        $filter_rows = $table.find('div.webform-form-filter-text-source');
+        $filter_rows = $table.find('.webform-form-filter-text-source');
         $input.on('keyup', filterElementList);
         if ($input.val()) {
           $input.keyup();

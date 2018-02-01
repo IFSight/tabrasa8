@@ -16,14 +16,22 @@ abstract class TextBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    return parent::getDefaultProperties() + [
+    return [
+      'readonly' => FALSE,
       'size' => '',
       'minlength' => '',
       'maxlength' => '',
       'placeholder' => '',
       'autocomplete' => 'on',
       'pattern' => '',
-    ];
+    ] + parent::getDefaultProperties();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTranslatableProperties() {
+    return array_merge(parent::getTranslatableProperties(), ['counter_message']);
   }
 
   /**
@@ -83,8 +91,8 @@ abstract class TextBase extends WebformElementBase {
       '#other__option_label' => $this->t('Custom...'),
       '#other__placeholder' => $this->t('Enter input mask...'),
       '#other__description' => $this->t('(9 = numeric; a = alphabetical; * = alphanumeric)'),
+      '#empty_option' => $this->t('- None -'),
       '#options' => [
-        '' => '',
         'Basic' => [
           "'alias': 'currency'" => $this->t('Currency - @format', ['@format' => '$ 9.99']),
           "'alias': 'mm/dd/yyyy'" => $this->t('Date - @format', ['@format' => 'mm/dd/yyyy']),
@@ -103,7 +111,7 @@ abstract class TextBase extends WebformElementBase {
       ],
     ];
     if ($this->librariesManager->isExcluded('jquery.inputmask')) {
-      $form['form']['input_mask'] ['#access'] = FALSE;
+      $form['form']['input_mask']['#access'] = FALSE;
     }
 
     // Pattern.
@@ -114,17 +122,18 @@ abstract class TextBase extends WebformElementBase {
     ];
 
     // Counter.
-    $form['validation']['counter_type'] = [
+    $form['validation']['counter_container'] = $this->getFormInlineContainer();
+    $form['validation']['counter_container']['counter_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Count'),
       '#description' => $this->t('Limit entered value to a maximum number of characters or words.'),
+      '#empty_option' => $this->t('- None -'),
       '#options' => [
-        '' => '',
         'character' => $this->t('Characters'),
         'word' => $this->t('Words'),
       ],
     ];
-    $form['validation']['counter_maximum'] = [
+    $form['validation']['counter_container']['counter_maximum'] = [
       '#type' => 'number',
       '#title' => $this->t('Count maximum'),
       '#min' => 1,
@@ -148,8 +157,7 @@ abstract class TextBase extends WebformElementBase {
       ],
     ];
     if ($this->librariesManager->isExcluded('jquery.word-and-character-counter')) {
-      $form['validation']['counter_type']['#access'] = FALSE;
-      $form['validation']['counter_maximum']['#access'] = FALSE;
+      $form['validation']['counter_container']['#access'] = FALSE;
       $form['validation']['counter_message']['#access'] = FALSE;
     }
 

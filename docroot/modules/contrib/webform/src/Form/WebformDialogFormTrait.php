@@ -78,7 +78,7 @@ trait WebformDialogFormTrait {
    * {@inheritdoc}
    */
   public function cancelAjaxForm(array &$form, FormStateInterface $form_state) {
-    $response = new AjaxResponse();
+    $response = $this->createAjaxResponse($form, $form_state);
     $response->addCommand(new CloseDialogCommand());
     return $response;
   }
@@ -91,6 +91,23 @@ trait WebformDialogFormTrait {
    */
   public function noSubmit(array &$form, FormStateInterface $form_state) {
     // Do nothing.
+  }
+
+  /**
+   * Close dialog.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return bool|\Drupal\Core\Ajax\AjaxResponse
+   *   An AJAX response that display validation error messages.
+   */
+  public function closeDialog(array &$form, FormStateInterface $form_state) {
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseDialogCommand());
+    return $response;
   }
 
 }

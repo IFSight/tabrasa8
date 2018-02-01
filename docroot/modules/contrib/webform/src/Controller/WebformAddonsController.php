@@ -53,26 +53,6 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
       ],
     ];
 
-    // Promotions.
-    $build['promotions'] = [
-      '#type' => 'container',
-      '#attributes' => [
-        'class' => ['webform-addons-promotions'],
-      ],
-
-    ];
-    $promotions = $this->addons->getPromotions();
-    foreach ($promotions as $promotion_name => $promotion) {
-      $build['promotions'][$promotion_name] = [
-        '#type' => 'webform_message',
-        '#message_type' => $promotion_name,
-        '#message_message' => $promotion['content'],
-        '#message_close' => TRUE,
-        '#message_id' => 'webform.addons.promotion.' . $promotion_name,
-        '#message_storage' => WebformMessage::STORAGE_SESSION,
-      ];
-    }
-
     // Projects.
     $build['projects'] = [
       '#type' => 'container',
@@ -94,11 +74,12 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
       foreach ($projects as $project_name => &$project) {
         $project['description'] .= '<br /><small>' . $project['url']->toString() . '</small>';
 
-        if (!empty($project['recommended']) && !$this->moduleHandler()->moduleExists($project_name)) {
+        // Append recommended to project's description.
+        if (!empty($project['recommended'])) {
+          $project['description'] .= '<br /><b class="color-success"> ★' . $this->t('Recommended') . '</b>';
+        }
 
-          // Append recommended to project's description.
-          $project['description'] .= '<br /><b class="color-error">' . $this->t('Recommended') . '</b>';
-
+        if (!empty($project['install']) && !$this->moduleHandler()->moduleExists($project_name)) {
           // If current user can install module then display a dismissible warning.
           if ($this->currentUser()->hasPermission('administer modules')) {
             $build['projects'][$project_name . '_message'] = [

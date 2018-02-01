@@ -16,14 +16,14 @@ abstract class NumericBase extends WebformElementBase {
    * {@inheritdoc}
    */
   public function getDefaultProperties() {
-    return parent::getDefaultProperties() + [
+    return [
       // Form validation.
       'size' => '',
       'minlength' => '',
       'maxlength' => '',
       'placeholder' => '',
       'autocomplete' => 'on',
-    ];
+    ] + parent::getDefaultProperties();
   }
 
   /**
@@ -32,7 +32,7 @@ abstract class NumericBase extends WebformElementBase {
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
     parent::prepare($element, $webform_submission);
     if ($this->hasProperty('step') && !isset($element['#step'])) {
-      $element['#step'] = 'any';
+      $element['#step'] = $this->getDefaultProperty('step') ?: 'any';
     }
   }
 
@@ -58,21 +58,22 @@ abstract class NumericBase extends WebformElementBase {
       '#type' => 'fieldset',
       '#title' => $this->t('Number settings'),
     ];
-    $form['number']['min'] = [
+    $form['number']['number_container'] = $this->getFormInlineContainer();
+    $form['number']['number_container']['min'] = [
       '#type' => 'number',
       '#title' => $this->t('Min'),
       '#description' => $this->t('Specifies the minimum value.'),
       '#step' => 'any',
       '#size' => 4,
     ];
-    $form['number']['max'] = [
+    $form['number']['number_container']['max'] = [
       '#type' => 'number',
       '#title' => $this->t('Max'),
       '#description' => $this->t('Specifies the maximum value.'),
       '#step' => 'any',
       '#size' => 4,
     ];
-    $form['number']['step'] = [
+    $form['number']['number_container']['step'] = [
       '#type' => 'number',
       '#title' => $this->t('Steps'),
       '#description' => $this->t('Specifies the legal number intervals. Leave blank to support any number interval. Decimals are supported.'),

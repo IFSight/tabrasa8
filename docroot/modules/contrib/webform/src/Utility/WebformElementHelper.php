@@ -5,9 +5,11 @@ namespace Drupal\webform\Utility;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
+use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
 
 /**
  * Helper class webform element methods.
@@ -120,7 +122,7 @@ class WebformElementHelper {
   }
 
   /**
-   * Set a property on all elements.
+   * Set a property on all elements and sub-elements.
    *
    * @param array $element
    *   A render element.
@@ -128,15 +130,60 @@ class WebformElementHelper {
    *   The property key.
    * @param mixed $property_value
    *   The property value.
-   *
-   * @return array
-   *   A render element with with a property set on all elements.
    */
-  public static function setPropertyRecursive(array $element, $property_key, $property_value) {
+  public static function setPropertyRecursive(array &$element, $property_key, $property_value) {
     $element[$property_key] = $property_value;
     foreach (Element::children($element) as $key) {
       self::setPropertyRecursive($element[$key], $property_key, $property_value);
     }
+  }
+
+  /**
+   * Enhance select menu with the Select2 or the Chosen library.
+   *
+   * Please Note: Select2 is preferred library for Webform administrative
+   * forms.
+   *
+   * @param array $element
+   *   A select element.
+   * @param bool $library
+   *   Flag to automatically detect and apply library.
+   *
+   * @return array
+   *   The select element with Select2 or Chosen class and library attached.
+   */
+  public static function enhanceSelect(array &$element, $library = FALSE) {
+    // If automatic is FALSE, look at the element's #select2 and #chosen
+    // property.
+    if (!$library) {
+      if (isset($element['#select2'])) {
+        $library = 'select2';
+      }
+      elseif (isset($element['#chosen'])) {
+        $library = 'chosen';
+      }
+    }
+
+    if ($library === FALSE) {
+      return $element;
+    }
+
+    /** @var \Drupal\webform\WebformLibrariesManagerInterface $libaries_manager */
+    $libaries_manager = \Drupal::service('webform.libraries_manager');
+
+    // Add select2 library and classes.
+    if (($library === TRUE || $library === 'select2') && $libaries_manager->isIncluded('jquery.select2')) {
+      $element['#attached']['library'][] = 'webform/webform.element.select2';
+      $element['#attributes']['class'][] = 'js-webform-select2';
+      $element['#attributes']['class'][] = 'webform-select2';
+    }
+    // Add chosen library and classes.
+    elseif (($library === TRUE || $library === 'chosen') && $libaries_manager->isIncluded('jquery.chosen')) {
+      $element['#attached']['library'][] = 'webform/webform.element.chosen';
+      $element['#attributes']['class'][] = 'js-webform-chosen';
+      $element['#attributes']['class'][] = 'webform-chosen';
+    }
+
     return $element;
   }
 
@@ -167,7 +214,8 @@ class WebformElementHelper {
     // Attach library.
     $element['#attached']['library'][] = 'core/drupal.states';
 
-    // Copy #states to #_webform_states property which can be used by
+    // Copy #states to #_webform_states property which can be used by the
+    // WebformSubmissionConditionsValidator.
     // @see \Drupal\webform\WebformSubmissionConditionsValidator
     $element['#_webform_states'] = $element['#states'];
 
@@ -190,6 +238,23 @@ class WebformElementHelper {
       if (Element::property($key)) {
         if (self::isIgnoredProperty($key)) {
           $ignored_properties[$key] = $key;
+        }
+        elseif ($key == '#element' && is_array($value) && isset($element['#type']) && $element['#type'] === 'webform_composite') {
+          foreach ($value as $composite_value) {
+
+            // Multiple sub composite elements are not supported.
+            if (isset($composite_value['#multiple'])) {
+              $ignored_properties['#multiple'] = t('Custom composite sub elements do not support elements with multiple values.');
+            }
+
+            // Check that sub composite element type is supported.
+            if (isset($composite_value['#type']) && !WebformCompositeBase::isSupportedElementType($composite_value['#type'])) {
+              $composite_type = $composite_value['#type'];
+              $ignored_properties["composite.$composite_type"] = t('Custom composite elements do not support the %type element.', ['%type' => $composite_type]);
+            }
+
+            $ignored_properties += self::getIgnoredProperties($composite_value);
+          }
         }
       }
       elseif (is_array($value)) {
@@ -368,6 +433,165 @@ class WebformElementHelper {
     else {
       return (string) $element;
     }
+  }
+
+  /****************************************************************************/
+  // Validate callbacks to trigger or suppress validation.
+  /****************************************************************************/
+
+  /****************************************************************************/
+  // ISSUE: Hidden elements still need to call #element_validate because
+  // certain elements, including managed_file, checkboxes, password_confirm,
+  // etc..., will also massage the submitted values via #element_validate.
+  //
+  // SOLUTION: Call #element_validate for all hidden elements but suppresses
+  // #element_validate errors.
+  /****************************************************************************/
+
+  /**
+   * Set element validate callback.
+   *
+   * @param array $element
+   *   An element.
+   * @param array $element_validate
+   *   Element validate callback.
+   *
+   * @return array
+   *   The element with validate callback.
+   *
+   * @see \Drupal\webform\Plugin\WebformElementBase::hiddenElementAfterBuild
+   * @see \Drupal\webform\WebformSubmissionConditionsValidator::elementAfterBuild
+   */
+  public static function setElementValidate(array $element, array $element_validate = [WebformElementHelper::class, 'suppressElementValidate']) {
+    // Element validation can only overridden once so we need to reset
+    // the #eleemnt_validate callback.
+    if (isset($element['#_element_validate'])) {
+      $element['#element_validate'] = $element['#_element_validate'];
+      unset($element['#_element_validate']);
+    }
+
+    // Wrap #element_validate so that we suppress validation error messages.
+    // This only applies visible elements (#access: TRUE) with
+    // #element_validate callbacks which are also conditionally hidden.
+    if (!empty($element['#element_validate'])) {
+      $element['#_element_validate'] = $element['#element_validate'];
+      $element['#element_validate'] = [$element_validate];
+    }
+    return $element;
+  }
+
+  /**
+   * Webform element #element_validate callback: Execute #element_validate and suppress errors.
+   *
+   * @param array $element
+   *   An element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public static function triggerElementValidate(array &$element, FormStateInterface $form_state) {
+    // @see \Drupal\Core\Form\FormValidator::doValidateForm
+    foreach ($element['#_element_validate'] as $callback) {
+      $complete_form = &$form_state->getCompleteForm();
+      call_user_func_array($form_state->prepareCallback($callback), [&$element, &$form_state, &$complete_form]);
+    }
+  }
+
+  /**
+   * Webform element #element_validate callback: Execute #element_validate and suppress errors.
+   *
+   * @param array $element
+   *   An element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public static function suppressElementValidate(array &$element, FormStateInterface $form_state) {
+    // Create a temp webform state that will capture and suppress all element
+    // validation errors.
+    $temp_form_state = clone $form_state;
+    $temp_form_state->setLimitValidationErrors([]);
+
+    // @see \Drupal\Core\Form\FormValidator::doValidateForm
+    foreach ($element['#_element_validate'] as $callback) {
+      $complete_form = &$form_state->getCompleteForm();
+      call_user_func_array($form_state->prepareCallback($callback), [&$element, &$temp_form_state, &$complete_form]);
+    }
+
+    // Get the temp webform state's values.
+    $form_state->setValues($temp_form_state->getValues());
+  }
+
+  /**
+   * Set form state required error for a specified element.
+   *
+   * @param array $element
+   *   An element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param string $title
+   *   OPTIONAL. Required error title.
+   */
+  public static function setRequiredError(array $element, FormStateInterface $form_state, $title = NULL) {
+    if (isset($element['#required_error'])) {
+      $form_state->setError($element, $element['#required_error']);
+    }
+    elseif ($title) {
+      $form_state->setError($element, t('@name field is required.', ['@name' => $title]));
+    }
+    elseif (isset($element['#title'])) {
+      $form_state->setError($element, t('@name field is required.', ['@name' => $element['#title']]));
+    }
+    else {
+      $form_state->setError($element);
+    }
+  }
+
+  /**
+   * Get an element's #states.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return array
+   *   An associative array containing an element's states.
+   */
+  public static function getStates(array $element) {
+    // Composite and multiple elements use use a custom states wrapper
+    // which will changes '#states' to '#_webform_states'.
+    // @see \Drupal\webform\Utility\WebformElementHelper::fixStatesWrapper
+    if (isset($element['#_webform_states'])) {
+      return $element['#_webform_states'];
+    }
+    elseif (isset($element['#states'])) {
+      return $element['#states'];
+    }
+    else {
+      return [];
+    }
+  }
+
+  /**
+   * Get required #states from an element's visible #states.
+   *
+   * This method allows composite and multiple to conditionally
+   * require sub-elements when they are visible.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return array
+   *   An associative array containing 'visible' and 'invisible' selectors
+   *   and triggers.
+   */
+  public static function getRequiredFromVisibleStates(array $element) {
+    $states = WebformElementHelper::getStates($element);
+    $required_states = [];
+    if (!empty($states['visible'])) {
+      $required_states['required'] = $states['visible'];
+    }
+    if (!empty($states['invisible'])) {
+      $required_states['optional'] = $states['invisible'];
+    }
+    return $required_states;
   }
 
 }

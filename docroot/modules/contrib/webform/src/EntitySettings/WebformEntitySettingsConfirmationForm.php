@@ -71,19 +71,28 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
     $form['confirmation_type']['ajax_confirmation'] = [
       '#type' => 'webform_message',
       '#message_type' => 'warning',
-      '#message_message' => $this->t("Only 'Inline' and 'Message' confirmation types are fully supported by Ajax."),
+      '#message_message' => $this->t("Only 'Inline', 'Message', and 'Modal' confirmation types are fully supported by Ajax."),
       '#access' => $settings['ajax'],
+      '#states' => [
+        'invisible' => [
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_INLINE]],
+          'or',
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_MESSAGE]],
+          'or',
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_MODAL]],
+        ],
+      ],
     ];
     $form['confirmation_type']['confirmation_type'] = [
       '#title' => $this->t('Confirmation type'),
       '#type' => 'radios',
       '#options' => [
         WebformInterface::CONFIRMATION_PAGE => $this->t('Page (redirects to new page and displays the confirmation message)'),
-        WebformInterface::CONFIRMATION_INLINE => $this->t('Inline (reloads the current page and replaces the webform with the confirmation message.)'),
-        WebformInterface::CONFIRMATION_MESSAGE => $this->t('Message (reloads the current page/form and displays the confirmation message at the top of the page.)'),
-        WebformInterface::CONFIRMATION_MODAL => $this->t('Modal (reloads the current page/form and displays the confirmation message in a modal dialog.)'),
+        WebformInterface::CONFIRMATION_INLINE => $this->t('Inline (reloads the current page and replaces the webform with the confirmation message)'),
+        WebformInterface::CONFIRMATION_MESSAGE => $this->t('Message (reloads the current page/form and displays the confirmation message at the top of the page)'),
+        WebformInterface::CONFIRMATION_MODAL => $this->t('Modal (reloads the current page/form and displays the confirmation message in a modal dialog)'),
         WebformInterface::CONFIRMATION_URL => $this->t('URL (redirects to a custom path or URL)'),
-        WebformInterface::CONFIRMATION_URL_MESSAGE => $this->t('URL with message (redirects to a custom path or URL and displays the confirmation message at the top of the page.)'),
+        WebformInterface::CONFIRMATION_URL_MESSAGE => $this->t('URL with message (redirects to a custom path or URL and displays the confirmation message at the top of the page)'),
       ],
       '#default_value' => $settings['confirmation_type'],
     ];

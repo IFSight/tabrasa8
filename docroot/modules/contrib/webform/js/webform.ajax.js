@@ -7,10 +7,16 @@
 
   'use strict';
 
+  Drupal.webform = Drupal.webform || {};
+  Drupal.webform.ajax = Drupal.webform.ajax || {};
+  // Allow scrollTopOffset to be custom defined or based on whether there is a
+  // floating toolbar.
+  Drupal.webform.ajax.scrollTopOffset = Drupal.webform.ajax.scrollTopOffset || ($('#toolbar-administration').length ? 140 : 10);
+
   /**
    * Provide Webform Ajax link behavior.
    *
-   * Display fullscreen progress indicator instead of throber.
+   * Display fullscreen progress indicator instead of throbber.
    * Copied from: Drupal.behaviors.AJAX
    *
    * @type {Drupal~behavior}
@@ -32,6 +38,7 @@
           element_settings.event = 'click';
         }
         element_settings.dialogType = $(this).data('dialog-type');
+        element_settings.dialogRenderer = $(this).data('dialog-renderer');
         element_settings.dialog = $(this).data('dialog-options');
         element_settings.base = $(this).attr('id');
         element_settings.element = this;
@@ -45,6 +52,13 @@
         if (hash) {
           $(this).on('click', function() {
             location.hash = $(this).data('hash');
+          });
+        }
+
+        // Close all open modal dialogs when opening off-canvas dialog.
+        if (element_settings.dialogRenderer === 'off_canvas') {
+          $(this).on('click', function() {
+            $(".ui-dialog.webform-modal:visible").find('.ui-dialog-content').dialog('close');
           });
         }
       });
@@ -125,7 +139,7 @@
 
       // Scroll to elements that are not visible.
       if (!isScrolledIntoView($element)) {
-        $('html, body').animate({scrollTop: $element.offset().top - 140}, 500);
+        $('html, body').animate({scrollTop: $element.offset().top - Drupal.webform.ajax.scrollTopOffset}, 500);
       }
     }
     updateKey = null; // Reset element update.
@@ -158,7 +172,7 @@
    * @param {string} response.selector
    *   Selector to use.
    *
-   * @see Drupal.AjaxCommands.prototype.webformScrollTop
+   * @see Drupal.AjaxCommands.prototype.viewScrollTop
    */
   Drupal.AjaxCommands.prototype.webformScrollTop = function (ajax, response) {
     // Scroll to the top of the view. This will allow users
@@ -173,9 +187,20 @@
     while ($(scrollTarget).scrollTop() === 0 && $(scrollTarget).parent()) {
       scrollTarget = $(scrollTarget).parent();
     }
-    // Only scroll upward.
-    if (offset.top - 10 < $(scrollTarget).scrollTop()) {
-      $(scrollTarget).animate({scrollTop: (offset.top - 10)}, 500);
+
+    if (response.target == 'page' && $(scrollTarget).length && $(scrollTarget)[0].tagName === 'HTML') {
+      // Scroll to top when scroll target is the entire page.
+      // @see https://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport
+      var rect = $(scrollTarget)[0].getBoundingClientRect();
+      if (!(rect.top >= 0 && rect.left >= 0 && rect.bottom <= $(window).height() && rect.right <= $(window).width())) {
+        $(scrollTarget).animate({scrollTop: 0}, 500);
+      }
+    }
+    else {
+      // Only scroll upward.
+      if (offset.top - Drupal.webform.ajax.scrollTopOffset < $(scrollTarget).scrollTop()) {
+        $(scrollTarget).animate({scrollTop: (offset.top - Drupal.webform.ajax.scrollTopOffset)}, 500);
+      }
     }
   };
 
