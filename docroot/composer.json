@@ -26,6 +26,7 @@
         "drupal/file_entity": "^2.0@beta",
         "drupal/geolocation": "^1.0",
         "drupal/google_analytics": "^2.1",
+        "drupal/libraries": "^3.0@alpha",
         "drupal/linkit": "^4.0",
         "drupal/mailsystem": "^4.1",
         "drupal/masquerade": "^2.0@beta",
