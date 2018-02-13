@@ -222,6 +222,14 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
 handlers:
   debug:
     id: debug

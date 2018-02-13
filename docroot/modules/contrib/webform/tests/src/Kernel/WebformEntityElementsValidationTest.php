@@ -32,7 +32,7 @@ class WebformEntityElementsValidationTest extends KernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->validator = new WebformEntityElementsValidator();
+    $this->validator = \Drupal::service('webform.elements_validator');
   }
 
   /**
@@ -192,7 +192,7 @@ duplicate:
       /** @var \Drupal\webform\WebformInterface $webform */
       $webform = $this->getMock('\Drupal\webform\WebformInterface');
       $methods = $test;
-      unset($methods['message']);
+      unset($methods['messages']);
       foreach ($methods as $method => $returnValue) {
         $webform->expects($this->any())
           ->method($method)
