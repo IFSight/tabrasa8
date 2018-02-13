@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class ContributeController.
+ * Class ContributeAutocompleteController.
  */
-class ContributeController extends ControllerBase implements ContainerInjectionInterface {
+class ContributeAutocompleteController extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * The Guzzle HTTP client.
@@ -23,7 +23,7 @@ class ContributeController extends ControllerBase implements ContainerInjectionI
   protected $httpClient;
 
   /**
-   * Constructs a ContributeController object.
+   * Constructs a ContributeAutocompleteController object.
    *
    * @param \GuzzleHttp\ClientInterface $http_client
    *   The Guzzle HTTP client.

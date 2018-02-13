@@ -32,20 +32,20 @@ class ContributeFunctionalTest extends BrowserTestBase {
       'account_type' => 'user',
       'user_id' => 'jrockowitz',
     ];
-    $this->drupalPostForm('/admin/reports/status/contribute', $edit, t('Save'));
+    $this->drupalPostForm('/admin/reports/status/contribute/configure', $edit, t('Save'));
     $this->assertSession()->responseContains('Community information has been saved.');
     $this->assertSession()->responseContains('Community information');
     $this->assertSession()->responseNotContains('When you <a href="https://register.drupal.org/user/register">create a Drupal.org account</a>, you gain access to a whole ecosystem of Drupal.org sites and services.');
     $this->assertSession()->responseContains('<strong><a href="https://www.drupal.org/u/jrockowitz">Jacob Rockowitz</a></strong>');
 
     // Check that 'Community information' can be cleared.
-    $this->drupalPostForm('/admin/reports/status/contribute', [], t('Clear'));
+    $this->drupalPostForm('/admin/reports/status/contribute/configure', [], t('Clear'));
     $this->assertSession()->responseContains('Community information has been cleared.');
     $this->assertSession()->responseNotContains('<strong><a href="https://www.drupal.org/u/jrockowitz">Jacob Rockowitz</a></strong>');
 
     // Check that 'Community information' can be disabled.
     $edit = ['disable' => TRUE];
-    $this->drupalPostForm('/admin/reports/status/contribute', $edit, t('Save'));
+    $this->drupalPostForm('/admin/reports/status/contribute/configure', $edit, t('Save'));
     $this->assertSession()->responseContains('Community information has been disabled.');
 
     // Check that 'Community information' can be remove.

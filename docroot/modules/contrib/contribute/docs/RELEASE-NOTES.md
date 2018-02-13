@@ -17,10 +17,12 @@ Steps for creating a new release
 [Commandline](https://www.drupal.org/node/1587138)
 
     # Check Drupal coding standards
-    phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info modules/sandbox/contribute
+    phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,
+    theme,css,info modules/sandbox/contribute
     
     # Check Drupal best practices
-    phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme,js,css,info modules/sandbox/contribute
+    phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,
+    profile,theme,js,css,info modules/sandbox/contribute
 
 
 2. Run tests
@@ -28,7 +30,8 @@ Steps for creating a new release
 
     # Execute all Webform PHPUnit tests.
     cd core
-    php ../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" --group contribute
+    php ../vendor/phpunit/phpunit/phpunit 
+    --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" --group contribute
 
 
 3. Generate release notes

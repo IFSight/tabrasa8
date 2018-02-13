@@ -1,0 +1,24 @@
+contribute:
+  title: 'Core'
+  route_name: contribute.drupal
+  base_route: contribute.drupal
+
+contribute.drupal:
+  title: 'Core'
+  route_name: contribute.drupal
+  parent_id: contribute
+
+contribute.association:
+  title: 'Association'
+  route_name: contribute.association
+  parent_id: contribute
+
+contribute.projects:
+  title: 'Projects'
+  route_name: contribute.projects
+  parent_id: contribute
+
+contribute.settings:
+  title: 'Configure'
+  route_name: contribute.settings
+  parent_id: contribute

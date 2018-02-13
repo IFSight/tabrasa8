@@ -224,7 +224,7 @@ class ContributeSettingsForm extends ConfigFormBase {
     }
 
     // Always clear cached information.
-    // Cache::invalidateTags(['contribute']);
+    Cache::invalidateTags(['contribute']);
 
     $this->config('contribute.settings')
       ->set('status', $status)

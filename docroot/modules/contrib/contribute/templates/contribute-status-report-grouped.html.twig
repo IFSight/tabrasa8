@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * Theme override to display status report.
+ *
+ * - grouped_requirements: Contains grouped requirements.
+ *   Each group contains:
+ *   - title: The title of the group.
+ *   - type: The severity of the group.
+ *   - items: The requirement instances.
+ *     Each requirement item contains:
+ *     - title: The title of the requirement.
+ *     - value: (optional) The requirement's status.
+ *     - description: (optional) The requirement's description.
+ *     - severity_title: The title of the severity.
+ *     - severity_status: Indicates the severity status.
+ */
+#}
+{{ attach_library('core/drupal.collapse') }}
+{{ attach_library('contribute/contribute-system-status-report') }}
+{{ attach_library('contribute/drupal.responsive-detail') }}
+
+<div class="contribute-system-status-report">
+  {% for group in grouped_requirements %}
+    <div class="contribute-system-status-report__requirements-group">
+      {% if group.title %}
+        <h3 id="{{ group.type }}">{{ group.title }}</h3>
+      {% endif %}
+      {% if group.description %}
+        <div class="description">{{ group.description }}</div>
+      {% endif %}
+      {% for requirement in group.items %}
+        <details class="contribute-system-status-report__entry contribute-system-status-report__entry--{{ requirement.type }} color-{{ requirement.type }}" open="open">
+          {%
+          set summary_classes = [
+          'contribute-system-status-report__status-title',
+          requirement.type in ['warning', 'error'] ? 'contribute-system-status-report__status-icon contribute-system-status-report__status-icon--' ~ requirement.type
+          ]
+          %}
+          <summary{{ create_attribute({'class': summary_classes}) }} role="button" aria-expanded="true" aria-pressed="true">
+            {% if requirement.severity_title  %}
+              <span class="visually-hidden">{{ requirement.severity_title }}</span>
+            {% endif %}
+            {{ requirement.title }}
+          </summary>
+          <div class="contribute-system-status-report__entry__value">
+            {{ requirement.value }}
+            {% if requirement.description %}
+              <div class="description">{{ requirement.description }}</div>
+            {% endif %}
+          </div>
+        </details>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>

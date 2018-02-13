@@ -1,14 +1,38 @@
 contribute.settings:
-  path: '/admin/reports/status/contribute'
+  path: '/admin/reports/status/contribute/configure'
   defaults:
     _form: '\Drupal\contribute\Form\ContributeSettingsForm'
-    _title: 'Community information'
+    _title: 'Configure Community Information'
+  requirements:
+    _permission: 'administer site configuration'
+
+contribute.drupal:
+  path: '/admin/reports/status/contribute/drupal'
+  defaults:
+    _controller: '\Drupal\contribute\Controller\ContributeCommunityController::drupal'
+    _title: 'Drupal Core Maintainers & Coordinators'
+  requirements:
+    _permission: 'administer site configuration'
+
+contribute.association:
+  path: '/admin/reports/status/contribute/association'
+  defaults:
+    _controller: '\Drupal\contribute\Controller\ContributeCommunityController::association'
+    _title: 'Drupal Association Staff & Board of Directors'
+  requirements:
+    _permission: 'administer site configuration'
+
+contribute.projects:
+  path: '/admin/reports/status/contribute/projects'
+  defaults:
+    _controller: '\Drupal\contribute\Controller\ContributeCommunityController::projects'
+    _title: 'Drupal Module & Theme Contributors'
   requirements:
     _permission: 'administer site configuration'
 
 contribute.autocomplete:
   path: '/admin/reports/status/contribute/autocomplete/{account_type}'
   defaults:
-    _controller: '\Drupal\contribute\Controller\ContributeController::autocomplete'
+    _controller: '\Drupal\contribute\Controller\ContributeAutocompleteController::autocomplete'
   requirements:
     _permission: 'administer site configuration'

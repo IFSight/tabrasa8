@@ -1,5 +1,22 @@
-status-report-contribute-info:
+contribute-status-report-community-info:
   version: VERSION
   css:
     theme:
-      css/status-report-contribute-info.css: {}
+      css/contribute-status-report-community-info.css: {}
+
+contribute-system-status-report:
+  version: VERSION
+  css:
+    theme:
+      css/contribute-system-status-report.css: {}
+
+drupal.responsive-detail:
+  version: VERSION
+  js:
+    /core/themes/seven/js/responsive-details.js: {}
+  dependencies:
+    - core/matchmedia
+    - core/matchmedia.addListener
+    - core/jquery
+    - core/jquery.once
+    - core/collapse
