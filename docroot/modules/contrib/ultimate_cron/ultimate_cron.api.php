@@ -13,6 +13,10 @@ use Drupal\ultimate_cron\Entity\CronJob;
 /**
  * Inform Ultimate Cron about cron jobs.
  *
+ * To add additional/multiple cron jobs from a custom module, provide
+ * a default configuration in the module with the needed settings.
+ * Example: ultimate_cron.job.custom_module_cron.yml
+ *
  * Note that the result of this hook is cached.
  *
  * @return array

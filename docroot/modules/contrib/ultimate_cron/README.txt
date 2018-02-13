@@ -5,87 +5,59 @@ Credits
 Thanks to Mark James for the icons
   http://www.famfamfam.com/lab/icons/silk/
 
+To add a cron job you can use either hook_cron() or use configuration files with custom parameters
+for multiple/additional cron jobs in a module.
 
-Example code:
+The easiest way to declare a cron job is tu use hook_cron()
+and then configure the cron job through the UI and export it, then change the cron jobs callback method.
 
+Another way to register a cron job is to add a cron configuration object in a custom module.
+In your custom module add in the sub directory my_module/config/optional a yaml file named
+ultimate_cron.job.my_custom_cron_job_name.yml
 
-// Default cron-function, configurable through /admin/config/system/cron
-function mymodule_cron() {
-  // Do some stuff ...
-}
+For an example see the cron configuration of the simplenews module:
+http://cgit.drupalcode.org/simplenews/tree/config/optional/ultimate_cron.job.simplenews_cron.yml
 
+After installing the custom module the configuration will become available.
+During development you can use the config_devel module to import configuration.
 
-// Define custom cron functions.
-function mymodule_cronapi($op, $job = NULL) {
-  return array(
-    'mymodule_cronjob_1' => array(
-      'title' => 'Cron-1 Handler',
-      'scheduler' => array(
-        'name' => 'crontab',
-        'crontab' => array(
-          'rules' => array('*/13 * * * *'),
-        ),
-      ),
-    ),
-    'mymodule_cronjob_2' => array(
-      'title' => 'Cron-2 Handler',
-      'callback' => 'mymodule_somefunction',
-      'scheduler' => array(
-        'name' => 'crontab',
-        'crontab' => array(
-          'rules' => array('0 0 1 * *'),
-        ),
-      ),
-    ),
-    'mymodule_cronjob_3' => array(
-      'title' => 'Cron-3 Handler',
-    ),
-  );
-}
+The cron configuration yaml file could look like:
 
-// Custom cron-function
-function mymodule_cronjob_1($job) {
-  // Do some stuff ...
-}
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+title: 'Pings users'
+id: user_ping
+module: my_module
+callback: _my_module_user_ping_cron
+scheduler:
+  id: simple
+  configuration:
+    rules:
+      - '*/5+@ * * * *'
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+      max_execution_time: 3600
+    launcher:
+      max_threads: 1
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000
 
-// Custom cron-function
-function mymodule_somefunction($job) {
-  // Do some stuff ...
-}
-
-// Custom cron-function
-function mymodule_cronjob_3($job) {
-  // Do some stuff ...
-}
-
-// Easy-hook, uses rule: 0+@ * * * *
-function mymodule_cron_hourly($job) {
-  // Do some stuff
-}
-
-// Easy-hook, uses rule: 0+@ 12 * * *
-function mymodule_cron_daily($job) {
-  // Do some stuff
-}
-
-// Easy-hook, uses rule: 0+@ 0 * * *
-function mymodule_cron_nightly($job) {
-  // Do some stuff
-}
-
-// Easy-hook, uses rule: 0+@ 0 * * 1
-function mymodule_cron_weekly($job) {
-  // Do some stuff
-}
-
-// Easy-hook, uses rule: 0+@ 0 1 * *
-function mymodule_cron_monthly($job) {
-  // Do some stuff
-}
-
-// Easy-hook, uses rule: 0+@ 0 1 1 *
-function mymodule_cron_yearly($job) {
-  // Do some stuff
-}
-
-
+The following details of the cron job can be specified:
+- "title": The title of the cron job. If not provided, the
+  name of the cron job will be used.
+- "module": The module where this job lives.
+- "callback": The callback to call when running the job.
+  Defaults to the job name.
+- "scheduler": Default scheduler (plugin type) for this job.
+- "launcher": Default launcher (plugin type) for this job.
+- "logger": Default logger (plugin type) for this job.

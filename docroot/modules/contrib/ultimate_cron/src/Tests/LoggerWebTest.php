@@ -95,7 +95,7 @@ class LoggerWebTest extends WebTestBase {
 
     // Check that the long log message is properly trimmed.
     $this->drupalGet('admin/config/system/cron/jobs/logs/ultimate_cron_logger_test_cron');
-    $xpath = '/html/body/div/main/div/div/table/tbody/tr/td[4]';
+    $xpath = version_compare(\Drupal::VERSION, '8.5', '>=') ? '/html/body/div/div/main/div/div/table/tbody/tr/td[4]' : '/html/body/div/main/div/div/table/tbody/tr/td[4]';
     // The last 2 chars from xpath are not related to the message.
     $this->assertTrue(strlen(substr($this->xpath($xpath)[0], 0, -2)) == 5000);
     $this->assertRaw('This is a v…');

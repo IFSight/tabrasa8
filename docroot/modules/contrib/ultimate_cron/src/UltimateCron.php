@@ -24,25 +24,12 @@ class UltimateCron extends Cron {
   protected $configFactory;
 
   /**
-   * Constructs a cron object.
+   * Sets the config factory for ultimate cron service.
    *
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler
-   * @param \Drupal\Core\Lock\LockBackendInterface $lock
-   *   The lock service.
-   * @param \Drupal\Core\Queue\QueueFactory $queue_factory
-   *   The queue service.
-   * @param \Drupal\Core\State\StateInterface $state
-   *   The state service.
-   * @param \Drupal\Core\Session\AccountSwitcherInterface $account_switcher
-   *    The account switching service.
-   * @param \Psr\Log\LoggerInterface $logger
-   *   A logger instance.
-   * @param \Drupal\Core\Queue\QueueWorkerManagerInterface
-   *   The queue plugin manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, LockBackendInterface $lock, QueueFactory $queue_factory, StateInterface $state, AccountSwitcherInterface $account_switcher, LoggerInterface $logger, QueueWorkerManagerInterface $queue_manager, ConfigFactoryInterface $config_factory) {
-    parent::__construct($module_handler, $lock, $queue_factory, $state, $account_switcher, $logger, $queue_manager);
+  public function setConfigFactory(ConfigFactoryInterface $config_factory) {
     $this->configFactory = $config_factory;
   }
 
