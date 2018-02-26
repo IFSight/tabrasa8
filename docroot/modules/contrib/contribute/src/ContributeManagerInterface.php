@@ -32,42 +32,6 @@ interface ContributeManagerInterface {
   public function getContribution();
 
   /**
-   * Get Drupal core maintainers.
-   *
-   * @return array
-   *   An associative array containing Drupal core maintainers.
-   */
-  public function getDrupal();
-
-  /**
-   * Get Drupal association staff.
-   *
-   * @return array
-   *   An associative array containing Drupal association staff.
-   */
-  public function getAssociation();
-
-  /**
-   * Get Drupal project maintainers.
-   *
-   * @return array
-   *   An associative array containing Drupal project maintainers.
-   */
-  public function getProjects();
-
-  /**
-   * Get a random person from the Drupal community.
-   *
-   * @param string $type
-   *   The type of person. (drupal or association)
-   *
-   * @return array
-   *   An associative array containing a random person from the Drupal
-   *   community.
-   */
-  public function getPerson($type);
-
-  /**
    * Get contribute status.
    *
    * @return bool

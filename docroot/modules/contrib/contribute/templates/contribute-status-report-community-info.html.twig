@@ -7,9 +7,6 @@
  * - account: The user or organization account profile.
  * - membership: The user or organizations membership status.
  * - contribution: The user or organizations contributions.
- * - drupal: Core maintainer spotlight.
- * - association: Drupal Association spotlight.
- * - projects: Project maintainers.
  */
 #}
 {{ attach_library('contribute/contribute-status-report-community-info') }}
@@ -44,37 +41,6 @@
         {{ contribution.value }}
         {% if contribution.description %}
           <br/>{{ contribution.description }}
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="contribute-status-report-community-info__item">
-      <span class="contribute-status-report-community-info__item-icon contribute-status-report-community-info__item-icon--drupal" id="contribute-info-drupal"></span>
-      <div class="contribute-status-report-community-info__item-details">
-        <h3 class="contribute-status-report-community-info__item-title">{{ 'Drupal Core Maintainers & Coordinators'|t }}</h3>
-        {{ drupal.value }}
-        {% if drupal.description %}
-          <br/>{{ drupal.description }}
-        {% endif %}
-      </div>
-    </div>
-    <div class="contribute-status-report-community-info__item">
-      <span class="contribute-status-report-community-info__item-icon contribute-status-report-community-info__item-icon--association" id="contribute-info-association"></span>
-      <div class="contribute-status-report-community-info__item-details">
-        <h3 class="contribute-status-report-community-info__item-title">{{ 'Drupal Association Staff & Board of Directors'|t }}</h3>
-        {{ association.value }}
-        {% if association.description %}
-          <br/>{{ association.description }}
-        {% endif %}
-      </div>
-    </div>
-    <div class="contribute-status-report-community-info__item">
-      <span class="contribute-status-report-community-info__item-icon contribute-status-report-community-info__item-icon--projects" id="contribute-info-projects"></span>
-      <div class="contribute-status-report-community-info__item-details">
-        <h3 class="contribute-status-report-community-info__item-title">{{ 'Drupal Module & Theme Contributors'|t }}</h3>
-        {{ projects.value }}
-        {% if projects.description %}
-          <br/>{{ projects.description }}
         {% endif %}
       </div>
     </div>

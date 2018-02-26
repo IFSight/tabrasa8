@@ -54,15 +54,6 @@
 .contribute-status-report-community-info__item-icon--contribution:before {
   background-image: url(../images/icons/cccccc/contribution.svg);
 }
-.contribute-status-report-community-info__item-icon--drupal:before {
-  background-image: url(../images/icons/cccccc/people.svg);
-}
-.contribute-status-report-community-info__item-icon--association:before {
-  background-image: url(../images/icons/cccccc/people.svg);
-}
-.contribute-status-report-community-info__item-icon--projects:before {
-  background-image: url(../images/icons/cccccc/people.svg);
-}
 
 .contribute-status-report-community-info__item-details {
   box-sizing: border-box;
@@ -94,15 +85,11 @@
   }
 
   .contribute-status-report-community-info__item:nth-child(2),
-  .contribute-status-report-community-info__item:nth-child(3),
-  .contribute-status-report-community-info__item:nth-child(5),
-  .contribute-status-report-community-info__item:nth-child(6) {
+  .contribute-status-report-community-info__item:nth-child(3) {
     border-left: 1px solid #ccc; /* LTR */
   }
   [dir="rtl"] .contribute-status-report-community-info__item:nth-child(1),
-  [dir="rtl"] .contribute-status-report-community-info__item:nth-child(2),
-  [dir="rtl"] .contribute-status-report-community-info__item:nth-child(4),
-  [dir="rtl"] .contribute-status-report-community-info__item:nth-child(5) {
+  [dir="rtl"] .contribute-status-report-community-info__item:nth-child(2) {
     border-left: 1px solid #ccc;
   }
 }

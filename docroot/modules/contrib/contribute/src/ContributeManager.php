@@ -342,6 +342,7 @@ class ContributeManager implements ContributeManagerInterface {
     return $membership;
   }
 
+
   /**
    * {@inheritdoc}
    */
@@ -400,74 +401,6 @@ class ContributeManager implements ContributeManagerInterface {
     $this->cache->set($cid, $contribution, strtotime('+1 hour'), ['contribute']);
 
     return $contribution;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getDrupal() {
-    return [
-      'value' => $this->buildCommunityPerson('drupal'),
-      'description' => $this->buildCommunityLink('drupal', $this->t("View core maintainers")),
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAssociation() {
-    return [
-      'value' => $this->buildCommunityPerson('association'),
-      'description' => $this->buildCommunityLink('association', $this->t('Meet the Drupal Association')),
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getProjects() {
-    $links = [];
-    $people = $this->getPeople('projects');
-    if ($people) {
-      $keys = array_rand($people, min(count($people), 5));
-      foreach ($keys as $key) {
-        $person = $people[$key];
-        $args = [
-          ':href' => $person['url'],
-          '@name' => $person['name'],
-        ];
-        $links[] = new FormattableMarkup('<a href=":href">@name</a>', $args);
-      }
-
-      switch (count($links)) {
-        case 0:
-          $people = [];
-          break;
-
-        case 1:
-          $people = reset($links);
-          break;
-
-        case 2:
-          $people = implode(' ' . $this->t('and') . ' ', $links);
-          break;
-
-        default:
-          $last = array_pop($links);
-          $people = implode(', ', $links) . ', ' . $this->t('and') . ' ' . $last;
-          break;
-      }
-      return [
-        'value' => $people ? ['#markup' => $this->t('Help') . ' ' . $people . ' ' . $this->t('build and maintain their projects.')] : [],
-        'description' => $this->buildCommunityLink('projects', $this->t('Support project contributors')),
-      ];
-    }
-    else {
-      return [
-        'value' => $people ? ['#markup' => $this->t('Help build and maintain projects.')] : [],
-        'description' => $this->buildCommunityLink('projects', $this->t('Support project contributors')),
-      ];
-    }
   }
 
   /**
@@ -597,6 +530,12 @@ class ContributeManager implements ContributeManagerInterface {
     if (strpos($body, 'association_ind_member_badge.svg') !== FALSE) {
       return 'https://www.drupal.org/sites/all/modules/drupalorg/drupalorg/images/association_ind_member_badge.svg';
     }
+    elseif (strpos($body, 'association_org_member_badge.svg') !== FALSE) {
+      return 'https://www.drupal.org/sites/all/modules/drupalorg/drupalorg/images/association_org_member_badge.svg';
+    }
+    else {
+      return NULL;
+    }
   }
 
   /**
@@ -651,144 +590,6 @@ class ContributeManager implements ContributeManagerInterface {
     else {
       return '';
     }
-  }
-
-  /*   * ************************************************************************* */
-  // People helpers.
-  /*   * ************************************************************************* */
-
-  /**
-   * Get an array of people from the Drupal community.
-   *
-   * @param string $type
-   *   The type of people. (drupal, association, or projects)
-   *
-   * @return array
-   *   An array of people from the Drupal community.
-   */
-  protected function getPeople($type) {
-    // Load data.
-    module_load_include('inc', 'contribute', 'includes/contribute.' . $type);
-    $function = "contribute_get_$type";
-    $data = $function();
-
-    $people = [];
-    $this->getPeopleRecursive($people, $data);
-    return $people;
-  }
-
-  /**
-   * Build an array of people from the Drupal community.
-   *
-   * @param array $people
-   *   An array of people from the Drupal community.
-   * @param array $data
-   *   An associative array containing information about the Drupal community.
-   */
-  protected function getPeopleRecursive(array &$people, array $data) {
-    foreach ($data as $item) {
-      if (!empty($item['people'])) {
-        foreach ($item['people'] as $person) {
-          // Skip people without images.
-          if (isset($person['image']) && $person['image'] === 'https://www.drupal.org/files/styles/drupalorg_user_picture/public/default-avatar.png') {
-            continue;
-          }
-
-          // Skip people without Drupal.org profiles.
-          if (strpos($person['url'], 'https://www.drupal.org/') !== 0) {
-            continue;
-          }
-
-          // Default the person's title to the project's title.
-          if (empty($person['title']) || (string) $person['title'] === '(Provisional)') {
-            if ($item['title'] === 'Board of Directors') {
-              $person['title'] = $this->t('Board member');
-            }
-            else {
-              $person['title'] = $item['title'];
-            }
-          }
-
-          // Track the person's project.
-          $person['project'] = $item['title'];
-
-          $people[$person['name']] = $person;
-        }
-      }
-
-      if (!empty($item['projects'])) {
-        $this->getPeopleRecursive($people, $item['projects']);
-      }
-    }
-  }
-
-  /*   * ************************************************************************* */
-  // Rendering helpers.
-  /*   * ************************************************************************* */
-
-  /**
-   * Build person's bio with link.
-   *
-   * @param string $type
-   *   The type of community information.
-   *
-   * @return array
-   *   A renderable array containing a person's bio with link.
-   */
-  protected function buildCommunityPerson($type) {
-    $person = $this->getPerson($type);
-    if ($type === 'drupal') {
-      $t_args = [
-        '@name' => $person['name'],
-        '@project' => $person['project'],
-        ':href' => $person['url'],
-      ];
-      return [
-        '#markup' => $this->t('<a href=":href">@name</a> contributes to @project.', $t_args),
-      ];
-    }
-    else {
-      $t_args = [
-        '@name' => $person['name'],
-        '@title' => $person['title'],
-        ':href' => $person['url'],
-      ];
-      return [
-        '#markup' => $this->t('Meet <a href=":href">@name</a>, @title.', $t_args),
-      ];
-    }
-  }
-
-  /**
-   * Build button link to a community information dialog.
-   *
-   * @param string $type
-   *   The type of community information.
-   * @param string $title
-   *   The button title/label.
-   *
-   * @return array
-   *   A renderable array containing a button link to a community
-   *   information dialog.
-   */
-  protected function buildCommunityLink($type, $title) {
-    return [
-      '#type' => 'link',
-      '#title' => $title,
-      '#url' => Url::fromRoute('contribute.' . $type),
-      '#attributes' => [
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode([
-          'width' => 740,
-        ]),
-        'class' => [
-          'use-ajax',
-          'button',
-          'button--small',
-          'contribute-status-report-community-info__button',
-        ],
-      ],
-    ];
   }
 
 }

@@ -33,13 +33,6 @@ function contribute_page_attachments(&$page) {
     $url = base_path() . drupal_get_path('module', 'contribute') . '/images/icons/drupal.svg';
     $value .= '#contribute-info-contribution:before {background-image: url(' . $url . ')}';
   }
-
-  $drupal_person = $contribute_manager->getPerson('drupal');
-  $value .= '#contribute-info-drupal:before {background-image: url(' . $drupal_person['image'] . ')}';
-
-  $association_person = $contribute_manager->getPerson('association');
-  $value .= '#contribute-info-association:before {background-image: url(' . $association_person['image'] . ')}';
-
   $page['#attached']['html_head'][] = [
     [
       '#type' => 'html_tag',
@@ -60,21 +53,6 @@ function contribute_theme() {
         'account' => [],
         'membership' => [],
         'contribution' => [],
-        'drupal' => [],
-        'association' => [],
-        'projects' => [],
-      ],
-    ],
-    'contribute_status_report_grouped' => [
-      'variables' => [
-        'grouped_requirements' => NULL,
-        'requirements' => NULL,
-      ],
-    ],
-    'contribute_person' => [
-      'variables' => [
-        'node' => NULL,
-        'caption' => NULL,
       ],
     ],
   ];
@@ -96,9 +74,6 @@ function contribute_preprocess_status_report_page(&$variables) {
         '#account' => $contribute_manager->getAccount(),
         '#membership' => $contribute_manager->getMembership(),
         '#contribution' => $contribute_manager->getContribution(),
-        '#drupal' => $contribute_manager->getDrupal(),
-        '#association' => $contribute_manager->getAssociation(),
-        '#projects' => $contribute_manager->getProjects(),
       ],
       'general_info' => $variables['general_info'],
     ];

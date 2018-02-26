@@ -1,4 +1,11 @@
-Contribute 8.1.0-beta6, 2018-XX-XX
+Contribute 8.1.0-beta7, 2018-XX-XX
+----------------------------------
+Changes since 8.1.0-beta6:
+- #2944781 by jrockowitz, Dave Reid, adriancid, tim.plunkett, gdd: Displaying
+  maintainer/DA names and pictures on Drupal sites should be opt-in
+- #2944555 by edurenye, jrockowitz: Support type might not be an URL
+
+Contribute 8.1.0-beta6, 2018-02-12
 ----------------------------------
 Changes since 8.1.0-beta5:
 

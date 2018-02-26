@@ -5,8 +5,8 @@ description: Encourages people to join and contribute to the Drupal community.
 package: Community
 configure: contribute.settings
 
-# Information added by Drupal.org packaging script on 2018-02-12
-version: '8.x-1.0-beta6'
+# Information added by Drupal.org packaging script on 2018-02-14
+version: '8.x-1.0-beta7'
 core: '8.x'
 project: 'contribute'
-datestamp: 1518459487
+datestamp: 1518634136
