@@ -1,0 +1,1 @@
+{"version":3,"sources":["clearfix.css"],"names":[],"mappings":"AAAA;EACE,YAAY;EACZ,eAAe;CAChB;;AAED;EACE,YAAY;EACZ,eAAe;EACf,YAAY;CACb","file":"clearfix.css","sourcesContent":[".clearfix:before {\n  content: '';\n  display: table;\n}\n\n.clearfix:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n"]}

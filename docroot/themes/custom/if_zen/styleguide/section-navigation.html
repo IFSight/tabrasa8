@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 <head>
   <meta charset="utf-8">
-  <title>STARTERKIT Style Guide</title>
+  <title>if_zen Style Guide</title>
 
   <meta name="description" content="">
   <meta name="generator" content="kss-node">
@@ -20,9 +20,11 @@
 <link rel="stylesheet" href="../components/asset-builds/css/header.css">
 <link rel="stylesheet" href="../components/asset-builds/css/hidden.css">
 <link rel="stylesheet" href="../components/asset-builds/css/highlight-mark.css">
+<link rel="stylesheet" href="../components/asset-builds/css/icons.css">
 <link rel="stylesheet" href="../components/asset-builds/css/inline-links.css">
 <link rel="stylesheet" href="../components/asset-builds/css/inline-sibling.css">
 <link rel="stylesheet" href="../components/asset-builds/css/messages.css">
+<link rel="stylesheet" href="../components/asset-builds/css/modal.css">
 <link rel="stylesheet" href="../components/asset-builds/css/print-none.css">
 <link rel="stylesheet" href="../components/asset-builds/css/responsive-video.css">
 <link rel="stylesheet" href="../components/asset-builds/css/visually-hidden.css">
@@ -37,6 +39,7 @@
 <link rel="stylesheet" href="../components/asset-builds/css/resizable-textarea.css">
 <link rel="stylesheet" href="../components/asset-builds/css/table-drag.css">
 <link rel="stylesheet" href="../components/asset-builds/css/breadcrumb.css">
+<link rel="stylesheet" href="../components/asset-builds/css/megamenu.css">
 <link rel="stylesheet" href="../components/asset-builds/css/more-link.css">
 <link rel="stylesheet" href="../components/asset-builds/css/nav-menu.css">
 <link rel="stylesheet" href="../components/asset-builds/css/navbar.css">
@@ -45,11 +48,11 @@
 <link rel="stylesheet" href="../components/asset-builds/css/tabs.css">
 
 </head>
-<body id="kss-node">
+<body id="kss-node" >
 
 <div class="kss-sidebar kss-style">
   <header class="kss-header">
-    <h1 class="kss-doc-title">STARTERKIT Style Guide</h1>
+    <h1 class="kss-doc-title">if_zen Style Guide</h1>
   </header>
   <nav class="kss-nav">
     <ul class="kss-nav__menu">
@@ -145,7 +148,7 @@
 <article role="main" class="kss-main">
 
   
-          <div id="kssref-navigation" class="kss-section kss-section--depth-1">
+          <div id="kssref-navigation" class="kss-section kss-section--depth-1 ">
       <div class="kss-style">
                 <h1 class="kss-title kss-title--level-1">
           <a class="kss-title__permalink" href="#kssref-navigation">
@@ -159,6 +162,7 @@
           </a>
         </h1>
 
+        
                   <div class="kss-description">
             <p>Navigation components are specialized design components that are used for
 page navigation.</p>
@@ -172,7 +176,7 @@ page navigation.</p>
           Source: <code>navigation/_navigation.scss</code>, line 1
         </div>
           </div>
-          <section id="kssref-navigation-breadcrumb" class="kss-section kss-section--depth-2">
+          <section id="kssref-navigation-breadcrumb" class="kss-section kss-section--depth-2 ">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
           <a class="kss-title__permalink" href="#kssref-navigation-breadcrumb">
@@ -186,6 +190,57 @@ page navigation.</p>
           </a>
         </h2>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-breadcrumb" data-kss-fullscreen="kssref-navigation-breadcrumb">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-breadcrumb.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-breadcrumb" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-breadcrumb" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>The path to the current page in the form of a list of links.</p>
 
@@ -222,40 +277,54 @@ page navigation.</p>
       </ol>
 </nav>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                   </div>
-                  <div class="kss-markup kss-style">
-            <pre class="prettyprint linenums lang-html"><code data-language="html">
-
-&lt;nav class=&quot;breadcrumb &quot; role=&quot;navigation&quot; aria-labelledby=&quot;system-breadcrumb&quot;&gt;
-  &lt;h2 id=&quot;system-breadcrumb&quot; class=&quot;visually-hidden&quot;&gt;You are here&lt;/h2&gt;
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/breadcrumb/breadcrumb.twig</code>
+                          </summary>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">{#
+/**
+ * @file
+ * Component for a breadcrumb trail.
+ *
+ * Variables:
+ * - modifier_class: [string] Classes to modify the default component styling.
+ * - heading: [string] Accessible heading.
+ * - breadcrumb: [array] The breadcrumb trail items. Each item is an object
+ *   containing:
+ *   - text: [string] Text of the item.
+ *   - url: [string] URL of the item (optional).
+ */
+#}
+{{ attach_library(&#039;if_zen/breadcrumb&#039;) }}
+&lt;nav class=&quot;breadcrumb {{modifier_class}}&quot; role=&quot;navigation&quot; aria-labelledby=&quot;system-breadcrumb&quot;&gt;
+  &lt;h2 id=&quot;system-breadcrumb&quot; class=&quot;visually-hidden&quot;&gt;{{ heading|default(&#039;You are here&#039;) }}&lt;/h2&gt;
   &lt;ol class=&quot;breadcrumb__list&quot;&gt;
-          &lt;li class=&quot;breadcrumb__item&quot;&gt;
-                  &lt;a href=&quot;#&quot;&gt;Home&lt;/a&gt;
-                          ›
-              &lt;/li&gt;
-          &lt;li class=&quot;breadcrumb__item&quot;&gt;
-                  &lt;a href=&quot;#&quot;&gt;Level 1&lt;/a&gt;
-                          ›
-              &lt;/li&gt;
-          &lt;li class=&quot;breadcrumb__item&quot;&gt;
-                  &lt;a href=&quot;#&quot;&gt;Level 2&lt;/a&gt;
-                          ›
-              &lt;/li&gt;
-          &lt;li class=&quot;breadcrumb__item&quot;&gt;
-                  Current item
-                      &lt;/li&gt;
-      &lt;/ol&gt;
+    {% for item in breadcrumb %}
+      &lt;li class=&quot;breadcrumb__item&quot;&gt;
+        {% if item.url %}
+          &lt;a href=&quot;{{ item.url }}&quot;&gt;{{ item.text }}&lt;/a&gt;
+        {% else %}
+          {{ item.text }}
+        {% endif %}
+        {% if not loop.last %}
+          ›
+        {% endif %}
+      &lt;/li&gt;
+    {% endfor %}
+  &lt;/ol&gt;
 &lt;/nav&gt;
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/breadcrumb/breadcrumb.scss</code>, line 3
         </div>
           </section>
-          <section id="kssref-navigation-more-link" class="kss-section kss-section--depth-2">
+          <section id="kssref-navigation-more-link" class="kss-section kss-section--depth-2 ">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
           <a class="kss-title__permalink" href="#kssref-navigation-more-link">
@@ -269,6 +338,57 @@ page navigation.</p>
           </a>
         </h2>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-more-link" data-kss-fullscreen="kssref-navigation-more-link">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-more-link.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-more-link" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-more-link" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>Styles the &quot;Read more…&quot; links common in Drupal.</p>
 
@@ -288,23 +408,38 @@ page navigation.</p>
       <a href="#">Read more…</a>
   </div>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                   </div>
-                  <div class="kss-markup kss-style">
-            <pre class="prettyprint linenums lang-html"><code data-language="html">
-
-&lt;div class=&quot;more-link &quot;&gt;
-      &lt;a href=&quot;#&quot;&gt;Read more…&lt;/a&gt;
-  &lt;/div&gt;
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/more-link/more-link.twig</code>
+                          </summary>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">{#
+/**
+ * @file
+ * Component for a more link.
+ *
+ * Variables:
+ * - modifier_class: [string] Classes to modify the default component styling.
+ * - content: [string] The component contents.
+ */
+#}
+{{ attach_library(&#039;if_zen/more-link&#039;) }}
+&lt;div class=&quot;more-link {{modifier_class}}&quot;&gt;
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+&lt;/div&gt;
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/more-link/more-link.scss</code>, line 3
         </div>
           </section>
-          <section id="kssref-navigation-nav-menu" class="kss-section kss-section--depth-2">
+          <section id="kssref-navigation-nav-menu" class="kss-section kss-section--depth-2 ">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
           <a class="kss-title__permalink" href="#kssref-navigation-nav-menu">
@@ -318,6 +453,57 @@ page navigation.</p>
           </a>
         </h2>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-nav-menu" data-kss-fullscreen="kssref-navigation-nav-menu">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-nav-menu.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-nav-menu" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-nav-menu" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>A &quot;nav menu&quot; is secondary, hierarchical navigation which can be displayed to the
 side or below the main content.</p>
@@ -361,11 +547,15 @@ side or below the main content.</p>
   </li>
 </ul>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                   </div>
-                  <div class="kss-markup kss-style">
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;ul class=&quot;nav-menu &quot;&gt;
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/nav-menu/nav-menu.twig</code>
+                          </summary>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;ul class=&quot;nav-menu {{modifier_class}}&quot;&gt;
   &lt;li class=&quot;nav-menu__item&quot;&gt;
     &lt;a href=&quot;/&quot; class=&quot;nav-menu__link&quot;&gt;Home&lt;/a&gt;
   &lt;/li&gt;
@@ -394,13 +584,13 @@ side or below the main content.</p>
   &lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/nav-menu/nav-menu.scss</code>, line 6
         </div>
           </section>
-          <section id="kssref-navigation-navbar" class="kss-section kss-section--depth-2">
+          <section id="kssref-navigation-navbar" class="kss-section kss-section--depth-2 ">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
           <a class="kss-title__permalink" href="#kssref-navigation-navbar">
@@ -414,6 +604,57 @@ side or below the main content.</p>
           </a>
         </h2>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-navbar" data-kss-fullscreen="kssref-navigation-navbar">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-navbar.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-navbar" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-navbar" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>A simple method to get navigation links to appear in one line.</p>
 
@@ -437,10 +678,14 @@ side or below the main content.</p>
   <li class="navbar__item"><a href="#">Ut</a></li>
 </ul>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                   </div>
-                  <div class="kss-markup kss-style">
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/navbar/navbar.twig</code>
+                          </summary>
             <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;ul class=&quot;navbar clearfix&quot;&gt;
   &lt;li class=&quot;navbar__item&quot;&gt;&lt;a href=&quot;#&quot;&gt;Home&lt;/a&gt;&lt;/li&gt;
   &lt;li class=&quot;navbar__item&quot;&gt;&lt;a href=&quot;#&quot;&gt;Blandit Jugis&lt;/a&gt;&lt;/li&gt;
@@ -451,13 +696,13 @@ side or below the main content.</p>
   &lt;li class=&quot;navbar__item&quot;&gt;&lt;a href=&quot;#&quot;&gt;Ut&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/navbar/navbar.scss</code>, line 3
         </div>
           </section>
-          <section id="kssref-navigation-pager" class="kss-section kss-section--depth-2">
+          <section id="kssref-navigation-pager" class="kss-section kss-section--depth-2 ">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
           <a class="kss-title__permalink" href="#kssref-navigation-pager">
@@ -471,6 +716,57 @@ side or below the main content.</p>
           </a>
         </h2>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-pager" data-kss-fullscreen="kssref-navigation-pager">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-pager.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-pager" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-pager" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>Paged navigation is a list of page numbers when more than 1 page of content
 is available.</p>
@@ -513,11 +809,15 @@ is available.</p>
   </li>
 </ul>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                   </div>
-                  <div class="kss-markup kss-style">
-            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;ul class=&quot;pager &quot;&gt;
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/pager/pager.twig</code>
+                          </summary>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">&lt;ul class=&quot;pager {{modifier_class}}&quot;&gt;
   &lt;li class=&quot;pager__item&quot;&gt;
     &lt;a title=&quot;Go to first page&quot; href=&quot;/admin/content&quot;&gt;« first&lt;/a&gt;
   &lt;/li&gt;
@@ -545,13 +845,13 @@ is available.</p>
   &lt;/li&gt;
 &lt;/ul&gt;
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/pager/pager.scss</code>, line 3
         </div>
           </section>
-          <section id="kssref-navigation-skip-link" class="kss-section kss-section--depth-2">
+          <section id="kssref-navigation-skip-link" class="kss-section kss-section--depth-2 ">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
           <a class="kss-title__permalink" href="#kssref-navigation-skip-link">
@@ -565,6 +865,57 @@ is available.</p>
           </a>
         </h2>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-skip-link" data-kss-fullscreen="kssref-navigation-skip-link">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-skip-link.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-skip-link" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-skip-link" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>To make the link completely hidden until a user tabs to the link, combine it
 with the <code>visually-hidden</code> component.</p>
@@ -584,10 +935,11 @@ with the <code>visually-hidden</code> component.</p>
           <div class="kss-modifier__example">
             
 
-<a href="#main-content" class="skip-link [modifier class]">
+<a href="#main-content" class="skip-link ">
       Skip to main content
   </a>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                       <div class="kss-modifier__name kss-style">
@@ -603,6 +955,7 @@ with the <code>visually-hidden</code> component.</p>
       Skip to main content
   </a>
 
+              <div class="kss-modifier__example-footer"></div>
             </div>
                       <div class="kss-modifier__name kss-style">
               .visually-hidden.visually-hidden--focusable:focus
@@ -617,22 +970,38 @@ with the <code>visually-hidden</code> component.</p>
       Skip to main content
   </a>
 
+              <div class="kss-modifier__example-footer"></div>
             </div>
                   </div>
-                  <div class="kss-markup kss-style">
-            <pre class="prettyprint linenums lang-html"><code data-language="html">
-
-&lt;a href=&quot;#main-content&quot; class=&quot;skip-link [modifier class]&quot;&gt;
-      Skip to main content
-  &lt;/a&gt;
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/skip-link/skip-link.twig</code>
+                          </summary>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">{#
+/**
+ * @file
+ * Component for a skip link.
+ *
+ * Variables:
+ * - modifier_class: [string] Classes to modify the default component styling.
+ * - url: [string] The url to skip to.
+ * - text: [string] The link text.
+ */
+#}
+{{ attach_library(&#039;if_zen/skip-link&#039;) }}
+&lt;a href=&quot;{{ url|default(&#039;#main-content&#039;) }}&quot; class=&quot;skip-link {{ modifier_class }}&quot;&gt;
+  {% block content %}
+    {{ text|default(&#039;Skip to main content&#039;) }}
+  {% endblock %}
+&lt;/a&gt;
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/skip-link/skip-link.scss</code>, line 3
         </div>
           </section>
-          <section id="kssref-navigation-tabs" class="kss-section kss-section--depth-2">
+          <section id="kssref-navigation-tabs" class="kss-section kss-section--depth-2 ">
       <div class="kss-style">
                 <h2 class="kss-title kss-title--level-2">
           <a class="kss-title__permalink" href="#kssref-navigation-tabs">
@@ -646,6 +1015,57 @@ with the <code>visually-hidden</code> component.</p>
           </a>
         </h2>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-tabs" data-kss-fullscreen="kssref-navigation-tabs">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-tabs.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-tabs" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-tabs" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>The primary and secondary tabs.</p>
 
@@ -665,7 +1085,7 @@ with the <code>visually-hidden</code> component.</p>
             
 
   <h2 class="visually-hidden">Primary tabs</h2>
-<ul class="tabs clearfix [modifier class]">
+<ul class="tabs clearfix ">
           <li class="tabs__tab is-active">
               <a href="#" class="tabs__tab-link is-active">
           View
@@ -684,6 +1104,7 @@ with the <code>visually-hidden</code> component.</p>
           </li>
   </ul>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                       <div class="kss-modifier__name kss-style">
@@ -715,38 +1136,54 @@ with the <code>visually-hidden</code> component.</p>
           </li>
   </ul>
 
+              <div class="kss-modifier__example-footer"></div>
             </div>
                   </div>
-                  <div class="kss-markup kss-style">
-            <pre class="prettyprint linenums lang-html"><code data-language="html">
-
-  &lt;h2 class=&quot;visually-hidden&quot;&gt;Primary tabs&lt;/h2&gt;
-&lt;ul class=&quot;tabs clearfix [modifier class]&quot;&gt;
-          &lt;li class=&quot;tabs__tab is-active&quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link is-active&quot;&gt;
-          View
-                      &lt;span class=&quot;visually-hidden&quot;&gt;(active tab)&lt;/span&gt;
-                  &lt;/a&gt;
-          &lt;/li&gt;
-          &lt;li class=&quot;tabs__tab &quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link &quot;&gt;
-          Edit
-                  &lt;/a&gt;
-          &lt;/li&gt;
-          &lt;li class=&quot;tabs__tab &quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link &quot;&gt;
-          Delete
-                  &lt;/a&gt;
-          &lt;/li&gt;
-  &lt;/ul&gt;
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/tabs/tabs.twig</code>
+                          </summary>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">{#
+/**
+ * @file
+ * Component for tabs.
+ *
+ * Variables:
+ * - heading: [string] Accessible heading.
+ * - modifier_class: [string] Classes to modify the default component styling.
+ * - tabs: [array] The tabs. Each tab is an object containing:
+ *   - active: [boolean] Whether the tab is the active tab.
+ *   - text: [string] Text of the item.
+ *   - url: [string] URL of the item (optional).
+ */
+#}
+{{ attach_library(&#039;if_zen/tabs&#039;) }}
+{% if heading %}
+  &lt;h2 class=&quot;visually-hidden&quot;&gt;{{ heading }}&lt;/h2&gt;
+{% endif %}
+&lt;ul class=&quot;tabs clearfix {{modifier_class}}&quot;&gt;
+  {% for tab in tabs %}
+    {% set activeClass = tab.active ? &#039;is-active&#039; : &#039;&#039; %}
+    &lt;li class=&quot;tabs__tab {{ activeClass }}&quot;&gt;
+      {% block link %}
+        &lt;a href=&quot;{{ tab.url }}&quot; class=&quot;tabs__tab-link {{ activeClass }}&quot;&gt;
+          {{ tab.text }}
+          {% if tab.active %}
+            &lt;span class=&quot;visually-hidden&quot;&gt;{{ activeLabel|default(&#039;(active tab)&#039;) }}&lt;/span&gt;
+          {% endif %}
+        &lt;/a&gt;
+      {% endblock link %}
+    &lt;/li&gt;
+  {% endfor %}
+&lt;/ul&gt;
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/tabs/tabs.scss</code>, line 3
         </div>
           </section>
-          <section id="kssref-navigation-tabs-stacked" class="kss-section kss-section--depth-3">
+          <section id="kssref-navigation-tabs-stacked" class="kss-section kss-section--depth-3 ">
       <div class="kss-style">
                 <h3 class="kss-title kss-title--level-3">
           <a class="kss-title__permalink" href="#kssref-navigation-tabs-stacked">
@@ -760,6 +1197,57 @@ with the <code>visually-hidden</code> component.</p>
           </a>
         </h3>
 
+                  <p class="kss-toolbar">
+                          <a href="#kssref-navigation-tabs-stacked" data-kss-fullscreen="kssref-navigation-tabs-stacked">
+                <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+                <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                </svg>
+              </a>
+              <a href="item-navigation-tabs-stacked.html" target="_blank">
+                <span class="kss-toolbar__tooltip">Open in new window</span>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                  <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                  <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                  <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                  <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                </svg>
+              </a>
+                        <a href="#kssref-navigation-tabs-stacked" data-kss-guides="true">
+              <span class="kss-toolbar__tooltip">Toggle example guides</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+              </svg>
+            </a>
+            <a href="#kssref-navigation-tabs-stacked" data-kss-markup="true">
+              <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+              </svg>
+            </a>
+          </p>
+        
                   <div class="kss-description">
             <p>When the secondary tabs appear directly after the primary tabs, the styling
 is slightly different.</p>
@@ -818,55 +1306,21 @@ is slightly different.</p>
           </li>
   </ul>
 
+            <div class="kss-modifier__example-footer"></div>
           </div>
 
                   </div>
-                  <div class="kss-markup kss-style">
-            <pre class="prettyprint linenums lang-html"><code data-language="html">
+                  <details class="kss-markup kss-style">
+            <summary>
+                              Markup: <code>navigation/tabs/tabs--stacked.twig</code>
+                          </summary>
+            <pre class="prettyprint linenums lang-html"><code data-language="html">{% include &quot;tabs.twig&quot; %}
 
-  &lt;h2 class=&quot;visually-hidden&quot;&gt;Primary tabs&lt;/h2&gt;
-&lt;ul class=&quot;tabs clearfix &quot;&gt;
-          &lt;li class=&quot;tabs__tab is-active&quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link is-active&quot;&gt;
-          View
-                      &lt;span class=&quot;visually-hidden&quot;&gt;(active tab)&lt;/span&gt;
-                  &lt;/a&gt;
-          &lt;/li&gt;
-          &lt;li class=&quot;tabs__tab &quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link &quot;&gt;
-          Edit
-                  &lt;/a&gt;
-          &lt;/li&gt;
-          &lt;li class=&quot;tabs__tab &quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link &quot;&gt;
-          Delete
-                  &lt;/a&gt;
-          &lt;/li&gt;
-  &lt;/ul&gt;
-
-
-
-  &lt;h2 class=&quot;visually-hidden&quot;&gt;Secondary tabs&lt;/h2&gt;
-&lt;ul class=&quot;tabs clearfix tabs--secondary&quot;&gt;
-          &lt;li class=&quot;tabs__tab is-active&quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link is-active&quot;&gt;
-          View
-                      &lt;span class=&quot;visually-hidden&quot;&gt;(active tab)&lt;/span&gt;
-                  &lt;/a&gt;
-          &lt;/li&gt;
-          &lt;li class=&quot;tabs__tab &quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link &quot;&gt;
-          Edit
-                  &lt;/a&gt;
-          &lt;/li&gt;
-          &lt;li class=&quot;tabs__tab &quot;&gt;
-              &lt;a href=&quot;#&quot; class=&quot;tabs__tab-link &quot;&gt;
-          Delete
-                  &lt;/a&gt;
-          &lt;/li&gt;
-  &lt;/ul&gt;
+{% set modifier_class = &#039;tabs--secondary&#039; %}
+{% set heading = &quot;Secondary tabs&quot; %}
+{% include &quot;tabs.twig&quot; %}
 </code></pre>
-          </div>
+          </details>
               
               <div class="kss-source kss-style">
           Source: <code>navigation/tabs/tabs.scss</code>, line 13
@@ -878,11 +1332,26 @@ is slightly different.</p>
 <script src="kss-assets/kss.js"></script>
 <script src="kss-assets/scrollspy.js"></script>
 <script src="kss-assets/prettify.js"></script>
+<script src="kss-assets/kss-fullscreen.js"></script>
+<script src="kss-assets/kss-guides.js"></script>
+<script src="kss-assets/kss-markup.js"></script>
 <script>
   prettyPrint();
   var spy = new ScrollSpy('#kss-node', {
     nav: '.kss-nav__menu-child > li > a',
     className: 'is-in-viewport'
+  });
+  var kssFullScreen = new KssFullScreen({
+    idPrefix: 'kss-fullscreen-',
+    bodyClass: 'kss-fullscreen-mode',
+    elementClass: 'is-fullscreen'
+  });
+  var kssGuides = new KssGuides({
+    bodyClass: 'kss-guides-mode'
+  });
+  var kssMarkup = new KssMarkup({
+    bodyClass: 'kss-markup-mode',
+    detailsClass: 'kss-markup'
   });
 </script>
 

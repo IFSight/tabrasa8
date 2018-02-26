@@ -1,0 +1,1 @@
+{"version":3,"sources":["highlight-mark.css"],"names":[],"mappings":"AAAA;;EAEE,YAAY;EACZ,8BAA8B;CAC/B","file":"highlight-mark.css","sourcesContent":[".highlight-mark,\n.marker {\n  color: #c00;\n  background-color: transparent;\n}\n"]}

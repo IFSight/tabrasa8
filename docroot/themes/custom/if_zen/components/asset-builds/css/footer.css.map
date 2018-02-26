@@ -1,0 +1,1 @@
+{"version":3,"sources":["footer.css"],"names":[],"mappings":"AAAA;EACE,oBAAoB;EACpB,oBAAoB;EACpB,iBAAiB;EACjB,kBAAkB;EAClB,8BAA8B;CAC/B","file":"footer.css","sourcesContent":[".footer {\n  font-size: 0.875rem;\n  line-height: 1.5rem;\n  margin-top: 3rem;\n  padding: 1.5rem 0;\n  border-top: 1px solid #cccccc;\n}\n"]}

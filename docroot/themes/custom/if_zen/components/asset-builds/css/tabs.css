@@ -2,7 +2,6 @@
   margin: 1.125rem 0 0;
   line-height: 1.875rem;
   border-bottom: 1px solid #cccccc \0/ie;
-  background-image: -webkit-linear-gradient(bottom, #cccccc 1px, transparent 1px);
   background-image: linear-gradient(to top, #cccccc 1px, transparent 1px);
   padding: 0 2px;
   list-style: none;
@@ -39,7 +38,6 @@
   padding: 0 1.5rem;
   display: block;
   text-decoration: none;
-  -webkit-transition: color .3s, background .3s, border .3s;
   transition: color .3s, background .3s, border .3s;
   text-shadow: #fff 0 1px 0;
   color: #000;
@@ -65,7 +63,6 @@
 .tabs + .tabs--secondary,
 .tabs + h2 + .tabs--secondary {
   margin-top: 0;
-  background-image: -webkit-linear-gradient(bottom, #cccccc 1px, transparent 1px);
   background-image: linear-gradient(to top, #cccccc 1px, transparent 1px);
 }
 
@@ -103,3 +100,5 @@
   background: #666666;
   border-color: black;
 }
+
+/*# sourceMappingURL=tabs.css.map */

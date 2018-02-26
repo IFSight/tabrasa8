@@ -1,0 +1,1 @@
+{"version":3,"sources":["more-link.css"],"names":[],"mappings":"AAAA;EACE,kBAAkB;CACnB;;AAED;EACE,iBAAiB;CAClB","file":"more-link.css","sourcesContent":[".more-link {\n  text-align: right;\n}\n\n[dir=\"rtl\"] .more-link {\n  text-align: left;\n}\n"]}

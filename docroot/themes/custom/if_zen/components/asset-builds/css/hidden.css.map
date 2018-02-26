@@ -1,0 +1,1 @@
+{"version":3,"sources":["hidden.css"],"names":[],"mappings":"AAAA;;;;EAIE,cAAc;CACf","file":"hidden.css","sourcesContent":[".hidden,\nhtml.js .js-hidden,\nhtml.js .element-hidden,\nhtml.js .js-hide {\n  display: none;\n}\n"]}
