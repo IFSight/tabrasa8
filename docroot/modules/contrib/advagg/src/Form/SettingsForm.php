@@ -238,6 +238,17 @@ class SettingsForm extends ConfigFormBase {
         '@link' => 'https://www.drupal.org/node/2336217',
       ]),
     ];
+    $form['css']['css_preserve_external'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Do not change external to file if on same host.'),
+      '#default_value' => $config->get('css.preserve_external'),
+      '#description' => t('If a CSS file is set as external and is on the same hosts do not convert to file.'),
+      '#states' => [
+        'disabled' => [
+          '#edit-css-fix-type' => ['checked' => FALSE],
+        ],
+      ],
+    ];
 
     $form['js'] = [
       '#type' => 'details',
@@ -252,7 +263,7 @@ class SettingsForm extends ConfigFormBase {
         '@link' => 'https://www.drupal.org/node/2336217',
       ]),
     ];
-    $form['js']['js.preserve_external'] = [
+    $form['js']['js_preserve_external'] = [
       '#type' => 'checkbox',
       '#title' => t('Do not change external to file if on same host.'),
       '#default_value' => $config->get('js.preserve_external'),
@@ -412,6 +423,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('css.brotli', $form_state->getValue('css_brotli'))
       ->set('css.fix_type', $form_state->getValue('css_fix_type'))
       ->set('css.combine_media', $form_state->getValue('css_combine_media'))
+      ->set('css.preserve_external', $form_state->getValue('css_preserve_external'))
       ->set('path.convert.force_https', $form_state->getValue('path_convert_force_https'))
       ->set('path.convert.absolute', $form_state->getValue('path_convert_absolute'))
       ->set('path.convert.absolute_to_protocol_relative', $form_state->getValue('path_convert_absolute_to_protocol_relative'))

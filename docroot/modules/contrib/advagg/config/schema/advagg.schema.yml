@@ -15,6 +15,9 @@ advagg.settings:
         fix_type:
           type: boolean
           label: 'Fix type of added asset files.'
+        preserve_external:
+          type: boolean
+          label: 'Do not change external to file if on same host for css.'
     dns_prefetch:
       type: boolean
       label: 'Prefetch external domains for css/js'

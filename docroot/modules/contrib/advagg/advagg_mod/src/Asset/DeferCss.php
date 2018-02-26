@@ -84,7 +84,7 @@ class DeferCss {
    *   Updated html string.
    */
   protected function callback(array $matches) {
-    return "<link rel='preload' {$matches[1]} {$matches[2]} as='style' onload=\"this.rel='stylesheet'\" {$matches[3]}\\><noscript>{$matches[0]}</noscript>";
+    return "<link rel='preload' {$matches[1]} {$matches[2]} as='style' onload=\"this.rel='stylesheet'\" {$matches[3]}/><noscript>{$matches[0]}</noscript>";
   }
 
   /**

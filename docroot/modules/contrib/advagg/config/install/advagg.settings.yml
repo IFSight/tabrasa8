@@ -2,6 +2,7 @@ css:
   brotli: true
   combine_media: false
   fix_type: true
+  preserve_external: false
 dns_prefetch: false
 path:
   convert:

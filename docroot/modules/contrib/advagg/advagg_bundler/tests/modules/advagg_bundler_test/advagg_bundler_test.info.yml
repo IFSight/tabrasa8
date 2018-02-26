@@ -1,11 +1,8 @@
-name: 'AdvAgg Minify CSS'
-description: 'Minify CSS.'
-package: 'Advanced CSS/JS Aggregation'
+name: 'Advanced CSS/JS Aggregation Bundler Testing'
+description: 'Provides assets for automated testing.'
+package: Testing
 # core: 8.x
-dependencies:
-  - advagg
 type: module
-configure: advagg_css_minify.settings
 
 # Information added by Drupal.org packaging script on 2018-02-15
 version: '8.x-3.5'

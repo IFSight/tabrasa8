@@ -4,6 +4,7 @@ namespace Drupal\advagg_mod\Asset;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Add defer tag to scripts.
@@ -25,14 +26,37 @@ class DeferJs {
   protected $counter;
 
   /**
+   * The Drupal module handler
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * A list of file cids to skip.
+   *
+   * @var array
+   */
+  protected $skipList;
+
+  /**
    * DeferCss constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface
+   *   The Drupal module handler.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler) {
     $this->deferType = $config_factory->get('advagg_mod.settings')->get('css_defer_js_code');
     $this->counter = $config_factory->get('advagg.settings')->get('global_counter');
+    $this->moduleHandler = $module_handler;
+    $this->skipList = [];
+
+    // Admin Toolbar 8x fails when deferred.
+    if ($this->moduleHandler->moduleExists('admin_toolbar')) {
+      $this->skipList[] = Crypt::hashBase64(drupal_get_path('module', 'admin_toolbar') . '/js/admin_toolbar.js' . $this->counter);
+    }
   }
 
   /**
@@ -46,10 +70,12 @@ class DeferJs {
    */
   public function defer($content) {
     // Admin Toolbar 8x fails when deferred.
-    $cid = Crypt::hashBase64(drupal_get_path('module', 'admin_toolbar') . '/js/admin_toolbar.js' . $this->counter);
-    if (strstr($content, $cid)) {
-      return $content;
+    foreach ($this->skipList as $cid) {
+      if (strstr($content, $cid)) {
+        return $content;
+      }
     }
+
     // Only defer local scripts.
     if ($this->deferType === 2) {
       $pattern = '/<script src="\/[a-zA-Z0-0].*"/';

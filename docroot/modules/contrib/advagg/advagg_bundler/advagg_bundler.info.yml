@@ -1,5 +1,5 @@
 name: 'AdvAgg Bundler'
-description: 'Custumize the number of aggregates to be created.'
+description: 'Customize the number of aggregates to be created.'
 package: 'Advanced CSS/JS Aggregation'
 # core: 8.x
 dependencies:
@@ -7,8 +7,8 @@ dependencies:
 type: module
 configure: advagg_bundler.settings
 
-# Information added by Drupal.org packaging script on 2017-10-18
-version: '8.x-3.4'
+# Information added by Drupal.org packaging script on 2018-02-15
+version: '8.x-3.5'
 core: '8.x'
 project: 'advagg'
-datestamp: 1508369048
+datestamp: 1518684422

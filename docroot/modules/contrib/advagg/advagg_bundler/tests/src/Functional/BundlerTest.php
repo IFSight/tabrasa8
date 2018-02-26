@@ -19,7 +19,7 @@ class BundlerTest extends AdvaggFunctionalTestBase {
    *
    * @var array
    */
-  public static $modules = ['advagg_bundler'];
+  public static $modules = ['advagg_bundler', 'advagg_bundler_test'];
 
   /**
    * Test the bundler functionality and settings configuration.
@@ -35,7 +35,7 @@ class BundlerTest extends AdvaggFunctionalTestBase {
     $this->drupalGet(Url::fromRoute('advagg_bundler.settings'));
     $session = $this->assertSession();
     $session->statusCodeEquals(200);
-    
+
     // Requires: https://github.com/minkphp/Mink/pull/744
     // $session->responseContainsCount("<script", 8);
     // $session->responseContainsCount('rel="stylesheet"', 4);
@@ -50,11 +50,22 @@ class BundlerTest extends AdvaggFunctionalTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, t('Save configuration'));
     $session = $this->assertSession();
+    $session->statusCodeEquals(200);
 
     // The Drupal settings json is a script element but inline so AdvAgg ignores it.
     // Requires: https://github.com/minkphp/Mink/pull/744
     // $session->responseContainsCount("<script", 11);
     // $session->responseContainsCount('rel="stylesheet"', 6);
+
+    // Ensure that bundler works even if the number of non-preprocessed files
+    // *exactly* match the selected maximum. See advagg_bundler_test.module.
+    $edit['max_js'] = 1;
+    $edit['max_css'] = 1;
+    $this->drupalPostForm(NULL, $edit, t('Save configuration'));
+
+    $this->drupalGet(Url::fromRoute('system.admin'));
+    $session = $this->assertSession();
+    $session->statusCodeEquals(200);
   }
 
 }

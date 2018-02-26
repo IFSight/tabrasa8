@@ -58,9 +58,10 @@ class CssOptimizer extends AssetOptimizer {
       if (stripos($path, 'http') !== 0 && stripos($path, '//') !== 0) {
         $asset['type'] = 'file';
       }
-      // If type is external & starts with http, https or // but points to this
-      // host change to file, but move it to the top of the aggregation stack.
-      elseif (stripos($path, $this->basePath) !== FALSE) {
+      // If type is external and starts with http, https, or // but points to
+      // this host change to file, but move it to the top of the aggregation
+      // stack as long as css.preserve_external is not set.
+      elseif (stripos($path, $this->basePath) !== FALSE && !$this->config->get('css.preserve_external')) {
         $asset['type'] = 'file';
         $asset['group'] = CSS_BASE;
         $asset['every_page'] = TRUE;

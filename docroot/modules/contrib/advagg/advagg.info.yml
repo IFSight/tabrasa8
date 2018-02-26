@@ -5,8 +5,8 @@ package: 'Advanced CSS/JS Aggregation'
 type: module
 configure: advagg.settings
 
-# Information added by Drupal.org packaging script on 2017-10-18
-version: '8.x-3.4'
+# Information added by Drupal.org packaging script on 2018-02-15
+version: '8.x-3.5'
 core: '8.x'
 project: 'advagg'
-datestamp: 1508369048
+datestamp: 1518684422

@@ -35,7 +35,7 @@ class AdvaggJsCollectionGrouper extends JsCollectionGrouper implements AssetColl
 
     $logic = $this->config->get('js.logic');
     $preprocess_count = count(array_filter(array_column($js_assets, 'preprocess')));
-    $target = $max - (count($js_assets) - $preprocess_count);
+    $target = max($max - (count($js_assets) - $preprocess_count), 1);
     if ($logic === 0) {
       $split = round($preprocess_count / $target);
     }
@@ -96,7 +96,7 @@ class AdvaggJsCollectionGrouper extends JsCollectionGrouper implements AssetColl
           }
         }
         else {
-          $current_size += $item['size'];
+            $current_size += isset($item['size']) ? $item['size'] : 0;
           if ($current_size >= $split) {
             $current_size = 0;
             $current_group_keys = NULL;

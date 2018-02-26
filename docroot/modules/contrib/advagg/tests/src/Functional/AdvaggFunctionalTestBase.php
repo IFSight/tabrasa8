@@ -37,7 +37,10 @@ abstract class AdvaggFunctionalTestBase extends BrowserTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->user = $this->drupalCreateUser(['administer site configuration']);
+    $this->user = $this->drupalCreateUser([
+      'administer site configuration',
+      'access administration pages'
+    ]);
     $this->drupalLogin($this->user);
   }
 
