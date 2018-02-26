@@ -1,0 +1,13 @@
+name: Zen
+description: 'Zen sub-themes are the ultimate starting themes for Drupal 8. Read the <a href="https://drupal.org/node/873778">online docs</a> or the included README-FIRST.txt on how to create a theme with Zen.'
+screenshot: zen-internals/screenshot.png
+
+# core: 8.x
+type: theme
+base theme: classy
+
+# Information added by Drupal.org packaging script on 2016-06-02
+version: '8.x-7.0-alpha14'
+core: '8.x'
+project: 'zen'
+datestamp: 1464881363

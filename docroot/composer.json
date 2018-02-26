@@ -53,6 +53,7 @@
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
         "drupal/youtube": "^1.0@beta",
+        "drupal/zen": "^7.0@alpha",
         "drupal/console": "~1.0"
     },
     "minimum-stability": "dev",

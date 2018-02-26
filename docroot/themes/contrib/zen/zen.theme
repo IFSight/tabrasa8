@@ -1,0 +1,88 @@
+<?php
+/**
+ * @file
+ * Contains functions to alter Drupal's markup for the Zen theme.
+ *
+ * IMPORTANT WARNING: DO NOT MODIFY THIS FILE.
+ *
+ * The base Zen theme is designed to be easily extended by its sub-themes. You
+ * shouldn't modify this or any of the CSS or PHP files in the root zen/ folder.
+ * See the online documentation for more information:
+ *   https://drupal.org/documentation/theme/zen
+ */
+
+
+// Auto-rebuild the theme registry during theme development.
+if (theme_get_setting('zen_rebuild_registry') && !defined('MAINTENANCE_MODE')) {
+  // Rebuild .info.yml data and clear Twig cache.
+  $theme_handler = \Drupal::service('theme_handler');
+  $theme_handler->refreshInfo();
+
+  // Rebuild theme registry.
+  // @TODO Clear the theme registry.
+  // $theme_registry = \Drupal::service('theme.registry');
+  // $theme_registry->reset();
+  // $theme_registry->get();
+
+  // @TODO: Turn on Twig debugging. Though its probably impossible from a theme.
+  // $GLOBALS['conf']['theme_debug'] = TRUE;
+}
+
+/**
+ * Implements HOOK_theme().
+ */
+function zen_theme(&$existing, $type, $theme, $path) {
+  include_once './' . drupal_get_path('theme', 'zen') . '/zen-internals/theme-registry.inc';
+  return _zen_theme($existing, $type, $theme, $path);
+}
+
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function zen_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // If on an individual node page, add the node type to theme suggestions.
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $first_suggestion = array_shift($suggestions);
+    array_unshift($suggestions, 'page__node__' . $node->bundle());
+    if ($first_suggestion) {
+      array_unshift($suggestions, $first_suggestion);
+    }
+    if (in_array('page__node__edit', $suggestions)) {
+      $suggestions[] = 'page__node__edit__' . $node->bundle();
+    }
+  }
+}
+
+/**
+ * Implements hook_pre_render_HOOK() for menu-local-tasks templates.
+ *
+ * Use preprocess hook to convert menu_local_task into variables needed by the
+ * tabs component.
+ */
+function zen_preprocess_menu_local_tasks(&$variables) {
+  foreach (array('primary', 'secondary') as $type) {
+    $tabs = array();
+
+    // Sort the tabs by #weight.
+    uasort($variables[$type], array('Drupal\Component\Utility\SortArray', 'sortByWeightProperty'));
+
+    foreach (array_keys($variables[$type]) as $key) {
+      // Add the tab to a new array.
+      $tabs[$key] = array(
+        'active' => $variables[$type][$key]['#active'],
+        'url' => $variables[$type][$key]['#link']['url']->toString(),
+        'text' => \Drupal\Component\Utility\Html::escape($variables[$type][$key]['#link']['title'])
+      );
+
+      // Check if the tab should be shown by rendering the original.
+      $link = drupal_render($variables[$type][$key]);
+      if (!$link) {
+        unset($tabs[$key]);
+      }
+    }
+
+    // Overwrite the original tabs data.
+    $variables[$type] = $tabs;
+  }
+}
