@@ -1,11 +1,13 @@
 /* eslint-env node, es6 */
 /* global Promise */
-/* eslint-disable key-spacing, one-var, no-multi-spaces, max-nested-callbacks, quote-props */
+/* eslint-disable key-spacing, one-var, no-multi-spaces, max-nested-callbacks, quote-props, strict */
 
 'use strict';
 
-var importOnce = require('node-sass-import-once'),
-  path = require('path');
+var importOnce = require('node-sass-import-once');
+var path = require('path');
+var shell = require('gulp-shell');
+var notify = require('gulp-notify');
 
 var options = {};
 
@@ -88,9 +90,11 @@ options.styleGuide = {
     path.relative(options.rootPath.styleGuide, options.theme.css + 'header.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'hidden.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'highlight-mark.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'icons.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'inline-links.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'inline-sibling.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'messages.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'modal.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'print-none.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'responsive-video.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'visually-hidden.css'),
@@ -107,6 +111,7 @@ options.styleGuide = {
     path.relative(options.rootPath.styleGuide, options.theme.css + 'table-drag.css'),
     // navigation stylesheets
     path.relative(options.rootPath.styleGuide, options.theme.css + 'breadcrumb.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'megamenu.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'more-link.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'nav-menu.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'navbar.css'),
@@ -147,7 +152,8 @@ var gulp      = require('gulp'),
   del         = require('del'),
   // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
   sass        = require('gulp-sass'),
-  kss         = require('kss');
+  kss         = require('kss'),
+  cache       = require('gulp-cached');
 
 // The default task.
 gulp.task('default', ['build']);
@@ -168,9 +174,10 @@ var sassFiles = [
   '!' + options.theme.components + 'style-guide/kss-example-chroma.scss'
 ];
 
-gulp.task('styles', ['clean:css'], function () {
+gulp.task('styles', function () {
   return gulp.src(sassFiles)
     .pipe($.sourcemaps.init())
+    .pipe(cache())
     .pipe(sass(options.sass).on('error', sass.logError))
     .pipe($.autoprefixer(options.autoprefixer))
     .pipe($.rename({dirname: ''}))
@@ -249,7 +256,10 @@ gulp.task('lint:sass-with-fail', function () {
 // ##############################
 // Watch for changes and rebuild.
 // ##############################
-gulp.task('watch', ['browser-sync', 'watch:lint-and-styleguide', 'watch:js']);
+gulp.task('watch', ['browser-sync', 'watch:lint-and-styleguide', 'watch:js', 'drush:cr']);
+
+// for running styleguide outside of drupal
+gulp.task('watch-styleguide', ['browser-sync', 'watch:lint-and-styleguide', 'watch:js']);
 
 gulp.task('browser-sync', ['watch:css'], function () {
   if (!options.drupalURL) {
@@ -261,7 +271,7 @@ gulp.task('browser-sync', ['watch:css'], function () {
   });
 });
 
-gulp.task('watch:css', ['styles'], function () {
+gulp.task('watch:css', ['clean:css', 'styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', options.gulpWatchOptions, ['styles']);
 });
 
@@ -274,6 +284,18 @@ gulp.task('watch:lint-and-styleguide', ['styleguide', 'lint:sass'], function () 
 
 gulp.task('watch:js', ['lint:js'], function () {
   return gulp.watch(options.eslint.files, options.gulpWatchOptions, ['lint:js']);
+});
+
+gulp.task('drush:cr', function () {
+  return gulp.src('', {read: false})
+    .pipe(shell([
+      'drush cr'
+    ]))
+    .pipe(notify({
+      title: 'Cache rebuilt',
+      message: 'Drupal caches rebuilt.',
+      onLast: true
+    }));
 });
 
 // ######################
