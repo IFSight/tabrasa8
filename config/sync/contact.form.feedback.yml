@@ -1,0 +1,14 @@
+uuid: d44a78dd-54c5-4c47-9903-c11a4470dafc
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: c4zaT5cyPxuTXI6JOWt3qRtMvICT9tHB6d9a5VG-CmQ
+id: feedback
+label: 'Website feedback'
+recipients:
+  - ifdrupaladmin@ifsight.net
+reply: ''
+weight: 0
+message: 'Your message has been sent.'
+redirect: ''

@@ -1,0 +1,22 @@
+uuid: a3dead25-c205-4d65-87e7-45ad4a758a90
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - if_zen
+_core:
+  default_config_hash: nLe-6orj-WfNG3pzv9uU2VlrFztFMUEtlx1mIWw-gk4
+id: if_zen_help
+theme: if_zen
+region: help
+weight: -30
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  provider: help
+  label_display: '0'
+visibility: {  }

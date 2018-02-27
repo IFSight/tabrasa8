@@ -1,0 +1,20 @@
+uuid: 5daabfa5-5a68-4b5b-9e19-f79187fe0e61
+langcode: en
+status: true
+dependencies:
+  theme:
+    - if_zen
+_core:
+  default_config_hash: Ygq1ev38pb83MNqPX3vIQzLmb44dbydjV5EAl-yfqkY
+id: if_zen_local_actions
+theme: if_zen
+region: content
+weight: -20
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  provider: core
+  label_display: '0'
+visibility: {  }

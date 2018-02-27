@@ -1,0 +1,22 @@
+uuid: c1c5295f-d868-4f73-a797-d7140116a0f1
+langcode: en
+status: true
+dependencies:
+  theme:
+    - if_zen
+_core:
+  default_config_hash: zbUDIb2Tpk7QZLaqPh2Bt3cxr26OQoZyiDfrScAo7u8
+id: if_zen_local_tasks
+theme: if_zen
+region: content
+weight: -40
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility: {  }
