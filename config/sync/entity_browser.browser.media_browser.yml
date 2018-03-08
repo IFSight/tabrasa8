@@ -34,7 +34,7 @@ widgets:
     settings:
       entity_type: media
       bundle: image
-      form_mode: default
+      form_mode: entity_browser_form
       submit_text: 'Upload Image'
     uuid: e4edf215-26bd-4004-8a3e-ebc01fd1dd4d
     weight: -10
