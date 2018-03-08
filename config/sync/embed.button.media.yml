@@ -6,7 +6,7 @@ dependencies:
     - 'file:image:813d2f81-a124-4737-ad1c-11ef1ed1f023'
   module:
     - entity_embed
-    - media_entity
+    - media
 label: Media
 id: media
 type_id: entity

@@ -1,16 +1,13 @@
-uuid: f0ca46f5-03e0-4062-a80f-9ddd988910b0
+uuid: 3fa3622b-327a-47b3-be78-104069fc3c12
 langcode: en
 status: true
-dependencies:
-  module:
-    - media_entity_image
+dependencies: {  }
 id: image
 label: Image
 description: ''
-type: image
+source: image
 queue_thumbnail_downloads: false
 new_revision: false
-type_configuration:
+source_configuration:
   source_field: field_image
-  gather_exif: false
 field_map: {  }

@@ -1,4 +1,4 @@
-admin: seven
+admin: if_admin
 default: if_zen
 _core:
   default_config_hash: fOjer9hADYYnbCJVZMFZIIM1azTFWyg84ZkFDHfAbUg

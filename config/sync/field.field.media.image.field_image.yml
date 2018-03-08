@@ -1,10 +1,10 @@
-uuid: 8900af33-33bd-49d8-9524-4fd8a48e88be
+uuid: ef73c5db-ddb0-4bfc-a43d-86275e64ad1e
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.media.field_image
-    - media_entity.bundle.image
+    - media.type.image
   module:
     - image
 id: media.image.field_image
@@ -13,8 +13,8 @@ entity_type: media
 bundle: image
 label: Image
 description: ''
-required: false
-translatable: false
+required: true
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:

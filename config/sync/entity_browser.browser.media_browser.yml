@@ -1,11 +1,11 @@
-uuid: efe661c6-65f9-42e6-aebd-35d50afa0b07
+uuid: a7ce8351-129b-407d-97a9-882c93d6a2f5
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.entity_browser
+    - views.view.media_entity_browser
   module:
-    - media_entity_image
+    - entity_browser_entity_form
     - views
 name: media_browser
 label: 'Media Browser'
@@ -20,24 +20,23 @@ selection_display_configuration: {  }
 widget_selector: tabs
 widget_selector_configuration: {  }
 widgets:
-  e5a98c7e-555e-4dd2-9360-46f3b36afa81:
+  cee2ea0e-4fdd-4b57-b736-58917a5254e3:
     settings:
-      extensions: 'jpg jpeg png gif'
-      media_bundle: image
-      upload_location: 'public://'
-      multiple: '1'
-      submit_text: 'Select files'
-    uuid: e5a98c7e-555e-4dd2-9360-46f3b36afa81
-    weight: 1
-    label: 'Upload Images'
-    id: media_entity_image_upload
-  ee04f0e3-23e0-4719-b5b4-d10ea9241159:
-    settings:
-      view: entity_browser
+      view: media_entity_browser
       view_display: entity_browser_1
       submit_text: 'Select entities'
       auto_select: false
-    uuid: ee04f0e3-23e0-4719-b5b4-d10ea9241159
-    weight: 2
+    uuid: cee2ea0e-4fdd-4b57-b736-58917a5254e3
+    weight: -9
     label: 'Browse Media'
     id: view
+  e4edf215-26bd-4004-8a3e-ebc01fd1dd4d:
+    settings:
+      entity_type: media
+      bundle: image
+      form_mode: default
+      submit_text: 'Upload Image'
+    uuid: e4edf215-26bd-4004-8a3e-ebc01fd1dd4d
+    weight: -10
+    label: 'Upload Image'
+    id: entity_form

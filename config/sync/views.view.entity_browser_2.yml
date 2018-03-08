@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
-    - media_entity
+    - media
     - user
 id: entity_browser_2
 label: 'Entity Browser 2'

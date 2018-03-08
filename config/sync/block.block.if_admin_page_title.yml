@@ -1,0 +1,20 @@
+uuid: 587b2c28-8bc1-48a8-b6c0-1276dac39168
+langcode: en
+status: true
+dependencies:
+  theme:
+    - if_admin
+_core:
+  default_config_hash: nF-N8WT2XdR5rMKxwc4ghq-D-VC9QbXR8CPxuWTsCmA
+id: if_admin_page_title
+theme: if_admin
+region: header
+weight: -50
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility: {  }

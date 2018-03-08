@@ -1,0 +1,10 @@
+uuid: 23b6bd1f-222c-47ef-8261-f2080fa1acc6
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+id: media.entity_browser_form
+label: 'Entity Browser Form'
+targetEntityType: media
+cache: true

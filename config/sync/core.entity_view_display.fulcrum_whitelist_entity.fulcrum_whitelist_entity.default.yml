@@ -1,0 +1,26 @@
+uuid: c5f48fed-4c75-4c6e-b457-16f4f05d8d67
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.fulcrum_whitelist_entity.fulcrum_whitelist_entity.field_user
+  module:
+    - fulcrum_whitelist
+_core:
+  default_config_hash: r2rkQRHs5pmmC24CLggyF6NlW_cyj40Xx_ZAOaYIIMk
+id: fulcrum_whitelist_entity.fulcrum_whitelist_entity.default
+targetEntityType: fulcrum_whitelist_entity
+bundle: fulcrum_whitelist_entity
+mode: default
+content:
+  field_user:
+    weight: 0
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+hidden:
+  name: true
+  user_id: true

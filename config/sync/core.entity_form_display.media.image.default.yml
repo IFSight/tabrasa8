@@ -1,54 +1,38 @@
-uuid: 9ceeb845-7fa7-4f81-8c01-9b2db905dd14
+uuid: 5b4ed87d-a1d4-439a-8762-360b15adcfc6
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.media.image.field_image
+    - field.field.media.image.field_media_image
     - image.style.thumbnail
-    - media_entity.bundle.image
+    - media.type.image
   module:
     - image
-    - path
 id: media.image.default
 targetEntityType: media
 bundle: image
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 10
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_image:
-    weight: 31
-    settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
-    third_party_settings: {  }
     type: image_image
+    weight: 1
     region: content
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings: {  }
   name:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  uid:
-    type: entity_reference_autocomplete
-    weight: 5
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    region: content
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  created: true
+  field_media_image: true
+  path: true
+  status: true
+  uid: true

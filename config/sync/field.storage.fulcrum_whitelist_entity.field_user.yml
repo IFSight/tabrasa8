@@ -1,0 +1,22 @@
+uuid: c45ccb7c-dd81-47fb-92cb-e16dbb7e2e5e
+langcode: en
+status: true
+dependencies:
+  module:
+    - fulcrum_whitelist
+    - user
+_core:
+  default_config_hash: Uk4UiJefJpCl8jtm-oGBK1adelHXgyk1MydoGlLGKIY
+id: fulcrum_whitelist_entity.field_user
+field_name: field_user
+entity_type: fulcrum_whitelist_entity
+type: entity_reference
+settings:
+  target_type: user
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
