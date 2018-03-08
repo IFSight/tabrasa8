@@ -1,0 +1,47 @@
+.adminimal .vertical-tabs {
+  border-radius: 0;
+  border: none;
+  background: transparent;
+}
+.adminimal .toolbar-tray a {
+   color:#666;
+}
+.adminimal .toolbar .toolbar-tray .menu-item--active-trail > .toolbar-box a,
+.adminimal .toolbar .toolbar-tray a.is-active {
+  color: rgba(0, 137, 255, 1);
+}
+.toolbar-tray-horizontal .menu-item--expanded,
+.toolbar-lining,
+.toolbar-menu .menu-item,
+.adminimal .tabs__tab:hover {
+  background:#f8f8f8;
+}
+.adminimal .content-header {
+  background:#fff;
+}
+.toolbar .toolbar-toggle-orientation button {
+  height: 40px;
+}
+.adminimal h1 {
+  color:#333;
+}
+
+.field--widget-image-image,
+.field--widget-boolean-checkbox,
+.field--widget-number,
+.field--name-field-overlay-color {
+  margin: 1em 0;
+}
+
+.field--name-field-overlay-color {
+  transition: height .25s, opacity .25s;
+  visibility: hidden;
+  opacity: 0;
+  height: 0;
+}
+
+.visible {
+  visibility: visible;
+  opacity: 1;
+  height: 73px;
+}
