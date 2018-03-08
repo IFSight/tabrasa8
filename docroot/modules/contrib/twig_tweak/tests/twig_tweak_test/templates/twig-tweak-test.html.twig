@@ -1,3 +1,4 @@
+{% set image_attributes = {style: 'width: 30px; height 30px;'} %}
 <style>
   .tt-test > div {
     margin: 15px;
@@ -30,12 +31,19 @@
   <div class="tt-menu-level">{{ drupal_menu('twig-tweak-test', 2) }}</div>
   <div class="tt-menu-depth">{{ drupal_menu('twig-tweak-test', 1, 1) }}</div>
   <div class="tt-form">{{ drupal_form('Drupal\\system\\Form\\CronForm') }}</div>
+  <div class="tt-image-by-fid">{{ drupal_image(1, attributes=image_attributes) }}</div>
+  <div class="tt-image-by-uri">{{ drupal_image('public://druplicon.png', attributes=image_attributes) }}</div>
+  <div class="tt-image-by-uuid">{{ drupal_image('b2c22b6f-7bf8-4da4-9de5-316e93487518', attributes=image_attributes) }}</div>
+  <div class="tt-image-with-style">{{ drupal_image(1, 'thumbnail', image_attributes) }}</div>
+  <div class="tt-image-with-responsive-style">{{ drupal_image(1, 'example', image_attributes, true) }}</div>
   <div class="tt-token">{{ drupal_token('site:name') }}</div>
   <div class="tt-token-data">{{ drupal_token('node:title', {'node': node}) }}</div>
   <div class="tt-config">{{ drupal_config('user.settings', 'anonymous') }}</div>
   <div class="tt-status-message">{{ drupal_set_message('Hi!', 'warning') }}</div>
   <div class="tt-title">{{ drupal_title() }}</div>
   <div class="tt-url">{{ drupal_url('node/1', {absolute: true}) }}</div>
+  <div class="tt-link">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}) }}</div>
+  <div class="tt-link-access">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}, true) }}</div>
   <div class="tt-token-replace">{{ 'Site name: [site:name]' | token_replace }}</div>
   <div class="tt-preg-replace">{{ 'FOO' | preg_replace('/(foo)/i', '$1-bar') }}</div>
   <div class="tt-image-style">{{ 'public://images/ocean.jpg' | image_style('thumbnail') }}</div>

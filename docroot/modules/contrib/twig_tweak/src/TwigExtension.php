@@ -2,7 +2,10 @@
 
 namespace Drupal\twig_tweak;
 
+use Drupal\Component\Uuid\Uuid;
 use Drupal\Core\Block\TitleBlockPluginInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\image\Entity\ImageStyle;
@@ -28,6 +31,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFunction('drupal_field', [$this, 'drupalField']),
       new \Twig_SimpleFunction('drupal_menu', [$this, 'drupalMenu']),
       new \Twig_SimpleFunction('drupal_form', [$this, 'drupalForm']),
+      new \Twig_SimpleFunction('drupal_image', [$this, 'drupalImage']),
       new \Twig_SimpleFunction('drupal_token', [$this, 'drupalToken']),
       new \Twig_SimpleFunction('drupal_config', [$this, 'drupalConfig']),
       new \Twig_SimpleFunction('drupal_dump', [$this, 'drupalDump']),
@@ -37,6 +41,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFunction('drupal_set_message', [$this, 'drupalSetMessage']),
       new \Twig_SimpleFunction('drupal_title', [$this, 'drupalTitle']),
       new \Twig_SimpleFunction('drupal_url', [$this, 'drupalUrl']),
+      new \Twig_SimpleFunction('drupal_link', [$this, 'drupalLink']),
     ];
   }
 
@@ -184,9 +189,8 @@ class TwigExtension extends \Twig_Extension {
       ? \Drupal::entityTypeManager()->getStorage($entity_type)->load($id)
       : \Drupal::routeMatch()->getParameter($entity_type);
     if ($entity && (!$check_access || $entity->access('view'))) {
-      if ($langcode && $entity->hasTranslation($langcode)) {
-        $entity = $entity->getTranslation($langcode);
-      }
+      $entity = \Drupal::service('entity.repository')
+        ->getTranslationFromContext($entity, $langcode);
       if (isset($entity->{$field_name})) {
         return $entity->{$field_name}->view($view_mode);
       }
@@ -202,11 +206,13 @@ class TwigExtension extends \Twig_Extension {
    *   (optional) Initial menu level.
    * @param int $depth
    *   (optional) Maximum number of menu levels to display.
+   * @param bool $expand
+   *   (optional) Expand all menu links.
    *
    * @return array
    *   A render array for the menu.
    */
-  public function drupalMenu($menu_name, $level = 1, $depth = 0) {
+  public function drupalMenu($menu_name, $level = 1, $depth = 0, $expand = FALSE) {
     /** @var \Drupal\Core\Menu\MenuLinkTreeInterface $menu_tree */
     $menu_tree = \Drupal::service('menu.link_tree');
     $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
@@ -219,6 +225,11 @@ class TwigExtension extends \Twig_Extension {
     // (absolute) depth, that may never exceed the maximum depth.
     if ($depth > 0) {
       $parameters->setMaxDepth(min($level + $depth - 1, $menu_tree->maxDepth()));
+    }
+
+    // If expandedParents is empty, the whole menu tree is built.
+    if ($expand) {
+      $parameters->expandedParents = [];
     }
 
     $tree = $menu_tree->load($menu_name, $parameters);
@@ -244,6 +255,73 @@ class TwigExtension extends \Twig_Extension {
   public function drupalForm($form_id) {
     $form_builder = \Drupal::formBuilder();
     return call_user_func_array([$form_builder, 'getForm'], func_get_args());
+  }
+
+  /**
+   * Builds an image.
+   *
+   * @param mixed $property
+   *   A property to identify the image.
+   * @param string $style
+   *   (Optional) Image style.
+   * @param array $attributes
+   *   (Optional) Image attributes.
+   * @param bool $responsive
+   *   (Optional) Indicates that the provided image style is responsive.
+   * @param bool $check_access
+   *   (Optional) Indicates that access check is required.
+   *
+   * @return array|null
+   *   A render array to represent the image.
+   */
+  public function drupalImage($property, $style = NULL, array $attributes = [], $responsive = FALSE, $check_access = TRUE) {
+
+    // Determine property type by its value.
+    if (preg_match('/^\d+$/', $property)) {
+      $property_type = 'fid';
+    }
+    elseif (Uuid::isValid($property)) {
+      $property_type = 'uuid';
+    }
+    else {
+      $property_type = 'uri';
+    }
+
+    $files = \Drupal::entityTypeManager()
+      ->getStorage('file')
+      ->loadByProperties([$property_type => $property]);
+
+    // To avoid ambiguity render nothing unless exact one image was found.
+    if (count($files) != 1) {
+      return;
+    }
+
+    $file = reset($files);
+
+    if ($check_access && !$file->access('view')) {
+      return;
+    }
+
+    $build = [
+      '#uri' => $file->getFileUri(),
+      '#attributes' => $attributes,
+    ];
+
+    if ($style) {
+      if ($responsive) {
+        $build['#type'] = 'responsive_image';
+        $build['#responsive_image_style_id'] = $style;
+      }
+      else {
+        $build['#theme'] = 'image_style';
+        $build['#style_name'] = $style;
+      }
+    }
+    else {
+      $build['#theme'] = 'image';
+    }
+
+    return $build;
   }
 
   /**
@@ -352,23 +430,52 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Generates a URL from internal path.
+   * Generates a URL from an internal path.
    *
    * @param string $user_input
    *   User input for a link or path.
    * @param array $options
    *   (optional) An array of options.
+   * @param bool $check_access
+   *   (Optional) Indicates that access check is required.
    *
    * @return \Drupal\Core\Url
    *   A new Url object based on user input.
    *
    * @see \Drupal\Core\Url::fromUserInput()
    */
-  public function drupalUrl($user_input, array $options = []) {
+  public function drupalUrl($user_input, array $options = [], $check_access = FALSE) {
     if (!in_array($user_input[0], ['/', '#', '?'])) {
       $user_input = '/' . $user_input;
     }
-    return Url::fromUserInput($user_input, $options);
+    $url = Url::fromUserInput($user_input, $options);
+    if (!$check_access || $url->access()) {
+      return $url;
+    }
+  }
+
+  /**
+   * Generates a link from an internal path.
+   *
+   * @param string $text
+   *   The text to be used for the link.
+   * @param string $user_input
+   *   User input for a link or path.
+   * @param array $options
+   *   (optional) An array of options.
+   * @param bool $check_access
+   *   (Optional) Indicates that access check is required.
+   *
+   * @return \Drupal\Core\Link
+   *   A new Link object.
+   *
+   * @see \Drupal\Core\Link::fromTextAndUrl()
+   */
+  public function drupalLink($text, $user_input, array $options = [], $check_access = FALSE) {
+    $url = $this->drupalUrl($user_input, $options, $check_access);
+    if ($url) {
+      return Link::fromTextAndUrl($text, $url);
+    }
   }
 
   /**
