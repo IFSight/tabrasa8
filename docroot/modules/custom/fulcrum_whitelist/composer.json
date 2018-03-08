@@ -1,0 +1,14 @@
+{
+  "name": "drupal/fulcrum_whitelist",
+  "type": "drupal-module",
+  "description": "On Fulcrum environment whitelist authenticated users",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/fulcrum_whitelist",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/fulcrum_whitelist",
+    "source": "http://cgit.drupalcode.org/fulcrum_whitelist"
+  },
+  "require": { }
+}

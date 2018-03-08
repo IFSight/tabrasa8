@@ -1,0 +1,5 @@
+entity.fulcrum_whitelist_entity.add_form:
+  route_name: entity.fulcrum_whitelist_entity.add_form
+  title: 'Add Fulcrum Whitelist Entity'
+  appears_on:
+    - entity.fulcrum_whitelist_entity.collection

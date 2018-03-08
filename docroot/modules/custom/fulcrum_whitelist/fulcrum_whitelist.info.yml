@@ -1,0 +1,6 @@
+name: 'Fulcrum Whitelist'
+type: module
+description: 'Fulcrum Streamlined Whitelist (FSW) is intended for current clients using Interpersonal Frequency (I.F.) Fulcrum Drupal-as-a-Service websites and provides use and administration of controlled access to restricted areas of client sites.'
+core: 8.x
+package: 'Fulcrum'
+configure: fulcrum_whitelist.fulcrum_whitelist_config

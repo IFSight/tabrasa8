@@ -1,0 +1,35 @@
+<script type="text/javascript">
+// get JSONP script
+var fulcrumWhitelistCheck = function() {
+  var script = document.createElement('script'),
+    head = document.getElementsByTagName('head')[0];
+
+  script.src = '/fulcrumwhitelistcheck';
+
+  // Attach handlers for all browsers
+  script.onload = script.onreadystatechange = function() {
+    if (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete') {
+      script.onload = script.onreadystatechange = null;
+      head.removeChild(script);
+    }
+  };
+
+  head.appendChild(script);
+};
+
+var fulcrumStatus = function(status) {
+  // redirect to /user
+  if (status == 200) {
+    // put in a second delay for all servers to take effect
+    setTimeout(function() {
+      window.location = location.protocol + '//' + location.hostname + '/user';
+    }, 1000 * {{ delay }});
+  // append dot and try again
+  } else if (status == 403) {
+    document.getElementById('wait_dots').innerHTML += '.';
+    setTimeout(function() {fulcrumWhitelistCheck();}, 500);
+  }
+};
+
+fulcrumWhitelistCheck();
+</script>

@@ -1,0 +1,110 @@
+<?php
+
+/**
+ * @file
+ * Contains fulcrum_whitelist.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function fulcrum_whitelist_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the fulcrum_whitelist module.
+    case 'help.page.fulcrum_whitelist':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Fulcrum Streamlined Whitelist (FSW) is intended for current clients using Interpersonal Frequency (I.F.) Fulcrum Drupal-as-a-Service websites and provides use and administration of controlled access to restricted areas of client sites. For more information please visit the <a href="/fulcrum/whitelist_docs">FSW docs</a>.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function fulcrum_whitelist_cron() {
+  _fulcrum_whitelist_create_tokens();
+}
+
+/**
+ * Implements hook_install().
+ */
+function fulcrum_whitelist_install() {
+  _fulcrum_whitelist_create_tokens();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function fulcrum_whitelist_theme() {
+  return [
+    'dechrome' => [
+      'variables' => [
+        'message' => NULL,
+        'js'      => NULL
+      ],
+    ],
+    'javascript' => [
+      'variables' => [
+        'delay' => NULL
+      ],
+    ],
+    'docs' => [
+      'variables' => [
+        'docs_intro' => NULL,
+        'docs_user' => NULL,
+        'docs_admin' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Make the whitelist tokens
+ */
+function _fulcrum_whitelist_create_tokens() {
+  $config = \Drupal::config('fulcrum_whitelist.fulcrumwhitelistconfig');
+
+  $selectSQL = t(
+    _fulcrum_whitelist_users_wo_tokens(),
+    ['@limit' => $config->get('token_process_limit')]
+  );
+
+  // \Drupal::logger('fulcrum_whitelist')->notice('in cron: ' . $selectSQL);
+
+  // find users that dont exist in fulcrum_whitelist entity
+  $accounts = \Drupal::database()
+    ->query($selectSQL)
+    ->fetchAll();
+
+  foreach ($accounts as $account) {
+    $token = user_password(50);
+
+    $fulcrum_whitelist = entity_create('fulcrum_whitelist_entity', [
+      'name' => $token,
+      'type' => 'fulcrum_whitelist_entity',
+      'field_user' => ['target_id' => $account->uid]
+    ]);
+
+    $fulcrum_whitelist->save();
+
+    // log a notice
+    \Drupal::logger('fulcrum_whitelist')
+      ->notice(t('Created token for @mail', ['@mail' => $account->mail]));
+  }
+}
+
+function _fulcrum_whitelist_users_wo_tokens() {
+  return <<< SQL
+SELECT u.uid, u.mail
+FROM {users_field_data} u
+LEFT JOIN {fulcrum_whitelist_entity__field_user} w ON u.uid = w.field_user_target_id
+WHERE u.status = 1
+AND w.entity_id IS NULL
+LIMIT @limit
+SQL;
+}

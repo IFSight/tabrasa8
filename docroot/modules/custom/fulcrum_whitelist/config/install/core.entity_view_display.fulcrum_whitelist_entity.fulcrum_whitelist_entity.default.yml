@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.fulcrum_whitelist_entity.fulcrum_whitelist_entity.field_user
+  module:
+    - fulcrum_whitelist
+_core:
+  default_config_hash: FfL5POnyQaGZeJ-WCxW8r4PEOWhU-5oG_IusBAutk6M
+id: fulcrum_whitelist_entity.fulcrum_whitelist_entity.default
+targetEntityType: fulcrum_whitelist_entity
+bundle: fulcrum_whitelist_entity
+mode: default
+content:
+  field_user:
+    weight: 0
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+hidden:
+  name: true
+  user_id: true
