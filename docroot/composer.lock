@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "80779fac0e0f532fb164f1202dfb2a09",
+    "content-hash": "ee2469dc358d6de6b40f1d2733fd78eb",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -2236,17 +2236,17 @@
         },
         {
             "name": "drupal/entity_browser",
-            "version": "1.4.0",
+            "version": "2.0.0-alpha2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/entity_browser",
-                "reference": "8.x-1.4"
+                "reference": "8.x-2.0-alpha2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/entity_browser-8.x-1.4.zip",
-                "reference": "8.x-1.4",
-                "shasum": "4375e996b8d1e103ca5daf9ce352e2af9cab568f"
+                "url": "https://ftp.drupal.org/files/projects/entity_browser-8.x-2.0-alpha2.zip",
+                "reference": "8.x-2.0-alpha2",
+                "shasum": "f31ad069e5c5e95db9b9410a4d71038ac0c5b370"
             },
             "require": {
                 "drupal/core": "~8.0"
@@ -2254,22 +2254,21 @@
             "require-dev": {
                 "drupal/ctools": "*",
                 "drupal/inline_entity_form": "*",
-                "drupal/media_entity": "*",
                 "drupal/paragraphs": "*",
                 "drupal/token": "*"
             },
             "type": "drupal-module",
             "extra": {
                 "branch-alias": {
-                    "dev-1.x": "1.x-dev",
+                    "dev-2.x": "2.x-dev",
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.4",
-                    "datestamp": "1512033785",
+                    "version": "8.x-2.0-alpha2",
+                    "datestamp": "1512118387",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -2731,6 +2730,72 @@
             }
         },
         {
+            "name": "drupal/inline_entity_form",
+            "version": "1.0.0-beta1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/inline_entity_form",
+                "reference": "8.x-1.0-beta1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/inline_entity_form-8.x-1.0-beta1.zip",
+                "reference": "8.x-1.0-beta1",
+                "shasum": "185ffc28a7b68d19cce057855d1c111f1741a3ea"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "require-dev": {
+                "drupal/entity_reference_revisions": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-beta1",
+                    "datestamp": "1477868343",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Beta releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "bojanz",
+                    "homepage": "https://www.drupal.org/user/86106"
+                },
+                {
+                    "name": "dawehner",
+                    "homepage": "https://www.drupal.org/user/99340"
+                },
+                {
+                    "name": "rszrama",
+                    "homepage": "https://www.drupal.org/user/49344"
+                },
+                {
+                    "name": "slashrsm",
+                    "homepage": "https://www.drupal.org/user/744628"
+                },
+                {
+                    "name": "webflo",
+                    "homepage": "https://www.drupal.org/user/254778"
+                }
+            ],
+            "description": "Provides a widget for inline management (creation, modification, removal) of referenced entities.",
+            "homepage": "https://www.drupal.org/project/inline_entity_form",
+            "support": {
+                "source": "http://cgit.drupalcode.org/inline_entity_form"
+            }
+        },
+        {
             "name": "drupal/libraries",
             "version": "3.0.0-alpha1",
             "source": {
@@ -2973,37 +3038,33 @@
         },
         {
             "name": "drupal/media_entity",
-            "version": "1.7.0",
+            "version": "2.0.0-beta1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/media_entity",
-                "reference": "8.x-1.7"
+                "reference": "8.x-2.0-beta1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/media_entity-8.x-1.7.zip",
-                "reference": "8.x-1.7",
-                "shasum": "5f7ccdf1db07732f3c94e642e60d88746e73cc86"
+                "url": "https://ftp.drupal.org/files/projects/media_entity-8.x-2.0-beta1.zip",
+                "reference": "8.x-2.0-beta1",
+                "shasum": "abaea1afb82c82b14db38adbeb8d785315fc1b61"
             },
             "require": {
                 "drupal/core": "*",
                 "drupal/entity": "*"
             },
-            "require-dev": {
-                "drupal/entity": "*",
-                "drupal/inline_entity_form": "*"
-            },
             "type": "drupal-module",
             "extra": {
                 "branch-alias": {
-                    "dev-1.x": "1.x-dev"
+                    "dev-2.x": "2.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.7",
-                    "datestamp": "1510737185",
+                    "version": "8.x-2.0-beta1",
+                    "datestamp": "1515532385",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Beta releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -3072,25 +3133,21 @@
             }
         },
         {
-            "name": "drupal/media_entity_image",
-            "version": "1.2.0",
+            "name": "drupal/media_entity_actions",
+            "version": "1.0.0-alpha2",
             "source": {
                 "type": "git",
-                "url": "https://git.drupal.org/project/media_entity_image",
-                "reference": "8.x-1.2"
+                "url": "https://git.drupal.org/project/media_entity_actions",
+                "reference": "8.x-1.0-alpha2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/media_entity_image-8.x-1.2.zip",
-                "reference": "8.x-1.2",
-                "shasum": "d02d1d793a50ea3b9cb5a3219472fdd27980f4f3"
+                "url": "https://ftp.drupal.org/files/projects/media_entity_actions-8.x-1.0-alpha2.zip",
+                "reference": "8.x-1.0-alpha2",
+                "shasum": "9bf7881f11fa182c1b6673c4cc8c32ce3a1bdb81"
             },
             "require": {
-                "drupal/core": "~8.1",
-                "drupal/media_entity": "~1.0 || ~8.1.0"
-            },
-            "require-dev": {
-                "drupal/entity_browser": "*"
+                "drupal/core": "^8.4.0"
             },
             "type": "drupal-module",
             "extra": {
@@ -3098,45 +3155,44 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.2",
-                    "datestamp": "1470170939",
+                    "version": "8.x-1.0-alpha2",
+                    "datestamp": "1510588386",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
                     }
-                },
-                "patches_applied": {
-                    "Adds Media Image Formatter": "https://www.drupal.org/files/issues/add_image_formatter-2850169-5.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
             "license": [
-                "GPL-2.0+"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
-                    "name": "Drupal Media Team",
-                    "homepage": "https://www.drupal.org/user/3260690"
+                    "name": "chr.fritsch",
+                    "homepage": "https://www.drupal.org/user/2103716"
                 },
                 {
-                    "name": "Primsi",
-                    "homepage": "https://www.drupal.org/user/282629"
+                    "name": "marcoscano",
+                    "homepage": "https://www.drupal.org/user/1288796"
+                },
+                {
+                    "name": "phenaproxima",
+                    "homepage": "https://www.drupal.org/user/205645"
+                },
+                {
+                    "name": "seanB",
+                    "homepage": "https://www.drupal.org/user/545912"
                 },
                 {
                     "name": "slashrsm",
                     "homepage": "https://www.drupal.org/user/744628"
                 }
             ],
-            "description": "Local images integration for Drupal Media entity.",
-            "homepage": "https://www.drupal.org/project/media_entity_image",
-            "keywords": [
-                "Drupal",
-                "image",
-                "media"
-            ],
+            "description": "Provides Actions plugins to be used with Media in core",
+            "homepage": "https://www.drupal.org/project/media_entity_actions",
             "support": {
-                "source": "https://www.drupal.org/project/media_entity_image",
-                "issues": "https://www.drupal.org/project/issues/media_entity_image"
+                "source": "http://cgit.drupalcode.org/media_entity_actions"
             }
         },
         {
@@ -9107,10 +9163,14 @@
         "drupal/block_field": 15,
         "drupal/captcha": 10,
         "drupal/entity": 10,
+        "drupal/entity_browser": 15,
         "drupal/entity_embed": 10,
         "drupal/file_entity": 10,
+        "drupal/inline_entity_form": 10,
         "drupal/libraries": 15,
         "drupal/masquerade": 10,
+        "drupal/media_entity": 10,
+        "drupal/media_entity_actions": 15,
         "drupal/plupload": 10,
         "drupal/purge": 10,
         "drupal/purge_queuer_url": 10,
