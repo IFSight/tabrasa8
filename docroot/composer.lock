@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "885e2b3ddf9cf4a33f832a4054e046f2",
+    "content-hash": "2f1833b2de368c0eb12e33998d4bc7bb",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -1859,6 +1859,9 @@
                     "recurse": false,
                     "replace": false,
                     "merge-extra": false
+                },
+                "patches_applied": {
+                    "Replaces 'thumbnail' text with actual alt text for thumbnail formatter": "sites/patches/core/media-IFCUSTOM-fix-thumbnail-image-alt-text.patch"
                 }
             },
             "autoload": {
