@@ -20,13 +20,6 @@ class FileEntityFileTypeClassificationTest extends WebTestBase {
   public static $modules = array('file');
 
   /**
-   * Disable strict schema checking until schema is updated.
-   *
-   * @todo Update schema and remove this.
-   */
-  protected $strictConfigSchema = FALSE;
-
-  /**
    * Get the file type of a given file.
    *
    * @param $file
@@ -60,7 +53,8 @@ class FileEntityFileTypeClassificationTest extends WebTestBase {
     // Enable file entity which adds adds a file type property to files and
     // queues up existing files for classification.
     \Drupal::service('module_installer')->install(array('file_entity'));
-    $this->assertTrue(empty(\Drupal::entityDefinitionUpdateManager()->getChangeSummary()), 'No entity definition changes pending');
+    $change_summary = \Drupal::entityDefinitionUpdateManager()->getChangeSummary();
+    $this->assertTrue(empty($change_summary), 'No entity definition changes pending');
 
     // Existing files have yet to be classified and should have an undefined
     // file type.

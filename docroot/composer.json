@@ -31,7 +31,6 @@
         "drupal/linkit": "^4.0",
         "drupal/mailsystem": "^4.1",
         "drupal/masquerade": "^2.0@beta",
-        "drupal/media_entity": "^2.0@beta",
         "drupal/media_entity_actions": "^1.0@alpha",
         "drupal/menu_block": "^1.4",
         "drupal/metatag": "^1.4",

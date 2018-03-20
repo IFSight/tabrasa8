@@ -25,12 +25,10 @@ class WebformEmailMultiple extends FormElement {
       '#cardinality' => NULL,
       '#allow_tokens' => FALSE,
       '#process' => [
+        [$class, 'processWebformEmailConfirm'],
         [$class, 'processAutocomplete'],
         [$class, 'processAjaxForm'],
         [$class, 'processPattern'],
-      ],
-      '#element_validate' => [
-        [$class, 'validateWebformEmailMultiple'],
       ],
       '#pre_render' => [
         [$class, 'preRenderWebformEmailMultiple'],
@@ -41,10 +39,22 @@ class WebformEmailMultiple extends FormElement {
   }
 
   /**
+   * Process email multiple element.
+   */
+  public static function processWebformEmailConfirm(&$element, FormStateInterface $form_state, &$complete_form) {
+    // Add validate callback.
+    $element += ['#element_validate' => []];
+    array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformEmailMultiple']);
+    return $element;
+  }
+
+  /**
    * Webform element validation handler for #type 'webform_email_multiple'.
    */
   public static function validateWebformEmailMultiple(&$element, FormStateInterface $form_state, &$complete_form) {
     $value = trim($element['#value']);
+
+    $element['#value'] = $value;
     $form_state->setValueForElement($element, $value);
 
     if ($value) {

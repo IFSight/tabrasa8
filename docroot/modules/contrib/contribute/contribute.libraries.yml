@@ -1,5 +1,0 @@
-contribute-status-report-community-info:
-  version: VERSION
-  css:
-    theme:
-      css/contribute-status-report-community-info.css: {}

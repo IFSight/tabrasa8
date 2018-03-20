@@ -487,7 +487,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
       $form['message']['body_default_' . $format] = [
         '#type' => 'webform_codemirror',
         '#mode' => $format,
-        '#title' => $this->t('Body default value (@format)', ['@label' => $format]),
+        '#title' => $this->t('Body default value (@format)', ['@format' => $format]),
         '#title_display' => 'hidden',
         '#default_value' => $body_default_values[$format],
         '#attributes' => ['readonly' => 'readonly', 'disabled' => 'disabled'],
@@ -652,6 +652,8 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
     // WORKAROUND: Convert all Render/Markup to strings.
     WebformElementHelper::convertRenderMarkupToStrings($form);
 
+    $this->tokenManager->elementValidate($form, $token_types);
+
     return $form;
   }
 
@@ -782,7 +784,16 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
       else {
         // Clear tokens from email values.
         $token_options['clear'] = (strpos($configuration_key, '_mail') !== FALSE) ? TRUE : FALSE;
-        $message[$configuration_key] = $this->tokenManager->replace($configuration_value, $webform_submission, $token_data, $token_options);
+
+        // Get replace token values.
+        $token_value = $this->tokenManager->replace($configuration_value, $webform_submission, $token_data, $token_options);
+
+        // Decode entities for all message values except the message body.
+        if (!empty($token_value) && is_string($token_value) && $configuration_key != 'body') {
+          $token_value = Html::decodeEntities($token_value);
+        }
+
+        $message[$configuration_key] = $token_value;
       }
     }
 
@@ -1319,8 +1330,14 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
       '#default_value' => $this->configuration[$name],
     ];
 
+    // Set empty option.
     if (in_array($name, ['reply_to', 'return_path', 'sender_mail', 'sender_name'])) {
       $element[$name]['#empty_option'] = $this->t('- Default -');
+    }
+
+    // Remove maxlength.
+    if (in_array($name, ['subject'])) {
+      $element[$name]['#other__maxlength'] = NULL;
     }
 
     // Use multiple email for reply_to, return_path, and sender_mail because

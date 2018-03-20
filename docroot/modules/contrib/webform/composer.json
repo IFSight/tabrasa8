@@ -10,6 +10,11 @@
       "name": "Jacob Rockowitz (jrockowitz)",
       "homepage": "https://www.drupal.org/u/jrockowitz",
       "role": "Maintainer"
+    },
+    {
+      "name": "Alexander Trotsenko (bucefal91)",
+      "homepage": "https://www.drupal.org/u/bucefal91",
+      "role": "Co-maintainer"
     }
   ],
   "support": {
@@ -17,9 +22,6 @@
     "source": "http://cgit.drupalcode.org/webform",
     "docs": "https://www.drupal.org/docs/8/modules/webform",
     "forum": "https://drupal.stackexchange.com/questions/tagged/webform"
-  },
-  "require": {
-    "drupal/contribute": "^1.0"
   },
   "extra": {
     "drush": {

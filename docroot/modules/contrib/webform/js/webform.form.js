@@ -109,6 +109,13 @@
     }
   };
 
+  // When #state:required is triggered we need to reset the target elements
+  // custom validity.
+  $(document).on('state:required', function (e) {
+    $(e.target).filter('[data-webform-required-error]')
+      .each(function() {this.setCustomValidity('');});
+  });
+
   /**
    * Filters the webform element list by a text input search string.
    *
@@ -192,22 +199,5 @@
       el.parentNode.insertAfter(button, el);
     };
   }
-
-  /**
-   * Reacts to contextual links being added.
-   *
-   * @param {jQuery.Event} event
-   *   The `drupalContextualLinkAdded` event.
-   * @param {object} data
-   *   An object containing the data relevant to the event.
-   *
-   * @listens event:drupalContextualLinkAdded
-   */
-  $(document).on('drupalContextualLinkAdded', function (event, data) {
-    // Bind Ajax behaviors to all items showing the class.
-    // @todo Fix contextual links to work with use-ajax links in
-    //    https://www.drupal.org/node/2764931.
-    Drupal.attachBehaviors(data.$el[0]);
-  });
 
 })(jQuery, Drupal);

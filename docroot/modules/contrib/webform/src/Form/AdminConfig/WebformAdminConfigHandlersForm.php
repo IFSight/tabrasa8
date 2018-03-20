@@ -14,18 +14,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
 
   /**
-   * The webform handler manager.
-   *
-   * @var \Drupal\webform\Plugin\WebformHandlerManagerInterface
-   */
-  protected $handlerManager;
-
-  /**
    * The webform token manager.
    *
    * @var \Drupal\webform\WebformTokenManagerInterface
    */
   protected $tokenManager;
+
+  /**
+   * The webform handler manager.
+   *
+   * @var \Drupal\webform\Plugin\WebformHandlerManagerInterface
+   */
+  protected $handlerManager;
 
   /**
    * {@inheritdoc}
@@ -39,15 +39,15 @@ class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\webform\Plugin\WebformHandlerManagerInterface $handler_manager
-   *   The webform handler manager.
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.
+   * @param \Drupal\webform\Plugin\WebformHandlerManagerInterface $handler_manager
+   *   The webform handler manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, WebformHandlerManagerInterface $handler_manager, WebformTokenManagerInterface $token_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, WebformTokenManagerInterface $token_manager, WebformHandlerManagerInterface $handler_manager) {
     parent::__construct($config_factory);
-    $this->handlerManager = $handler_manager;
     $this->tokenManager = $token_manager;
+    $this->handlerManager = $handler_manager;
   }
 
   /**
@@ -56,8 +56,8 @@ class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('plugin.manager.webform.handler'),
-      $container->get('webform.token_manager')
+      $container->get('webform.token_manager'),
+      $container->get('plugin.manager.webform.handler')
     );
   }
 
@@ -131,6 +131,7 @@ class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
       '#type' => 'textfield',
       '#title' => $this->t('Default email subject'),
       '#required' => TRUE,
+      '#maxlength' => NULL,
       '#default_value' => $config->get('mail.default_subject'),
     ];
     $form['mail']['default_body_text'] = [
@@ -175,6 +176,8 @@ class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
         'visible' => $excluded_handler_checkboxes,
       ],
     ];
+
+    $this->tokenManager->elementValidate($form);
 
     return parent::buildForm($form, $form_state);
   }

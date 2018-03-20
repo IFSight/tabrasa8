@@ -11,7 +11,7 @@ use Drupal\webform\Entity\WebformOptions as WebformOptionsEntity;
 use Drupal\webform\Utility\WebformElementHelper;
 
 /**
- * Provides a webform element for managing webform element options.
+ * Provides a form element for managing webform element options.
  *
  * This element is used by select, radios, checkboxes, likert, and
  * mapping elements.
@@ -96,6 +96,7 @@ class WebformElementOptions extends FormElement {
         'class' => ['js-' . $element['#id'] . '-options'],
       ],
       '#error_no_message' => TRUE,
+      '#access' => count($options) ? TRUE : FALSE,
       '#default_value' => (isset($element['#default_value']) && !is_array($element['#default_value'])) ? $element['#default_value'] : '',
     ];
 
@@ -133,9 +134,11 @@ class WebformElementOptions extends FormElement {
       ];
     }
 
-    $element['#element_validate'] = [[get_called_class(), 'validateWebformElementOptions']];
+    // Add validate callback.
+    $element += ['#element_validate' => []];
+    array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformElementOptions']);
 
-    if (isset($element['#states'])) {
+    if (!empty($element['#states'])) {
       webform_process_states($element, '#wrapper_attributes');
     }
 
@@ -167,6 +170,8 @@ class WebformElementOptions extends FormElement {
 
     $form_state->setValueForElement($element['options'], NULL);
     $form_state->setValueForElement($element['custom'], NULL);
+
+    $element['#value'] = $value;
     $form_state->setValueForElement($element, $value);
   }
 

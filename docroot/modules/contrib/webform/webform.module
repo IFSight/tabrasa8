@@ -130,13 +130,10 @@ function webform_local_tasks_alter(&$local_tasks) {
     $local_tasks['config_translation.local_tasks:config_translation.item.overview.webform.config']['parent_id'] = 'webform.config';
   }
 
-  // Disable 'About' tab.
-  if (\Drupal::config('webform.settings')->get('ui.about_disabled')) {
-    unset(
-      $local_tasks['webform.about'],
-      $local_tasks['webform.about.webform'],
-      $local_tasks['webform.about.drupal']
-    );
+  // Disable 'Contribute' tab if explicitly disabled or the Contribute module
+  // is installed.
+  if (\Drupal::config('webform.settings')->get('ui.contribute_disabled') || \Drupal::moduleHandler()->moduleExists('contribute')) {
+    unset($local_tasks['webform.contribute']);
   }
 }
 
@@ -244,17 +241,11 @@ function webform_form_webform_submission_form_alter(&$form, FormStateInterface $
   /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
   $webform_submission = $form_object->getEntity();
   $webform = $webform_submission->getWebform();
-  $source_entity = $webform_submission->getSourceEntity();
 
-  $hooks = [];
-  $hooks[] = 'form_webform_submission_' . $webform->id() . '_form';
-  if ($source_entity) {
-    $hooks[] = 'form_webform_submission_' . $webform->id() . '_' . $source_entity->getEntityTypeId() . '_' . $source_entity->id() . '_form';
-  }
-
+  $hook = 'form_webform_submission_' . $webform->id() . '_form';
   $form_id = $form_object->getFormId();
-  \Drupal::service('module_handler')->alter($hooks, $form, $form_state, $form_id);
-  \Drupal::service('theme.manager')->alter($hooks, $form, $form_state, $form_id);
+  \Drupal::service('module_handler')->alter($hook, $form, $form_state, $form_id);
+  \Drupal::service('theme.manager')->alter($hook, $form, $form_state, $form_id);
 
   // After build.
   $form['#after_build'][] = '_webform_form_webform_submission_form_after_build';
@@ -465,6 +456,20 @@ function webform_page_attachments(array &$attachments) {
   // library is loaded by the webform block is placed using Ajax.
   if (strpos($route_name, 'block.admin_display') === 0) {
     $attachments['#attached']['library'][] = 'webform/webform.block';
+  }
+
+  // Attach 'Contribute' section style.
+  if (\Drupal::routeMatch()->getRouteName() === 'webform.contribute') {
+    /** @var \Drupal\webform\WebformContributeManagerInterface $contribute_manager */
+    $contribute_manager = \Drupal::service('webform.contribute_manager');
+    $attachments['#attached']['html_head'][] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'style',
+        '#value' => $contribute_manager->getStyle(),
+      ],
+      'webform_contribute',
+    ];
   }
 }
 

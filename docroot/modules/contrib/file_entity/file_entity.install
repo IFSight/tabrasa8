@@ -51,7 +51,15 @@ function file_entity_schema() {
  * Implements hook_install().
  */
 function file_entity_install() {
+  $entity_type = \Drupal::entityDefinitionUpdateManager()->getEntityType('file');
+  $keys = $entity_type->getKeys();
+  $keys['bundle'] = 'type';
+  $entity_type->set('entity_keys', $keys);
+  \Drupal::entityDefinitionUpdateManager()->updateEntityType($entity_type);
+
+  /** @var \Drupal\Core\Field\BaseFieldDefinition $type_storage_definition */
   $type_storage_definition = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('file')['type'];
+  $type_storage_definition->setInitialValue(FILE_TYPE_NONE);
   \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('type', 'file', 'file_entity', $type_storage_definition);
   // Set permissions.
   $roles = user_roles();
@@ -123,4 +131,33 @@ function file_entity_update_8003() {
     }
   }
 
+}
+
+/**
+ * Fix entity field mismatches on the file type field.
+ */
+function file_entity_update_8004() {
+
+  $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+  $original = $entity_definition_update_manager->getFieldStorageDefinition('type', 'file');
+  $field_storage = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('file')['type'];
+
+  /** @var \Drupal\Core\Entity\Schema\DynamicallyFieldableEntityStorageSchemaInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('file');
+
+  // Do nothing if there is no field storage schema change reported.
+  if (!$storage->requiresFieldStorageSchemaChanges($field_storage, $original)) {
+    return;
+  }
+
+  // Ensure that the type field is not null, update the actual schema and the
+  // stored schema.
+  $key_value = \Drupal::keyValue('entity.storage_schema.sql');
+  $key_name = 'file.field_schema_data.type';
+
+  $storage_schema = $key_value->get($key_name);
+  $storage_schema['file_managed']['fields']['type']['not null'] = TRUE;
+
+  \Drupal::database()->schema()->changeField('file_managed', 'type', 'type', $storage_schema['file_managed']['fields']['type']);
+  $key_value->set($key_name, $storage_schema);
 }

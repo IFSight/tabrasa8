@@ -116,13 +116,11 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $form['form_settings']['default_form_open_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Default open message'),
-      '#required' => TRUE,
       '#default_value' => $settings['default_form_open_message'],
     ];
     $form['form_settings']['default_form_close_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Default closed message'),
-      '#required' => TRUE,
       '#default_value' => $settings['default_form_close_message'],
     ];
     $form['form_settings']['default_form_exception_message'] = [
@@ -140,7 +138,6 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $form['form_settings']['default_form_login_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Default login message when access denied to webform'),
-      '#required' => TRUE,
       '#default_value' => $settings['default_form_login_message'],
     ];
     $form['form_settings']['default_form_required_label'] = [
@@ -206,6 +203,11 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
         'title' => $this->t('Disable client-side validation for all webforms'),
         'description' => $this->t('If checked, the <a href=":href">novalidate</a> attribute, which disables client-side validation, will be added to all webforms.', [':href' => 'http://www.w3schools.com/tags/att_form_novalidate.asp']),
       ],
+      'default_form_disable_inline_errors' => [
+        'title' => $this->t('Disable inline form errors for all webforms'),
+        'description' => $this->t('If checked, <a href=":href">inline form errors</a>  will be disabled for all webforms.', [':href' => 'https://www.drupal.org/docs/8/core/modules/inline-form-errors/inline-form-errors-module-overview']),
+        'access' => (\Drupal::moduleHandler()->moduleExists('inline_form_errors') && floatval(\Drupal::VERSION) >= 8.5),
+      ],
       'default_form_required' => [
         'title' => $this->t('Display required indicator on all webforms'),
         'description' => $this->t('If checked, a required elements indicator will be added to all webforms.'),
@@ -223,6 +225,9 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
         '#return_value' => TRUE,
         '#default_value' => $settings[$behavior_key],
       ];
+      if (isset($behavior_element['access'])) {
+        $form['form_behaviors'][$behavior_key]['#access'] = $behavior_element['access'];
+      }
     }
 
     // Wizard settings.
@@ -324,13 +329,11 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $form['draft_settings']['default_draft_saved_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Default draft save message'),
-      '#required' => TRUE,
       '#default_value' => $settings['default_draft_saved_message'],
     ];
     $form['draft_settings']['default_draft_loaded_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Default draft load message'),
-      '#required' => TRUE,
       '#default_value' => $settings['default_draft_loaded_message'],
     ];
     $form['draft_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
@@ -345,7 +348,6 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $form['confirmation_settings']['default_confirmation_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Default confirmation message'),
-      '#required' => TRUE,
       '#default_value' => $settings['default_confirmation_message'],
     ];
     $form['confirmation_settings']['default_confirmation_back_label'] = [
@@ -399,6 +401,8 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     else {
       ksort($form['third_party_settings']);
     }
+
+    $this->tokenManager->elementValidate($form);
 
     return parent::buildForm($form, $form_state);
   }

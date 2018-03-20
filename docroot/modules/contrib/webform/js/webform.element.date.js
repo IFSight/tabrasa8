@@ -75,6 +75,9 @@
           options.yearRange = $input.data('min-year') + ':' + $input.attr('data-max-year')
         }
 
+        // First day of the week.
+        options.firstDay = settings.webform.dateFirstDay;
+
         $input.datepicker(options);
       });
     },

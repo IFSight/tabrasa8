@@ -20,7 +20,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "file_image",
  *   label = @Translation("File Image"),
  *   field_types = {
- *     "uri"
+ *     "uri",
+ *     "file_uri"
  *   }
  * )
  */

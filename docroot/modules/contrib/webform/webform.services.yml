@@ -14,6 +14,10 @@ services:
     class: Drupal\webform\Plugin\WebformExporterManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@config.factory']
 
+  plugin.manager.webform.source_entity:
+    class: Drupal\webform\Plugin\WebformSourceEntityManager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@config.factory']
+
   # Logger.
 
   logger.channel.webform:
@@ -28,6 +32,10 @@ services:
 
   webform.cli_service:
     class: Drupal\webform\Commands\WebformCliService
+
+  webform.contribute_manager:
+    class: Drupal\webform\WebformContributeManager
+    arguments: ['@cache.default', '@http_client', '@date.formatter', '@config.factory']
 
   webform.elements_validator:
     class: Drupal\webform\WebformEntityElementsValidator
@@ -59,7 +67,7 @@ services:
 
   webform.request:
     class: Drupal\webform\WebformRequest
-    arguments: ['@router.route_provider', '@request_stack', '@router.admin_context', '@current_route_match', '@entity_type.manager', '@entity_type.repository', '@webform.entity_reference_manager']
+    arguments: ['@router.route_provider', '@request_stack', '@router.admin_context', '@current_route_match', '@entity_type.manager', '@entity_type.repository', '@webform.entity_reference_manager', '@plugin.manager.webform.source_entity']
 
   webform_submission.generate:
     class: Drupal\webform\WebformSubmissionGenerate
@@ -75,7 +83,7 @@ services:
 
   webform.token_manager:
     class: Drupal\webform\WebformTokenManager
-    arguments: ['@config.factory', '@module_handler', '@token']
+    arguments: ['@config.factory', '@module_handler', '@theme.manager', '@token']
 
   webform.theme_manager:
     class: Drupal\webform\WebformThemeManager
@@ -97,7 +105,7 @@ services:
 
   webform.event_subscriber:
     class: Drupal\webform\EventSubscriber\WebformSubscriber
-    arguments: ['@current_user', '@config.factory', '@renderer', '@webform.token_manager']
+    arguments: ['@current_user', '@config.factory', '@renderer', '@redirect.destination', '@webform.token_manager']
     tags:
       - { name: event_subscriber }
 

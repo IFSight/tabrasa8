@@ -54,6 +54,9 @@ abstract class WebformOtherBase extends FormElement {
       '#options' => [],
       '#other__option_delimiter' => ', ',
       '#states' => [],
+      // Add '#markup' property to add an 'id' attribute to the form element.
+      // @see template_preprocess_form_element()
+      '#markup' => '',
     ];
   }
 
@@ -96,7 +99,7 @@ abstract class WebformOtherBase extends FormElement {
 
     if (!empty($element['#required'])) {
       $element['#wrapper_attributes']['required'] = 'required';
-      $element['#wrapper_attributes']['aria-required'] = 'aria-required';
+      $element['#wrapper_attributes']['aria-required'] = 'true';
     }
 
     $element[$type]['#type'] = static::$type;
@@ -145,13 +148,9 @@ abstract class WebformOtherBase extends FormElement {
     // Remove options.
     unset($element['#options']);
 
-    // Set validation.
-    if (isset($element['#element_validate'])) {
-      $element['#element_validate'] = array_merge([[get_called_class(), 'validateWebformOther']], $element['#element_validate']);
-    }
-    else {
-      $element['#element_validate'] = [[get_called_class(), 'validateWebformOther']];
-    }
+    // Add validate callback.
+    $element += ['#element_validate' => []];
+    array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformOther']);
 
     // Attach library.
     $element['#attached']['library'][] = 'webform/webform.element.other';
@@ -187,7 +186,7 @@ abstract class WebformOtherBase extends FormElement {
       if (isset($return_value[static::OTHER_OPTION])) {
         unset($return_value[static::OTHER_OPTION]);
         if ($has_access && $other_value === '') {
-          WebformElementHelper::setRequiredError($element['other'], $form_state, $required_error_title);
+          WebformElementHelper::setRequiredError($element, $form_state, $required_error_title);
         }
         else {
           $return_value += [$other_value => $other_value];
@@ -198,7 +197,7 @@ abstract class WebformOtherBase extends FormElement {
       $return_value = $element_value;
       if ($element_value == static::OTHER_OPTION) {
         if ($has_access && $other_value === '') {
-          WebformElementHelper::setRequiredError($element['other'], $form_state, $required_error_title);
+          WebformElementHelper::setRequiredError($element, $form_state, $required_error_title);
           $return_value = '';
         }
         else {
@@ -222,6 +221,8 @@ abstract class WebformOtherBase extends FormElement {
 
     $form_state->setValueForElement($element[$type], NULL);
     $form_state->setValueForElement($element['other'], NULL);
+
+    $element['#value'] = $return_value;
     $form_state->setValueForElement($element, $return_value);
   }
 

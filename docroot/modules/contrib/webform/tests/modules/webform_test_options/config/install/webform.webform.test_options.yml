@@ -17,10 +17,6 @@ elements: |
     '#type': details
     '#title': 'General options'
     '#open': true
-    creditcard_codes:
-      '#type': select
-      '#title': 'Credit card codes (creditcard_codes)'
-      '#options': creditcard_codes
     size:
       '#type': select
       '#title': 'Size (size)'
@@ -244,6 +240,7 @@ settings:
   form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
+  form_disable_inline_errors: false
   form_required: false
   form_unsaved: false
   form_disable_back: false
@@ -343,7 +340,7 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
-  administer:
+  test:
     roles: {  }
     users: {  }
     permissions: {  }

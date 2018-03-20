@@ -36,6 +36,9 @@ webform.settings:
         default_form_novalidate:
           type: boolean
           label: 'Disable client-side validation'
+        default_form_disable_inline_errors:
+          type: boolean
+          label: 'Disable inline form errors'
         default_form_required:
           type: boolean
           label: 'Display required indicator'
@@ -386,9 +389,9 @@ webform.settings:
         dialog_disabled:
           type: boolean
           label: 'Disable dialogs'
-        about_disabled:
+        contribute_disabled:
           type: boolean
-          label: 'Disable about'
+          label: 'Disable contribute'
         offcanvas_disabled:
           type: boolean
           label: 'Disable system tray'
@@ -424,6 +427,16 @@ webform.settings:
         spam:
           type: boolean
           label: 'Check if SPAM protection module is installed'
+    contribute:
+      type: mapping
+      label: 'Contribute'
+      mapping:
+        account_type:
+          type: string
+          label: 'Account type'
+        account_id:
+          type: string
+          label: 'Account ID'
     third_party_settings:
       type: sequence
       label: 'Third party settings'

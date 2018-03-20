@@ -65,8 +65,8 @@ class ReCaptchaAdminSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('widget.theme'),
       '#description' => $this->t('Defines which theme to use for reCAPTCHA.'),
       '#options' => [
-        'light' => t('Light (default)'),
-        'dark' => t('Dark'),
+        'light' => $this->t('Light (default)'),
+        'dark' => $this->t('Dark'),
       ],
       '#title' => $this->t('Theme'),
       '#type' => 'select',

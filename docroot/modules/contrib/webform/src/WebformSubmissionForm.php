@@ -193,34 +193,6 @@ class WebformSubmissionForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
-   *
-   * The WebformSubmissionForm trigger the below hooks...
-   * - hook_form_alter()
-   * - hook_form_{BASE_FORM_ID}_alter() => hook_form_webform_submission_alter()
-   * - hook_form_{BASE_FORM_ID}_{WEBFORM_ID}_alter() => hook_form_webform_submission_contact_alter()
-   * - hook_form_{BASE_FORM_ID}_{WEBFORM_ID}_{ENTITY_TYPE}_{ENTITY_ID}_form_alter() => hook_form_webform_submission_contact_node_1_form_alter()
-   * - hook_form_{BASE_FORM_ID}_{WEBFORM_ID}_{ENTITY_TYPE}_{ENTITY_ID}_{OPERATION}_form_alter() => hook_form_webform_submission_contact_node_1_add_form_alter()
-   *
-   * @see hook_form_alter()
-   * @see \Drupal\Core\Entity\EntityForm::getBaseFormId
-   * @see webform_form_webform_submission_form_alter()
-   */
-  public function getFormId() {
-    $form_id = $this->entity->getEntityTypeId();
-    if ($this->entity->getEntityType()->hasKey('bundle')) {
-      $form_id .= '_' . $this->entity->bundle();
-    }
-    if ($source_entity = $this->entity->getSourceEntity()) {
-      $form_id .= '_' . $source_entity->getEntityTypeId() . '_' . $source_entity->id();
-    }
-    if ($this->operation != 'default') {
-      $form_id .= '_' . $this->operation;
-    }
-    return $form_id . '_form';
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public function setEntity(EntityInterface $entity) {
     /** @var \Drupal\webform\WebformSubmissionInterface $entity */
@@ -261,12 +233,12 @@ class WebformSubmissionForm extends ContentEntityForm {
       }
     }
 
+    // Set entity before calling get last submission.
+    $this->entity = $entity;
+
     // Autofill with previous submission.
     if ($this->operation === 'add' && $entity->isNew() && $webform->getSetting('autofill')) {
-      $account = $entity->getOwner();
-      $options = ['in_draft' => FALSE];
-      $last_submission = $this->storage->getLastSubmission($webform, $source_entity, $account, $options);
-      if ($last_submission) {
+      if ($last_submission = $this->getLastSubmission()) {
         $excluded_elements = $webform->getSetting('autofill_excluded_elements') ?: [];
         $last_submission_data = array_diff_key($last_submission->getData(), $excluded_elements);
         $entity->setData($last_submission_data + $entity->getData());
@@ -490,7 +462,7 @@ class WebformSubmissionForm extends ContentEntityForm {
       ];
     }
 
-    // Required indicator
+    // Required indicator.
     $current_page = $this->getCurrentPage($form, $form_state);
     if ($current_page != 'webform_preview' && $this->getWebformSetting('form_required') && $webform->hasRequired()) {
       $form['required'] = [
@@ -560,6 +532,11 @@ class WebformSubmissionForm extends ContentEntityForm {
     // Novalidate: Add novalidate attribute to form if client side validation disabled.
     if ($this->getWebformSetting('form_novalidate')) {
       $form['#attributes']['novalidate'] = 'novalidate';
+    }
+
+    // Inline form errors: Add  #disable_inline_form_errors property to form.
+    if ($this->getWebformSetting('form_disable_inline_errors')) {
+      $form['#disable_inline_form_errors'] = TRUE;
     }
 
     // Details toggle: Display collapse/expand all details link.
@@ -814,7 +791,7 @@ class WebformSubmissionForm extends ContentEntityForm {
       if ($previous_submission_total > 1) {
         $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSIONS_PREVIOUS);
       }
-      elseif ($webform_submission->id() != $this->storage->getLastSubmission($webform, $this->sourceEntity, $this->currentUser())->id()) {
+      elseif ($webform_submission->id() != $this->getLastSubmission(FALSE)->id()) {
         $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_PREVIOUS);
       }
     }
@@ -823,7 +800,8 @@ class WebformSubmissionForm extends ContentEntityForm {
     if ($this->isGet()
       && $this->operation === 'add'
       && $webform_submission->isNew()
-      && $webform->getSetting('autofill')) {
+      && $webform->getSetting('autofill')
+      && $this->getLastSubmission()) {
       $this->getMessageManager()->display(WebformMessageManagerInterface::AUTOFILL);
     }
   }
@@ -1696,11 +1674,14 @@ class WebformSubmissionForm extends ContentEntityForm {
         return;
 
       case WebformInterface::CONFIRMATION_MODAL:
-        // Set webform confirmation modal in $form_state.
-        $form_state->set('webform_confirmation_modal', [
-          'title' => $this->getWebformSetting('confirmation_title', ''),
-          'content' => $this->getMessageManager()->build(WebformMessageManagerInterface::SUBMISSION_CONFIRMATION),
-        ]);
+        $message = $this->getMessageManager()->build(WebformMessageManagerInterface::SUBMISSION_CONFIRMATION);
+        if ($message) {
+          // Set webform confirmation modal in $form_state.
+          $form_state->set('webform_confirmation_modal', [
+            'title' => $this->getWebformSetting('confirmation_title', ''),
+            'content' => $message,
+          ]);
+        }
         return;
 
       case WebformInterface::CONFIRMATION_DEFAULT:
@@ -2090,6 +2071,23 @@ class WebformSubmissionForm extends ContentEntityForm {
       return $source_entity;
     }
     return NULL;
+  }
+
+  /**
+   * Get last completed webform submission for the current user.
+   *
+   * @param bool $completed
+   *   Flag to get last completed or draft submission.
+   *
+   * @return \Drupal\webform\WebformSubmissionInterface|null
+   *   The last completed webform submission for the current user.
+   */
+  protected function getLastSubmission($completed = TRUE) {
+    $webform = $this->getWebform();
+    $source_entity = $this->getSourceEntity();
+    $account = $this->getEntity()->getOwner();
+    $options = ($completed) ? ['in_draft' => FALSE] : [];
+    return $this->storage->getLastSubmission($webform, $source_entity, $account, $options);
   }
 
   /**

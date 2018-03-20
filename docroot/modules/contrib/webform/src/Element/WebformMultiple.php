@@ -48,6 +48,9 @@ class WebformMultiple extends FormElement {
         [$class, 'processWebformMultiple'],
       ],
       '#theme_wrappers' => ['form_element'],
+      // Add '#markup' property to add an 'id' attribute to the form element.
+      // @see template_preprocess_form_element()
+      '#markup' => '',
     ];
   }
 
@@ -87,12 +90,8 @@ class WebformMultiple extends FormElement {
     }
 
     // Add validate callback that extracts the array of items.
-    if (isset($element['#element_validate'])) {
-      $element['#element_validate'] = array_merge([[get_called_class(), 'validateWebformMultiple']], $element['#element_validate']);
-    }
-    else {
-      $element['#element_validate'] = [[get_called_class(), 'validateWebformMultiple']];
-    }
+    $element += ['#element_validate' => []];
+    array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformMultiple']);
 
     // Wrap this $element in a <div> that handle #states.
     WebformElementHelper::fixStatesWrapper($element);
@@ -480,7 +479,13 @@ class WebformMultiple extends FormElement {
           // Convert element to rendered hidden element.
           if (!isset($element['#access']) || $element['#access'] !== FALSE) {
             $hidden_elements[$child_key]['#type'] = 'hidden';
-            unset($hidden_elements[$child_key]['#access']);
+            // Unset #access, #element_validate, and #pre_render.
+            // @see \Drupal\webform\Plugin\WebformElementBase::prepare().
+            unset(
+              $hidden_elements[$child_key]['#access'],
+              $hidden_elements[$child_key]['#element_validate'],
+              $hidden_elements[$child_key]['#pre_render']
+            );
           }
           static::setElementRowParentsRecursive($hidden_elements[$child_key], $child_key, $hidden_parents);
         }
@@ -774,6 +779,7 @@ class WebformMultiple extends FormElement {
       WebformElementHelper::setRequiredError($element, $form_state);
     }
 
+    $element['#value'] = $items;
     $form_state->setValueForElement($element, $items);
   }
 

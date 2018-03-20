@@ -56,7 +56,7 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
     $this->assertRaw('Hillary,Clinton');
 
     // Check special characters.
-    $this->assertRaw("quotes' \"\"","html <markup>");
+    $this->assertRaw("quotes' \"\"", "html <markup>");
 
     // Check delimiter.
     $this->getExport($webform, ['delimiter' => '|']);
@@ -142,6 +142,14 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
     $this->assertRaw('Hillary,Clinton');
     $this->assertNoRaw('George,Washington');
     $this->assertNoRaw('Abraham,Lincoln');
+
+    // Check sort ASC.
+    $this->getExport($webform, ['order' => 'asc']);
+    $this->assertPattern('/George.*Abraham.*Hillary/ms');
+
+    // Check sort DESC.
+    $this->getExport($webform, ['order' => 'desc']);
+    $this->assertPattern('/Hillary.*Abraham.*George/ms');
 
     // Check sid start.
     $this->getExport($webform, ['range_type' => 'sid', 'range_start' => $submissions[1]->id()]);

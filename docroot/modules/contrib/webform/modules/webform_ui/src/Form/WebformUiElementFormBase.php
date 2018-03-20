@@ -233,7 +233,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       '#type' => 'machine_name',
       '#title' => $this->t('Key'),
       '#machine_name' => [
-        'label' => $this->t('Key'),
+        'label' => '<br/>' . $this->t('Key'),
         'exists' => [$this, 'exists'],
         'source' => ['title'],
       ],
@@ -272,7 +272,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
     ];
 
     $form = $this->buildDefaultValueForm($form, $form_state);
-    
+
     return $this->buildDialogForm($form, $form_state);
   }
 

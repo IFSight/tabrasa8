@@ -69,16 +69,6 @@ webform.addons:
     - webform/webform.element.details.save
     - webform/webform.promotions
 
-# About.
-
-webform.about:
-  version: VERSION
-  css:
-    theme:
-      css/webform.about.css: {}
-  dependencies:
-    - webform/webform.help
-
 # Ajax.
 
 webform.ajax:
@@ -92,7 +82,6 @@ webform.ajax:
     - core/drupal
     - core/drupalSettings
     - core/drupal.ajax
-    - core/jquery
     - core/jquery.once
     - core/jquery.form
 
@@ -128,9 +117,16 @@ webform.confirmation.modal:
     - core/drupal
     - core/drupal.dialog
     - core/drupal.dialog.position
-    - core/jquery
     - core/jquery.once
     - webform/webform.confirmation
+
+# Contribute.
+
+webform.contribute:
+  version: VERSION
+  css:
+    theme:
+      css/webform.contribute.css: {}
 
 # Contextual
 
@@ -150,7 +146,6 @@ webform.help:
     js/webform.help.js:  {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - core/jquery.ui.accordion
 
@@ -165,7 +160,6 @@ webform.element.more:
     js/webform.element.more.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 # Navigation.
@@ -251,7 +245,6 @@ webform.form:
     js/webform.form.js:  {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/webform.states
 
@@ -275,7 +268,6 @@ webform.form.submit_once:
     js/webform.form.submit_once.js:  {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - system/base
 
@@ -285,7 +277,6 @@ webform.form.tabs:
     js/webform.form.tabs.js:  {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - core/jquery.ui.tabs
 
@@ -294,7 +285,6 @@ webform.form.unsaved:
   js:
     js/webform.form.unsaved.js:  {}
   dependencies:
-    - core/jquery
     - core/jquery.once
     - core/drupal
 
@@ -303,7 +293,6 @@ webform.form.wizard:
   js:
     js/webform.form.wizard.js:  {}
   dependencies:
-    - core/jquery
     - core/jquery.once
     - core/drupal
 
@@ -347,7 +336,6 @@ webform.element.chosen:
     js/webform.element.chosen.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/libraries.jquery.chosen
 
@@ -451,7 +439,6 @@ webform.element.composite:
     js/webform.element.composite.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 webform.element.counter:
@@ -460,7 +447,6 @@ webform.element.counter:
     js/webform.element.counter.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/libraries.jquery.word-and-character-counter
 
@@ -470,6 +456,7 @@ webform.element.date:
     js/webform.element.date.js: {}
   dependencies:
     - core/drupal.date
+    - core/drupalSettings
 
 webform.element.details.save:
   version: VERSION
@@ -477,7 +464,6 @@ webform.element.details.save:
     js/webform.element.details.save.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 webform.element.details.toggle:
@@ -489,7 +475,6 @@ webform.element.details.toggle:
     js/webform.element.details.toggle.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 webform.element.file.button:
@@ -527,7 +512,6 @@ webform.element.html_editor:
     - core/ckeditor
     - core/drupal
     - core/drupalSettings
-    - core/jquery
     - core/jquery.once
 
 webform.element.horizontal_rule:
@@ -545,7 +529,6 @@ webform.element.icheck:
     js/webform.element.icheck.js: { weight: -10 } # iCheck library must be executed before #states.
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/libraries.jquery.icheck
 
@@ -563,22 +546,8 @@ webform.element.image_file.modal:
     - core/drupal
     - core/drupalSettings
     - core/drupal.dialog.ajax
-    - core/jquery
     - core/jquery.once
     - core/jquery.ui.dialog
-
-webform.element.image_select:
-  version: VERSION
-  css:
-    component:
-      css/webform.element.image_select.css: {}
-  js:
-    js/webform.element.image_select.js: {}
-  dependencies:
-    - core/drupal
-    - core/jquery
-    - core/jquery.once
-    - webform/libraries.jquery.image-picker
 
 webform.element.inputmask:
   version: VERSION
@@ -586,7 +555,6 @@ webform.element.inputmask:
     js/webform.element.inputmask.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/libraries.jquery.inputmask
 
@@ -605,7 +573,6 @@ webform.element.location:
     js/webform.element.location.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/libraries.jquery.geocomplete
 
@@ -618,7 +585,6 @@ webform.element.message:
     js/webform.element.message.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 webform.element.multiple:
@@ -644,7 +610,6 @@ webform.element.options.admin:
     js/webform.element.options.admin.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 webform.element.other:
@@ -656,7 +621,6 @@ webform.element.other:
     js/webform.element.other.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 webform.element.range:
@@ -679,13 +643,20 @@ webform.element.rating:
   dependencies:
     - webform/libraries.jquery.rateit
 
+webform.element.radios:
+  version: VERSION
+  js:
+    js/webform.element.radios.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery.once
+
 webform.element.roles:
   version: VERSION
   js:
     js/webform.element.roles.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
 
 webform.element.select2:
@@ -697,7 +668,6 @@ webform.element.select2:
     js/webform.element.select2.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/libraries.jquery.select2
 
@@ -724,7 +694,6 @@ webform.element.telephone:
     js/webform.element.telephone.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/jquery.once
     - webform/libraries.jquery.intl-tel-input
 
@@ -744,7 +713,6 @@ webform.element.terms_of_service:
   dependencies:
     - core/drupal
     - core/drupal.dialog.ajax
-    - core/jquery
     - core/jquery.once
     - core/jquery.ui.dialog
 
@@ -990,23 +958,6 @@ libraries.jquery.icheck.square:
       /libraries/jquery.icheck/skins/square/_all.css: {}
   dependencies:
     - webform/libraries.jquery.icheck
-
-libraries.jquery.image-picker:
-  remote: https://rvera.github.io/image-picker/
-  version: '0.3.0'
-  license:
-    name: MIT
-    url: https://github.com/rvera/image-picker/blob/master/LICENSE
-    gpl-compatible: true
-  cdn:
-    /libraries/jquery.image-picker/image-picker/: https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.3.0/
-  css:
-    component:
-      /libraries/jquery.image-picker/image-picker/image-picker.css: {}
-  js:
-    /libraries/jquery.image-picker/image-picker/image-picker.js: {}
-  dependencies:
-    - core/jquery
 
 libraries.jquery.inputmask:
   remote: https://github.com/RobinHerbots/jquery.inputmask

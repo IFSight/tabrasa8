@@ -110,6 +110,9 @@ webform.webform.*:
         form_novalidate:
           type: boolean
           label: 'Disable client-side validation'
+        form_disable_inline_errors:
+          type: boolean
+          label: 'Disable inline form errors'
         form_required:
           type: boolean
           label: 'Display required indicator'
@@ -479,6 +482,28 @@ webform.webform.*:
         administer:
           type: mapping
           label: 'Administer webform and submissions'
+          mapping:
+            roles:
+              type: sequence
+              label: 'Roles'
+              sequence:
+                type: string
+                label: 'Role'
+            users:
+              type: sequence
+              label: 'Users'
+              sequence:
+                type: integer
+                label: 'User IDs'
+            permissions:
+              type: sequence
+              label: 'Permissions'
+              sequence:
+                type: string
+                label: 'Permission'
+        test:
+          type: mapping
+          label: 'Test webform'
           mapping:
             roles:
               type: sequence

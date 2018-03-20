@@ -5,7 +5,9 @@ namespace Drupal\webform;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Utility\Token;
+use Drupal\webform\Utility\WebformFormHelper;
 
 /**
  * Defines a class to manage token replacement.
@@ -27,6 +29,13 @@ class WebformTokenManager implements WebformTokenManagerInterface {
   protected $moduleHandler;
 
   /**
+   * The theme manager.
+   *
+   * @var \Drupal\Core\Theme\ThemeManagerInterface
+   */
+  protected $themeManager;
+
+  /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
@@ -40,12 +49,15 @@ class WebformTokenManager implements WebformTokenManagerInterface {
    *   The configuration object factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
+   *   The theme manager.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, Token $token) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, ThemeManagerInterface $theme_manager, Token $token) {
     $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;
+    $this->themeManager = $theme_manager;
     $this->token = $token;
 
     $this->config = $this->configFactory->get('webform.settings');
@@ -68,13 +80,29 @@ class WebformTokenManager implements WebformTokenManagerInterface {
       return $text;
     }
 
-    // Replace @deprecated [webform-submission] with [webform_submission].
-    $text = str_replace('[webform-submission:', '[webform_submission:', $text);
+    if ($entity) {
+      // Replace @deprecated [webform-submission] with [webform_submission].
+      $text = str_replace('[webform-submission:', '[webform_submission:', $text);
 
-    // Set token data based on entity type.
-    $this->setTokenData($data, $entity);
+      // Set token data based on entity type.
+      $this->setTokenData($data, $entity);
+    }
 
-    return $this->token->replace($text, $data, $options);
+    // Track the active theme, if there is no active theme it mean tokens
+    // are being replaced during the initial page request.
+    $has_active_theme = $this->themeManager->hasActiveTheme();
+
+    // Replace the tokens.
+    $result = $this->token->replace($text, $data, $options);
+
+    // If there was no active theme and now there is one.
+    // Reset the active theme, so that theme negotiators can determine the
+    // correct active theme.
+    if (!$has_active_theme && $this->themeManager->hasActiveTheme()) {
+      $this->themeManager->resetActiveTheme();
+    }
+
+    return $result;
   }
 
   /**
@@ -115,6 +143,41 @@ class WebformTokenManager implements WebformTokenManagerInterface {
     }
     else {
       return $build;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementValidate(array &$form, array $token_types = ['webform', 'webform_submission', 'webform_handler']) {
+    if (!function_exists('token_element_validate')) {
+      return;
+    }
+
+    // Always add system tokens.
+    // @see system_token_info()
+    $token_types = array_merge($token_types, ['site', 'date']);
+
+    $text_element_types = [
+      'email' => 'email',
+      'textfield' => 'textfield',
+      'textarea' => 'textarea',
+      'url' => 'url',
+      'webform_codemirror' => 'webform_codemirror',
+      'webform_email_multiple' => 'webform_email_multiple',
+      'webform_html_editor' => 'webform_html_editor',
+      'webform_checkboxes_other' => 'webform_checkboxes_other',
+      'webform_select_other' => 'webform_select_other',
+      'webform_radios_other' => 'webform_radios_other',
+    ];
+    $elements =& WebformFormHelper::flattenElements($form);
+    foreach ($elements as &$element) {
+      if (!isset($element['#type']) || !isset($text_element_types[$element['#type']])) {
+        continue;
+      }
+
+      $element['#element_validate'][] = 'token_element_validate';
+      $element['#token_types'] = $token_types;
     }
   }
 

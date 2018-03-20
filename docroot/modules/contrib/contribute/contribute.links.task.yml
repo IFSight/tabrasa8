@@ -1,4 +1,0 @@
-contribute.settings:
-  title: 'Configure'
-  route_name: contribute.settings
-  parent_id: contribute

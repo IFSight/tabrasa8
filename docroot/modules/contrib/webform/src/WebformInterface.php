@@ -489,8 +489,8 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * @param \Drupal\webform\WebformSubmissionInterface|null $webform_submission
    *   (optional) A webform submission.
    *
-   * @return bool
-   *   The access result. Returns a TRUE if access is allowed.
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
    */
   public function checkAccessRules($operation, AccountInterface $account, WebformSubmissionInterface $webform_submission = NULL);
 
@@ -522,7 +522,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Get original elements decoded as an associative array.
    *
    * @return array|bool
-   *   Elements as an associative array. Returns FALSE is elements YAML is invalid.
+   *   Elements as an associative array. Returns FALSE if elements YAML is invalid.
    */
   public function getElementsOriginalDecoded();
 
@@ -538,7 +538,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Get webform elements decoded as an associative array.
    *
    * @return array|bool
-   *   Elements as an associative array. Returns FALSE is elements YAML is invalid.
+   *   Elements as an associative array. Returns FALSE if elements YAML is invalid.
    */
   public function getElementsDecoded();
 
@@ -568,7 +568,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Get webform elements initialized as an associative array.
    *
    * @return array|bool
-   *   Elements as an associative array. Returns FALSE is elements YAML is invalid.
+   *   Elements as an associative array. Returns FALSE if elements YAML is invalid.
    */
   public function getElementsInitialized();
 
@@ -580,7 +580,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    *
    * @return array
    *   Webform raw elements decoded and flattened into an associative array
-   *   keyed by element key. Returns FALSE is elements YAML is invalid.
+   *   keyed by element key. Returns FALSE if elements YAML is invalid.
    */
   public function getElementsDecodedAndFlattened($operation = NULL);
 
@@ -592,7 +592,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    *
    * @return array
    *   Webform elements flattened into an associative array keyed by element key.
-   *   Returns FALSE is elements YAML is invalid.
+   *   Returns FALSE if elements YAML is invalid.
    */
   public function getElementsInitializedAndFlattened($operation = NULL);
 

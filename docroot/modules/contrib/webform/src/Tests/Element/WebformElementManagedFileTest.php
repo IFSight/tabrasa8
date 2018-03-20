@@ -3,6 +3,7 @@
 namespace Drupal\webform\Tests\Element;
 
 use Drupal\file\Entity\File;
+use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
 
 /**
@@ -24,7 +25,7 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
    *
    * @var array
    */
-  protected static $testWebforms = ['test_element_managed_file'];
+  protected static $testWebforms = ['test_element_managed_file', 'test_element_managed_file_name'];
 
   /**
    * Test single and multiple file upload.
@@ -46,6 +47,47 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
 
     $this->checkFileUpload('single', $this->files[0], $this->files[1]);
     $this->checkFileUpload('multiple', $this->files[2], $this->files[3]);
+  }
+
+  /**
+   * Test the file renaming feature.
+   *
+   * The property #file_name_pattern is tested.
+   */
+  protected function testFileRename() {
+    $webform = Webform::load('test_element_managed_file_name');
+
+    $source_for_filename = $this->randomMachineName();
+    $sid = $this->postSubmission($webform, [
+      'source_for_filename' => $source_for_filename,
+      'files[file_single]' => \Drupal::service('file_system')->realpath($this->files[0]->uri),
+      'files[file_multiple][]' => \Drupal::service('file_system')->realpath($this->files[0]->uri),
+    ]);
+
+    $this->drupalLogin($this->adminSubmissionUser);
+    // Edit the submission and insert 1 extra file into the multiple element.
+    $this->drupalPostForm('webform/' . $webform->id() . '/submissions/' . $sid . '/edit', [
+      'files[file_multiple][]' => \Drupal::service('file_system')->realpath($this->files[1]->uri),
+    ], 'Save');
+    $this->drupalLogout();
+
+    /** @var \Drupal\webform\WebformSubmissionInterface $submission */
+    $submission = WebformSubmission::load($sid);
+
+    /** @var \Drupal\file\FileInterface $single_file */
+    $single_file = File::load($submission->getElementData('file_single'));
+    $this->assertEqual('file_single_' . $source_for_filename . '.txt', $single_file->getFilename());
+
+    /** @var \Drupal\file\FileInterface[] $multiple_file */
+    $multiple_file = File::loadMultiple($submission->getElementData('file_multiple'));
+    $this->assertEqual(count($multiple_file), 2, 'Two files found in the multiple element.');
+
+    $i = -1;
+    foreach ($multiple_file as $file) {
+      $suffix = $i == -1 ? '' : '_' . $i;
+      $this->assertEqual('file_multiple_' . $source_for_filename . $suffix . '.txt', $file->getFilename());
+      $i++;
+    }
   }
 
   /****************************************************************************/
@@ -74,7 +116,7 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
     /** @var \Drupal\webform\WebformSubmissionInterface $submission */
     $submission = WebformSubmission::load($sid);
 
-    /** @var \Drupal\file\Entity\File $file */
+    /** @var \Drupal\file\FileInterface $file */
     $fid = $this->getLastFileId();
     $file = File::load($fid);
 
@@ -122,7 +164,7 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
     // Submit the new file.
     $this->drupalPostForm(NULL, [], t('Save'));
 
-    /** @var \Drupal\file\Entity\File $test_file_0 */
+    /** @var \Drupal\file\FileInterface $test_file_0 */
     $new_fid = $this->getLastFileId();
     $new_file = File::load($new_fid);
 

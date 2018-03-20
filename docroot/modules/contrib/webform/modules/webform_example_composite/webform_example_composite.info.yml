@@ -6,8 +6,8 @@ package: 'Webform example'
 dependencies:
   - 'webform:webform'
 
-# Information added by Drupal.org packaging script on 2018-02-04
-version: '8.x-5.0-rc3'
+# Information added by Drupal.org packaging script on 2018-03-16
+version: '8.x-5.0-rc6'
 core: '8.x'
 project: 'webform'
-datestamp: 1517746089
+datestamp: 1521230890

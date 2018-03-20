@@ -1589,10 +1589,10 @@ function webform_update_8078() {
  * Issue #2911329: Create 'About' tab.
  */
 function webform_update_8079() {
-  // Convert ui.help_menu_disabled to ui.about_disabled.
+  // Convert ui.help_menu_disabled to ui.contribute_disabled.
   $admin_config = \Drupal::configFactory()->getEditable('webform.settings');
   $help_menu_disabled = $admin_config->get('ui.help_menu_disabled') ?: FALSE;
-  $admin_config->set('ui.about_disabled', $help_menu_disabled);
+  $admin_config->set('ui.contribute_disabled', $help_menu_disabled);
   $admin_config->clear('ui.help_menu_disabled');
   $admin_config->save();
 }
@@ -1708,7 +1708,11 @@ function webform_update_8088() {
 /******************************************************************************/
 
 /******************************************************************************/
-// Webform-8.x-5.0-beta24+
+// Webform-8.x-5.0-beta24 - November 16, 2017 (No updates required).
+/******************************************************************************/
+
+/******************************************************************************/
+// Webform-8.x-5.0-beta25 - December 11, 2017.
 /******************************************************************************/
 
 /**
@@ -1778,6 +1782,10 @@ function webform_update_8094() {
   _webform_update_webform_settings();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc1 - December 25, 2017.
+/******************************************************************************/
+
 /**
  * Issue #2918721: Access controlling Webform administration.
  */
@@ -1819,6 +1827,10 @@ function webform_update_8096() {
 function webform_update_8097() {
   _webform_update_webform_handler_configuration(EmailWebformHandler::class);
 }
+
+/******************************************************************************/
+// Webform-8.x-5.0-rc2 - January 30, 2018.
+/******************************************************************************/
 
 /**
  * Issue #2933705: Element Range.
@@ -1947,6 +1959,10 @@ function webform_update_8104() {
   _webform_update_webform_settings();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc3 - February 4, 2018.
+/******************************************************************************/
+
 /**
  * Issue #2941174 Notice: Undefined index: administer in WebformEntitySettingsAccessForm.
  */
@@ -1955,11 +1971,152 @@ function webform_update_8105() {
   webform_update_8095();
 }
 
+/******************************************************************************/
+// Webform-8.x-5.0-rc4
+/******************************************************************************/
+
 /**
- * Issue #2941297: Contribute dependency not auto enabled.
+ * Issue #2934970: Fully support for inline error form.
  */
-function webform_update_8106() {
-  if (!\Drupal::moduleHandler()->moduleExists('contribute')) {
-    \Drupal::service('module_installer')->install(['contribute']);
+function webform_update_8107() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #2944515: Report proper dependencies of a webform block.
+ */
+function webform_update_8108() {
+  /** @var \Drupal\block\Entity\Block $block */
+  foreach (\Drupal::entityTypeManager()->getStorage('block')->loadMultiple() as $block) {
+    if ($block->getPluginId() == 'webform_block') {
+      $webform_id = $block->getPlugin()->getConfiguration()['webform_id'];
+      if (\Drupal::entityTypeManager()->getStorage('webform')->load($webform_id)) {
+        $block->save();
+      }
+      else {
+        // The webform does not exist. There is no point to keep this block.
+        $block->delete();
+      }
+    }
   }
+}
+
+/**
+ * Issue #2933909: Webform Image Select Element Improvements.
+ */
+function webform_update_8109() {
+  $config_factory = \Drupal::configFactory();
+  $install_webform_image_select = FALSE;
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->get($webform_config_name);
+    $elements = $webform_config->get('elements');
+    if (strpos($elements, 'webform_image_select') !== FALSE) {
+      $install_webform_image_select = TRUE;
+      break;
+    }
+  }
+
+  if ($install_webform_image_select && !\Drupal::moduleHandler()->moduleExists('webform_image_select')) {
+    \Drupal::service('module_installer')->install(['webform_image_select']);
+  }
+}
+
+/**
+ * Issue #2947991: Disable the password field.
+ */
+function webform_update_8110() {
+  $config_factory = \Drupal::configFactory();
+  $has_password_element = FALSE;
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->get($webform_config_name);
+    $elements = $webform_config->get('elements');
+    // Check for password and password_confirm element #type.
+    if (strpos($elements, "'#type': password") !== FALSE) {
+      $has_password_element = TRUE;
+      break;
+    }
+  }
+
+  // If password element is not being used in any webform display both the
+  // password and password_confirm element.
+  if (!$has_password_element) {
+    $admin_config = \Drupal::configFactory()->getEditable('webform.settings');
+    $excluded_elements = $admin_config->get('element.excluded_elements') ?: [];
+    $excluded_elements['password'] = 'password';
+    $excluded_elements['password_confirm'] = 'password_confirm';
+    $admin_config->set('element.excluded_elements', $excluded_elements);
+    $admin_config->save();
+
+  }
+}
+
+/**
+ * Issue #2947991: Disable the password field. Fix webform_update_8110().
+ */
+function webform_update_8111() {
+  webform_update_8110();
+}
+
+/**
+ * Provide dedicated 'test' webform operation and access rule.
+ */
+function webform_update_8112() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $data = $webform_config->getRawData();
+    if (!isset($data['access']['test'])) {
+      $data['access']['test'] = [
+        'roles' => [],
+        'users' => [],
+        'permissions' => [],
+      ];
+      $webform_config->setData($data)->save();
+    }
+  }
+}
+
+/**
+ * Issue #2951001: Convert About section into Contribute section.
+ */
+function webform_update_8113() {
+  $config = \Drupal::configFactory()->getEditable('webform.settings');
+  $config->set('ui.contribute_disabled', $config->get('ui.about_disabled') ?: FALSE);
+  $config->save();
+}
+
+
+/**
+ * Issue #2951921: The contribute module is missing from the file system.
+ */
+function webform_update_8114() {
+  // Skip if the Contribute module still exists.
+  if (file_exists(drupal_get_path('module', 'contribute') . '/contribute.info.yml')) {
+    return;
+  }
+
+  $contribute_config = \Drupal::configFactory()->getEditable('contribute.settings');
+
+  // Migrate Contribute account info to Webform Contribute account info.
+  \Drupal::configFactory()->getEditable('webform.settings')
+    ->set('contribute.account_type', $contribute_config->get('account_type') ?: 'user')
+    ->set('contribute.account_id', $contribute_config->get('account_id') ?: NULL)
+    ->save();
+
+  // Manually delete the Contribute module's configuration.
+  $contribute_config->delete();
+
+  // Manually remove the contribute module from core.extension configuration.
+  $extension_config = \Drupal::configFactory()->getEditable('core.extension');
+  $module = $extension_config->get('module');
+  unset($module['contribute']);
+  $extension_config->set('module', $module);
+  $extension_config->save();
+
+  // Remove schema definitions.
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'contribute')
+    ->execute();
 }

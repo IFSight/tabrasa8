@@ -2,6 +2,7 @@ id: d7_recaptcha_settings
 label: reCAPTCHA 7 configuration
 migration_groups:
   - Drupal 7
+  - Configuration
 source:
   plugin: variable
   variables:
@@ -12,6 +13,7 @@ source:
     - recaptcha_size
     - recaptcha_tabindex
     - recaptcha_noscript
+  source_module: recaptcha
 process:
   site_key: recaptcha_site_key
   secret_key: recaptcha_secret_key

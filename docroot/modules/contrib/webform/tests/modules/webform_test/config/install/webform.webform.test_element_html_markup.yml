@@ -62,9 +62,6 @@ elements: |
     color:
       '#type': color
       '#title': '<u>Color</u>'
-    webform_creditcard_number:
-      '#type': webform_creditcard_number
-      '#title': '<u>Credit card number</u>'
     email:
       '#type': email
       '#title': '<u>Email</u>'
@@ -538,6 +535,7 @@ settings:
   form_reset: false
   form_disable_autocomplete: false
   form_novalidate: false
+  form_disable_inline_errors: false
   form_required: false
   form_unsaved: false
   form_disable_back: false
@@ -637,7 +635,7 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
-  administer:
+  test:
     roles: {  }
     users: {  }
     permissions: {  }

@@ -2,7 +2,6 @@
 
 namespace Drupal\recaptcha\Tests;
 
-use Drupal\Core\Session\AccountInterface;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -111,10 +110,7 @@ class ReCaptchaBasicTest extends WebTestBase {
     captcha_set_form_id_setting('user_login_form', 'recaptcha/reCAPTCHA');
     $result = captcha_get_form_id_setting('user_login_form');
     $this->assertNotNull($result, 'A configuration has been found for CAPTCHA point: user_login_form', 'reCAPTCHA');
-    //$this->assertEqual($result->module, 'recaptcha', 'reCAPTCHA module configured for CAPTCHA point: user_login_form', 'reCAPTCHA');
-    //$this->assertEqual($result->getCaptchaType(), 'reCAPTCHA', 'reCAPTCHA type has been configured for CAPTCHA point: user_login_form', 'reCAPTCHA');
     $this->assertEqual($result->getCaptchaType(), 'recaptcha/reCAPTCHA', 'reCAPTCHA type has been configured for CAPTCHA point: user_login_form', 'reCAPTCHA');
-    //$this->verbose($result->getCaptchaType());
 
     // Check if a Math CAPTCHA is still shown on the login form. The site key
     // and security key have not yet configured for reCAPTCHA. The module need

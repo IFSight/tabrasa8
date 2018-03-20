@@ -149,6 +149,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'url' => Url::fromUri('https://www.drupal.org/project/webform_composite'),
       'category' => 'element',
     ];
+    
+    // Element: Webform Checkboxes Table.
+    $projects['webform_checkboxes_table'] = [
+      'title' => $this->t('Webform Checkboxes Table'),
+      'description' => $this->t('Displays checkboxes element in a table grid.'),
+      'url' => Url::fromUri('https://github.com/minnur/webform_checkboxes_table'),
+      'category' => 'element',
+    ];
 
     // Element: Webform Crafty Clicks.
     $projects['webform_craftyclicks'] = [
@@ -419,6 +427,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Encrypt'),
       'description' => $this->t('Provides encryption for webform elements.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_encrypt'),
+      'category' => 'utility',
+    ];
+
+    // Utility: Webform Ip Track.
+    $projects['webform_ip_track'] = [
+      'title' => $this->t('Webform Ip Track'),
+      'description' => $this->t('Ip Location details as custom tokens to use in webform submission values.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_ip_track'),
       'category' => 'utility',
     ];
 
