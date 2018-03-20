@@ -12,6 +12,7 @@ settings:
   default_form_submit_back: false
   default_form_unsaved: false
   default_form_novalidate: false
+  default_form_disable_inline_errors: false
   default_form_required: false
   default_form_required_label: 'Indicates required field'
   default_form_details_toggle: true
@@ -90,7 +91,9 @@ element:
   default_empty_option_optional: ''
   default_icheck: ''
   default_google_maps_api_key: ''
-  excluded_elements: {  }
+  excluded_elements:
+    password: password
+    password_confirm: password_confirm
 html_editor:
   disabled: false
   format: ''
@@ -126,9 +129,10 @@ ui:
   details_save: true
   dialog_disabled: false
   offcanvas_disabled: false
-  about_disabled: false
+  contribute_disabled: false
   promotions_disabled: false
   description_help: true
+  about_disabled: false
   html_editor_disabled: false
 libraries:
   excluded_libraries:
@@ -137,6 +141,9 @@ requirements:
   cdn: true
   bootstrap: true
   spam: true
+contribute:
+  account_type: user
+  account_id: null
 langcode: en
 third_party_settings: {  }
 _core:

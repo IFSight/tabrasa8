@@ -54,7 +54,8 @@
         "drupal/webform": "^5.0",
         "drupal/youtube": "^1.0@beta",
         "drupal/zen": "^7.0@alpha",
-        "drupal/console": "~1.0"
+        "drupal/console": "~1.0",
+        "drupal/contribute": "^5.0@beta"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
