@@ -45,6 +45,7 @@
         "drupal/scheduler": "^1.0",
         "drupal/simple_sitemap": "^2.0",
         "drupal/smtp": "^1.0@beta",
+        "drupal/social_media_links": "^2.6",
         "drupal/token": "^1.0",
         "drupal/twig_tweak": "^2.0",
         "drupal/ultimate_cron": "^2.0@alpha",
@@ -54,8 +55,7 @@
         "drupal/webform": "^5.0",
         "drupal/youtube": "^1.0@beta",
         "drupal/zen": "^7.0@alpha",
-        "drupal/console": "~1.0",
-        "drupal/contribute": "^5.0@beta"
+        "drupal/console": "~1.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
