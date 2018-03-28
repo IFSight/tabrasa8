@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\masquerade\Tests;
+namespace Drupal\Tests\masquerade\Functional;
 
 /**
  * Tests caching for masquerade.
@@ -46,7 +46,7 @@ class MasqueradeCacheTest extends MasqueradeWebTestBase {
 
     // Masquerade as Nelle.
     $edit = ['masquerade_as' => $nelle->getAccountName()];
-    $this->drupalPostForm(NULL, $edit, t('Switch'));
+    $this->drupalPostForm(NULL, $edit, $this->t('Switch'));
     $this->drupalGet('<front>');
     $this->assertNoBlockAppears($masquerade_block);
 

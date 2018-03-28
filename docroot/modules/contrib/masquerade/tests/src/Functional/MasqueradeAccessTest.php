@@ -1,6 +1,8 @@
 <?php
 
-namespace Drupal\masquerade\Tests;
+namespace Drupal\Tests\masquerade\Functional;
+
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Tests masquerade access mechanism.
@@ -75,48 +77,56 @@ class MasqueradeAccessTest extends MasqueradeWebTestBase {
     $edit = [
       'masquerade_as' => $this->masquerade_user->getAccountName(),
     ];
-    $this->drupalPostForm('masquerade', $edit, t('Switch'));
-    $this->assertRaw(t('You cannot masquerade as yourself. Please choose a different user to masquerade as.'));
-    $this->assertNoText(t('Unmasquerade'));
+    $this->drupalPostForm('masquerade', $edit, $this->t('Switch'));
+    $this->assertSession()
+      ->responseContains($this->t('You cannot masquerade as yourself. Please choose a different user to masquerade as.'));
+    $this->assertSession()->pageTextNotContains($this->t('Unmasquerade'));
 
     // Basic 'masquerade' permission check.
     $this->drupalLogin($this->auth_user);
     $this->drupalGet('masquerade');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
   }
 
   /**
    * Asserts that the logged-in user can masquerade as a given target user.
    *
-   * @param \Drupal\user\UserInterface $target_account
+   * @param \Drupal\Core\Session\AccountInterface $target_account
    *   The user to masquerade to.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
    */
-  protected function assertCanMasqueradeAs($target_account) {
+  protected function assertCanMasqueradeAs(AccountInterface $target_account) {
     $edit = [
       'masquerade_as' => $target_account->getAccountName(),
     ];
-    $this->drupalPostForm('masquerade', $edit, t('Switch'));
-    $this->assertNoRaw(t('You are not allowed to masquerade as %name.', [
-      '%name' => $target_account->getDisplayName(),
-    ]));
-    $this->clickLink(t('Unmasquerade'));
+    $this->drupalPostForm('masquerade', $edit, $this->t('Switch'));
+    $this->assertSession()
+      ->responseNotContains($this->t('You are not allowed to masquerade as %name.', [
+        '%name' => $target_account->getDisplayName(),
+      ]));
+    $this->clickLink($this->t('Unmasquerade'));
   }
 
   /**
    * Asserts that the logged-in user can not masquerade as a given target user.
    *
-   * @param \Drupal\user\UserInterface $target_account
+   * @param \Drupal\Core\Session\AccountInterface $target_account
    *   The user to masquerade to.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   * @throws \Behat\Mink\Exception\ResponseTextException
    */
-  protected function assertCanNotMasqueradeAs($target_account) {
+  protected function assertCanNotMasqueradeAs(AccountInterface $target_account) {
     $edit = [
       'masquerade_as' => $target_account->getAccountName(),
     ];
-    $this->drupalPostForm('masquerade', $edit, t('Switch'));
-    $this->assertRaw(t('You are not allowed to masquerade as %name.', [
-      '%name' => $target_account->getDisplayName(),
-    ]));
-    $this->assertNoText(t('Unmasquerade'));
+    $this->drupalPostForm('masquerade', $edit, $this->t('Switch'));
+    $this->assertSession()
+      ->responseContains($this->t('You are not allowed to masquerade as %name.', [
+        '%name' => $target_account->getDisplayName(),
+      ]));
+    $this->assertSession()->pageTextNotContains($this->t('Unmasquerade'));
   }
 
 }

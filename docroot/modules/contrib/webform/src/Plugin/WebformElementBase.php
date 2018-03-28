@@ -234,6 +234,8 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     return [
       'multiple' => FALSE,
       'multiple__header_label' => '',
+      'multiple__label' => $this->t('item'),
+      'multiple__labels' => $this->t('items'),
       'multiple__min_items' => 1,
       'multiple__empty_items' => 1,
       'multiple__add_more' => 1,
@@ -315,6 +317,50 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    */
   public function getElementProperty(array $element, $property_name) {
     return (isset($element["#$property_name"])) ? $element["#$property_name"] : $this->getDefaultProperty($property_name);
+  }
+
+  /**
+   * Set element's default callback.
+   *
+   * This makes sure that an element's default callback is not clobbered by
+   * any additional callbacks.
+   *
+   * @param array $element
+   *   A render element.
+   * @param string $callback_name
+   *   A render element's callback.
+   */
+  protected function setElementDefaultCallback(array &$element, $callback_name) {
+    $callback_name = ($callback_name[0] !== '#') ? '#' . $callback_name : $callback_name;
+    $callback_value = $this->getElementInfoDefaultProperty($element, $callback_name) ?: [];
+    if (!empty($element[$callback_name])) {
+      $element[$callback_name] = array_merge($callback_value, $element[$callback_name]);
+    }
+    else {
+      $element[$callback_name] = $callback_value;
+    }
+  }
+
+  /**
+   * Get a render element's default property.
+   *
+   * @param array $element
+   *   A render element.
+   * @param string $property_name
+   *   An element's property name.
+   *
+   * @return mixed
+   *   A render element's default value, or NULL if
+   *   property does not exist.
+   */
+  protected function getElementInfoDefaultProperty(array $element, $property_name) {
+    if (!isset($element['#type'])) {
+      return NULL;
+    }
+    $property_name = ($property_name[0] !== '#') ? '#' . $property_name : $property_name;
+    $type = $element['#type'];
+    return $property_value = $this->elementInfo->getInfoProperty($type, $property_name, NULL)
+      ?: $this->elementInfo->getInfoProperty("webform_$type", $property_name, NULL);
   }
 
   /****************************************************************************/
@@ -584,7 +630,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    */
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
     $attributes_property = ($this->hasWrapper($element)) ? '#wrapper_attributes' : '#attributes';
-
     if ($webform_submission) {
       // Add webform and webform_submission IDs to every element.
       $element['#webform'] = $webform_submission->getWebform()->id();
@@ -684,22 +729,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       $element[$attributes_property]['class'][] = 'webform-has-field-suffix';
     }
 
-    // Get and set the element's default callbacks property so that
-    // it is not skipped when custom callbacks are added.
-    if (isset($element['#type'])) {
-      $type = $element['#type'];
-      $callbacks = ['#pre_render', '#element_validate'];
-      foreach ($callbacks as $callback) {
-        $callback_property = $this->elementInfo->getInfoProperty($type, $callback, [])
-          ?: $this->elementInfo->getInfoProperty("webform_$type", $callback, []);
-        if (!empty($element[$callback])) {
-          $element[$callback] = array_merge($callback_property, $element[$callback]);
-        }
-        else {
-          $element[$callback] = $callback_property;
-        }
-      }
-    }
+    // Set element's #element_validate callback so that is not replaced by
+    // additional #element_validate callbacks.
+    $this->setElementDefaultCallback($element, 'element_validate');
 
     if ($this->isInput($element)) {
       // Handle #readonly support.
@@ -731,9 +763,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       }
     }
 
-    // Prepare Flexbox and #states wrapper.
-    $this->prepareWrapper($element);
-
     // Replace tokens for all properties.
     if ($webform_submission) {
       $this->replaceTokens($element, $webform_submission);
@@ -746,6 +775,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
   public function finalize(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
     // Prepare multiple element.
     $this->prepareMultipleWrapper($element);
+
+    // Prepare #states and flexbox wrapper.
+    $this->prepareWrapper($element);
 
     // Set hidden element #after_build handler.
     $element['#after_build'][] = [get_class($this), 'hiddenElementAfterBuild'];
@@ -841,21 +873,31 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
   }
 
   /**
-   * Set an elements Flexbox and #states wrapper.
+   * Set an elements #states and flexbox wrapper.
    *
    * @param array $element
    *   An element.
    */
   protected function prepareWrapper(array &$element) {
+    $has_states_wrapper = $this->pluginDefinition['states_wrapper'];
+    $has_flexbox_wrapper = !empty($element['#webform_parent_flexbox']);
+    if (!$has_states_wrapper && !$has_flexbox_wrapper) {
+      return;
+    }
+
     $class = get_class($this);
 
+    // Set element's #pre_render callback so that is not replaced by
+    // additional element #pre_render callbacks.
+    $this->setElementDefaultCallback($element, 'pre_render');
+
     // Fix #states wrapper.
-    if ($this->pluginDefinition['states_wrapper']) {
+    if ($has_states_wrapper) {
       $element['#pre_render'][] = [$class, 'preRenderFixStatesWrapper'];
     }
 
     // Add flex(box) wrapper.
-    if (!empty($element['#webform_parent_flexbox'])) {
+    if ($has_flexbox_wrapper) {
       $element['#pre_render'][] = [$class, 'preRenderFixFlexboxWrapper'];
     }
   }
@@ -945,7 +987,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     }
 
     // Remove properties that should only be applied to the child element.
-    $element = array_diff_key($element, array_flip(['#attributes', '#field_prefix', '#field_suffix', '#pattern', '#placeholder', '#maxlength', '#element_validate']));
+    $element = array_diff_key($element, array_flip(['#attributes', '#field_prefix', '#field_suffix', '#pattern', '#placeholder', '#maxlength', '#element_validate', '#pre_render']));
 
     // Apply #unique multiple validation.
     if (isset($element['#unique'])) {
@@ -1059,7 +1101,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
     // Convert string to renderable #markup.
     if (is_string($value)) {
-      $value = ['#markup' => $value];
+      $value = ['#' . ($format === 'text' ? 'plain_text' : 'markup') => $value];
     }
 
     return [
@@ -1860,22 +1902,35 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
    * {@inheritdoc}
    */
   public function getElementStateOptions() {
+    $visibility_optgroup = (string) $this->t('Visibility');
+    $state_optgroup = (string) $this->t('State');
+    $validation_optgroup = (string) $this->t('Validation');
+    $value_optgroup = (string) $this->t('Value');
+
     $states = [];
 
     // Set default states that apply to the element/container and sub elements.
     $states += [
-      'visible' => $this->t('Visible'),
-      'invisible' => $this->t('Hidden'),
-      'enabled' => $this->t('Enabled'),
-      'disabled' => $this->t('Disabled'),
-      'required' => $this->t('Required'),
-      'optional' => $this->t('Optional'),
+      $visibility_optgroup => [
+        'visible' => $this->t('Visible'),
+        'invisible' => $this->t('Hidden'),
+        'visible-slide' => $this->t('Visible (Slide)'),
+        'invisible-slide' => $this->t('Hidden (Slide)'),
+      ],
+      $state_optgroup => [
+        'enabled' => $this->t('Enabled'),
+        'disabled' => $this->t('Disabled'),
+      ],
+      $validation_optgroup => [
+        'required' => $this->t('Required'),
+        'optional' => $this->t('Optional'),
+      ]
     ];
 
     // Set readwrite/readonly states for any element that supports it
     // and containers.
     if ($this->hasProperty('readonly') || $this->isContainer(['#type' => $this->getPluginId()])) {
-      $states += [
+      $states[$state_optgroup] += [
         'readwrite' => $this->t('Read/write'),
         'readonly' => $this->t('Read-only'),
       ];
@@ -1883,7 +1938,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
     // Set checked/unchecked states for any element that contains checkboxes.
     if ($this instanceof Checkbox || $this instanceof Checkboxes) {
-      $states += [
+      $states[$value_optgroup] = [
         'checked' => $this->t('Checked'),
         'unchecked' => $this->t('Unchecked'),
       ];
@@ -1891,7 +1946,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
 
     // Set expanded/collapsed states for any details element.
     if ($this instanceof Details) {
-      $states += [
+      $states[$state_optgroup] += [
         'expanded' => $this->t('Expanded'),
         'collapsed' => $this->t('Collapsed'),
       ];
@@ -2456,6 +2511,16 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#type' => 'textfield',
       '#title' => $this->t('Table header label'),
       '#description' => $this->t('This is used as the table header for this webform element when displaying multiple values.'),
+    ];
+    $form['multiple']['multiple__label'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Item label'),
+      '#description' => $this->t('This is used as the item label for this webform element when displaying multiple values.'),
+    ];
+    $form['multiple']['multiple__labels'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Item labels'),
+      '#description' => $this->t('This is used as the items label for this webform element when displaying multiple values.'),
     ];
     $form['multiple']['multiple__min_items'] = [
       '#type' => 'number',

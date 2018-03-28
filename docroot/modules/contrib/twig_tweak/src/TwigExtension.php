@@ -3,9 +3,15 @@
 namespace Drupal\twig_tweak;
 
 use Drupal\Component\Uuid\Uuid;
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Block\TitleBlockPluginInterface;
-use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Plugin\ContextAwarePluginInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\image\Entity\ImageStyle;
@@ -36,9 +42,6 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFunction('drupal_config', [$this, 'drupalConfig']),
       new \Twig_SimpleFunction('drupal_dump', [$this, 'drupalDump']),
       new \Twig_SimpleFunction('dd', [$this, 'drupalDump']),
-      // Wrap drupal_set_message() because it returns some value which is not
-      // suitable for Twig template.
-      new \Twig_SimpleFunction('drupal_set_message', [$this, 'drupalSetMessage']),
       new \Twig_SimpleFunction('drupal_title', [$this, 'drupalTitle']),
       new \Twig_SimpleFunction('drupal_url', [$this, 'drupalUrl']),
       new \Twig_SimpleFunction('drupal_link', [$this, 'drupalLink']),
@@ -55,6 +58,7 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('image_style', [$this, 'imageStyle']),
       new \Twig_SimpleFilter('transliterate', [$this, 'transliterate']),
       new \Twig_SimpleFilter('check_markup', [$this, 'checkMarkup']),
+      new \Twig_SimpleFilter('view', [$this, 'view']),
     ];
     // PHP filter should be enabled in settings.php file.
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -71,23 +75,70 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Builds the render array for the provided block plugin.
+   * Builds the render array for a block.
    *
    * @param mixed $id
-   *   The ID of block plugin to render.
+   *   The string of block plugin to render.
    * @param array $configuration
    *   (Optional) Pass on any configuration to the plugin block.
+   * @param bool $wrapper
+   *   (Optional) Whether or not use block template for rendering.
    *
    * @return null|array
-   *   A render array for the block or NULL if the block does not exist.
+   *   A render array for the block or NULL if the block cannot be rendered.
    */
-  public function drupalBlock($id, array $configuration = []) {
+  public function drupalBlock($id, array $configuration = [], $wrapper = TRUE) {
+
+    $configuration += ['label_display' => BlockPluginInterface::BLOCK_LABEL_VISIBLE];
+
     /** @var \Drupal\Core\Block\BlockPluginInterface $block_plugin */
     $block_plugin = \Drupal::service('plugin.manager.block')
       ->createInstance($id, $configuration);
-    if ($block_plugin->access(\Drupal::currentUser())) {
-      return $block_plugin->build();
+
+    // Inject runtime contexts.
+    if ($block_plugin instanceof ContextAwarePluginInterface) {
+      $contexts = \Drupal::service('context.repository')->getRuntimeContexts($block_plugin->getContextMapping());
+      \Drupal::service('context.handler')->applyContextMapping($block_plugin, $contexts);
     }
+
+    if (!$block_plugin->access(\Drupal::currentUser())) {
+      return;
+    }
+
+    $content = $block_plugin->build();
+
+    if ($content && !Element::isEmpty($content)) {
+      if ($wrapper) {
+        $build = [
+          '#theme' => 'block',
+          '#attributes' => [],
+          '#contextual_links' => [],
+          '#configuration' => $block_plugin->getConfiguration(),
+          '#plugin_id' => $block_plugin->getPluginId(),
+          '#base_plugin_id' => $block_plugin->getBaseId(),
+          '#derivative_plugin_id' => $block_plugin->getDerivativeId(),
+          'content' => $content,
+        ];
+      }
+      else {
+        $build = $content;
+      }
+    }
+    else {
+      // Preserve cache metadata of empty blocks.
+      $build = [
+        '#markup' => '',
+        '#cache' => $content['#cache'],
+      ];
+    }
+
+    if (!empty($content)) {
+      CacheableMetadata::createFromRenderArray($build)
+        ->merge(CacheableMetadata::createFromRenderArray($content))
+        ->applyTo($build);
+    }
+
+    return $build;
   }
 
   /**
@@ -141,7 +192,7 @@ class TwigExtension extends \Twig_Extension {
    * @param string $entity_type
    *   The entity type.
    * @param mixed $id
-   *   The ID of the entity to render.
+   *   The ID of the entity to build.
    * @param string $view_mode
    *   (optional) The view mode that should be used to render the entity.
    * @param string $langcode
@@ -392,28 +443,6 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Sets a message to display to the user.
-   *
-   * @param string|\Drupal\Component\Render\MarkupInterface $message
-   *   (optional) The translated message to be displayed to the user.
-   * @param string $type
-   *   (optional) The message's type. Defaults to 'status'.
-   * @param bool $repeat
-   *   (optional) If this is FALSE and the message is already set, then the
-   *   message will not be repeated. Defaults to FALSE.
-   *
-   * @return array
-   *   A render array to disable caching.
-   *
-   * @see drupal_set_message()
-   */
-  public function drupalSetMessage($message = NULL, $type = 'status', $repeat = FALSE) {
-    drupal_set_message($message, $type, $repeat);
-    $build['#cache']['max-age'] = 0;
-    return $build;
-  }
-
-  /**
    * Returns a title for the current route.
    *
    * @return array
@@ -572,6 +601,33 @@ class TwigExtension extends \Twig_Extension {
    */
   public function checkMarkup($text, $format_id = NULL, $langcode = '', array $filter_types_to_skip = []) {
     return check_markup($text, $format_id, $langcode, $filter_types_to_skip);
+  }
+
+  /**
+   * Returns a render array for entity, field list or field item.
+   *
+   * @param mixed $object
+   *   The object to build a render array from.
+   * @param string|array $display_options
+   *   Can be either the name of a view mode, or an array of display settings.
+   * @param string $langcode
+   *   (optional) For which language the entity should be rendered, defaults to
+   *   the current content language.
+   * @param bool $check_access
+   *   (Optional) Indicates that access check is required.
+   *
+   * @return array
+   *   A render array to represent the object.
+   */
+  public function view($object, $display_options = 'default', $langcode = NULL, $check_access = TRUE) {
+    if ($object instanceof FieldItemListInterface || $object instanceof FieldItemInterface) {
+      return $object->view($display_options);
+    }
+    elseif ($object instanceof EntityInterface && (!$check_access || $object->access('view'))) {
+      return \Drupal::entityTypeManager()
+        ->getViewBuilder($object->getEntityTypeId())
+        ->view($object, $display_options, $langcode);
+    }
   }
 
   /**

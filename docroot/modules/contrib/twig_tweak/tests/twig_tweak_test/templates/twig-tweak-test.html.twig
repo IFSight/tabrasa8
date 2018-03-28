@@ -21,7 +21,8 @@
   <div class="tt-view-page_1">{{ drupal_view('twig_tweak_test', 'page_1') }}</div>
   <div class="tt-view-page_1-with-argument">{{ drupal_view('twig_tweak_test', 'page_1', 1) }}</div>
   <div class="tt-view-result">{{ drupal_view_result('twig_tweak_test', 'page_1')|length }}</div>
-  <div class="tt-block">{{ drupal_block('system_branding_block', {use_site_name: false}) }}</div>
+  <div class="tt-block">{{ drupal_block('system_branding_block', {use_site_name: false}, false) }}</div>
+  <div class="tt-block-with-wrapper">{{ drupal_block('system_branding_block', {label: 'Branding'}) }}</div>
   <div class="tt-region">{{ drupal_region('sidebar_first') }}</div>
   <div class="tt-entity-default">{{ drupal_entity('node', 1) }}</div>
   <div class="tt-entity-teaser">{{ drupal_entity('node', 1, 'teaser') }}</div>
@@ -39,7 +40,6 @@
   <div class="tt-token">{{ drupal_token('site:name') }}</div>
   <div class="tt-token-data">{{ drupal_token('node:title', {'node': node}) }}</div>
   <div class="tt-config">{{ drupal_config('user.settings', 'anonymous') }}</div>
-  <div class="tt-status-message">{{ drupal_set_message('Hi!', 'warning') }}</div>
   <div class="tt-title">{{ drupal_title() }}</div>
   <div class="tt-url">{{ drupal_url('node/1', {absolute: true}) }}</div>
   <div class="tt-link">{{ drupal_link('Edit', 'node/1/edit', {absolute: true}) }}</div>
@@ -49,4 +49,7 @@
   <div class="tt-image-style">{{ 'public://images/ocean.jpg' | image_style('thumbnail') }}</div>
   <div class="tt-transliterate">{{ 'Привет!' | transliterate('ru') }}</div>
   <div class="tt-check-markup">{{ '<b>bold</b> <strong>strong</strong>' | check_markup('twig_tweak_test') }}</div>
+  <div class="tt-node-view">{{ node|view }}</div>
+  <div class="tt-field-list-view">{{ node.title|view }}</div>
+  <div class="tt-field-item-view">{{ node.title[0]|view }}</div>
 </div>

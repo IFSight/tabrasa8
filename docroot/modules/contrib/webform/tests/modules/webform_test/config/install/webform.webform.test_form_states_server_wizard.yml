@@ -154,12 +154,28 @@ elements: |
         visible:
           ':input[name="page_01_trigger_checkbox"]':
             checked: true
+    page_02_textfield_visible_slide:
+      '#type': textfield
+      '#title': page_02_textfield_visible_slide
+      '#description': '<b>Visible (Slide):</b> page_01_trigger_checkbox:checked'
+      '#states':
+        'visible-slide':
+          ':input[name="page_01_trigger_checkbox"]':
+            checked: true
     page_02_textfield_invisible:
       '#type': textfield
-      '#title': 'page_02_textfield_invisible:'
+      '#title': 'page_02_textfield_invisible'
       '#description': '<b>Invisible:</b> page_01_trigger_checkbox:checked'
       '#states':
         invisible:
+          ':input[name="page_01_trigger_checkbox"]':
+            checked: true
+    page_02_textfield_invisible_slide:
+      '#type': textfield
+      '#title': 'page_02_textfield_invisible_slide'
+      '#description': '<b>Invisible (Slide):</b> page_01_trigger_checkbox:checked'
+      '#states':
+        'invisible-slide':
           ':input[name="page_01_trigger_checkbox"]':
             checked: true
     page_02_checkbox_checked:
@@ -267,6 +283,8 @@ settings:
   confirmation_back: true
   confirmation_back_label: ''
   confirmation_back_attributes: {  }
+  confirmation_exclude_query: false
+  confirmation_exclude_token: false
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''

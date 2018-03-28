@@ -1599,18 +1599,20 @@ class WebformSubmissionForm extends ContentEntityForm {
     $route_options = [];
 
     // Add current query to route options.
-    $query = $this->getRequest()->query->all();
-    // Remove Ajax parameters from query.
-    unset($query['ajax_form'], $query['_wrapper_format']);
-    if ($query) {
-      $route_options['query'] = $query;
+    if (!$webform->getSetting('confirmation_exclude_query')) {
+      $query = $this->getRequest()->query->all();
+      // Remove Ajax parameters from query.
+      unset($query['ajax_form'], $query['_wrapper_format']);
+      if ($query) {
+        $route_options['query'] = $query;
+      }
     }
 
     // Default to displaying a confirmation message on this page when submission
     // is updated or locked (but not just completed).
     $state = $webform_submission->getState();
-    $is_updated = ($state == WebformSubmissionInterface::STATE_UPDATED);
-    $is_locked = ($state == WebformSubmissionInterface::STATE_LOCKED && $webform_submission->getChangedTime() > $webform_submission->getCompletedTime());
+    $is_updated = ($state === WebformSubmissionInterface::STATE_UPDATED);
+    $is_locked = ($state === WebformSubmissionInterface::STATE_LOCKED && $webform_submission->getChangedTime() > $webform_submission->getCompletedTime());
     if ($is_updated || $is_locked) {
       $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_UPDATED);
       $form_state->setRedirect($route_name, $route_parameters, $route_options);
@@ -1618,7 +1620,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     }
 
     // Add token route query options.
-    if ($state == WebformSubmissionInterface::STATE_COMPLETED) {
+    if ($state == WebformSubmissionInterface::STATE_COMPLETED && !$webform->getSetting('confirmation_exclude_token')) {
       $route_options['query']['token'] = $webform_submission->getToken();
     }
 
@@ -1689,7 +1691,6 @@ class WebformSubmissionForm extends ContentEntityForm {
         $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_DEFAULT_CONFIRMATION);
         return;
     }
-
   }
 
   /****************************************************************************/
@@ -1731,23 +1732,8 @@ class WebformSubmissionForm extends ContentEntityForm {
         continue;
       }
 
-      // Invoke WebformElement::prepare.
-      $this->elementManager->invokeMethod('prepare', $element, $this->entity);
-
-      // Invoke WebformElement::setDefaultValue.
-      $this->elementManager->invokeMethod('setDefaultValue', $element);
-
-      // Invoke WebformElement::finalize.
-      $this->elementManager->invokeMethod('finalize', $element, $this->entity);
-
-      // Allow modules to alter the webform element.
-      // @see \Drupal\Core\Field\WidgetBase::formSingleElement()
-      $hooks = ['webform_element'];
-      if (!empty($element['#type'])) {
-        $hooks[] = 'webform_element_' . $element['#type'];
-      }
-      $context = ['webform' => $form];
-      $this->moduleHandler->alter($hooks, $element, $form_state, $context);
+      // Build the webform element.
+      $this->elementManager->buildElement($element, $form, $form_state);
 
       // Recurse and prepare nested elements.
       $this->prepareElements($element, $form, $form_state);

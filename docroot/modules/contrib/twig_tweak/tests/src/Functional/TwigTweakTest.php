@@ -88,15 +88,22 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-view-result" and text() = 3]';
     $this->assertByXpath($xpath);
 
-    // Test block plugin.
+    // Test block.
     $xpath = '//div[@class = "tt-block"]';
     $xpath .= '/img[contains(@src, "/core/themes/classy/logo.svg") and @alt="Home"]';
+    $this->assertByXpath($xpath);
+
+    // Test block with wrapper.
+    $xpath = '//div[@class = "tt-block-with-wrapper"]';
+    $xpath .= '/div[@class = "block block-system block-system-branding-block"]';
+    $xpath .= '/h2[text() = "Branding"]';
+    $xpath .= '/following-sibling::a[img[contains(@src, "/core/themes/classy/logo.svg") and @alt="Home"]]';
+    $xpath .= '/following-sibling::div[@class = "site-name"]/a';
     $this->assertByXpath($xpath);
 
     // Test region.
     $xpath = '//div[@class = "tt-region"]/div[@class = "region region-sidebar-first"]';
     $xpath .= '/div[contains(@class, "block-page-title-block") and h1[@class="page-title" and text() = "Log in"]]';
-    $xpath .= '/following-sibling::div[@class="messages messages--warning" and contains(., "Hi!")]';
     $xpath .= '/following-sibling::div[contains(@class, "block-system-powered-by-block")]/span[. = "Powered by Drupal"]';
     $this->assertByXpath($xpath);
 
@@ -173,10 +180,6 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-config" and text() = "Anonymous"]';
     $this->assertByXpath($xpath);
 
-    // Test status message.
-    $xpath = '//div[@class = "messages messages--warning" and contains(., "Hi!")]';
-    $this->assertByXpath($xpath);
-
     // Test page title.
     $xpath = '//div[@class = "tt-title" and text() = "Beta"]';
     $this->assertByXpath($xpath);
@@ -190,11 +193,11 @@ class TwigTweakTest extends BrowserTestBase {
     $url = Url::fromUserInput('/node/1/edit', ['absolute' => TRUE]);
     $link = Link::fromTextAndUrl('Edit', $url)->toString();
     $xpath = '//div[@class = "tt-link"]';
-    $this->assertEquals($link, trim($this->xpath($xpath)[0]->getHtml()));
+    self::assertEquals($link, trim($this->xpath($xpath)[0]->getHtml()));
 
     // Test protected link.
     $xpath = '//div[@class = "tt-link-access"]';
-    $this->assertEquals('', trim($this->xpath($xpath)[0]->getHtml()));
+    self::assertEquals('', trim($this->xpath($xpath)[0]->getHtml()));
 
     // Test token replacement.
     $xpath = '//div[@class = "tt-token-replace" and text() = "Site name: Drupal"]';
@@ -214,7 +217,21 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Test text format.
     $xpath = '//div[@class = "tt-check-markup"]';
-    $this->assertEquals('<b>bold</b> strong', trim($this->xpath($xpath)[0]->getHtml()));
+    self::assertEquals('<b>bold</b> strong', trim($this->xpath($xpath)[0]->getHtml()));
+
+    // Test node view.
+    $xpath = '//div[@class = "tt-node-view"]/article[contains(@class, "node--view-mode-default")]/h2[a/span[text() = "Beta"]]';
+    $xpath .= '/following-sibling::footer[//h4[text() = "Member for"]]';
+    $xpath .= '/following-sibling::div[@class = "node__content"]/div/p';
+    $this->assertByXpath($xpath);
+
+    // Field list view.
+    $xpath = '//div[@class = "tt-field-list-view"]/span[contains(@class, "field--name-title") and text() = "Beta"]';
+    $this->assertByXpath($xpath);
+
+    // Field item view.
+    $xpath = '//div[@class = "tt-field-item-view" and text() = "Beta"]';
+    $this->assertByXpath($xpath);
   }
 
   /**

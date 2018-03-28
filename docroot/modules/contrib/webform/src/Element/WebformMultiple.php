@@ -6,6 +6,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\webform\Utility\WebformElementHelper;
 
 /**
@@ -139,7 +140,7 @@ class WebformMultiple extends FormElement {
     ];
 
     // Initialize, prepare, and finalize sub-elements.
-    static::initializeElement($element);
+    static::initializeElement($element, $form_state, $complete_form);
 
     // Build (single) element header.
     $header = static::buildElementHeader($element);
@@ -153,7 +154,11 @@ class WebformMultiple extends FormElement {
       $default_values = $element['#default_value'];
     }
     elseif ($form_state->isProcessingInput() && isset($element['#value']) && is_array($element['#value'])) {
-      $default_values = $element['#value'];
+      // Only set the default values if the form is being processed but the
+      // multiple element is not being displayed via #access: FALSE.
+      // This happens during a multistep wizard form with a multiple element.
+      $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
+      $default_values = (!$has_access) ? $element['#value'] : [];
     }
     else {
       $default_values = [];
@@ -174,8 +179,12 @@ class WebformMultiple extends FormElement {
     }
 
     // Build table.
+    $attributes = ['id' => $table_id, 'class' => ['webform-multiple-table']];
+    if (count($element['#element']) > 1) {
+      $attributes['class'][] = 'webform-multiple-table-responsive';
+    }
     $element['items'] = [
-      '#prefix' => '<div id="' . $table_id . '" class="webform-multiple-table">',
+      '#prefix' => '<div' . new Attribute($attributes) . '>',
       '#suffix' => '</div>',
       '#type' => 'table',
       '#header' => $header,
@@ -226,8 +235,12 @@ class WebformMultiple extends FormElement {
    *
    * @param array $element
    *   The element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *    An associative array containing the structure of the form.
    */
-  protected static function initializeElement(array &$element) {
+  protected static function initializeElement(array &$element, FormStateInterface $form_state, array &$complete_form) {
     // Track element child keys.
     $element['#child_keys'] = Element::children($element['#element']);
 
@@ -246,22 +259,26 @@ class WebformMultiple extends FormElement {
       // Initialize, prepare, and finalize composite sub-elements.
       // Get composite element required/options states from visible/hidden states.
       $required_states = WebformElementHelper::getRequiredFromVisibleStates($element);
-      static::initializeElementRecursive($element, $element['#element'], $required_states);
+      static::initializeElementRecursive($element, $form_state, $complete_form, $element['#element'], $required_states);
     }
   }
 
   /**
-   * Initialize, prepare, and finalize composite sub-elements recusively.
+   * Initialize, prepare, and finalize composite sub-elements recursively.
    *
    * @param array $element
    *   The main element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *    An associative array containing the structure of the form.
    * @param array $sub_elements
    *   The sub element.
    * @param array $required_states
    *   An associative array of required states froim the main element's
    *   visible/hidden states.
    */
-  protected static function initializeElementRecursive(array $element, array &$sub_elements, array $required_states) {
+  protected static function initializeElementRecursive(array $element, FormStateInterface $form_state, array &$complete_form, array &$sub_elements, array $required_states) {
     $child_keys = Element::children($sub_elements);
 
     // Exit immediate if the sub elements has no children.
@@ -269,26 +286,33 @@ class WebformMultiple extends FormElement {
       return;
     }
 
+    // Determine if the sub elements are the main element for each table cell.
+    $is_root = ($element['#element'] === $sub_elements) ? TRUE : FALSE;
+
     /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
     $element_manager = \Drupal::service('plugin.manager.webform.element');
     foreach ($child_keys as $child_key) {
       $sub_element =& $sub_elements[$child_key];
+
+      $element_plugin = $element_manager->getElementInstance($sub_element);
 
       // If the element's #access is FALSE, apply it to all sub elements.
       if (isset($element['#access']) && $element['#access'] === FALSE) {
         $sub_element['#access'] = FALSE;
       }
 
-      // If #header then hide the sub element's #title.
-      if ($element['#header'] && !isset($sub_element['#title_display'])) {
+      // If #header and root input then hide the sub element's #title.
+      if ($element['#header']
+        && ($is_root && $element_plugin->isInput($sub_element))
+        && !isset($sub_element['#title_display'])) {
         $sub_element['#title_display'] = 'invisible';
       }
 
-      // Initialize, prepare, and populate composite sub-element.
-      $element_plugin = $element_manager->getElementInstance($sub_element);
-      $element_plugin->initialize($sub_element);
-      $element_plugin->prepare($sub_element);
-      $element_plugin->finalize($sub_element);
+      // Initialize the composite sub-element.
+      $element_manager->initializeElement($sub_element);
+
+      // Build the composite sub-element.
+      $element_manager->buildElement($sub_element, $complete_form, $form_state);
 
       // Custom validate required sub-element because they can be hidden
       // via #access or #states.
@@ -303,7 +327,7 @@ class WebformMultiple extends FormElement {
       }
 
       if (is_array($sub_element)) {
-        static::initializeElementRecursive($element, $sub_element, $required_states);
+        static::initializeElementRecursive($element, $form_state, $complete_form, $sub_element, $required_states);
       }
     }
   }
@@ -695,7 +719,7 @@ class WebformMultiple extends FormElement {
     foreach ($element['items']['#value'] as $row_index => $value) {
       $values[] = $value;
       if ($row_index == $button['#row_index']) {
-        $values[] = ['item' => '', 'text' => ''];
+        $values[] = [];
       }
     }
 

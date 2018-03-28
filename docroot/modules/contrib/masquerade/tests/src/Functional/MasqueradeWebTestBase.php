@@ -1,12 +1,15 @@
 <?php
 
-namespace Drupal\masquerade\Tests;
+namespace Drupal\Tests\masquerade\Functional;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Tests\block\Functional\AssertBlockAppearsTrait;
+use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\Role;
-use Drupal\user\UserInterface;
 
 /**
  * Base test class for Masquerade module web tests.
@@ -15,7 +18,10 @@ use Drupal\user\UserInterface;
  *   request.
  * @see http://drupal.org/node/1555862
  */
-abstract class MasqueradeWebTestBase extends WebTestBase {
+abstract class MasqueradeWebTestBase extends BrowserTestBase {
+
+  use AssertBlockAppearsTrait;
+  use StringTranslationTrait;
 
   /**
    * Modules to install.
@@ -82,7 +88,6 @@ abstract class MasqueradeWebTestBase extends WebTestBase {
       ->save();
 
     // Create test users with varying privilege levels.
-
     // Administrative user with User module's admin role *only*.
     $this->admin_user = $this->drupalCreateUser();
     $this->admin_user->setUsername('admin_user');
@@ -117,52 +122,58 @@ abstract class MasqueradeWebTestBase extends WebTestBase {
   /**
    * Masquerades as another user.
    *
-   * @param \Drupal\user\UserInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account to masquerade as.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   * @throws \Behat\Mink\Exception\ResponseTextException
    */
-  protected function masqueradeAs(UserInterface $account) {
+  protected function masqueradeAs(AccountInterface $account) {
     $this->drupalGet('user/' . $account->id());
-    $this->clickLink(t('Masquerade as @name', ['@name' => $account->getDisplayName()]));
-    // @todo Fix when crsfTokenSeed is avalable.
-//    $this->drupalGet('user/' . $account->id() . '/masquerade', array(
-//      'query' => array(
-//        'token' => $this->drupalGetToken('user/' . $account->id() . '/masquerade'),
-//      ),
-//    ));
-    $this->assertResponse(200);
-    $this->assertText('You are now masquerading as ' . $account->label());
+    $this->clickLink($this->t('Masquerade as @name', ['@name' => $account->getDisplayName()]));
+    //$this->drupalGet('user/' . $account->id() . '/masquerade', [
+    //  'query' => [
+    //    'token' => $this->drupalGetToken('user/' . $account->id() . '/masquerade'),
+    //  ],
+    //]);
+    //$this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()
+      ->pageTextContains('You are now masquerading as ' . $account->label());
 
     // Update the logged in user account.
-    // @see WebTestBase::drupalLogin()
+    // @see \Drupal\Tests\BrowserTestBase::drupalLogin()
     if (isset($this->session_id)) {
-      $this->loggedInUser = $account;
-      $this->loggedInUser->session_id = $this->session_id;
+      //$this->loggedInUser = $account;
+      //$this->loggedInUser->session_id = $this->session_id;
     }
   }
 
   /**
    * Unmasquerades the current user.
    *
-   * @param \Drupal\user\UserInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account to unmasquerade from.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   * @throws \Behat\Mink\Exception\ResponseTextException
    */
-  protected function unmasquerade(UserInterface $account) {
-    $this->drupalGet('/user/' . $account->id());
+  protected function unmasquerade(AccountInterface $account) {
+    $this->drupalGet('user/' . $account->id());
     $this->clickLink('Unmasquerade');
-    // @todo Fix when crsfTokenSeed is avalable.
-//    $this->drupalGet('unmasquerade', array(
-//      'query' => array(
-//        'token' => $this->drupalGetToken('unmasquerade'),
-//      ),
-//    ));
-    $this->assertResponse(200);
-    $this->assertText('You are no longer masquerading as ' . $account->label());
+    //$this->drupalGet('unmasquerade', [
+    //  'query' => [
+    //    'token' => $this->drupalGetToken('unmasquerade'),
+    //  ],
+    //]);
+    //$this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()
+      ->pageTextContains('You are no longer masquerading as ' . $account->label());
 
     // Update the logged in user account.
-    // @see WebTestBase::drupalLogin()
+    // @see \Drupal\Tests\BrowserTestBase::drupalLogin()
     if (isset($this->session_id)) {
-      $this->loggedInUser = $account;
-      $this->loggedInUser->session_id = $this->session_id;
+      //$this->loggedInUser = $account;
+      //$this->loggedInUser->session_id = $this->session_id;
     }
   }
 
@@ -171,70 +182,37 @@ abstract class MasqueradeWebTestBase extends WebTestBase {
    *
    * @param int $uid
    *   The user ID for which to find a session record.
-   * @param int|false $expected_masquerading_uid
+   * @param int|null $masquerading
    *   (optional) The expected value of the 'masquerading' session data. Pass
-   *   FALSE to assert that the session data is not set.
-   *
-   * @return \stdClass
-   *   The session record from {sessions}, if any.
+   *   NULL to assert that the session data is not set.
    */
-  protected function assertSessionByUid($uid, $expected_masquerading_uid = NULL) {
-    $result = db_query('SELECT * FROM {sessions} WHERE uid = :uid', array(
+  protected function assertSessionByUid($uid, $masquerading = NULL) {
+    $result = \Drupal::database()->query('SELECT * FROM {sessions} WHERE uid = :uid', [
       ':uid' => $uid,
-    ))->fetchAll();
+    ])->fetchAll();
     if (empty($result)) {
-      $this->fail(format_string('No session found for uid @uid', array('@uid' => $uid)));
+      $this->fail("No session found for uid $uid");
     }
     elseif (count($result) > 1) {
       // If there is more than one session, then that must be unexpected.
       $this->fail("Found more than 1 session for uid $uid.");
     }
     else {
-      $this->pass("Found session for uid $uid.");
+      $this->assertTrue(TRUE, "Found session for uid $uid.");
       $session = reset($result);
 
-      // Decode the session data.
-      if (!empty($session->session)) {
-        // Careful: PHP does not provide a utility function that decodes session
-        // data only. session_decode() merges the input into the global
-        // $_SESSION (but only if it is an array).
-        // @see http://php.net/manual/function.session-decode.php
-        $old_session = isset($_SESSION) ? $_SESSION : NULL;
-        // Furthermore, if this test is executed on the command line, then
-        // Drupal denies to start a session. PHP throws a notice if the session
-        // is attempted to be started more than once.
-        // @see drupal_session_start()
-        @session_start();
-        // In any case, ensure that it is empty.
-        $_SESSION = array();
-
-        if (!session_decode($session->session)) {
-          $this->fail(format_string('Failed to decode session data: @data', array('@data' => $session->session)));
-        }
-        $session->session = isset($_SESSION) ? $_SESSION : array();
-
-        // Restore the original global session.
-        $_SESSION = NULL;
-        if (isset($old_session)) {
-          $_SESSION = $old_session;
-        }
+      // Careful: PHP does not provide a utility function that decodes session
+      // data only. Using string comparison because rely on default storage.
+      if ($masquerading) {
+        $expected = 'masquerading|s:' . strlen($masquerading) . ':"' . $masquerading . '"';
+        self::assertNotFalse(strpos($session->session, $expected), new FormattableMarkup('$_SESSION[\'masquerading\'] equals @uid.', [
+          '@uid' => $masquerading,
+        ]));
       }
       else {
-        $session = new \stdClass();
-        $session->session = array();
+        $expected = empty($session->session) || strpos($session->session, 'masquerading') === FALSE;
+        self::assertTrue($expected, '$_SESSION[\'masquerading\'] is not set.');
       }
-
-      if (isset($expected_masquerading_uid)) {
-        if ($expected_masquerading_uid !== FALSE) {
-          $this->assertEqual($session->session['masquerading'], $expected_masquerading_uid, format_string('$_SESSION[\'masquerading\'] equals @uid.', array(
-            '@uid' => $expected_masquerading_uid,
-          )));
-        }
-        else {
-          $this->assert(!isset($session->session['masquerading']), '$_SESSION[\'masquerading\'] is not set.');
-        }
-      }
-      return $session;
     }
   }
 
@@ -245,10 +223,10 @@ abstract class MasqueradeWebTestBase extends WebTestBase {
    *   The user ID to assert.
    */
   protected function assertNoSessionByUid($uid) {
-    $result = db_query('SELECT * FROM {sessions} WHERE uid = :uid', array(
+    $result = \Drupal::database()->query('SELECT * FROM {sessions} WHERE uid = :uid', [
       ':uid' => $uid,
-    ))->fetchAll();
-    $this->assert(empty($result), "No session for uid $uid found.");
+    ])->fetchAll();
+    self::assertEmpty($result, "No session for uid $uid found.");
   }
 
   /**
@@ -267,4 +245,3 @@ abstract class MasqueradeWebTestBase extends WebTestBase {
   }
 
 }
-
