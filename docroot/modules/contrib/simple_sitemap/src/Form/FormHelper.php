@@ -197,7 +197,7 @@ class FormHelper {
 
     // Do not alter the form, if sitemap is disabled for the entity type of this
     // entity instance.
-    elseif ($this->getEntityCategory() == 'instance'
+    elseif ($this->getEntityCategory() === 'instance'
       && !$this->generator->bundleIsIndexed($this->getEntityTypeId(), $this->getBundleName())) {
       return FALSE;
     }
@@ -317,7 +317,7 @@ class FormHelper {
    *   TRUE if this is a bundle or bundle instance form, FALSE otherwise.
    */
   protected function getEntityDataFromFormEntity() {
-    if (FALSE === $form_entity = $this->getFormEntity()) {
+    if (!$form_entity = $this->getFormEntity()) {
       return FALSE;
     }
 
@@ -339,7 +339,7 @@ class FormHelper {
     }
 
     // Menu fix.
-    $this->setEntityCategory(NULL === $this->getEntityCategory() && $entity_type_id == 'menu' ? 'bundle' : $this->getEntityCategory());
+    $this->setEntityCategory(NULL === $this->getEntityCategory() && $entity_type_id === 'menu' ? 'bundle' : $this->getEntityCategory());
 
     switch ($this->getEntityCategory()) {
       case 'bundle':
@@ -444,9 +444,9 @@ class FormHelper {
    *   Select options.
    */
   public function getChangefreqSelectValues() {
-    $options = ['' => t('- Not specified -')];
+    $options = ['' => $this->t('- Not specified -')];
     foreach (self::$changefreqValues as $setting) {
-      $options[$setting] = t($setting);
+      $options[$setting] = $this->t($setting);
     }
     return $options;
   }

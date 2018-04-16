@@ -1,11 +1,12 @@
 <?php
 
-namespace Drupal\simple_sitemap\Tests;
+namespace Drupal\Tests\simple_sitemap\Functional;
+
+use Drupal\Core\Url;
 
 /**
  * Tests Simple XML sitemap functional integration.
  *
- * @package Drupal\simple_sitemap\Tests
  * @group simple_sitemap
  */
 class SimplesitemapTest extends SimplesitemapTestBase {
@@ -16,31 +17,34 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   public function testInitialGeneration() {
     $this->generator->generateSitemap('nobatch');
     $this->drupalGet('sitemap.xml');
-    $this->assertRaw('urlset');
-    $this->assertText($GLOBALS['base_url']);
-    $this->assertText('1.0');
-    $this->assertText('daily');
+    $this->assertSession()->responseContains('urlset');
+    $this->assertSession()->responseContains(Url::fromRoute('<front>')->setAbsolute()->toString());
+    $this->assertSession()->responseContains('1.0');
+    $this->assertSession()->responseContains('daily');
   }
 
+  /**
+   * Test custom link.
+   */
   public function testAddCustomLink() {
     $this->generator->addCustomLink('/node/' . $this->node->id(), ['priority' => 0.2, 'changefreq' => 'monthly'])
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('0.2');
-    $this->assertText('monthly');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('0.2');
+    $this->assertSession()->responseContains('monthly');
 
-    $this->drupalLogin($this->createPrivilegedUser());
+    $this->drupalLogin($this->privilegedUser);
 
     $this->drupalGet('admin/config/search/simplesitemap/custom');
-    $this->assertText('/node/' . $this->node->id() . ' 0.2 monthly');
+    $this->assertSession()->pageTextContains('/node/' . $this->node->id() . ' 0.2 monthly');
 
     $this->generator->addCustomLink('/node/' . $this->node->id(), ['changefreq' => 'yearly'])
       ->generateSitemap('nobatch');
 
     $this->drupalGet('admin/config/search/simplesitemap/custom');
-    $this->assertText('/node/' . $this->node->id() . ' yearly');
+    $this->assertSession()->pageTextContains('/node/' . $this->node->id() . ' yearly');
   }
 
   /**
@@ -52,9 +56,9 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('0.5');
-    $this->assertNoRaw('changefreq');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('0.5');
+    $this->assertSession()->responseNotContains('changefreq');
   }
 
   /**
@@ -66,7 +70,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertNoText('node/' . $this->node->id());
+    $this->assertSession()->responseNotContains('node/' . $this->node->id());
   }
 
   /**
@@ -77,7 +81,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertNoText($GLOBALS['base_url']);
+    $this->assertSession()->responseNotContains(Url::fromRoute('<front>')->setAbsolute()->toString());
   }
 
   /**
@@ -86,18 +90,21 @@ class SimplesitemapTest extends SimplesitemapTestBase {
    * @todo Add form tests
    */
   public function testSetBundleSettings() {
-
     $this->assertFalse($this->generator->bundleIsIndexed('node', 'page'));
 
     // Index new bundle.
     $this->generator->removeCustomLinks()
-      ->setBundleSettings('node', 'page', ['index' => TRUE, 'priority' => 0.5, 'changefreq' => 'hourly'])
+      ->setBundleSettings('node', 'page', [
+        'index' => TRUE,
+        'priority' => 0.5,
+        'changefreq' => 'hourly',
+      ])
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('0.5');
-    $this->assertText('hourly');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('0.5');
+    $this->assertSession()->responseContains('hourly');
 
     $this->assertTrue($this->generator->bundleIsIndexed('node', 'page'));
 
@@ -106,27 +113,27 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertNoText('0.5');
-    $this->assertText('0.9');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseNotContains('0.5');
+    $this->assertSession()->responseContains('0.9');
 
     // Only change bundle changefreq.
     $this->generator->setBundleSettings('node', 'page', ['changefreq' => 'daily'])
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertNoText('hourly');
-    $this->assertText('daily');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseNotContains('hourly');
+    $this->assertSession()->responseContains('daily');
 
     // Remove changefreq setting.
     $this->generator->setBundleSettings('node', 'page', ['changefreq' => ''])
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertNoRaw('changefreq');
-    $this->assertNoText('daily');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseNotContains('changefreq');
+    $this->assertSession()->responseNotContains('daily');
 
     // Index two bundles.
     $this->drupalCreateContentType(['type' => 'blog']);
@@ -137,8 +144,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('node/' . $node3->id());
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('node/' . $node3->id());
 
     // Set bundle 'index' setting to false.
     $this->generator->setBundleSettings('node', 'page', ['index' => FALSE])
@@ -146,37 +153,35 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertNoText('node/' . $this->node->id());
-    $this->assertNoText('node/' . $node3->id());
+    $this->assertSession()->responseNotContains('node/' . $this->node->id());
+    $this->assertSession()->responseNotContains('node/' . $node3->id());
   }
 
   /**
    * Test default settings of bundles.
    */
   public function testSetBundleSettingsDefaults() {
-
     $this->generator->setBundleSettings('node', 'page')
       ->removeCustomLinks()
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('0.5');
-    $this->assertNoRaw('changefreq');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('0.5');
+    $this->assertSession()->responseNotContains('changefreq');
   }
 
   /**
    * Test the lastmod parameter in different scenarios.
    */
   public function testLastmod() {
-
     // Entity links should have 'lastmod'.
     $this->generator->setBundleSettings('node', 'page')
       ->removeCustomLinks()
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertRaw('lastmod');
+    $this->assertSession()->responseContains('lastmod');
 
     // Entity custom links should have 'lastmod'.
     $this->generator->setBundleSettings('node', 'page', ['index' => FALSE])
@@ -184,7 +189,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertRaw('lastmod');
+    $this->assertSession()->responseContains('lastmod');
 
     // Non-entity custom links should not have 'lastmod'.
     $this->generator->removeCustomLinks()
@@ -192,7 +197,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertNoRaw('lastmod');
+    $this->assertSession()->responseNotContains('lastmod');
   }
 
   /**
@@ -207,13 +212,13 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertUniqueText('node/' . $this->node->id());
+    $this->assertUniqueTextWorkaround('node/' . $this->node->id());
 
     $this->generator->saveSetting('remove_duplicates', FALSE)
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertNoUniqueText('node/' . $this->node->id());
+    $this->assertNoUniqueTextWorkaround('node/' . $this->node->id());
   }
 
   /**
@@ -226,22 +231,24 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('sitemaps/1/sitemap.xml');
-    $this->assertText('sitemaps/2/sitemap.xml');
+    $this->assertSession()->responseContains('sitemaps/1/sitemap.xml');
+    $this->assertSession()->responseContains('sitemaps/2/sitemap.xml');
 
     $this->drupalGet('sitemaps/1/sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('0.5');
-    $this->assertNoText('node/' . $this->node2->id());
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('0.5');
+    $this->assertSession()->responseNotContains('node/' . $this->node2->id());
 
     $this->drupalGet('sitemaps/2/sitemap.xml');
-    $this->assertText('node/' . $this->node2->id());
-    $this->assertText('0.5');
-    $this->assertNoText('node/' . $this->node->id());
+    $this->assertSession()->responseContains('node/' . $this->node2->id());
+    $this->assertSession()->responseContains('0.5');
+    $this->assertSession()->responseNotContains('node/' . $this->node->id());
   }
 
+  /**
+   * Test batch process limit setting.
+   */
   public function testBatchProcessLimitSetting() {
-
     // Create some nodes.
     for ($i = 3; $i <= 50; $i++) {
       $this->createNode(['title' => "Node{$i}", 'type' => 'page']);
@@ -260,8 +267,8 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch')
       ->getSitemap();
 
-    $this->assertEqual($sitemap, $sitemap2);
-    $this->assertEqual($sitemap, $sitemap3);
+    $this->assertEquals($sitemap2, $sitemap);
+    $this->assertEquals($sitemap3, $sitemap);
 
     // Test batch_process_limit setting in combination with max_links setting.
     $sitemap_index = $this->generator->setBundleSettings('node', 'page')
@@ -284,11 +291,10 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     $sitemap_chunk3 = $this->generator->getSitemap(1);
 
-    $this->assertIdentical($sitemap_index, $sitemap_index2);
-    $this->assertIdentical($sitemap_chunk, $sitemap_chunk2);
-    $this->assertIdentical($sitemap_index, $sitemap_index3);
-    $this->assertIdentical($sitemap_chunk, $sitemap_chunk3);
-
+    $this->assertSame($sitemap_index2, $sitemap_index);
+    $this->assertSame($sitemap_chunk2, $sitemap_chunk);
+    $this->assertSame($sitemap_index3, $sitemap_index);
+    $this->assertSame($sitemap_chunk3, $sitemap_chunk);
   }
 
   /**
@@ -300,14 +306,14 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('http://base_url_test');
+    $this->assertSession()->responseContains('http://base_url_test');
 
     // Set base URL in the sitemap index.
     $this->generator->saveSetting('max_links', 1)
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('http://base_url_test/sitemaps/1/sitemap.xml');
+    $this->assertSession()->responseContains('http://base_url_test/sitemaps/1/sitemap.xml');
   }
 
   /**
@@ -327,19 +333,20 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     // Verify the cache was flushed and node is in the sitemap.
     $this->drupalGet('sitemap.xml');
-    $this->assertEqual($this->drupalGetHeader('X-Drupal-Cache'), 'MISS');
-    $this->assertText('node/' . $this->node->id());
+    $this->assertEquals('MISS', $this->drupalGetHeader('X-Drupal-Cache'));
+    $this->assertSession()->responseContains('node/' . $this->node->id());
 
-    // Verify the sitemap is taken from cache on second call and node is in the sitemap.
+    // Verify the sitemap is taken from cache on second call and node is in the
+    // sitemap.
     $this->drupalGet('sitemap.xml');
-    $this->assertEqual($this->drupalGetHeader('X-Drupal-Cache'), 'HIT');
-    $this->assertText('node/' . $this->node->id());
+    $this->assertEquals('HIT', $this->drupalGetHeader('X-Drupal-Cache'));
+    $this->assertSession()->responseContains('node/' . $this->node->id());
   }
 
   /**
    * Test overriding of bundle settings for a single entity.
    *
-   * @todo: Use form testing instead of assertRaw().
+   * @todo: Use form testing instead of responseContains().
    */
   public function testSetEntityInstanceSettings() {
     $this->generator->setBundleSettings('node', 'page')
@@ -350,21 +357,21 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     // Test sitemap result.
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('0.1');
-    $this->assertText('never');
-    $this->assertNoText('node/' . $this->node2->id());
-    $this->assertNoText('0.5');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('0.1');
+    $this->assertSession()->responseContains('never');
+    $this->assertSession()->responseNotContains('node/' . $this->node2->id());
+    $this->assertSession()->responseNotContains('0.5');
 
-    $this->drupalLogin($this->createPrivilegedUser());
+    $this->drupalLogin($this->privilegedUser);
 
     // Test UI changes.
     $this->drupalGet('node/' . $this->node->id() . '/edit');
-    $this->assertRaw('<option value="0.1" selected="selected">0.1</option>');
-    $this->assertRaw('<option value="never" selected="selected">never</option>');
+    $this->assertSession()->responseContains('<option value="0.1" selected="selected">0.1</option>');
+    $this->assertSession()->responseContains('<option value="never" selected="selected">never</option>');
 
     // Test database changes.
-    $result = \Drupal::database()->select('simple_sitemap_entity_overrides', 'o')
+    $result = $this->database->select('simple_sitemap_entity_overrides', 'o')
       ->fields('o', ['inclusion_settings'])
       ->condition('o.entity_type', 'node')
       ->condition('o.entity_id', $this->node->id())
@@ -377,19 +384,20 @@ class SimplesitemapTest extends SimplesitemapTestBase {
 
     // Test sitemap result.
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
-    $this->assertText('0.1');
-    $this->assertText('never');
-    $this->assertNoText('node/' . $this->node2->id());
-    $this->assertNoText('0.5');
+    $this->assertSession()->responseContains('node/' . $this->node->id());
+    $this->assertSession()->responseContains('0.1');
+    $this->assertSession()->responseContains('never');
+    $this->assertSession()->responseNotContains('node/' . $this->node2->id());
+    $this->assertSession()->responseNotContains('0.5');
 
     // Test UI changes.
     $this->drupalGet('node/' . $this->node->id() . '/edit');
-    $this->assertRaw('<option value="0.1" selected="selected">0.1 (default)</option>');
-    $this->assertRaw('<option value="never" selected="selected">never (default)</option>');
+    $this->assertSession()->responseContains('<option value="0.1" selected="selected">0.1 (default)</option>');
+    $this->assertSession()->responseContains('<option value="never" selected="selected">never (default)</option>');
 
-    // Test if entity override has been removed from database after its equal to its bundle settings.
-    $result = \Drupal::database()->select('simple_sitemap_entity_overrides', 'o')
+    // Test if entity override has been removed from database after its equal to
+    // its bundle settings.
+    $result = $this->database->select('simple_sitemap_entity_overrides', 'o')
       ->fields('o', ['inclusion_settings'])
       ->condition('o.entity_type', 'node')
       ->condition('o.entity_id', $this->node->id())
@@ -402,19 +410,19 @@ class SimplesitemapTest extends SimplesitemapTestBase {
    * Test indexing an atomic entity (here: a user)
    * @todo Not working
    */
-/*  public function testAtomicEntityIndexation() {
-    $user = $this->createPrivilegedUser();
+  /*public function testAtomicEntityIndexation() {
+    $user_id = $this->privilegedUser->id();
     $this->generator->setBundleSettings('user')
       ->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertNoText('user/' . $user->id());
+    $this->assertSession()->responseNotContains('user/' . $user_id);
 
     user_role_grant_permissions(0, ['access user profiles']);
     $this->generator->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('user/' . $user->id());
+    $this->assertSession()->responseContains('user/' . $user_id);
   }*/
 
   /**
@@ -432,14 +440,14 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->generator->setBundleSettings('node', 'page')
       ->disableEntityType('node');
 
-    $this->drupalLogin($this->createPrivilegedUser());
+    $this->drupalLogin($this->privilegedUser);
     $this->drupalGet('admin/structure/types/manage/page');
-    $this->assertNoText('Simple XML sitemap');
+    $this->assertSession()->pageTextNotContains('Simple XML sitemap');
 
     $this->generator->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertNoText('node/' . $this->node->id());
+    $this->assertSession()->responseNotContains('node/' . $this->node->id());
 
     $this->assertFalse($this->generator->entityTypeIsEnabled('node'));
   }
@@ -454,15 +462,16 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->enableEntityType('node')
       ->setBundleSettings('node', 'page');
 
-    $this->drupalLogin($this->createPrivilegedUser());
+    $this->drupalLogin($this->privilegedUser);
     $this->drupalGet('admin/structure/types/manage/page');
-    $this->assertText('Simple XML sitemap');
+    $this->assertSession()->pageTextContains('Simple XML sitemap');
 
     $this->generator->generateSitemap('nobatch');
 
     $this->drupalGet('sitemap.xml');
-    $this->assertText('node/' . $this->node->id());
+    $this->assertSession()->responseContains('node/' . $this->node->id());
 
     $this->assertTrue($this->generator->entityTypeIsEnabled('node'));
   }
+
 }

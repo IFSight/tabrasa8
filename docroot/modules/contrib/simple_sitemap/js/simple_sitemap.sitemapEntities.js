@@ -24,9 +24,11 @@
         $(enabledId).change(function() {
           if ($(enabledId).is(':checked')) {
             $('#warning-' + value).hide();
+            $('#indexed-bundles-' + value).show();
           }
           else {
             $('#warning-' + value).show();
+            $('#indexed-bundles-' + value).hide();
           }
 
           // Show 'Regenerate sitemap' field if 'enabled' setting has changed.

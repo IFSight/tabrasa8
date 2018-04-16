@@ -41,7 +41,7 @@ class EntityHelper {
    * @return string
    */
   public function getEntityInstanceBundleName(EntityInterface $entity) {
-    return $entity->getEntityTypeId() == 'menu_link_content'
+    return $entity->getEntityTypeId() === 'menu_link_content'
       // Menu fix.
       ? $entity->getMenuName() : $entity->bundle();
   }
@@ -53,7 +53,7 @@ class EntityHelper {
    * @return null|string
    */
   public function getBundleEntityTypeId(EntityInterface $entity) {
-    return $entity->getEntityTypeId() == 'menu'
+    return $entity->getEntityTypeId() === 'menu'
       // Menu fix.
       ? 'menu_link_content' : $entity->getEntityType()->getBundleOf();
   }
@@ -84,20 +84,19 @@ class EntityHelper {
    * @return bool
    */
   public function entityTypeIsAtomic($entity_type_id) {
+
     // Menu fix.
-    if ($entity_type_id == 'menu_link_content') {
+    if ($entity_type_id === 'menu_link_content') {
       return FALSE;
     }
 
-    $sitemap_entity_types = $this->getSupportedEntityTypes();
-    if (isset($sitemap_entity_types[$entity_type_id])) {
-      $entity_type = $sitemap_entity_types[$entity_type_id];
-      if (empty($entity_type->getBundleEntityType())) {
-        return TRUE;
-      }
+    $entity_types = $this->entityTypeManager->getDefinitions();
+
+    if (!isset($entity_types[$entity_type_id])) {
+      // todo: Throw exception.
     }
-    // todo: throw exception.
-    return FALSE;
+
+    return empty($entity_types[$entity_type_id]->getBundleEntityType()) ? TRUE : FALSE;
   }
 
   /**
@@ -105,9 +104,9 @@ class EntityHelper {
    * @return object|null
    */
   public function getEntityFromUrlObject(Url $url_object) {
-    $route_parameters = $url_object->getRouteParameters();
-    return !empty($route_parameters) && $this->entityTypeManager
-      ->getDefinition($entity_type_id = key($route_parameters), FALSE)
+    return $url_object->isRouted()
+    && !empty($route_parameters = $url_object->getRouteParameters())
+    && $this->entityTypeManager->getDefinition($entity_type_id = key($route_parameters), FALSE)
       ? $this->entityTypeManager->getStorage($entity_type_id)
         ->load($route_parameters[$entity_type_id])
       : NULL;

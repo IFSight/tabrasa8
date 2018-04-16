@@ -131,7 +131,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
     $form['simple_sitemap_settings']['advanced']['languages']['skip_untranslated'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Skip non-existent translations'),
-      '#description' => $this->t('If checked, entity links are generated exclusively for languages the entity has been translated to as long as the language is not excluded below.<br/>Otherwise entity links are generated for every language installed on the site apart from languages excluded below.<br/>This setting has no effect on non-entity paths like homepage.'),
+      '#description' => $this->t('If checked, entity links are generated exclusively for languages the entity has been translated to as long as the language is not excluded below.<br/>Otherwise entity links are generated for every language installed on the site apart from languages excluded below.<br/>Bear in mind that non-entity paths like homepage will always be generated for every non-excluded language.'),
       '#default_value' => $this->generator->getSetting('skip_untranslated', FALSE),
     ];
 
@@ -139,7 +139,9 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
       '#title' => $this->t('Exclude languages'),
       '#type' => 'checkboxes',
       '#options' => $language_options,
-      '#description' => $this->t('There will be no links generated for languages checked here.'),
+      '#description' => !empty($language_options)
+        ? $this->t('There will be no links generated for languages checked here.')
+        : $this->t('There are no languages other than the default language <a href="@url">available</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/regional/language']),
       '#default_value' => $this->generator->getSetting('excluded_languages', []),
     ];
 
@@ -154,7 +156,7 @@ class SimplesitemapSettingsForm extends SimplesitemapFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $base_url = $form_state->getValue('base_url');
     $form_state->setValue('base_url', rtrim($base_url, '/'));
-    if ($base_url != '' && !UrlHelper::isValid($base_url, TRUE)) {
+    if ($base_url !== '' && !UrlHelper::isValid($base_url, TRUE)) {
       $form_state->setErrorByName('base_url', t('The base URL is invalid.'));
     }
   }

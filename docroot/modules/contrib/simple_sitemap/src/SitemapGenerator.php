@@ -2,7 +2,6 @@
 
 namespace Drupal\simple_sitemap;
 
-use XMLWriter;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -101,17 +100,15 @@ class SitemapGenerator {
     $this->languageManager = $language_manager;
     $this->time = $time;
     $this->writer = $sitemapWriter;
-    $this->setIsHreflangSitemap();
-  }
-
-  protected function setIsHreflangSitemap() {
-    $this->isHreflangSitemap = count($this->languageManager->getLanguages()) > 1;
   }
 
   /**
    * @return bool
    */
-  public function isHreflangSitemap() {
+  protected function isHreflangSitemap() {
+    if (NULL === $this->isHreflangSitemap) {
+      $this->isHreflangSitemap = count(array_diff_key($this->languageManager->getLanguages(), $this->settings['excluded_languages'])) > 1;
+    }
     return $this->isHreflangSitemap;
   }
 

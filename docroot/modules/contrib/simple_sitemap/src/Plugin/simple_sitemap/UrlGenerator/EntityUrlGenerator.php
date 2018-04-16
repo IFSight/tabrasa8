@@ -2,17 +2,92 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\simple_sitemap\EntityHelper;
+use Drupal\simple_sitemap\Logger;
+use Drupal\simple_sitemap\Simplesitemap;
+use Drupal\simple_sitemap\SitemapGenerator;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 /**
  * Class EntityUrlGenerator
  * @package Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator
  *
  * @UrlGenerator(
  *   id = "entity",
+ *   title = @Translation("Entity URL generator"),
+ *   description = @Translation("Generates URLs for entity bundles and bundle overrides."),
  *   weight = 10,
- *   instantiateForEachDataSet = true
+ *   settings = {
+ *     "instantiate_for_each_data_set" = true,
+ *   },
  * )
  */
 class EntityUrlGenerator extends UrlGeneratorBase {
+
+  /**
+   * @var \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager
+   */
+  protected $urlGeneratorManager;
+
+  /**
+   * EntityMenuLinkContentUrlGenerator constructor.
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   * @param \Drupal\simple_sitemap\Simplesitemap $generator
+   * @param \Drupal\simple_sitemap\SitemapGenerator $sitemap_generator
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\simple_sitemap\Logger $logger
+   * @param \Drupal\simple_sitemap\EntityHelper $entityHelper
+   * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorManager $url_generator_manager
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Simplesitemap $generator,
+    SitemapGenerator $sitemap_generator,
+    LanguageManagerInterface $language_manager,
+    EntityTypeManagerInterface $entity_type_manager,
+    Logger $logger,
+    EntityHelper $entityHelper,
+    UrlGeneratorManager $url_generator_manager
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $generator,
+      $sitemap_generator,
+      $language_manager,
+      $entity_type_manager,
+      $logger,
+      $entityHelper
+    );
+    $this->urlGeneratorManager = $url_generator_manager;
+  }
+
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('simple_sitemap.generator'),
+      $container->get('simple_sitemap.sitemap_generator'),
+      $container->get('language_manager'),
+      $container->get('entity_type.manager'),
+      $container->get('simple_sitemap.logger'),
+      $container->get('simple_sitemap.entity_helper'),
+      $container->get('plugin.manager.simple_sitemap.url_generator')
+    );
+  }
 
   /**
    * @inheritdoc
@@ -20,12 +95,17 @@ class EntityUrlGenerator extends UrlGeneratorBase {
   public function getDataSets() {
     $data_sets = [];
     $sitemap_entity_types = $this->entityHelper->getSupportedEntityTypes();
+
     foreach ($this->generator->getBundleSettings() as $entity_type_name => $bundles) {
       if (isset($sitemap_entity_types[$entity_type_name])) {
-        $keys = $sitemap_entity_types[$entity_type_name]->getKeys();
 
-        // Menu fix.
-        $keys['bundle'] = $entity_type_name == 'menu_link_content' ? 'menu_name' : $keys['bundle'];
+        // Skip this entity type if another plugin is written to override its generation.
+        foreach ($this->urlGeneratorManager->getDefinitions() as $plugin) {
+          if ($plugin['enabled'] && !empty($plugin['settings']['overrides_entity_type'])
+            && $plugin['settings']['overrides_entity_type'] === $entity_type_name) {
+            continue 2;
+          }
+        }
 
         foreach ($bundles as $bundle_name => $bundle_settings) {
           if ($bundle_settings['index']) {
@@ -33,12 +113,13 @@ class EntityUrlGenerator extends UrlGeneratorBase {
               'bundle_settings' => $bundle_settings,
               'bundle_name' => $bundle_name,
               'entity_type_name' => $entity_type_name,
-              'keys' => $keys,
+              'keys' => $sitemap_entity_types[$entity_type_name]->getKeys(),
             ];
           }
         }
       }
     }
+
     return $data_sets;
   }
 
@@ -56,19 +137,7 @@ class EntityUrlGenerator extends UrlGeneratorBase {
       return FALSE;
     }
 
-    switch ($entity_type_name) {
-      // Loading url object for menu links.
-      case 'menu_link_content':
-        if (!$entity->isEnabled()) {
-          return FALSE;
-        }
-        $url_object = $entity->getUrlObject();
-        break;
-
-      // Loading url object for other entities.
-      default:
-        $url_object = $entity->toUrl();
-    }
+    $url_object = $entity->toUrl();
 
     // Do not include external paths.
     if (!$url_object->isRouted()) {
@@ -84,14 +153,9 @@ class EntityUrlGenerator extends UrlGeneratorBase {
 
     $url_object->setOption('absolute', TRUE);
 
-    $lastmod = method_exists($entity, 'getChangedTime') ? date_iso8601($entity->getChangedTime()) : NULL;
-
-    // Menu fix.
-    $lastmod = $entity_type_name !== 'menu_link_content' ? $lastmod : NULL;
-
     return [
       'url' => $url_object,
-      'lastmod' => $lastmod,
+      'lastmod' => method_exists($entity, 'getChangedTime') ? date_iso8601($entity->getChangedTime()) : NULL,
       'priority' => isset($entity_settings['priority']) ? $entity_settings['priority'] : NULL,
       'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
       'images' => !empty($entity_settings['include_images'])
@@ -112,7 +176,7 @@ class EntityUrlGenerator extends UrlGeneratorBase {
   /**
    * @inheritdoc
    */
-  protected function getBatchIterationElements(array $entity_info) {
+  protected function getBatchIterationElements($entity_info) {
     $query = $this->entityTypeManager->getStorage($entity_info['entity_type_name'])->getQuery();
 
     if (!empty($entity_info['keys']['id'])) {

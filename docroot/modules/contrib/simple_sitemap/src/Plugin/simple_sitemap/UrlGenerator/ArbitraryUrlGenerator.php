@@ -17,8 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @UrlGenerator(
  *   id = "arbitrary",
+ *   title = @Translation("Arbitrary URL generator"),
+ *   description = @Translation("Generates URLs from data sets collected in the hook_arbitrary_links_alter hook."),
  *   weight = 20,
- *   instantiateForEachDataSet = false
  * )
  */
 class ArbitraryUrlGenerator extends UrlGeneratorBase {

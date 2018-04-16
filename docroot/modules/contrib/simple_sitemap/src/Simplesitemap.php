@@ -252,13 +252,15 @@ class Simplesitemap {
     });
 
     foreach ($plugins as $plugin) {
-      if ($plugin['instantiateForEachDataSet']) {
-        foreach ($this->urlGeneratorManager->createInstance($plugin['id'])->getDataSets() as $data_sets) {
-          $this->batch->addOperation($plugin['id'], $data_sets);
+      if ($plugin['enabled']) {
+        if (!empty($plugin['settings']['instantiate_for_each_data_set'])) {
+          foreach ($this->urlGeneratorManager->createInstance($plugin['id'])->getDataSets() as $data_sets) {
+            $this->batch->addOperation($plugin['id'], $data_sets);
+          }
         }
-      }
-      else {
-        $this->batch->addOperation($plugin['id']);
+        else {
+          $this->batch->addOperation($plugin['id']);
+        }
       }
     }
 
@@ -392,7 +394,7 @@ class Simplesitemap {
       $keys = $entity_type->getKeys();
 
       // Menu fix.
-      $keys['bundle'] = $entity_type_id == 'menu_link_content' ? 'menu_name' : $keys['bundle'];
+      $keys['bundle'] = $entity_type_id === 'menu_link_content' ? 'menu_name' : $keys['bundle'];
 
       $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
       if (!$this->entityHelper->entityTypeIsAtomic($entity_type_id)) {
@@ -622,7 +624,7 @@ class Simplesitemap {
       // todo: log error.
       return $this;
     }
-    if ($path[0] != '/') {
+    if ($path[0] !== '/') {
       // todo: log error.
       return $this;
     }

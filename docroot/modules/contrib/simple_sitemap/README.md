@@ -121,6 +121,12 @@ class. See the generator plugins included in this module and check the API docs
 (https://www.drupal.org/docs/8/api/plugin-api/plugin-api-overview) to learn how
 to implement plugins.
 
+Overwriting the default EntityUrlGenerator for a single entity type is possible
+through the flag "overrides_entity_type" = "[entity_type_to_be_overwritten]" in
+the settings array of the new generator plugin's annotation. See how the
+EntityUrlGenerator is overwritten by the EntityMenuLinkContentUrlGenerator to
+facilitate a different logic for menu links.
+
 There are API methods for altering stored inclusion settings, status queries and
 programmatic sitemap generation. These include:
 

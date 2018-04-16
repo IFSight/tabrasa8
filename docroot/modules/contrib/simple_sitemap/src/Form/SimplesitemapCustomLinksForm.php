@@ -71,7 +71,7 @@ class SimplesitemapCustomLinksForm extends SimplesitemapFormBase {
       }
 
       // Making sure the paths start with a slash.
-      if ($link_config['path'][0] != '/') {
+      if ($link_config['path'][0] !== '/') {
         $form_state->setErrorByName('', $this->t("<strong>Line @line</strong>: The path <em>@path</em> needs to start with a '/'.", $placeholders));
       }
 

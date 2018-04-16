@@ -2,7 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGeneratorPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -19,7 +19,7 @@ use Drupal\Core\Language\Language;
  * Class UrlGeneratorBase
  * @package Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator
  */
-abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGeneratorInterface {
+abstract class UrlGeneratorBase extends UrlGeneratorPluginBase implements UrlGeneratorInterface {
 
   const ANONYMOUS_USER_ID = 0;
   const PROCESSING_PATH_MESSAGE = 'Processing path #@current out of @max: @path';
@@ -115,11 +115,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
       ->load(self::ANONYMOUS_USER_ID);
   }
 
-  public static function create(
-    ContainerInterface $container,
-    array $configuration,
-    $plugin_id,
-    $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
@@ -155,7 +151,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    * @return bool
    */
   protected function isBatch() {
-    return $this->batchSettings['from'] != 'nobatch';
+    return $this->batchSettings['from'] !== 'nobatch';
   }
 
   protected function getProcessedElements() {
@@ -227,9 +223,13 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    * @param array $path_data
    */
   protected function addUrlVariants(array $path_data, Url $url_object) {
-    $entity = $this->entityHelper->getEntityFromUrlObject($url_object);
 
-    if ($entity instanceof ContentEntityBase && $this->batchSettings['skip_untranslated']) {
+    if (!$url_object->isRouted()) {
+      // Not a routed URL, including only default variant.
+      $alternate_urls = $this->getAlternateUrlsForDefaultLanguage($url_object);
+    }
+    elseif ($this->batchSettings['skip_untranslated']
+      && ($entity = $this->entityHelper->getEntityFromUrlObject($url_object)) instanceof ContentEntityBase) {
       $translation_languages = $entity->getTranslationLanguages();
       if (isset($translation_languages[Language::LANGCODE_NOT_SPECIFIED])
         || isset($translation_languages[Language::LANGCODE_NOT_APPLICABLE])) {
@@ -341,7 +341,9 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
         if (count($chunk_links) == $max_links) {
 
           // Generate sitemap.
-          $this->sitemapGenerator->generateSitemap($chunk_links, empty($this->getChunkCount()));
+          $this->sitemapGenerator
+            ->setSettings(['excluded_languages' => $this->batchSettings['excluded_languages']])
+            ->generateSitemap($chunk_links, empty($this->getChunkCount()));
 
           // Update chunk count info.
           $this->setChunkCount(empty($this->getChunkCount()) ? 1 : ($this->getChunkCount() + 1));
@@ -352,7 +354,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
       }
     }
   }
-  
+
   protected function setProgressInfo() {
     if ($this->context['sandbox']['progress'] != $this->context['sandbox']['max']) {
 
@@ -387,10 +389,10 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
   }
 
   /**
-   * @param array $elements
+   * @param mixed $elements
    * @return array
    */
-  protected function getBatchIterationElements(array $elements) {
+  protected function getBatchIterationElements($elements) {
     if ($this->needsInitialization()) {
       $this->initializeBatch(count($elements));
     }
