@@ -9346,5 +9346,21 @@
         ],
         "description": "Symfony PHPUnit Bridge",
         "homepage": "https://symfony.com"
+    },
+    {
+        "name": "moxiecode/plupload",
+        "version": "3.1.2",
+        "version_normalized": "3.1.2.0",
+        "dist": {
+            "type": "zip",
+            "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip",
+            "reference": null,
+            "shasum": null
+        },
+        "require": {
+            "composer/installers": "~1.0"
+        },
+        "type": "drupal-library",
+        "installation-source": "dist"
     }
 ]

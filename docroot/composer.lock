@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2cad86faffaea0add79242e5d9f592e",
+    "content-hash": "4b097208e9fb96f7e411d1af16238445",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -4942,6 +4942,20 @@
                 "xml"
             ],
             "time": "2017-09-04T12:26:28+00:00"
+        },
+        {
+            "name": "moxiecode/plupload",
+            "version": "3.1.2",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "drupal-library"
         },
         {
             "name": "nikic/php-parser",

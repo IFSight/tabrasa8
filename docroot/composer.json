@@ -55,7 +55,8 @@
         "drupal/webform": "^5.0",
         "drupal/youtube": "^1.0@beta",
         "drupal/zen": "^7.0@alpha",
-        "drupal/console": "~1.0"
+        "drupal/console": "~1.0",
+        "moxiecode/plupload": "^3.1"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -111,6 +112,19 @@
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "moxiecode/plupload",
+                "type": "drupal-library",
+                "version": "3.1.2",
+                "dist": {
+                    "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip",
+                    "type": "zip"
+             },
+          "require": { "composer/installers": "~1.0" }
+            }
         }
     ]
 }
