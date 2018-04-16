@@ -195,6 +195,14 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class = "tt-link"]';
     self::assertEquals($link, trim($this->xpath($xpath)[0]->getHtml()));
 
+    // Test status messages.
+    $xpath = '//div[@class = "tt-messages"]/div[contains(@class, "messages--status") and contains(., "Hello world!")]';
+    $this->assertByXpath($xpath);
+
+    // Test breadcrumb.
+    $xpath = '//div[@class = "tt-breadcrumb"]/nav[@class = "breadcrumb"]/ol/li/a[text() = "Home"]';
+    $this->assertByXpath($xpath);
+
     // Test protected link.
     $xpath = '//div[@class = "tt-link-access"]';
     self::assertEquals('', trim($this->xpath($xpath)[0]->getHtml()));
@@ -218,6 +226,14 @@ class TwigTweakTest extends BrowserTestBase {
     // Test text format.
     $xpath = '//div[@class = "tt-check-markup"]';
     self::assertEquals('<b>bold</b> strong', trim($this->xpath($xpath)[0]->getHtml()));
+
+    // Test truncation.
+    $xpath = '//div[@class = "tt-truncate" and text() = "Hello…"]';
+    $this->assertByXpath($xpath);
+
+    // Test 'with'.
+    $xpath = '//div[@class = "tt-with"]/b[text() = "Example"]';
+    $this->assertByXpath($xpath);
 
     // Test node view.
     $xpath = '//div[@class = "tt-node-view"]/article[contains(@class, "node--view-mode-default")]/h2[a/span[text() = "Beta"]]';

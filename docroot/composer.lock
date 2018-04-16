@@ -3989,17 +3989,17 @@
         },
         {
             "name": "drupal/twig_tweak",
-            "version": "2.0.0-rc4",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/twig_tweak",
-                "reference": "8.x-2.0-rc4"
+                "reference": "8.x-2.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/twig_tweak-8.x-2.0-rc4.zip",
-                "reference": "8.x-2.0-rc4",
-                "shasum": "a79d5835685489bd88d30c075ef4369b6b1244de"
+                "url": "https://ftp.drupal.org/files/projects/twig_tweak-8.x-2.0.zip",
+                "reference": "8.x-2.0",
+                "shasum": "e07fe9386a415f5a2122f4bd7ee2305be15c81f7"
             },
             "require": {
                 "drupal/core": "~8.0"
@@ -4013,11 +4013,11 @@
                     "dev-2.x": "2.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-2.0-rc4",
-                    "datestamp": "1522232884",
+                    "version": "8.x-2.0",
+                    "datestamp": "1523707084",
                     "security-coverage": {
-                        "status": "not-covered",
-                        "message": "RC releases are not covered by Drupal security advisories."
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
                     }
                 }
             },
