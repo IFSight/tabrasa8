@@ -102,6 +102,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     $categories['utility'] = [
       'title' => $this->t('Utility'),
     ];
+    $categories['workflow'] = [
+      'title' => $this->t('Workflow'),
+    ];
     $categories['development'] = [
       'title' => $this->t('Development'),
     ];
@@ -211,6 +214,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform HubSpot'),
       'description' => $this->t('Provides HubSpot leads API integration with Drupal.'),
       'url' => Url::fromUri('https://www.drupal.org/project/hubspot'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Micro Webform.
+    $projects['micro_webform'] = [
+      'title' => $this->t('Micro Webform'),
+      'description' => $this->t('Integrate webform module with a micro site.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/micro_webform'),
       'category' => 'integration',
     ];
 
@@ -473,6 +484,15 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'description' => $this->t('Provides Symfony (form) Validators for Drupal 8.'),
       'url' => Url::fromUri('https://www.drupal.org/project/validators'),
       'category' => 'validation',
+    ];
+
+    // Workflow: Maestro.
+    $projects['maestro'] = [
+      'title' => $this->t('Maestro Workflow Engine'),
+      'description' => $this->t('A business process workflow solution that allows you to create and automate a sequence of tasks representing any business, document approval or collaboration process.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/maestro'),
+      'category' => 'workflow',
+      'recommended' => TRUE,
     ];
 
     // Devel: Maillog / Mail Developer.

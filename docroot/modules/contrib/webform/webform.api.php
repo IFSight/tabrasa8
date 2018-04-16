@@ -149,15 +149,6 @@ function hook_webform_submission_form_alter(array &$form, \Drupal\Core\Form\Form
 }
 
 /**
- * Perform alterations by FORM_ID before a webform submission form is rendered.
- *
- * @ingroup form_api
- */
-function hook_webform_submission_form_FORM_ID_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-
-}
-
-/**
  * Perform alterations on webform admin third party settings form.
  *
  * This hook is identical to hook_form_alter() but allows contrib and custom
@@ -259,7 +250,7 @@ function hook_webform_libraries_info_alter(&$libraries) {
  *   - message_storage: (string) Will be supplied into 'webform_message'
  *     element.
  */
-function hook_webform_help() {
+function hook_webform_help_info() {
   $help = [];
 
   $help['my_custom_help'] = [
@@ -288,11 +279,51 @@ function hook_webform_help() {
  * Alter the webform help.
  *
  * @param array $help
- *   Webform help data as collected from hook_webform_help().
+ *   Webform help data as collected from hook_webform_help_info().
  */
-function hook_webform_help_alter(array &$help) {
+function hook_webform_help_info_alter(array &$help) {
   if (isset($help['some_help_i_wanna_change'])) {
     $help['title'] = t('This is a really cool help message. Do read it thorough!');
+  }
+}
+
+/**
+ * Act on a custom message being displayed, closed or reset.
+ *
+ * @param string $operation
+ *   closed: Returns TRUE if the message is closed.
+ *   close: Sets the message's state to closed.
+ *   reset: Resets the message's closed state.
+ *
+ * @param string $id
+ *   The message id.
+ *
+ * @return mixed|boolean
+ *   TRUE if message is closed, else NULL
+ *
+ * @internal
+ *   This is an experimental hook whose definition may change.
+ *
+ * @see \Drupal\webform\Element\WebformMessage::isClosed
+ * @see \Drupal\webform\Element\WebformMessage::setClosed
+ * @see \Drupal\webform\Element\WebformMessage::resetClosed
+ */
+function hook_webform_message_custom($operation, $id) {
+  // Handle 'webform_test_message_custom' defined in
+  // webform.webform.test_element_message.yml.
+  if ($id === 'webform_test_message_custom') {
+    switch ($operation) {
+      case 'closed':
+        return \Drupal::state()->get($id, FALSE);
+
+      case 'close':
+        \Drupal::state()->set($id, TRUE);
+        return NULL;
+
+      case 'reset':
+        \Drupal::state()->delete($id);
+        return NULL;
+    }
   }
 }
 

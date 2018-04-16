@@ -28,6 +28,7 @@ use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformHtmlHelper;
+use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformLibrariesManagerInterface;
@@ -2515,11 +2516,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $form['multiple']['multiple__label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Item label'),
+      '#attributes' => ['data-webform-states-no-clear' => TRUE],
       '#description' => $this->t('This is used as the item label for this webform element when displaying multiple values.'),
     ];
     $form['multiple']['multiple__labels'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Item labels'),
+      '#attributes' => ['data-webform-states-no-clear' => TRUE],
       '#description' => $this->t('This is used as the items label for this webform element when displaying multiple values.'),
     ];
     $form['multiple']['multiple__min_items'] = [
@@ -2604,7 +2607,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#type' => 'select',
       '#title' => $this->t('Item format'),
       '#description' => $this->t('Select how a single value is displayed.'),
-      '#options' => $this->getItemFormats(),
+      '#options' => WebformOptionsHelper::appendValueToText($this->getItemFormats()),
     ];
     $format = isset($element_properties['format']) ? $element_properties['format'] : NULL;
     $format_custom = ($has_edit_twig_access || $format === 'custom');
@@ -2677,7 +2680,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
       '#type' => 'select',
       '#title' => $this->t('Items format'),
       '#description' => $this->t('Select how multiple values are displayed.'),
-      '#options' => $this->getItemsFormats(),
+      '#options' => WebformOptionsHelper::appendValueToText($this->getItemsFormats()),
     ];
     $format_items = isset($element_properties['format_items']) ? $element_properties['format_items'] : NULL;
     $format_items_custom = ($has_edit_twig_access || $format_items === 'custom');

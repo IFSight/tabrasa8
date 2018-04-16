@@ -19,6 +19,7 @@ use Drupal\webform\Plugin\WebformHandler\RemotePostWebformHandler;
 use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
+use Drupal\webform\Utility\WebformYaml;
 
 /******************************************************************************/
 // Webform-8.x-5.0-beta1 - December 7, 2016 (No update required).
@@ -2059,7 +2060,7 @@ function webform_update_8111() {
 }
 
 /**
- * Provide dedicated 'test' webform operation and access rule.
+ * Issue #2951368: Provide dedicated 'test' webform operation and access rule.
  */
 function webform_update_8112() {
   $config_factory = \Drupal::configFactory();
@@ -2126,4 +2127,79 @@ function webform_update_8114() {
  */
 function webform_update_8115() {
   _webform_update_webform_settings();
+}
+
+/**
+ * #multiple__label and #multiple__labels are being saved with every element.
+ */
+function webform_update_8116() {
+  _webform_update_elements_clear_properties([
+    '#multiple__label' => '',
+    '#multiple__labels' => '',
+  ]);
+}
+
+/**
+ * Issue #2957192: Add postal_code to test data
+ */
+function webform_update_8117() {
+  $config = \Drupal::configFactory()->getEditable('webform.settings');
+  $names = Yaml::decode($config->get('test.names'));
+  $names += [
+    'postal_code' => ['11111', '12345', '12345-6789']
+  ];
+  $config->set('test.names', WebformYaml::tidy(Yaml::encode($names)));
+  $config->save();
+}
+
+/**
+ * Issue #2957074: Invalid Tokens in Email Handler.
+ */
+function webform_update_8118() {
+  $config_factory = \Drupal::configFactory();
+
+  // Update 'webform.settings' configuration.
+  $settings_config = \Drupal::configFactory()->getEditable('webform.settings');
+  $yaml = Yaml::encode($settings_config->getRawData());
+  $yaml = str_replace('[webform-submission:', '[webform_submission:', $yaml);
+  $settings_config->setData(Yaml::decode($yaml));
+  $settings_config->save();
+
+  // Update 'webform.webform.*' configuration.
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $yaml = Yaml::encode($webform_config->getRawData());
+    $yaml = str_replace('[webform-submission:', '[webform_submission:', $yaml);
+    $webform_config->setData(Yaml::decode($yaml));
+    $webform_config->save();
+  }
+}
+
+
+/**
+ * Issue #2957002: Same webform multiple times on the same page.
+ */
+function webform_update_8119() {
+  /** @var \Drupal\webform\WebformHelpManagerInterface $help_manager */
+  $help_manager = \Drupal::service('webform.help_manager');
+  $help_manager->addNotification('webform_update_8119',
+    t('<strong>ATTENTION DEVELOPERS!!!</strong> The webform submission form\'s  BASE_FORM_ID and FORM_ID have changed.') .
+    '<br/>' . t('Please make sure to update all webform related <code>hook_form_BASE_FORM_ID_alter()</code> and <code>hook_form_FORM_ID_alter()</code> hooks.') .
+    ' ' . t('<a href=":href">Learn more</a>', [':href' => 'https://www.drupal.org/node/2959264']),
+    'warning'
+  );
+}
+
+/**
+ * Issue #2953929: Remote handler does not display messages when HTTP status is different than 200.
+ */
+function webform_update_8120() {
+  _webform_update_webform_handler_configuration(RemotePostWebformHandler::class);
+}
+
+/**
+ * Issue #2953929: Remote handler does not display messages when HTTP status is different than 200.
+ */
+function webform_update_8121() {
+  _webform_update_webform_handler_configuration(RemotePostWebformHandler::class);
 }

@@ -126,16 +126,34 @@ class WebformHandlerRemotePostTest extends WebformTestBase {
     $this->assertRaw('Failed to process completed request.');
     $this->assertRaw('Unable to process this submission. Please contact the site administrator.');
 
-    // Check 404 Not Found.
+    // Check default custom response message.
+    $handler = $webform->getHandler('remote_post');
+    $configuration = $handler->getConfiguration();
+    $configuration['settings']['message'] = 'This is a custom response message';
+    $handler->setConfiguration($configuration);
+    $webform->save();
+    $this->postSubmission($webform, ['response_type' => '500']);
+    $this->assertRaw('Failed to process completed request.');
+    $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
+    $this->assertRaw('This is a custom response message');
+
+    // Check 404 Not Found with custom message.
     $this->postSubmission($webform, ['response_type' => '404']);
     $this->assertRaw('File not found');
-    $this->assertRaw('Unable to process this submission. Please contact the site administrator.');
+    $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
+    $this->assertRaw('This is a custom 404 not found message.');
+
+    // Check 401 Unauthorized with custom message and token.
+    $this->postSubmission($webform, ['response_type' => '401']);
+    $this->assertRaw('Unauthorized');
+    $this->assertNoRaw('Unable to process this submission. Please contact the site administrator.');
+    $this->assertRaw('This is a message token <strong>Unauthorized to process completed request.</strong>');
 
     // Disable saving of results.
     $webform->setSetting('results_disabled', TRUE);
     $webform->save();
 
-    // Check confiramtion number when results disabled.
+    // Check confirmation number when results disabled.
     $sid = $this->postSubmission($webform);
     $this->assertNull($sid);
 

@@ -7,8 +7,8 @@ dependencies:
   - drupal:media (>= 8.4)
   - video_embed_field:video_embed_field
 
-# Information added by Drupal.org packaging script on 2017-12-08
-version: '8.x-2.0-alpha2'
+# Information added by Drupal.org packaging script on 2018-04-10
+version: '8.x-2.0'
 core: '8.x'
 project: 'video_embed_field'
-datestamp: 1512694695
+datestamp: 1523338087

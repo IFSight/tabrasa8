@@ -194,6 +194,30 @@ class WebformSubmissionForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
+  public function getBaseFormId() {
+    $base_form_id = $this->entity->getEntityTypeId();
+    $base_form_id .= '_' . $this->entity->bundle();
+    return $base_form_id . '_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    $form_id = $this->entity->getEntityTypeId();
+    $form_id .= '_' . $this->entity->bundle();
+    if ($source_entity = $this->entity->getSourceEntity()) {
+      $form_id .= '_' . $source_entity->getEntityTypeId() . '_' . $source_entity->id();
+    }
+    if ($this->operation != 'default') {
+      $form_id .= '_' . $this->operation;
+    }
+    return $form_id . '_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setEntity(EntityInterface $entity) {
     /** @var \Drupal\webform\WebformSubmissionInterface $entity */
     $webform = $entity->getWebform();
@@ -746,7 +770,10 @@ class WebformSubmissionForm extends ContentEntityForm {
     }
 
     // Display admin only message.
-    if ($this->isGet() && $this->isRoute('webform.canonical') && !$this->getWebform()->getSetting('page')) {
+    if ($this->isGet()
+      && $this->isRoute('webform.canonical')
+      && $this->getRouteMatch()->getRawParameter('webform') === $webform->id()
+      && !$this->getWebform()->getSetting('page')) {
       $this->getMessageManager()->display(WebformMessageManagerInterface::ADMIN_PAGE, 'info');
     }
 
