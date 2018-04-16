@@ -146,7 +146,7 @@ function file_entity_update_8004() {
   $storage = \Drupal::entityTypeManager()->getStorage('file');
 
   // Do nothing if there is no field storage schema change reported.
-  if (!$storage->requiresFieldStorageSchemaChanges($field_storage, $original)) {
+  if ($original && !$storage->requiresFieldStorageSchemaChanges($field_storage, $original)) {
     return;
   }
 
