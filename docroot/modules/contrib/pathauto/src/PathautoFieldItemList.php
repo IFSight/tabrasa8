@@ -38,12 +38,4 @@ class PathautoFieldItemList extends PathFieldItemList {
     }
   }
 
-  /**
-   * @inheritDoc
-   */
-  public function delete() {
-    \Drupal::service('pathauto.alias_storage_helper')->deleteEntityPathAll($this->getEntity());
-    $this->first()->get('pathauto')->purge();
-  }
-
 }
