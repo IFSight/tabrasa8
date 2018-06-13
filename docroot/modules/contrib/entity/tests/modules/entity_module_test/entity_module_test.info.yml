@@ -3,8 +3,8 @@ type: module
 package: Testing
 # core: 8.x
 
-# Information added by Drupal.org packaging script on 2018-03-13
-version: '8.x-1.0-beta3'
+# Information added by Drupal.org packaging script on 2018-06-08
+version: '8.x-1.0-beta4'
 core: '8.x'
 project: 'entity'
-datestamp: 1520958515
+datestamp: 1528452194
