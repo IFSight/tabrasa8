@@ -21,6 +21,6 @@ fulcrum_whitelist.fulcrum_whitelist_config:
     _form: '\Drupal\fulcrum_whitelist\Form\FulcrumWhitelistConfig'
     _title: 'Fulcrum Whitelist Config'
   requirements:
-    _permission: 'access administration pages'
+    _permission: 'administer fulcrum whitelist configuration'
   options:
     _admin_route: TRUE

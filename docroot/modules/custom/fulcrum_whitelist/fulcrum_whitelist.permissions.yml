@@ -6,6 +6,11 @@ administer fulcrum whitelist entity entities:
   description: 'Allow to access the administration form to configure Fulcrum Whitelist Entity entities.'
   restrict access: true
 
+administer fulcrum whitelist configuration:
+  title: 'Administer Fulcrum Whitelist Configuration'
+  description: 'Allow access to the FSW configuration form.'
+  restrict access: true
+
 delete fulcrum whitelist entity entities:
   title: 'Delete Fulcrum Whitelist Entity entities'
 
