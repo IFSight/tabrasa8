@@ -5,8 +5,8 @@ type: module
 dependencies:
   - menu_ui
 
-# Information added by Drupal.org packaging script on 2016-09-05
-version: '8.x-1.4'
+# Information added by Drupal.org packaging script on 2018-05-01
+version: '8.x-1.5'
 core: '8.x'
 project: 'menu_block'
-datestamp: 1473063240
+datestamp: 1525200191

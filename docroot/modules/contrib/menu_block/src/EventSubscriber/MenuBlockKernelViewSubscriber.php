@@ -62,7 +62,7 @@ class MenuBlockKernelViewSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  static function getSubscribedEvents() {
+  public static function getSubscribedEvents() {
     // Run before main_content_view_subscriber.
     $events[KernelEvents::VIEW][] = ['onView', 1];
     return $events;

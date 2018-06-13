@@ -42,7 +42,7 @@ class MenuBlock extends SystemMenuBlock {
     ];
 
     $menu_name = $this->getDerivativeId();
-    $menus = Menu::loadMultiple(array($menu_name));
+    $menus = Menu::loadMultiple([$menu_name]);
     $menus[$menu_name] = $menus[$menu_name]->label();
 
     /** @var \Drupal\Core\Menu\MenuParentFormSelectorInterface $menu_parent_selector */
@@ -69,11 +69,12 @@ class MenuBlock extends SystemMenuBlock {
       '#description' => $this->t('A theme hook suggestion can be used to override the default HTML and CSS classes for menus found in <code>menu.html.twig</code>.'),
       '#machine_name' => [
         'error' => $this->t('The theme hook suggestion must contain only lowercase letters, numbers, and underscores.'),
+        'exists' => [$this, 'suggestionExists'],
       ],
     ];
 
     // Open the details field sets if their config is not set to defaults.
-    foreach(['menu_levels', 'advanced', 'style'] as $fieldSet) {
+    foreach (['menu_levels', 'advanced', 'style'] as $fieldSet) {
       foreach (array_keys($form[$fieldSet]) as $field) {
         if (isset($defaults[$field]) && $defaults[$field] !== $config[$field]) {
           $form[$fieldSet]['#open'] = TRUE;
@@ -127,28 +128,51 @@ class MenuBlock extends SystemMenuBlock {
     if ($depth > 0) {
       $parameters->setMaxDepth(min($level + $depth - 1, $this->menuTree->maxDepth()));
     }
+
+    // For menu blocks with start level greater than 1, only show menu items
+    // from the current active trail. Adjust the root according to the current
+    // position in the menu in order to determine if we can show the subtree.
+    // If we're using a fixed parent item, we'll skip this step.
+    $fixed_parent_menu_link_id = str_replace($menu_name . ':', '', $parent);
+    if ($level > 1 && !$fixed_parent_menu_link_id) {
+      if (count($parameters->activeTrail) >= $level) {
+        // Active trail array is child-first. Reverse it, and pull the new menu
+        // root based on the parent of the configured start level.
+        $menu_trail_ids = array_reverse(array_values($parameters->activeTrail));
+        $menu_root = $menu_trail_ids[$level - 1];
+        $parameters->setRoot($menu_root)->setMinDepth(1);
+        if ($depth > 0) {
+          $max_depth = min($level - 1 + $depth - 1, $this->menuTree->maxDepth());
+          $parameters->setMaxDepth($max_depth);
+        }
+      }
+      else {
+        return [];
+      }
+    }
+
     // If expandedParents is empty, the whole menu tree is built.
     if ($expand) {
-      $parameters->expandedParents = array();
+      $parameters->expandedParents = [];
     }
     // When a fixed parent item is set, root the menu tree at the given ID.
-    if ($menuLinkID = str_replace($menu_name . ':', '', $parent)) {
-      $parameters->setRoot($menuLinkID);
+    if ($fixed_parent_menu_link_id) {
+      $parameters->setRoot($fixed_parent_menu_link_id);
 
       // If the starting level is 1, we always want the child links to appear,
       // but the requested tree may be empty if the tree does not contain the
       // active trail.
       if ($level === 1 || $level === '1') {
         // Check if the tree contains links.
-        $tree = $this->menuTree->load(NULL, $parameters);
+        $tree = $this->menuTree->load($menu_name, $parameters);
         if (empty($tree)) {
           // Change the request to expand all children and limit the depth to
           // the immediate children of the root.
-          $parameters->expandedParents = array();
+          $parameters->expandedParents = [];
           $parameters->setMinDepth(1);
           $parameters->setMaxDepth(1);
           // Re-load the tree.
-          $tree = $this->menuTree->load(NULL, $parameters);
+          $tree = $this->menuTree->load($menu_name, $parameters);
         }
       }
     }
@@ -157,10 +181,10 @@ class MenuBlock extends SystemMenuBlock {
     if (!isset($tree)) {
       $tree = $this->menuTree->load($menu_name, $parameters);
     }
-    $manipulators = array(
-      array('callable' => 'menu.default_tree_manipulators:checkAccess'),
-      array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
-    );
+    $manipulators = [
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ];
     $tree = $this->menuTree->transform($tree, $manipulators);
     $build = $this->menuTree->build($tree);
 
@@ -171,6 +195,10 @@ class MenuBlock extends SystemMenuBlock {
       // better in menu_block_theme_suggestions_menu().
       $build['#theme'] = 'menu';
     }
+
+    $build['#contextual_links']['menu'] = [
+      'route_parameters' => ['menu' => $menu_name],
+    ];
 
     return $build;
   }
@@ -186,6 +214,16 @@ class MenuBlock extends SystemMenuBlock {
       'parent' => $this->getDerivativeId() . ':',
       'suggestion' => strtr($this->getDerivativeId(), '-', '_'),
     ];
+  }
+
+  /**
+   * Checks for an existing theme hook suggestion.
+   *
+   * @return bool
+   *   Returns FALSE because there is no need of validation by unique value.
+   */
+  public function suggestionExists() {
+    return FALSE;
   }
 
 }
