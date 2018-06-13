@@ -3,11 +3,14 @@
 namespace Drupal\block_field\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'block_field' widget.
@@ -20,7 +23,40 @@ use Drupal\Core\Form\SubformState;
  *   }
  * )
  */
-class BlockFieldWidget extends WidgetBase {
+class BlockFieldWidget extends WidgetBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The block manager.
+   *
+   * @var \Drupal\Core\Block\BlockManagerInterface
+   */
+  protected $blockManager;
+
+  /**
+   * Set the block manager.
+   *
+   * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
+   *   The block manager.
+   */
+  public function setBlockManager(BlockManagerInterface $block_manager) {
+    $this->blockManager = $block_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings']
+    );
+    $instance->setBlockManager($container->get('plugin.manager.block'));
+
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -29,7 +65,35 @@ class BlockFieldWidget extends WidgetBase {
     return [
       'plugin_id' => '',
       'settings' => [],
+      'configuration_form' => 'full',
     ] + parent::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $elements['configuration_form'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Configuration form'),
+      '#description' => $this->t('How the block configuration form will be shown.'),
+      '#options' => [
+        'full' => $this->t('Full'),
+        'hidden' => $this->t('Hidden'),
+      ],
+      '#default_value' => $this->getSetting('configuration_form'),
+      '#required' => TRUE,
+    ];
+
+    return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary() {
+    $summary[] = $this->t('Configuration form: @configuration_form', ['@configuration_form' => $this->getSetting('configuration_form')]);
+    return $summary;
   }
 
   /**
@@ -40,7 +104,10 @@ class BlockFieldWidget extends WidgetBase {
     $item =& $items[$delta];
 
     $field_name = $this->fieldDefinition->getName();
-    $settings_id = implode('-', array_merge($element['#field_parents'], [$field_name, $delta, 'settings']));
+    $settings_id = implode('-', array_merge(
+      $element['#field_parents'],
+      [$field_name, $delta, 'settings']
+    ));
 
     $plugin_ids = $this->fieldDefinition->getSetting('plugin_ids');
 
@@ -83,30 +150,33 @@ class BlockFieldWidget extends WidgetBase {
       '#empty_option' => $this->t('- None -'),
       '#default_value' => $item->plugin_id,
       '#required' => $element['#required'],
-      '#ajax' => [
+    ];
+
+    // Show configuration form if required.
+    if ($this->getSetting('configuration_form') === 'full') {
+      $element['plugin_id']['#ajax'] = [
         'callback' => [$this, 'configurationForm'],
         'wrapper' => $settings_id,
-      ],
-    ];
+      ];
 
-    // Build configuration container.
-    $element['settings'] = [
-      '#type' => 'container',
-      '#attributes' => ['id' => $settings_id],
-      '#tree' => TRUE,
-    ];
+      // Build configuration container.
+      $element['settings'] = [
+        '#type' => 'container',
+        '#attributes' => ['id' => $settings_id],
+        '#tree' => TRUE,
+      ];
 
-    // If block plugin exists get the block's configuration form.
-    if ($block_instance = $item->getBlock()) {
-      $element['settings'] += $block_instance->buildConfigurationForm([], $form_state);
+      // If block plugin exists get the block's configuration form.
+      if ($block_instance = $item->getBlock()) {
+        $element['settings'] += $block_instance->buildConfigurationForm([], $form_state);
 
-      // Hide admin label (aka description).
-      if (isset($element['settings']['admin_label'])) {
-        $element['settings']['admin_label']['#access'] = FALSE;
+        // Hide admin label (aka description).
+        if (isset($element['settings']['admin_label'])) {
+          $element['settings']['admin_label']['#access'] = FALSE;
+        }
+
+        $element['#element_validate'] = [[$this, 'validate']];
       }
-
-      // DEBUG:
-      $element['#element_validate'] = [[$this, 'validate']];
     }
 
     return $element;
@@ -184,9 +254,6 @@ class BlockFieldWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
-    // @todo: Inject the block manager as proper dependency.
-    /** @var \Drupal\Core\Block\BlockManagerInterface $block_manager */
-    $block_manager = \Drupal::service('plugin.manager.block');
     $field_name = $this->fieldDefinition->getName();
 
     // Some blocks clean the processed values in form state. However, entity
@@ -198,8 +265,8 @@ class BlockFieldWidget extends WidgetBase {
     foreach ($values as $delta => &$value) {
       // Execute block submit configuration in order to transform the form
       // values into block configuration.
-      if (!empty($value['plugin_id']) && !empty($value['settings']) && $block = $block_manager->createInstance($value['plugin_id'])) {
-        $elements = &$form[$field_name]['widget'][$delta]['settings'];
+      if (!empty($value['plugin_id']) && !empty($value['settings']) && $block = $this->blockManager->createInstance($value['plugin_id'])) {
+        $elements = &$form[$field_name]['widget'][$value['_original_delta']]['settings'];
         $subform_state = SubformState::createForSubform($elements, $form_state->getCompleteForm(), $form_state);
         $block->submitConfigurationForm($elements, $subform_state);
         $value['settings'] = $block->getConfiguration();

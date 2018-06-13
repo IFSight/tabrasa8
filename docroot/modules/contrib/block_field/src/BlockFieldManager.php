@@ -2,7 +2,7 @@
 
 namespace Drupal\block_field;
 
-use \Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Block\BlockManagerInterface;
 
 /**
  * Defines a service that manages block plugins for the block field.

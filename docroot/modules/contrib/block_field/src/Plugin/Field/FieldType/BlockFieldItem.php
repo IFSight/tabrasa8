@@ -119,7 +119,6 @@ class BlockFieldItem extends FieldItemBase implements BlockFieldItemInterface {
     return $element;
   }
 
-
   /**
    * {@inheritdoc}
    */

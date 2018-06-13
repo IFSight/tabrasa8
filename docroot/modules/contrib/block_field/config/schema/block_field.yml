@@ -17,6 +17,8 @@ field.widget.settings.block_field_default:
       label: 'Settings'
       sequence:
         type: string
+    configuration_form:
+      type: string
 
 field.storage_settings.block_field:
   type: mapping
@@ -43,4 +45,4 @@ field.value.block_field:
       type: sequence
       label: 'Settings'
       sequence:
-        type: stringd
+        type: string
