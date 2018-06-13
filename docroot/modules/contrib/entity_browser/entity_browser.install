@@ -91,3 +91,26 @@ function entity_browser_update_8002() {
     }
   }
 }
+
+/**
+ * Updates entity browsers to use the new media image upload widget plugin.
+ */
+function entity_browser_update_8201() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('entity_browser.browser.') as $name) {
+    $config = $config_factory->getEditable($name);
+    $widgets = $config->get('widgets');
+    $changed = FALSE;
+    foreach ($widgets as &$widget) {
+      if ($widget['id'] === 'media_entity_image_upload') {
+        $widget['id'] = 'media_image_upload';
+        $widget['settings']['media_type'] = $widget['settings']['media_bundle'];
+        unset($widget['settings']['media_bundle']);
+        $changed = TRUE;
+      }
+    }
+    if ($changed) {
+      $config->set('widgets', $widgets)->save(TRUE);
+    }
+  }
+}
