@@ -1436,18 +1436,18 @@
     },
     {
         "name": "drupal/better_exposed_filters",
-        "version": "3.0.0-alpha3",
-        "version_normalized": "3.0.0.0-alpha3",
+        "version": "3.0.0-alpha4",
+        "version_normalized": "3.0.0.0-alpha4",
         "source": {
             "type": "git",
             "url": "https://git.drupal.org/project/better_exposed_filters",
-            "reference": "8.x-3.0-alpha3"
+            "reference": "8.x-3.0-alpha4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/better_exposed_filters-8.x-3.0-alpha3.zip",
-            "reference": "8.x-3.0-alpha3",
-            "shasum": "0268a42ea5a4ab170c8f4aefecd26b6f3c7448d2"
+            "url": "https://ftp.drupal.org/files/projects/better_exposed_filters-8.x-3.0-alpha4.zip",
+            "reference": "8.x-3.0-alpha4",
+            "shasum": "f42013d1fc36d45212d582e18afc59bc2c364719"
         },
         "require": {
             "drupal/core": "*"
@@ -1458,8 +1458,8 @@
                 "dev-3.x": "3.x-dev"
             },
             "drupal": {
-                "version": "8.x-3.0-alpha3",
-                "datestamp": "1501274342",
+                "version": "8.x-3.0-alpha4",
+                "datestamp": "1525044484",
                 "security-coverage": {
                     "status": "not-covered",
                     "message": "Alpha releases are not covered by Drupal security advisories."
