@@ -73,6 +73,13 @@ class WebformSubmissionListBuilderTest extends WebformTestBase {
     $this->assertRaw($submissions[2]->getElementData('first_name'));
     $this->assertNoFieldById('edit-reset', 'reset');
 
+    // Check results filtered by uuid.
+    $this->drupalPostForm('admin/structure/webform/manage/' . $webform->id() . '/results/submissions', ['search' => $submissions[0]->get('uuid')->value], t('Filter'));
+    $this->assertUrl('admin/structure/webform/manage/' . $webform->id() . '/results/submissions?search=' . $submissions[0]->get('uuid')->value . '&state=');
+    $this->assertRaw($submissions[0]->getElementData('first_name'));
+    $this->assertNoRaw($submissions[1]->getElementData('first_name'));
+    $this->assertNoRaw($submissions[2]->getElementData('first_name'));
+
     // Check results filtered by key(word).
     $this->drupalPostForm('admin/structure/webform/manage/' . $webform->id() . '/results/submissions', ['search' => $submissions[0]->getElementData('first_name')], t('Filter'));
     $this->assertUrl('admin/structure/webform/manage/' . $webform->id() . '/results/submissions?search=' . $submissions[0]->getElementData('first_name') . '&state=');
@@ -102,6 +109,16 @@ class WebformSubmissionListBuilderTest extends WebformTestBase {
     /**************************************************************************/
     // Customize submission results.
     /**************************************************************************/
+
+    // Check that access is denied to custom results table.
+    $this->drupalLogin($this->adminSubmissionUser);
+    $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/submissions/custom');
+    $this->assertResponse(403);
+
+    // Check that access is allowed to custom results table.
+    $this->drupalLogin($this->adminWebformUser);
+    $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/submissions/custom');
+    $this->assertResponse(200);
 
     // Check that created is visible and changed is hidden.
     $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/submissions');

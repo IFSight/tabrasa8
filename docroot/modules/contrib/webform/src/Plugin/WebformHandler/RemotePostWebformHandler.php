@@ -9,6 +9,10 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
+use Drupal\webform\Element\WebformMessage;
+use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase;
+use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformMessageManagerInterface;
@@ -64,14 +68,33 @@ class RemotePostWebformHandler extends WebformHandlerBase {
   protected $messageManager;
 
   /**
+   * A webform element plugin manager.
+   *
+   * @var \Drupal\webform\Plugin\WebformElementManagerInterface
+   */
+  protected $elementManager;
+
+  /**
+   * List of unsupported webforem submission properties.
+   *
+   * The below properties will not being included in a remote post.
+   *
+   * @var array
+   */
+  protected $unsupportedProperties = [
+    'metatag',
+  ];
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, WebformSubmissionConditionsValidatorInterface $conditions_validator, ModuleHandlerInterface $module_handler, ClientInterface $http_client, WebformTokenManagerInterface $token_manager, WebformMessageManagerInterface $message_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerChannelFactoryInterface $logger_factory, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, WebformSubmissionConditionsValidatorInterface $conditions_validator, ModuleHandlerInterface $module_handler, ClientInterface $http_client, WebformTokenManagerInterface $token_manager, WebformMessageManagerInterface $message_manager, WebformElementManagerInterface $element_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger_factory, $config_factory, $entity_type_manager, $conditions_validator);
     $this->moduleHandler = $module_handler;
     $this->httpClient = $http_client;
     $this->tokenManager = $token_manager;
     $this->messageManager = $message_manager;
+    $this->elementManager = $element_manager;
   }
 
   /**
@@ -89,7 +112,8 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       $container->get('module_handler'),
       $container->get('http_client'),
       $container->get('webform.token_manager'),
-      $container->get('webform.message_manager')
+      $container->get('webform.message_manager'),
+      $container->get('plugin.manager.webform.element')
     );
   }
 
@@ -286,7 +310,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     $form['additional']['messages'] = [
       '#type' => 'webform_multiple',
       '#title' => $this->t('Custom error response messages'),
-      '#description' => $this->t('Enter custom response messages for specific status codes.') . '<br/>' . $this->t('Defaults to: %value', ['%value' => $this->messageManager->render(WebformMessageManagerInterface::SUBMISSION_EXCEPTION)]),
+      '#description' => $this->t('Enter custom response messages for specific status codes.') . '<br/>' . $this->t('Defaults to: %value', ['%value' => $this->messageManager->render(WebformMessageManagerInterface::SUBMISSION_EXCEPTION_MESSAGE)]),
       '#empty_items' => 0,
       '#add' => FALSE,
       '#element' => [
@@ -334,6 +358,17 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       '#type' => 'details',
       '#title' => $this->t('Submission data'),
     ];
+    // Display warning about file uploads.
+    if ($this->getWebform()->hasManagedFile()) {
+      $form['submission_data']['managed_file_message'] = [
+        '#type' => 'webform_message',
+        '#message_message' => $this->t('Upload files will include the file\'s id, name, uri, and data (<a href=":href">Base64</a> encode).', [':href' => 'https://en.wikipedia.org/wiki/Base64']),
+        '#message_type' => 'warning',
+        '#message_close' => TRUE,
+        '#message_id' => 'webform_node.references',
+        '#message_storage' => WebformMessage::STORAGE_SESSION,
+      ];
+    }
     $form['submission_data']['excluded_data'] = [
       '#type' => 'webform_excluded_columns',
       '#title' => $this->t('Posted data'),
@@ -470,13 +505,43 @@ class RemotePostWebformHandler extends WebformHandlerBase {
     // Get submission and elements data.
     $data = $webform_submission->toArray(TRUE);
 
-    // Flatten data.
-    // Prioritizing elements before the submissions fields.
-    $data = $data['data'] + $data;
+    // Remove unsupported properties from data.
+    // These are typically added by other module's like metatag.
+    $unsupported_properties = array_combine($this->unsupportedProperties, $this->unsupportedProperties);
+    $data = array_diff_key($data, $unsupported_properties);
+
+    // Flatten data and prioritize the element data over the
+    // webform submission data.
+    $element_data = $data['data'];
     unset($data['data']);
+    $data = $element_data + $data;
 
     // Excluded selected submission data.
     $data = array_diff_key($data, $this->configuration['excluded_data']);
+
+    // Append uploaded file name, uri, and base64 data to data.
+    $webform = $this->getWebform();
+    foreach ($data as $element_key => $element_value) {
+      $element = $webform->getElement($element_key);
+      if (!$element) {
+        continue;
+      }
+
+      $element_plugin = $this->elementManager->getElementInstance($element);
+      if (!($element_plugin instanceof WebformManagedFileBase)) {
+        continue;
+      }
+
+      /** @var \Drupal\file\FileInterface $file */
+      $file = File::load($element_value);
+      if (!$file) {
+        continue;
+      }
+
+      $data[$element_key . '__name'] = $file->getFilename();
+      $data[$element_key . '__uri'] = $file->getFileUri();
+      $data[$element_key . '__data'] = base64_encode(file_get_contents($file->getFileUri()));
+    }
 
     // Append custom data.
     if (!empty($this->configuration['custom_data'])) {
@@ -762,12 +827,12 @@ class RemotePostWebformHandler extends WebformHandlerBase {
         ],
       ];
       $build_message = [
-        '#markup' => $this->tokenManager->replace($custom_response_message, $this->getWebform(), $token_data)
+        '#markup' => $this->tokenManager->replace($custom_response_message, $this->getWebform(), $token_data),
       ];
       drupal_set_message(\Drupal::service('renderer')->renderPlain($build_message), 'error');
     }
     else {
-      $this->messageManager->display(WebformMessageManagerInterface::SUBMISSION_EXCEPTION, 'error');
+      $this->messageManager->display(WebformMessageManagerInterface::SUBMISSION_EXCEPTION_MESSAGE, 'error');
     }
   }
 

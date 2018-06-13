@@ -102,11 +102,18 @@ function webform_modules_uninstalled($modules) {
   // Remove uninstalled module's third party settings from admin settings.
   $config = \Drupal::configFactory()->getEditable('webform.settings');
   $third_party_settings = $config->get('third_party_settings');
+
+  $has_third_party_settings = FALSE;
   foreach ($modules as $module) {
-    unset($third_party_settings[$module]);
+    if (isset($third_party_settings[$module])) {
+      $has_third_party_settings = TRUE;
+      unset($third_party_settings[$module]);
+    }
   }
-  $config->set('third_party_settings', $third_party_settings);
-  $config->save();
+  if ($has_third_party_settings) {
+    $config->set('third_party_settings', $third_party_settings);
+    $config->save();
+  }
 
   // Check HTML email provider support as modules are ininstalled.
   /** @var \Drupal\webform\WebformEmailProviderInterface $email_provider */
@@ -352,6 +359,17 @@ function webform_system_breadcrumb_alter(Breadcrumb &$breadcrumb, RouteMatchInte
 }
 
 /**
+ * Implements hook_token_info_alter().
+ */
+function webform_token_info_alter(&$data) {
+  foreach ($data['types'] as $type => &$info) {
+    if (strpos($type, 'webform') === 0) {
+      $info['description'] .= ' ' . t("Add ':clear' to the end token to return an empty value when the token is missing.");
+    }
+  }
+}
+
+/**
  * Implements hook_entity_delete().
  */
 function webform_entity_delete(EntityInterface $entity) {
@@ -480,6 +498,12 @@ function webform_page_attachments(array &$attachments) {
       ],
       'webform_contribute',
     ];
+  }
+
+  // Attach webform dialog library and options to every page.
+  if (\Drupal::config('webform.settings')->get('settings.dialog')) {
+    $attachments['#attached']['library'][] = 'webform/webform.dialog';
+    $attachments['#attached']['drupalSettings']['webform']['dialog']['options'] = \Drupal::config('webform.settings')->get('settings.dialog_options');
   }
 }
 

@@ -7,8 +7,8 @@ dependencies:
   - 'drupal:node'
   - 'webform:webform'
 
-# Information added by Drupal.org packaging script on 2018-04-20
-version: '8.x-5.0-rc11'
+# Information added by Drupal.org packaging script on 2018-06-12
+version: '8.x-5.0-rc15'
 core: '8.x'
 project: 'webform'
-datestamp: 1524229413
+datestamp: 1528795693

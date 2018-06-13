@@ -27,6 +27,16 @@
     return (typeof this.data(data) !== 'undefined');
   };
 
+  /**
+   * Check if element is within the webform or not.
+   *
+   * @returns {boolean}
+   *   TRUE if element is within the webform.
+   */
+  $.fn.isWebform = function () {
+    return $(this).closest('form[id^="webform"]').length ? true : false;
+  };
+
   // The change event is triggered by cut-n-paste and select menus.
   // Issue #2445271: #states element empty check not triggered on mouse
   // based paste.
@@ -58,7 +68,7 @@
   var $document = $(document);
 
   $document.on('state:required', function (e) {
-    if (e.trigger) {
+    if (e.trigger && $(e.target).isWebform()) {
       var $target = $(e.target);
       // Fix #required file upload.
       // @see Issue #2860529: Conditional required File upload field don't work.
@@ -73,12 +83,14 @@
       // @see Issue #2938414: Checkboxes don't support #states required
       // @see Issue #2731991: Setting required on radios marks all options required.
       // @see Issue #2856315: Conditional Logic - Requiring Radios in a Fieldset.
-      if ($target.is('.js-webform-type-radios, .js-webform-type-checkboxes')) {
+      // Fix #required for fieldsets.
+      // @see Issue #2977569: Hidden fieldsets that become visible with conditional logic cannot be made required.
+      if ($target.is('.js-webform-type-radios, .js-webform-type-checkboxes, fieldset')) {
         if (e.value) {
-          $target.find('legend span').addClass('js-form-required form-required');
+          $target.find('legend span:not(.visually-hidden)').addClass('js-form-required form-required');
         }
         else {
-          $target.find('legend span').removeClass('js-form-required form-required');
+          $target.find('legend span:not(.visually-hidden)').removeClass('js-form-required form-required');
         }
       }
 
@@ -114,18 +126,19 @@
             .unbind('click', checkboxRequiredhandler);
         }
       }
+
     }
 
   });
 
   $document.on('state:readonly', function (e) {
-    if (e.trigger) {
+    if (e.trigger && $(e.target).isWebform()) {
       $(e.target).prop('readonly', e.value).closest('.js-form-item, .js-form-wrapper').toggleClass('webform-readonly', e.value).find('input, textarea').prop('readonly', e.value);
     }
   });
 
   $document.on('state:visible state:visible-slide', function (e) {
-    if (e.trigger) {
+    if (e.trigger && $(e.target).isWebform()) {
       if (e.value) {
         $(':input', e.target).addBack().each(function () {
           restoreValueAndRequired(this);
@@ -144,7 +157,7 @@
   });
 
   $document.bind('state:visible-slide', function(e) {
-    if (e.trigger) {
+    if (e.trigger && $(e.target).isWebform()) {
       var effect = e.value ? 'slideDown' : 'slideUp';
       var duration = Drupal.webform.states[effect].duration;
       $(e.target).closest('.js-form-item, .js-form-submit, .js-form-wrapper')[effect ](duration);
@@ -153,7 +166,7 @@
   Drupal.states.State.aliases['invisible-slide'] = '!visible-slide';
 
   $document.on('state:disabled', function (e) {
-    if (e.trigger) {
+    if (e.trigger && $(e.target).isWebform()) {
       // Make sure disabled property is set before triggering webform:disabled.
       // Copied from: core/misc/states.js
       $(e.target)
@@ -205,7 +218,7 @@
         .trigger('change', extraParameters)
         .trigger('blur', extraParameters);
     }
-    else if (type !== 'submit' && type !== 'button') {
+    else if (type !== 'submit' && type !== 'button' && type !== 'file') {
       $input
         .trigger('input', extraParameters)
         .trigger('change', extraParameters)

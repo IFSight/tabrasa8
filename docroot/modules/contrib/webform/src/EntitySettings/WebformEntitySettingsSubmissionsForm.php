@@ -93,8 +93,20 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
     $form['submission_settings']['submission_locked_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Submission locked message'),
-      '#description' => $this->t('A message to be displayed if submission is lockec.'),
+      '#description' => $this->t('A message to be displayed if submission is locked.'),
       '#default_value' => $settings['submission_locked_message'],
+    ];
+    $form['submission_settings']['previous_submission_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Previous submission message'),
+      '#description' => $this->t('A message to be displayed when there is previous submission.'),
+      '#default_value' => $settings['previous_submission_message'],
+    ];
+    $form['submission_settings']['previous_submissions_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Previous submissions message'),
+      '#description' => $this->t('A message to be displayed when there are previous submissions.'),
+      '#default_value' => $settings['previous_submissions_message'],
     ];
     $form['submission_settings']['next_serial'] = [
       '#type' => 'number',
@@ -104,7 +116,20 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       '#default_value' => $webform_storage->getNextSerial($webform),
     ];
     $form['submission_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
-    $form['submission_settings']['submission_columns'] = [
+
+    // User settings.
+    $form['submission_user_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('User settings'),
+      '#open' => TRUE,
+    ];
+    $form['submission_user_settings']['submission_user_duplicate'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow users to duplicate previous submissions'),
+      '#description' => $this->t('If checked, users will be able to duplicate their previous submissions.'),
+      '#default_value' => $settings['submission_user_duplicate'],
+    ];
+    $form['submission_user_settings']['submission_columns'] = [
       '#type' => 'details',
       '#title' => $this->t('Submission columns'),
       '#description' => $this->t('Below columns are displayed to users who can view previous submissions and/or pending drafts.'),
@@ -131,7 +156,7 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
     $columns_keys = array_keys($custom_columns);
     $columns_default_value = array_combine($columns_keys, $columns_keys);
     // Display columns in sortable table select element.
-    $form['submission_settings']['submission_columns']['submission_user_columns'] = [
+    $form['submission_user_settings']['submission_columns']['submission_user_columns'] = [
       '#type' => 'webform_tableselect_sort',
       '#header' => [
         'title' => $this->t('Title'),
@@ -165,6 +190,13 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       ],
     ];
     $form['submission_access_denied']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    if ($form['submission_access_denied']['token_tree_link']) {
+      $form['submission_access_denied']['token_tree_link']['#states'] = [
+        'visible' => [
+          ':input[name="submission_login"]' => ['checked' => TRUE],
+        ]
+      ];
+    }
 
     // Submission behaviors.
     $form['submission_behaviors'] = [
