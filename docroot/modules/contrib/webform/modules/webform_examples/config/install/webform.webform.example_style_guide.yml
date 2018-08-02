@@ -134,6 +134,15 @@ elements: |
     '#type': details
     '#title': 'Advanced elements'
     '#open': true
+    email:
+      '#type': email
+      '#title': Email
+    email_multiple:
+      '#type': webform_email_multiple
+      '#title': 'Email multiple'
+    email_confirm:
+      '#type': webform_email_confirm
+      '#title': Email
     tel:
       '#type': tel
       '#title': Telephone
@@ -552,6 +561,14 @@ elements: |
         '#type': textfield
         '#title': 'Element (Flex: 3)'
         '#flex': 3
+  contrib:
+    '#type': details
+    '#title': 'Contrib modules'
+    '#open': true
+    address:
+      '#type': address
+      '#title': Address
+      '#description': '@see <a href="https://www.drupal.org/project/address">https://www.drupal.org/project/address</a>'
 css: ''
 javascript: ''
 settings:

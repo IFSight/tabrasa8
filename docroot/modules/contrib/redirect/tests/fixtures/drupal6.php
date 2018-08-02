@@ -173,15 +173,14 @@ $connection->insert('system')
     'info',
   ))
   ->values(array(
-    'filename' => 'modules/contrib/redirect/redirect.module',
-    'name' => 'redirect',
+    'filename' => 'modules/contrib/path_redirect/path_redirect.module',
+    'name' => 'path_redirect',
     'type' => 'module',
     'owner' => '',
     'status' => '1',
     'bootstrap' => '0',
     'schema_version' => '7000',
     'weight' => '0',
-    'info' => 'a:10:{s:4:"name";s:8:"Redirect";s:11:"description";s:51:"Allows users to redirect from old URLs to new URLs.";s:7:"package";s:5:"Other";s:7:"version";s:3:"6.0";s:4:"core";s:3:"6.x";s:7:"project";s:8:"redirect";s:9:"datestamp";s:10:"1347989995";s:12:"dependencies";a:0:{}s:10:"dependents";a:0:{}s:3:"php";s:5:"4.3.5";}',
+    'info' => 'a:10:{s:4:"name";s:13:"Path Redirect";s:11:"description";s:51:"Allows users to redirect from old URLs to new URLs.";s:7:"package";s:5:"Other";s:7:"version";s:3:"6.0";s:4:"core";s:3:"6.x";s:7:"project";s:13:"path_redirect";s:9:"datestamp";s:10:"1347989995";s:12:"dependencies";a:0:{}s:10:"dependents";a:0:{}s:3:"php";s:5:"4.3.5";}',
   ))
   ->execute();
-

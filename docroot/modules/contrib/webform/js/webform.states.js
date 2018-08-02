@@ -45,20 +45,56 @@
     return this.val() === '';
   };
 
+  // Apply solution included in #1962800 patch.
+  // Issue #1962800: Form #states not working with literal integers as
+  // values in IE11.
+  // @see https://www.drupal.org/project/drupal/issues/1962800
+  // @see https://www.drupal.org/files/issues/core-states-not-working-with-integers-ie11_1962800_46.patch
+  //
+  // This issue causes pattern, less than, and greater than support to break.
+  // @see https://www.drupal.org/project/webform/issues/2981724
+  var states = Drupal.states;
+  Drupal.states.Dependent.prototype.compare = function compare(reference, selector, state) {
+    var value = this.values[selector][state.name];
+
+    var name = reference.constructor.name;
+    if (!name) {
+      name = $.type(reference);
+
+      name = name.charAt(0).toUpperCase() + name.slice(1);
+    }
+    if (name in states.Dependent.comparisons) {
+      return states.Dependent.comparisons[name](reference, value);
+    }
+
+    if (reference.constructor.name in states.Dependent.comparisons) {
+      return states.Dependent.comparisons[reference.constructor.name](reference, value);
+    }
+
+    return _compare2(reference, value);
+  };
+  function _compare2(a, b) {
+    if (a === b) {
+      return typeof a === 'undefined' ? a : true;
+    }
+
+    return typeof a === 'undefined' || typeof b === 'undefined';
+  }
+
   // Adds pattern, less than, and greater than support to #state API.
   // @see http://drupalsun.com/julia-evans/2012/03/09/extending-form-api-states-regular-expressions
   Drupal.states.Dependent.comparisons.Object = function (reference, value) {
     if ('pattern' in reference) {
-      return (new RegExp(reference.pattern)).test(value);
+      return (new RegExp(reference['pattern'])).test(value);
     }
     else if ('!pattern' in reference) {
       return !((new RegExp(reference['!pattern'])).test(value));
     }
     else if ('less' in reference) {
-      return (value !== '' && reference.less > value);
+      return (value !== '' && parseFloat(reference['less']) > parseFloat(value));
     }
     else if ('greater' in reference) {
-      return (value !== '' && reference.greater < value);
+      return (value !== '' && parseFloat(reference['greater']) < parseFloat(value));
     }
     else {
       return reference.indexOf(value) !== false;

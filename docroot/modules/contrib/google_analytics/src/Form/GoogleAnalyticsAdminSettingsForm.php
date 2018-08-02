@@ -150,18 +150,18 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     }
     else {
       $options = [
-        t('Every page except the listed pages'),
-        t('The listed pages only'),
+        $this->t('Every page except the listed pages'),
+        $this->t('The listed pages only'),
       ];
-      $description = t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", ['%blog' => '/blog', '%blog-wildcard' => '/blog/*', '%front' => '<front>']);
+      $description = $this->t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", ['%blog' => '/blog', '%blog-wildcard' => '/blog/*', '%front' => '<front>']);
 
       if (\Drupal::moduleHandler()->moduleExists('php') && $php_access) {
-        $options[] = t('Pages on which this PHP code returns <code>TRUE</code> (experts only)');
-        $title = t('Pages or PHP code');
-        $description .= ' ' . t('If the PHP option is chosen, enter PHP code between %php. Note that executing incorrect PHP code can break your Drupal site.', ['%php' => '<?php ?>']);
+        $options[] = $this->t('Pages on which this PHP code returns <code>TRUE</code> (experts only)');
+        $title = $this->t('Pages or PHP code');
+        $description .= ' ' . $this->t('If the PHP option is chosen, enter PHP code between %php. Note that executing incorrect PHP code can break your Drupal site.', ['%php' => '<?php ?>']);
       }
       else {
-        $title = t('Pages');
+        $title = $this->t('Pages');
       }
       $form['tracking']['page_visibility_settings']['google_analytics_visibility_request_path_mode'] = [
         '#type' => 'radios',
@@ -192,8 +192,8 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#type' => 'radios',
       '#title' => $this->t('Add tracking for specific roles'),
       '#options' => [
-        t('Add to the selected roles only'),
-        t('Add to every role except the selected ones'),
+        $this->t('Add to the selected roles only'),
+        $this->t('Add to every role except the selected ones'),
       ],
       '#default_value' => $config->get('visibility.user_role_mode'),
     ];
@@ -213,14 +213,14 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Users'),
       '#group' => 'tracking_scope',
     ];
-    $t_permission = ['%permission' => $this->t('opt-in or out of tracking')];
+    $t_permission = ['%permission' => $this->t('Opt-in or out of tracking')];
     $form['tracking']['user_visibility_settings']['google_analytics_visibility_user_account_mode'] = [
       '#type' => 'radios',
       '#title' => $this->t('Allow users to customize tracking on their account page'),
       '#options' => [
-        t('No customization allowed'),
-        t('Tracking on by default, users with %permission permission can opt out', $t_permission),
-        t('Tracking off by default, users with %permission permission can opt in', $t_permission),
+        $this->t('No customization allowed'),
+        $this->t('Tracking on by default, users with %permission permission can opt out', $t_permission),
+        $this->t('Tracking off by default, users with %permission permission can opt in', $t_permission),
       ],
       '#default_value' => !empty($visibility_user_account_mode) ? $visibility_user_account_mode : 0,
     ];
@@ -271,7 +271,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     ];
 
     $colorbox_dependencies = '<div class="admin-requirements">';
-    $colorbox_dependencies .= t('Requires: @module-list', ['@module-list' => (\Drupal::moduleHandler()->moduleExists('colorbox') ? t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Colorbox']) : t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Colorbox']))]);
+    $colorbox_dependencies .= $this->t('Requires: @module-list', ['@module-list' => (\Drupal::moduleHandler()->moduleExists('colorbox') ? $this->t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Colorbox']) : $this->t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Colorbox']))]);
     $colorbox_dependencies .= '</div>';
 
     $form['tracking']['linktracking']['google_analytics_trackcolorbox'] = [
@@ -321,7 +321,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     ];
 
     $site_search_dependencies = '<div class="admin-requirements">';
-    $site_search_dependencies .= t('Requires: @module-list', ['@module-list' => (\Drupal::moduleHandler()->moduleExists('search') ? t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Search']) : t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Search']))]);
+    $site_search_dependencies .= $this->t('Requires: @module-list', ['@module-list' => (\Drupal::moduleHandler()->moduleExists('search') ? $this->t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Search']) : $this->t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Search']))]);
     $site_search_dependencies .= '</div>';
 
     $form['tracking']['search_and_advertising']['google_analytics_site_search'] = [
@@ -575,13 +575,13 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     $form_state->setValue('google_analytics_account', str_replace(['–', '—', '−'], '-', $form_state->getValue('google_analytics_account')));
 
     if (!preg_match('/^UA-\d+-\d+$/', $form_state->getValue('google_analytics_account'))) {
-      $form_state->setErrorByName('google_analytics_account', t('A valid Google Analytics Web Property ID is case sensitive and formatted like UA-xxxxxxx-yy.'));
+      $form_state->setErrorByName('google_analytics_account', $this->t('A valid Google Analytics Web Property ID is case sensitive and formatted like UA-xxxxxxx-yy.'));
     }
 
     // If multiple top-level domains has been selected, a domain names list is
     // required.
     if ($form_state->getValue('google_analytics_domain_mode') == 2 && $form_state->isValueEmpty('google_analytics_cross_domains')) {
-      $form_state->setErrorByName('google_analytics_cross_domains', t('A list of top-level domains is required if <em>Multiple top-level domains</em> has been selected.'));
+      $form_state->setErrorByName('google_analytics_cross_domains', $this->t('A list of top-level domains is required if <em>Multiple top-level domains</em> has been selected.'));
     }
     // Clear the domain list if cross domains are disabled.
     if ($form_state->getValue('google_analytics_domain_mode') != 2) {
@@ -589,12 +589,12 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     }
 
     // Verify that every path is prefixed with a slash, but don't check PHP
-    // code snippets.
-    if ($form_state->getValue('google_analytics_visibility_request_path_mode') != 2) {
+    // code snippets and do not check for slashes if no paths configured.
+    if ($form_state->getValue('google_analytics_visibility_request_path_mode') != 2 && !empty($form_state->getValue('google_analytics_visibility_request_path_pages'))) {
       $pages = preg_split('/(\r\n?|\n)/', $form_state->getValue('google_analytics_visibility_request_path_pages'));
       foreach ($pages as $page) {
         if (strpos($page, '/') !== 0 && $page !== '<front>') {
-          $form_state->setErrorByName('google_analytics_visibility_request_path_pages', t('Path "@page" not prefixed with slash.', ['@page' => $page]));
+          $form_state->setErrorByName('google_analytics_visibility_request_path_pages', $this->t('Path "@page" not prefixed with slash.', ['@page' => $page]));
           // Drupal forms show one error only.
           break;
         }
@@ -603,7 +603,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
 
     // Disallow empty list of download file extensions.
     if ($form_state->getValue('google_analytics_trackfiles') && $form_state->isValueEmpty('google_analytics_trackfiles_extensions')) {
-      $form_state->setErrorByName('google_analytics_trackfiles_extensions', t('List of download file extensions cannot empty.'));
+      $form_state->setErrorByName('google_analytics_trackfiles_extensions', $this->t('List of download file extensions cannot empty.'));
     }
     // Clear obsolete local cache if cache has been disabled.
     if ($form_state->isValueEmpty('google_analytics_cache') && $form['advanced']['google_analytics_cache']['#default_value']) {
@@ -612,16 +612,16 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
 
     // This is for the Newbie's who cannot read a text area description.
     if (stristr($form_state->getValue('google_analytics_codesnippet_before'), 'google-analytics.com/analytics.js')) {
-      $form_state->setErrorByName('google_analytics_codesnippet_before', t('Do not add the tracker code provided by Google into the javascript code snippets! This module already builds the tracker code based on your Google Analytics account number and settings.'));
+      $form_state->setErrorByName('google_analytics_codesnippet_before', $this->t('Do not add the tracker code provided by Google into the javascript code snippets! This module already builds the tracker code based on your Google Analytics account number and settings.'));
     }
     if (stristr($form_state->getValue('google_analytics_codesnippet_after'), 'google-analytics.com/analytics.js')) {
-      $form_state->setErrorByName('google_analytics_codesnippet_after', t('Do not add the tracker code provided by Google into the javascript code snippets! This module already builds the tracker code based on your Google Analytics account number and settings.'));
+      $form_state->setErrorByName('google_analytics_codesnippet_after', $this->t('Do not add the tracker code provided by Google into the javascript code snippets! This module already builds the tracker code based on your Google Analytics account number and settings.'));
     }
     if (preg_match('/(.*)<\/?script(.*)>(.*)/i', $form_state->getValue('google_analytics_codesnippet_before'))) {
-      $form_state->setErrorByName('google_analytics_codesnippet_before', t('Do not include the &lt;script&gt; tags in the javascript code snippets.'));
+      $form_state->setErrorByName('google_analytics_codesnippet_before', $this->t('Do not include the &lt;script&gt; tags in the javascript code snippets.'));
     }
     if (preg_match('/(.*)<\/?script(.*)>(.*)/i', $form_state->getValue('google_analytics_codesnippet_after'))) {
-      $form_state->setErrorByName('google_analytics_codesnippet_after', t('Do not include the &lt;script&gt; tags in the javascript code snippets.'));
+      $form_state->setErrorByName('google_analytics_codesnippet_after', $this->t('Do not include the &lt;script&gt; tags in the javascript code snippets.'));
     }
   }
 
@@ -879,6 +879,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       'sampleRate',
       'siteSpeedSampleRate',
       'storage',
+      'useAmpClientId',
       'userId',
     ];
 

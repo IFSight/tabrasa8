@@ -57,10 +57,15 @@ class CronJobForm extends EntityForm {
       '#markup' => $job->getModule(),
     );
 
+    $callback = $job->getCallback();
+    if (is_array($callback)) {
+      $callback = get_class($callback[0]) . '::' . $callback[1];
+    }
+
     $form['callback_info'] = array(
       '#type' => 'item',
       '#title' => $this->t('Callback'),
-      '#markup' => $job->getCallback(),
+      '#markup' => $callback,
     );
 
     // Setup vertical tabs.

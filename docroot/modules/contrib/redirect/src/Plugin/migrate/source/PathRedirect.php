@@ -9,7 +9,7 @@ use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
  *
  * @MigrateSource(
  *   id = "d6_path_redirect",
- *   source_module = "redirect"
+ *   source_module = "path_redirect"
  * )
  */
 class PathRedirect extends DrupalSqlBase {

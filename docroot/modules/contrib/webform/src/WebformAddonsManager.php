@@ -145,6 +145,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'recommended' => TRUE,
     ];
 
+    // Element: Address.
+    $projects['address'] = [
+      'title' => $this->t('Address'),
+      'description' => $this->t("Provides functionality for storing, validating and displaying international postal addresses."),
+      'url' => Url::fromUri('https://www.drupal.org/project/address'),
+      'category' => 'element',
+    ];
+
     // Element: Webform Composite Tools.
     $projects['webform_composite'] = [
       'title' => $this->t('Webform Composite Tools'),
@@ -152,7 +160,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'url' => Url::fromUri('https://www.drupal.org/project/webform_composite'),
       'category' => 'element',
     ];
-    
+
     // Element: Webform Checkboxes Table.
     $projects['webform_checkboxes_table'] = [
       'title' => $this->t('Webform Checkboxes Table'),
@@ -217,6 +225,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
+    // Enhancement: Webform Extra Field.
+    $projects['webform_extra_field'] = [
+      'title' => $this->t('Webform Extra Field'),
+      'description' => $this->t("Provides an extra field for placing a webform in any entity display mode."),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_extra_field'),
+      'category' => 'enhancement',
+    ];
+
     // Enhancement: Webform Wizard Full Title.
     $projects['webform_wizard_full_title'] = [
       'title' => $this->t('Webform Wizard Full Title'),
@@ -270,6 +286,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Product'),
       'description' => $this->t('Links commerce products to webform elements.'),
       'url' => Url::fromUri('https://github.com/chx/webform_product'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Webform to Salesforce Leads.
+    $projects['webform_to_leads'] = [
+      'title' => $this->t('Webform to Salesforce Leads'),
+      'description' => $this->t('Extends the Webform module to allow the creation of a webform that feeds to your Salesforce.com Account'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_to_leads'),
       'category' => 'integration',
     ];
 
@@ -424,7 +448,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'recommended' => TRUE,
     ];
 
-    // Webform Invitation.
+    // Submissions: Webform Invitation.
     $projects['webform_invitation'] = [
       'title' => $this->t('Webform Invitation'),
       'description' => $this->t('Allows you to restrict submissions to a webform by generating codes (which may then be distributed e.g. by email to participants).'),
@@ -478,6 +502,30 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'description' => $this->t('Retrieve and submit webforms via REST.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_rest'),
       'category' => 'rest',
+    ];
+
+    // Utility: Googalytics Webform.
+    $projects['ga_webform'] = [
+      'title' => $this->t('Googalytics Webform'),
+      'description' => $this->t('Provides integration for Webform into Googalytics module.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/ga_webform'),
+      'category' => 'utility',
+    ];
+
+    // Utility: EU Cookie Compliance.
+    $projects['eu_cookie_compliance'] = [
+      'title' => $this->t('EU Cookie Compliance'),
+      'description' => $this->t('This module aims at making the website compliant with the new EU cookie regulation.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/eu_cookie_compliance'),
+      'category' => 'utility',
+    ];
+
+    // Utility: General Data Protection Regulation Compliance.
+    $projects['gdpr_compliance'] = [
+      'title' => $this->t('General Data Protection Regulation Compliance'),
+      'description' => $this->t('Provides Basic GDPR Compliance use cases via form checkboxes, pop-up alert, and a policy page.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/gdpr_compliance'),
+      'category' => 'utility',
     ];
 
     // Utility: Webform Encrypt.

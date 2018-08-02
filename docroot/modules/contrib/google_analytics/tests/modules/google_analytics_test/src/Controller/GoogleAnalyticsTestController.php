@@ -12,8 +12,8 @@ class GoogleAnalyticsTestController extends ControllerBase {
   /**
    * Tests setting messages and removing one before it is displayed.
    *
-   * @return string
-   *   Empty string, we just test the setting of messages.
+   * @return array
+   *   Empty array, we just test the setting of messages.
    */
   public function drupalSetMessageTest() {
     // Set some messages.

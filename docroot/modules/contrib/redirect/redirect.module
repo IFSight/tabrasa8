@@ -22,6 +22,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
 use Drupal\redirect\Entity\Redirect;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Implements hook_hook_info().
@@ -79,9 +80,15 @@ function redirect_help($route_name, RouteMatchInterface $route_match) {
  * Will delete redirects based on the entity URL.
  */
 function redirect_entity_delete(EntityInterface $entity) {
-  if ($entity->getEntityType()->hasLinkTemplate('canonical')) {
-    redirect_delete_by_path('internal:/' . $entity->toUrl('canonical')->getInternalPath());
-    redirect_delete_by_path('entity:' . $entity->getEntityTypeId() . '/' . $entity->id());
+  try {
+    if ($entity->getEntityType()->hasLinkTemplate('canonical') && $entity->toUrl('canonical')->isRouted()) {
+      redirect_delete_by_path('internal:/' . $entity->toUrl('canonical')->getInternalPath());
+      redirect_delete_by_path('entity:' . $entity->getEntityTypeId() . '/' . $entity->id());
+    }
+  }
+  catch (RouteNotFoundException $e) {
+    // This can happen if a module incorrectly defines a link template, ignore
+    // such errors.
   }
 }
 

@@ -81,7 +81,7 @@ class ReflectionClassResource implements SelfCheckingResourceInterface, \Seriali
             $file = $class->getFileName();
             if (false !== $file && file_exists($file)) {
                 foreach ($this->excludedVendors as $vendor) {
-                    if (0 === strpos($file, $vendor) && false !== strpbrk(substr($file, strlen($vendor), 1), '/'.DIRECTORY_SEPARATOR)) {
+                    if (0 === strpos($file, $vendor) && false !== strpbrk(substr($file, \strlen($vendor), 1), '/'.\DIRECTORY_SEPARATOR)) {
                         $file = false;
                         break;
                     }
@@ -138,7 +138,7 @@ class ReflectionClassResource implements SelfCheckingResourceInterface, \Seriali
             }
         }
 
-        if (defined('HHVM_VERSION')) {
+        if (\defined('HHVM_VERSION')) {
             foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $m) {
                 // workaround HHVM bug with variadics, see https://github.com/facebook/hhvm/issues/5762
                 yield preg_replace('/^  @@.*/m', '', new ReflectionMethodHhvmWrapper($m->class, $m->name));
@@ -155,12 +155,16 @@ class ReflectionClassResource implements SelfCheckingResourceInterface, \Seriali
             }
         }
 
-        if ($class->isSubclassOf(EventSubscriberInterface::class)) {
+        if ($class->isAbstract() || $class->isInterface() || $class->isTrait()) {
+            return;
+        }
+
+        if (interface_exists(EventSubscriberInterface::class, false) && $class->isSubclassOf(EventSubscriberInterface::class)) {
             yield EventSubscriberInterface::class;
             yield print_r(\call_user_func(array($class->name, 'getSubscribedEvents')), true);
         }
 
-        if ($class->isSubclassOf(ServiceSubscriberInterface::class)) {
+        if (interface_exists(ServiceSubscriberInterface::class, false) && $class->isSubclassOf(ServiceSubscriberInterface::class)) {
             yield ServiceSubscriberInterface::class;
             yield print_r(\call_user_func(array($class->name, 'getSubscribedServices')), true);
         }

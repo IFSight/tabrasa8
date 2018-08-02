@@ -495,9 +495,9 @@ function _google_analytics_cache($location, $synchronize = FALSE) {
   if (!file_exists($file_destination) || $synchronize) {
     // Download the latest tracking code.
     try {
-      $data = \Drupal::httpClient()
+      $data = (string) \Drupal::httpClient()
         ->get($location)
-        ->getBody(TRUE);
+        ->getBody();
 
       if (file_exists($file_destination)) {
         // Synchronize tracking code and and replace local file if outdated.

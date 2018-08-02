@@ -37,6 +37,7 @@ abstract class WebformOtherBase extends FormElement {
   protected static $properties = [
     '#title',
     '#required',
+    '#required_error',
     '#options',
     '#options_display',
     '#default_value',
@@ -107,6 +108,11 @@ abstract class WebformOtherBase extends FormElement {
       $element[$type]['#options'][static::OTHER_OPTION] = (!empty($element['#other__option_label'])) ? $element['#other__option_label'] : t('Other...');
     }
     $element[$type]['#error_no_message'] = TRUE;
+
+    // Prevent nested fieldset by removing fieldset theme wrapper around
+    // radios and checkboxes.
+    // @see \Drupal\Core\Render\Element\CompositeFormElementTrait
+    $element[$type]['#pre_render'] = [];
 
     // Disable label[for] which does not point to any specific element.
     // @see webform_preprocess_form_element_label()

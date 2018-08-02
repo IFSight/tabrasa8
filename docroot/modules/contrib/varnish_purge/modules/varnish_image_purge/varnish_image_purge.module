@@ -95,17 +95,22 @@ function varnish_image_purge_entity_update(EntityInterface $entity) {
             $client = new Client();
             $styles = ImageStyle::loadMultiple();
             foreach ($field_images as $field_image) {
-              $file = File::load($entity->$field_image->getValue()[0]['target_id']);
-              if ($file instanceof FileInterface) {
-                foreach ($styles as $style) {
-                  /* @var $style Drupal\image\Entity\ImageStyle; */
-                  foreach ($purgers as $key => $value) {
-                    try {
-                      $request = $client->request('URIBAN', $style->buildUrl($file->getFileUri()));
-                    }
-                    catch (Exception $e) {
-                      \Drupal::logger('varnish_image_purge')
-                        ->error('URL not purged ' . $style->buildUrl($file->getFileUri()) . $e->getMessage());
+              if ($entity->$field_image->isEmpty()) {
+                continue;
+              }
+              foreach($entity->$field_image as $delta => $image_field) {
+                $file = File::load($image_field->target_id);
+                if ($file instanceof FileInterface) {
+                  foreach ($styles as $style) {
+                    /* @var $style Drupal\image\Entity\ImageStyle; */
+                    foreach ($purgers as $key => $value) {
+                      try {
+                        $request = $client->request('URIBAN', $style->buildUrl($file->getFileUri()));
+                      }
+                      catch (Exception $e) {
+                        \Drupal::logger('varnish_image_purge')
+                          ->error('URL not purged ' . $style->buildUrl($file->getFileUri()) . $e->getMessage());
+                      }
                     }
                   }
                 }
