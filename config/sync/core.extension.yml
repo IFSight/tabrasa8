@@ -2,6 +2,7 @@ module:
   action: 0
   admin_toolbar: 0
   admin_toolbar_tools: 0
+  allowed_formats: 0
   automated_cron: 0
   better_exposed_filters: 0
   block: 0
@@ -20,6 +21,7 @@ module:
   datetime: 0
   dblog: 0
   dynamic_page_cache: 0
+  easy_breadcrumb: 0
   editor: 0
   embed: 0
   entity: 0
