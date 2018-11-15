@@ -28,6 +28,11 @@
           var $rateit = $(this);
           var $input = $($rateit.attr('data-rateit-backingfld'));
 
+          // Rateit only initialize inputs on load.
+          if (document.readyState === 'complete') {
+            $rateit.rateit();
+          }
+
           // Update the RateIt widget when the input's value has changed.
           // @see webform.states.js
           $input.on('change', function () {

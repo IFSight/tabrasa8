@@ -18,7 +18,7 @@ class WebformImageSelectImagesAccessControlHandler extends EntityAccessControlHa
    * {@inheritdoc}
    */
   public function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    return AccessResult::allowedIf($account->hasPermission('administer webform'))->cachePerPermissions();
+    return AccessResult::allowedIfHasPermission($account, 'administer webform');
   }
 
 }

@@ -52,7 +52,7 @@ class WebformCompositeFormatTest extends WebformTestBase {
       'Likert (List)' => '<div class="item-list"><ul><li><b>Please answer question 1?:</b> 1</li><li><b>How about now answering question 2?:</b> 1</li><li><b>Finally, here is question 3?:</b> 1</li></ul></div>',
       'Basic address (Value)' => '10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan<br />',
       'Basic address (Raw value)' => '<div class="item-list"><ul><li><b>address:</b> 10 Main Street</li><li><b>address_2:</b> 10 Main Street</li><li><b>city:</b> Springfield</li><li><b>state_province:</b> Alabama</li><li><b>postal_code:</b> 11111</li><li><b>country:</b> Afghanistan</li></ul></div><br /><br />',
-      'Basic address (List)' => '<div class="item-list"><ul><li><b>Address:</b> 10 Main Street</li><li><b>Address 2:</b> 10 Main Street</li><li><b>City/Town:</b> Springfield</li><li><b>State/Province:</b> Alabama</li><li><b>Zip/Postal Code:</b> 11111</li><li><b>Country:</b> Afghanistan</li></ul></div><br /><br />',
+      'Basic address (List)' => '<div class="item-list"><ul><li><b>Address:</b> 10 Main Street</li><li><b>Address 2:</b> 10 Main Street</li><li><b>City/Town:</b> Springfield</li><li><b>State/Province:</b> Alabama</li><li><b>ZIP/Postal Code:</b> 11111</li><li><b>Country:</b> Afghanistan</li></ul></div><br /><br />',
       'Advanced address (Value)' => '<div class="address" translate="no"><span class="given-name">John</span> <span class="family-name">Smith</span><br>
 <span class="organization">Google Inc.</span><br>
 <span class="address-line1">1098 Alta Ave</span><br>
@@ -103,7 +103,7 @@ Address: 10 Main Street
 Address 2: 10 Main Street
 City/Town: Springfield
 State/Province: Alabama
-Zip/Postal Code: 11111
+ZIP/Postal Code: 11111
 Country: Afghanistan',
       'Advanced address (Value):
 John Smith
@@ -157,7 +157,7 @@ Language code: en',
       'Basic address (Ordered list)' => '<div class="item-list"><ol><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan</li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan</li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan</li></ol></div>',
       'Basic address (Unordered list)' => '<div class="item-list"><ul><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan</li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan</li><li>10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan</li></ul></div>',
       'Basic address (Horizontal rule)' => '10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan<hr class="webform-horizontal-rule" />10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan<hr class="webform-horizontal-rule" />10 Main Street<br />10 Main Street<br />Springfield, Alabama. 11111<br />Afghanistan',
-      'Basic address (Table)' => '<table width="100%" cellspacing="0" cellpadding="5" border="1" class="responsive-enabled" data-striping="1"><thead><tr><th bgcolor="#eee">Address</th><th bgcolor="#eee">Address 2</th><th bgcolor="#eee">City/Town</th><th bgcolor="#eee">State/Province</th><th bgcolor="#eee">Zip/Postal Code</th><th bgcolor="#eee">Country</th></tr></thead><tbody><tr class="odd"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>11111</td><td>Afghanistan</td></tr><tr class="even"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>11111</td><td>Afghanistan</td></tr><tr class="odd"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>11111</td><td>Afghanistan</td></tr></tbody></table>',
+      'Basic address (Table)' => '<table width="100%" cellspacing="0" cellpadding="5" border="1" class="responsive-enabled" data-striping="1"><thead><tr><th bgcolor="#eee">Address</th><th bgcolor="#eee">Address 2</th><th bgcolor="#eee">City/Town</th><th bgcolor="#eee">State/Province</th><th bgcolor="#eee">ZIP/Postal Code</th><th bgcolor="#eee">Country</th></tr></thead><tbody><tr class="odd"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>11111</td><td>Afghanistan</td></tr><tr class="even"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>11111</td><td>Afghanistan</td></tr><tr class="odd"><td>10 Main Street</td><td>10 Main Street</td><td>Springfield</td><td>Alabama</td><td>11111</td><td>Afghanistan</td></tr></tbody></table>',
     ];
     foreach ($elements as $label => $value) {
       $this->assertContains($body, '<b>' . $label . '</b><br />' . $value, new FormattableMarkup('Found @label: @value', ['@label' => $label, '@value' => $value]));

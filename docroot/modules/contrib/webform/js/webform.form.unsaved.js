@@ -47,6 +47,17 @@
 
         unsaved = false;
       });
+
+      // Track all CKEditor change events.
+      // @see https://ckeditor.com/old/forums/Support/CKEditor-jQuery-change-event
+      if (window.CKEDITOR && !CKEDITOR.webformUnsaved) {
+        CKEDITOR.webformUnsaved = true;
+        CKEDITOR.on('instanceCreated', function (event) {
+          event.editor.on('change', function (evt) {
+            unsaved = true;
+          });
+        });
+      }
     }
   };
 
@@ -73,7 +84,7 @@
     }
     $('a').bind('click', function (evt) {
       var href = $(evt.target).closest('a').attr('href');
-      if (href !== undefined && !(href.match(/^#/) || href.trim() === '')) {
+      if (typeof href !== 'undefined' && !(href.match(/^#/) || href.trim() === '')) {
         if ($(window).triggerHandler('beforeunload')) {
           if (!window.confirm(Drupal.t('Changes you made may not be saved.') + '\n\n' + Drupal.t('Press OK to leave this page or Cancel to stay.'))) {
             return false;

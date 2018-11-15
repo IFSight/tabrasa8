@@ -130,7 +130,7 @@ class TwigExtension extends \Twig_Extension {
       '#markup' => '<p>' . t("You can also output tokens using the <code>webform_token()</code> function.") . '</p>',
     ];
     $output[] = [
-      '#markup' => "<pre>{{ webform_token('[webform_submission:values:element_value]', webform_submission) }}</pre>",
+      '#markup' => "<pre>{{ webform_token('[webform_submission:values:element_value]', webform_submission, [], options) }}</pre>",
     ];
     if (\Drupal::currentUser()->hasPermission('administer modules') && !\Drupal::moduleHandler()->moduleExists('twig_tweak')) {
       $t_args = [
@@ -175,7 +175,7 @@ class TwigExtension extends \Twig_Extension {
     }
     catch (\Exception $exception) {
       if ($webform_submission->getWebform()->access('update')) {
-        drupal_set_message(t('Failed to render computed Twig value due to error "%error"', ['%error' => $exception->getMessage()]), 'error');
+        \Drupal::messenger()->addError(t('Failed to render computed Twig value due to error "%error"', ['%error' => $exception->getMessage()]));
       }
       return '';
     }
@@ -213,6 +213,7 @@ class TwigExtension extends \Twig_Extension {
       'webform' => $webform_submission->getWebform(),
       'elements' => $webform_submission->getWebform()->getElementsDecoded(),
       'elements_flattened' => $webform_submission->getWebform()->getElementsDecodedAndFlattened(),
+      'options' => $options,
     ] + $webform_submission->toArray(TRUE);
 
     return [
@@ -223,10 +224,10 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Determine if the  current user can edit Twig templates.
+   * Determine if the current user can edit Twig templates.
    *
    * @return bool
-   *   TRUE if the  current user can edit Twig templates.
+   *   TRUE if the current user can edit Twig templates.
    */
   public static function hasEditTwigAccess() {
     return (\Drupal::currentUser()->hasPermission('edit webform twig') || \Drupal::currentUser()->hasPermission('administer webform'));

@@ -20,7 +20,7 @@ class WebformHandlerPluginTest extends WebformTestBase {
   public static $modules = ['webform', 'webform_test_handler'];
 
   /**
-   * Tests webform element plugin.
+   * Tests webform handler plugin.
    */
   public function testWebformHandler() {
     $webform = Webform::load('contact');

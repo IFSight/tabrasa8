@@ -8,6 +8,28 @@
   'use strict';
 
   /**
+   * Remove single submit event listener.
+   *
+   * @type {Drupal~behavior}
+   *
+   * @prop {Drupal~behaviorAttach} attach
+   *   Attaches the behavior for removing single submit event listener.
+   *
+   * @see Drupal.behaviors.formSingleSubmit
+   */
+  Drupal.behaviors.weformRemoveFormSingleSubmit = {
+    attach: function attach() {
+      function onFormSubmit(e) {
+        var $form = $(e.currentTarget);
+        $form.removeAttr('data-drupal-form-submit-last');
+      }
+      $('body')
+        .once('webform-single-submit')
+        .on('submit.singleSubmit', 'form.webform-remove-single-submit:not([method~="GET"])', onFormSubmit);
+    }
+  };
+
+  /**
    * Autofocus first input.
    *
    * @type {Drupal~behavior}
@@ -92,18 +114,18 @@
   Drupal.behaviors.webformRequiredError = {
     attach: function (context) {
       $(context).find(':input[data-webform-required-error]').once('webform-required-error')
-        .on('invalid', function() {
+        .on('invalid', function () {
           this.setCustomValidity('');
           if (!this.valid) {
             this.setCustomValidity($(this).attr('data-webform-required-error'));
           }
         })
-        .on('input, change', function() {
+        .on('input, change', function () {
           // Find all related elements by name and reset custom validity.
           // This specifically applies to required radios and checkboxes.
           var name = $(this).attr('name');
-          $(this.form).find(':input[name="' + name + '"]').each(
-            function() {this.setCustomValidity('');
+          $(this.form).find(':input[name="' + name + '"]').each(function () {
+            this.setCustomValidity('');
           });
         });
     }
@@ -113,85 +135,8 @@
   // custom validity.
   $(document).on('state:required', function (e) {
     $(e.target).filter('[data-webform-required-error]')
-      .each(function() {this.setCustomValidity('');});
+      .each(function () {this.setCustomValidity('');});
   });
-
-  /**
-   * Filters the webform element list by a text input search string.
-   *
-   * The text input will have the selector `input.webform-form-filter-text`.
-   *
-   * The target element to do searching in will be in the selector
-   * `input.webform-form-filter-text[data-element]`
-   *
-   * The text source where the text should be found will have the selector
-   * `.webform-form-filter-text-source`
-   *
-   * @type {Drupal~behavior}
-   *
-   * @prop {Drupal~behaviorAttach} attach
-   *   Attaches the behavior for the webform element filtering.
-   */
-  Drupal.behaviors.webformFilterByText = {
-    attach: function (context, settings) {
-      var $input = $('input.webform-form-filter-text').once('webform-form-filter-text');
-      var $table = $($input.attr('data-element'));
-      var $details = $table.closest('details');
-      var $filter_rows;
-
-      /**
-       * Filters the webform element list.
-       *
-       * @param {jQuery.Event} e
-       *   The jQuery event for the keyup event that triggered the filter.
-       */
-      function filterElementList(e) {
-        var query = $(e.target).val().toLowerCase();
-
-        /**
-         * Shows or hides the webform element entry based on the query.
-         *
-         * @param {number} index
-         *   The index in the loop, as provided by `jQuery.each`
-         * @param {HTMLElement} label
-         *   The label of the webform.
-         */
-        function toggleEntry(index, label) {
-          var $label = $(label);
-          var $row = $label.closest('tr');
-          var textMatch = $label.text().toLowerCase().indexOf(query) !== -1;
-          $row.toggle(textMatch);
-          if (textMatch && $details.length) {
-            $row.closest('details').show();
-          }
-        }
-
-        // Filter if the length of the query is at least 2 characters.
-        if (query.length >= 2) {
-          if ($details.length) {
-            $details.hide();
-          }
-          $filter_rows.each(toggleEntry);
-        }
-        else {
-          $filter_rows.each(function (index) {
-            $(this).closest('tr').show();
-            if ($details.length) {
-              $details.show();
-            }
-          });
-        }
-      }
-
-      if ($table.length) {
-        $filter_rows = $table.find('.webform-form-filter-text-source');
-        $input.on('keyup', filterElementList);
-        if ($input.val()) {
-          $input.keyup();
-        }
-      }
-    }
-  };
 
   if (window.imceInput) {
     window.imceInput.processUrlInput = function (i, el) {

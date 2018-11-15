@@ -2,7 +2,6 @@
 
 namespace Drupal\webform_scheduled_email\Plugin\WebformHandler;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -36,6 +35,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
       'send' => '[date:html_date]',
       'days' => '',
       'unschedule' => FALSE,
+      'ignore_past' => FALSE,
     ];
   }
 
@@ -101,6 +101,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
       $summary['#status'] = [
         '#type' => 'details',
         '#title' => $this->t('Scheduled email status (@total)', ['@total' => $stats['total']]),
+        '#help' => FALSE,
         '#description' => $build,
       ];
     }
@@ -144,7 +145,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
     // Send date/time.
     $send_options = [
       '[date:html_date]' => $this->t('Current date'),
-      WebformOtherBase::OTHER_OPTION => $this->t('Custom date...'),
+      WebformOtherBase::OTHER_OPTION => $this->t('Custom date…'),
       (string) $this->t('Webform') => [
         '[webform:open:html_date]' => $this->t('Open date'),
         '[webform:close:html_date]' => $this->t('Close date'),
@@ -186,11 +187,21 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
       '#empty_option' => $this->t('- None -'),
       '#options' => $days_options,
       '#default_value' => $this->configuration['days'],
-      '#other__option_label' => $this->t('Custom number of days...'),
+      '#other__option_label' => $this->t('Custom number of days…'),
       '#other__type' => 'number',
       '#other__field_suffix' => $this->t('days'),
       '#other__placeholder' => $this->t('Enter +/- days'),
       '#parents' => ['settings', 'days'],
+    ];
+
+    // Ignore past.
+    $form['scheduled']['ignore_past'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Do not schedule email if the action should be triggered in the past.'),
+      '#description' => $this->t('You can use this setting to prevent an action to be scheduled if it should have been triggered in the past.'),
+      '#default_value' => $this->configuration['ignore_past'],
+      '#return_value' => TRUE,
+      '#parents' => ['settings', 'ignore_past'],
     ];
 
     // Unschedule.
@@ -242,7 +253,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
       ],
     ];
 
-    $form['scheduled']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['scheduled']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     $form = parent::buildConfigurationForm($form, $form_state);
 
@@ -349,7 +360,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
     // Don't send the message if empty (aka To, CC, and BCC is empty).
     if (!$this->hasRecipient($webform_submission, $message)) {
       if ($this->configuration['debug']) {
-        drupal_set_message($this->t('%submission: Email <b>not sent</b> for %handler handler because a <em>To</em>, <em>CC</em>, or <em>BCC</em> email was not provided.', $t_args), 'warning');
+        $this->messenger()->addWarning($this->t('%submission: Email <b>not sent</b> for %handler handler because a <em>To</em>, <em>CC</em>, or <em>BCC</em> email was not provided.', $t_args));
       }
       return FALSE;
     }
@@ -362,7 +373,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
     // date.
     if (!$send_iso_date) {
       if ($this->configuration['debug']) {
-        drupal_set_message($this->t('%submission: Email <b>not scheduled</b> for %handler handler because %send is not a valid date/token.', $t_args), 'warning', TRUE);
+        $this->messenger()->addWarning($this->t('%submission: Email <b>not scheduled</b> for %handler handler because %send is not a valid date/token.', $t_args), TRUE);
       }
       $context = $t_args + [
         'link' => $this->getWebform()->toLink($this->t('Edit'), 'handlers')->toString(),
@@ -381,10 +392,12 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
         WebformScheduledEmailManagerInterface::EMAIL_ALREADY_SCHEDULED => $this->t('Already Scheduled'),
         WebformScheduledEmailManagerInterface::EMAIL_SCHEDULED => $this->t('Scheduled'),
         WebformScheduledEmailManagerInterface::EMAIL_RESCHEDULED => $this->t('Rescheduled'),
+        WebformScheduledEmailManagerInterface::EMAIL_UNSCHEDULED => $this->t('Unscheduled'),
+        WebformScheduledEmailManagerInterface::EMAIL_IGNORED => $this->t('Ignored'),
       ];
 
-      $t_args['@action'] = Unicode::strtolower($statuses[$status]);
-      drupal_set_message($this->t('%submission: Email <b>@action</b> by %handler handler to be sent on %date.', $t_args), 'warning', TRUE);
+      $t_args['@action'] = mb_strtolower($statuses[$status]);
+      $this->messenger()->addWarning($this->t('%submission: Email <b>@action</b> by %handler handler to be sent on %date.', $t_args), TRUE);
 
       $debug_message = $this->buildDebugMessage($webform_submission, $message);
       $debug_message['status'] = [
@@ -401,7 +414,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
         '#wrapper_attributes' => ['class' => ['container-inline'], 'style' => 'margin: 0'],
         '#weight' => -10,
       ];
-      drupal_set_message(\Drupal::service('renderer')->renderPlain($debug_message), 'warning', TRUE);
+      $this->messenger()->addWarning(\Drupal::service('renderer')->renderPlain($debug_message), TRUE);
     }
 
     return $status;
@@ -423,7 +436,7 @@ class ScheduleEmailWebformHandler extends EmailWebformHandler {
           '%submission' => $webform_submission->label(),
           '%handler' => $this->label(),
         ];
-        drupal_set_message($this->t('%submission: Email <b>unscheduled</b> for %handler handler.', $t_args), 'warning', TRUE);
+        $this->messenger()->addWarning($this->t('%submission: Email <b>unscheduled</b> for %handler handler.', $t_args), TRUE);
       }
     }
   }

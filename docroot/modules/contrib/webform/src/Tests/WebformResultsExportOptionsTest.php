@@ -26,19 +26,16 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
   protected static $testWebforms = ['test_submissions'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Tests export options.
    */
   public function testExportOptions() {
+    $admin_submission_user = $this->drupalCreateUser([
+      'access webform submission log',
+      'administer webform submission',
+    ]);
+
+    /**************************************************************************/
+
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_submissions');
     /** @var \Drupal\webform\WebformSubmissionInterface[] $submissions */
@@ -46,7 +43,7 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
     /** @var \Drupal\node\NodeInterface[] $node */
     $nodes = array_values(\Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'webform_test_submissions']));
 
-    $this->drupalLogin($this->adminSubmissionUser);
+    $this->drupalLogin($admin_submission_user);
 
     // Check default options.
     $this->getExport($webform);
@@ -131,11 +128,11 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
 
     // Check composite w/o header prefix.
     $this->getExport($webform, ['header_format' => 'label', 'header_prefix' => TRUE]);
-    $this->assertRaw('"Address: Address","Address: Address 2","Address: City/Town","Address: State/Province","Address: Zip/Postal Code","Address: Country"');
+    $this->assertRaw('"Address: Address","Address: Address 2","Address: City/Town","Address: State/Province","Address: ZIP/Postal Code","Address: Country"');
 
     // Check composite w header prefix.
     $this->getExport($webform, ['header_format' => 'label', 'header_prefix' => FALSE]);
-    $this->assertRaw('Address,"Address 2",City/Town,State/Province,"Zip/Postal Code",Country');
+    $this->assertRaw('Address,"Address 2",City/Town,State/Province,"ZIP/Postal Code",Country');
 
     // Check limit.
     $this->getExport($webform, ['range_type' => 'latest', 'range_latest' => 2]);
@@ -193,8 +190,9 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
     $this->assertNoRaw('Abraham,Lincoln');
     $this->assertNoRaw('Hillary,Clinton');
 
-    // Check changing default exporter to 'table' settings.
     $this->drupalLogin($this->rootUser);
+
+    // Check changing default exporter to 'table' settings.
     $edit = [
       'exporter' => 'table',
     ];
@@ -203,7 +201,6 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
     $this->assertPattern('#<td>George</td>\s+<td>Washington</td>\s+<td>Male</td>#ms');
 
     // Check changing default export (delimiter) settings.
-    $this->drupalLogin($this->rootUser);
     $edit = [
       'exporter' => 'delimited',
       'exporters[delimited][delimiter]' => '|',

@@ -44,6 +44,7 @@ abstract class WebformMarkupBase extends WebformElementBase implements WebformEl
   protected function getDefaultBaseProperties() {
     $properties = parent::getDefaultBaseProperties();
     unset($properties['prepopulate']);
+    unset($properties['states_clear']);
     return $properties;
   }
 

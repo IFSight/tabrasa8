@@ -32,7 +32,7 @@ class WebformBlockContextTest extends WebformTestBase {
       'node' => '@node.node_route_context:node',
     ];
     foreach ($contexts as $type => $context) {
-      $block = $this->placeBlock('webform_test_block_context_block', ['label' => '{' . $type . ' context}']);
+      $block = $this->drupalPlaceBlock('webform_test_block_context_block', ['label' => '{' . $type . ' context}']);
       $block->setVisibilityConfig('webform', [
         'id' => 'webform',
         'webforms' => ['contact' => 'contact'],
@@ -43,7 +43,7 @@ class WebformBlockContextTest extends WebformTestBase {
       ]);
       $block->save();
     }
-    $block = $this->placeBlock('webform_test_block_context_block', ['label' => '{all contexts}']);
+    $block = $this->drupalPlaceBlock('webform_test_block_context_block', ['label' => '{all contexts}']);
     $block->setVisibilityConfig('webform', [
       'id' => 'webform',
       'webforms' => ['contact' => 'contact'],

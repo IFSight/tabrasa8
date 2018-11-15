@@ -7,6 +7,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
+use Drupal\webform\Utility\WebformAccessibilityHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 
 /**
@@ -35,13 +36,14 @@ class WebformMultiple extends FormElement {
         '#type' => 'textfield',
         '#title' => t('Item value'),
         '#title_display' => 'invisible',
-        '#placeholder' => t('Enter value'),
+        '#placeholder' => t('Enter value…'),
       ],
       '#cardinality' => FALSE,
       '#min_items' => NULL,
       '#no_items_message' => $this->t('No items entered. Please add items below.'),
       '#empty_items' => 1,
-      '#add_more' => 1,
+      '#add_more' => TRUE,
+      '#add_more_items' => 1,
       '#add_more_button_label' => $this->t('Add'),
       '#add_more_input_label' => $this->t('more items'),
       '#sorting' => TRUE,
@@ -77,7 +79,7 @@ class WebformMultiple extends FormElement {
       return static::convertValuesToItems($element, $input['items']);
     }
     else {
-      return NULL;
+      return [];
     }
   }
 
@@ -93,9 +95,14 @@ class WebformMultiple extends FormElement {
       $element['#min_items'] = (empty($element['#required'])) ? 0 : 1;
     }
 
-    // Disable operation when #cardinality is set.
-    if (!empty($element['#cardinality'])) {
-      $element['#operations'] = FALSE;
+    // Make sure min items does not exceed cardinality.
+    if (!empty($element['#cardinality']) && $element['#min_items'] > $element['#cardinality']) {
+      $element['#min_items'] = $element['#cardinality'];
+    }
+
+    // Make sure empty items does not exceed cardinality.
+    if (!empty($element['#cardinality']) && $element['#empty_items'] > $element['#cardinality']) {
+      $element['#empty_items'] = $element['#cardinality'];
     }
 
     // Add validate callback that extracts the array of items.
@@ -105,36 +112,50 @@ class WebformMultiple extends FormElement {
     // Wrap this $element in a <div> that handle #states.
     WebformElementHelper::fixStatesWrapper($element);
 
-    if ($element['#cardinality']) {
-      // If the cardinality is set limit number of items to this value.
-      $number_of_items = $element['#cardinality'];
-    }
-    else {
-      // Get unique key used to store the current number of items.
-      $number_of_items_storage_key = static::getStorageKey($element, 'number_of_items');
+    // Get unique key used to store the current number of items.
+    $number_of_items_storage_key = static::getStorageKey($element, 'number_of_items');
 
-      // Store the number of items which is the number of
-      // #default_values + number of empty_items.
-      if ($form_state->get($number_of_items_storage_key) === NULL) {
-        if (empty($element['#default_value']) || !is_array($element['#default_value'])) {
-          $number_of_default_values = 0;
-        }
-        else {
-          $number_of_default_values = count($element['#default_value']);
-        }
-        $number_of_empty_items = (int) $element['#empty_items'];
-        $number_of_items = $number_of_default_values + $number_of_empty_items;
+    // Store the number of items which is the number of
+    // #default_values + number of empty_items.
+    if ($form_state->get($number_of_items_storage_key) === NULL) {
+      if (empty($element['#default_value']) || !is_array($element['#default_value'])) {
+        $number_of_default_values = 0;
+      }
+      else {
+        $number_of_default_values = count($element['#default_value']);
+      }
+      $number_of_empty_items = (int) $element['#empty_items'];
+      $number_of_items = $number_of_default_values + $number_of_empty_items;
 
-        $min_items = (int) $element['#min_items'];
-        $number_of_items = ($number_of_items < $min_items) ? $min_items : $number_of_items;
+      // Make sure number of items is greated than min items.
+      $min_items = (int) $element['#min_items'];
+      $number_of_items = ($number_of_items < $min_items) ? $min_items : $number_of_items;
 
-        $form_state->set($number_of_items_storage_key, $number_of_items);
+      // Make sure number of (default) items does not exceed cardinality.
+      if (!empty($element['#cardinality']) && $number_of_items > $element['#cardinality']) {
+        $number_of_items = $element['#cardinality'];
       }
 
-      $number_of_items = $form_state->get($number_of_items_storage_key);
+      $form_state->set($number_of_items_storage_key, $number_of_items);
     }
 
+    $number_of_items = $form_state->get($number_of_items_storage_key);
+
     $table_id = implode('_', $element['#parents']) . '_table';
+
+    // Disable add operation when #cardinality is met
+    // and make sure to limit the number of items.
+    if (!empty($element['#cardinality']) && $number_of_items >= $element['#cardinality']) {
+      $element['#add'] = FALSE;
+      $number_of_items = $element['#cardinality'];
+      $form_state->set($number_of_items_storage_key, $number_of_items);
+    }
+
+    // Add wrapper to the element.
+    $element += [
+      '#prefix' => '<div id="' . $table_id . '">',
+      '#suffix' => '</div>',
+    ];
 
     // DEBUG:
     // Disable Ajax callback by commenting out the below callback and wrapper.
@@ -187,7 +208,7 @@ class WebformMultiple extends FormElement {
     }
 
     // Build table.
-    $attributes = ['id' => $table_id, 'class' => ['webform-multiple-table']];
+    $attributes = ['class' => ['webform-multiple-table']];
     if (count($element['#element']) > 1) {
       $attributes['class'][] = 'webform-multiple-table-responsive';
     }
@@ -223,8 +244,8 @@ class WebformMultiple extends FormElement {
       ];
     }
 
-    // Build add items actions.
-    if (empty($element['#cardinality'])) {
+    // Build add more actions.
+    if ($element['#add_more'] && (empty($element['#cardinality']) || ($number_of_items < $element['#cardinality']))) {
       $element['add'] = [
         '#prefix' => '<div class="webform-multiple-add js-webform-multiple-add container-inline">',
         '#suffix' => '</div>',
@@ -237,11 +258,14 @@ class WebformMultiple extends FormElement {
         '#ajax' => $ajax_settings,
         '#name' => $table_id . '_add',
       ];
+      $max = ($element['#cardinality']) ? $element['#cardinality'] - $number_of_items : 100;
       $element['add']['more_items'] = [
         '#type' => 'number',
+        '#title' => $element['#add_more_button_label'] . ' ' . $element['#add_more_input_label'],
+        '#title_display' => 'invisible',
         '#min' => 1,
-        '#max' => 100,
-        '#default_value' => $element['#add_more'],
+        '#max' => $max,
+        '#default_value' => $element['#add_more_items'],
         '#field_suffix' => $element['#add_more_input_label'],
         '#error_no_message' => TRUE,
       ];
@@ -293,11 +317,11 @@ class WebformMultiple extends FormElement {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    * @param array $complete_form
-   *    An associative array containing the structure of the form.
+   *   An associative array containing the structure of the form.
    * @param array $sub_elements
    *   The sub element.
    * @param array $required_states
-   *   An associative array of required states froim the main element's
+   *   An associative array of required states from the main element's
    *   visible/hidden states.
    */
   protected static function initializeElementRecursive(array $element, FormStateInterface $form_state, array &$complete_form, array &$sub_elements, array $required_states) {
@@ -376,24 +400,36 @@ class WebformMultiple extends FormElement {
 
     if (empty($element['#header'])) {
       return [
-        ['data' => '', 'colspan' => ($colspan + 1)],
+        [
+          'data' => (!empty($element['#title'])) ? WebformAccessibilityHelper::buildVisuallyHidden($element['#title']) : [],
+          'colspan' => ($colspan + 1),
+        ],
       ];
     }
     elseif (is_array($element['#header'])) {
       $header = [];
 
       if ($element['#sorting']) {
-        $header[] = ['class' => ["$table_id--handle", "webform-multiple-table--handle"]];
+        $header[] = [
+          'data' => WebformAccessibilityHelper::buildVisuallyHidden(t('Re-order')),
+          'class' => ["$table_id--handle", 'webform-multiple-table--handle'],
+        ];
       }
 
       $header = array_merge($header, $element['#header']);
 
       if ($element['#sorting']) {
-        $header[] = ['class' => ["$table_id--weight", "webform-multiple-table--weight"]];
+        $header[] = [
+          'data' => ['#markup' => t('Weight')],
+          'class' => ["$table_id--weight", 'webform-multiple-table--weight'],
+        ];
       }
 
       if ($element['#operations']) {
-        $header[] = ['class' => ["$table_id--handle", "webform-multiple-table--operations"]];
+        $header[] = [
+          'data' => WebformAccessibilityHelper::buildVisuallyHidden(t('Operations')),
+          'class' => ["$table_id--handle", 'webform-multiple-table--operations'],
+        ];
       }
 
       return $header;
@@ -407,7 +443,10 @@ class WebformMultiple extends FormElement {
       $header = [];
 
       if ($element['#sorting']) {
-        $header['_handle_'] = ['class' => ["$table_id--handle", "webform-multiple-table--handle"]];
+        $header['_handle_'] = [
+          'data' => WebformAccessibilityHelper::buildVisuallyHidden(t('Re-order')),
+          'class' => ["$table_id--handle", "webform-multiple-table--handle"],
+        ];
       }
 
       if ($element['#child_keys']) {
@@ -416,9 +455,11 @@ class WebformMultiple extends FormElement {
             continue;
           }
 
+          $child_title = (!empty($element['#element'][$child_key]['#title'])) ? $element['#element'][$child_key]['#title'] : '';
+
           $title = [];
           $title['title'] = [
-            '#markup' => (!empty($element['#element'][$child_key]['#title'])) ? $element['#element'][$child_key]['#title'] : '',
+            '#markup' => $child_title,
           ];
           if (!empty($element['#element'][$child_key]['#required']) || !empty($element['#element'][$child_key]['#_required'])) {
             $title['title'] += [
@@ -430,6 +471,7 @@ class WebformMultiple extends FormElement {
             $title['help'] = [
               '#type' => 'webform_help',
               '#help' => $element['#element'][$child_key]['#help'],
+              '#help_title' => $child_title,
             ];
           }
           $header[$child_key] = [
@@ -454,6 +496,7 @@ class WebformMultiple extends FormElement {
 
       if ($element['#operations']) {
         $header['_operations_'] = [
+          'data' => WebformAccessibilityHelper::buildVisuallyHidden(t('Operations')),
           'class' => ["$table_id--operations", "webform-multiple-table--operations"],
         ];
       }
@@ -640,7 +683,7 @@ class WebformMultiple extends FormElement {
   }
 
   /**
-   * Set element row default value recusively.
+   * Set element row default value recursively.
    *
    * @param array $element
    *   The element.
@@ -657,7 +700,7 @@ class WebformMultiple extends FormElement {
   }
 
   /**
-   * Set element row default value recusively.
+   * Set element row default value recursively.
    *
    * @param array $element
    *   The element.
@@ -815,11 +858,11 @@ class WebformMultiple extends FormElement {
     $button = $form_state->getTriggeringElement();
     $parent_length = (isset($button['#row_index'])) ? -4 : -2;
     $element = NestedArray::getValue($form, array_slice($button['#array_parents'], 0, $parent_length));
-    return $element['items'];
+    return $element;
   }
 
   /**
-   * Validates webform list element.
+   * Validates webform multiple element.
    */
   public static function validateWebformMultiple(&$element, FormStateInterface $form_state, &$complete_form) {
     // IMPORTANT: Must get values from the $form_states since sub-elements
@@ -830,7 +873,7 @@ class WebformMultiple extends FormElement {
 
     $number_of_items_storage_key = static::getStorageKey($element, 'number_of_items');
     $number_of_items = $form_state->get($number_of_items_storage_key);
-    if ($number_of_items || $element['#cardinality']) {
+    if (!empty($values['items']) && ($number_of_items || $element['#cardinality'])) {
       $items = $values['items'];
 
       // Validate unique keys.
@@ -897,20 +940,7 @@ class WebformMultiple extends FormElement {
     // Now build the associative array of items.
     $items = [];
     foreach ($values as $value) {
-      $item = NULL;
-      if (isset($value['_item_'])) {
-        $item = $value['_item_'];
-      }
-      else {
-        // Get hidden (#access: FALSE) elements in the '_handle_' column and
-        // add them to the $value.
-        // @see \Drupal\webform\Element\WebformMultiple::buildElementRow
-        if (isset($value['_hidden_']) && is_array($value['_hidden_'])) {
-          $value += $value['_hidden_'];
-        }
-        unset($value['weight'], $value['_operations_'], $value['_hidden_']);
-        $item = $value;
-      }
+      $item = static::convertValueToItem($value);
 
       // Never add an empty item.
       if (static::isEmpty($item)) {
@@ -933,6 +963,31 @@ class WebformMultiple extends FormElement {
   }
 
   /**
+   * Convert value array containing (elements or _item_ and weight) to an item.
+   *
+   * @param array $value
+   *   The multiple value array.
+   *
+   * @return array
+   *   An item array.
+   */
+  public static function convertValueToItem(array $value) {
+    if (isset($value['_item_'])) {
+      return $value['_item_'];
+    }
+    else {
+      // Get hidden (#access: FALSE) elements in the '_handle_' column and
+      // add them to the $value.
+      // @see \Drupal\webform\Element\WebformMultiple::buildElementRow
+      if (isset($value['_hidden_']) && is_array($value['_hidden_'])) {
+        $value += $value['_hidden_'];
+      }
+      unset($value['weight'], $value['_operations_'], $value['_hidden_']);
+      return $value;
+    }
+  }
+
+  /**
    * Validate composite element has unique keys.
    *
    * @param array $element
@@ -952,10 +1007,14 @@ class WebformMultiple extends FormElement {
 
     $unique_keys = [];
     foreach ($values as $value) {
-      $item = (isset($value['_item_'])) ? $value['_item_'] : $value;
+      $item = static::convertValueToItem($value);
+
       $key_name = $element['#key'];
       $key_value = $item[$key_name];
-      if (empty($key_value)) {
+
+      // Skip empty key and item.
+      unset($item[$key_name]);
+      if (empty($key_value) && static::isEmpty($item)) {
         continue;
       }
 

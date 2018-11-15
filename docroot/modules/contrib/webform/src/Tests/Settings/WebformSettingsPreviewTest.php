@@ -67,6 +67,20 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     $this->assertNoRaw('<label>Email</label>');
     $this->assertNoRaw('<label>Checkbox</label>');
 
+    // Check submission view without values.
+    $sid = $this->postSubmission($webform_preview);
+    $this->drupalGet("admin/structure/webform/manage/test_form_preview/submission/$sid");
+    $this->assertNoRaw('<label>Name</label>');
+    $this->assertNoRaw('<label>Email</label>');
+    $this->assertNoRaw('<label>Checkbox</label>');
+
+    // Check submission table without values.
+    $this->drupalGet("admin/structure/webform/manage/test_form_preview/submission/$sid/table");
+    $this->assertNoRaw('<th>Name</th>');
+    $this->assertNoRaw('<th>Email</th>');
+    $this->assertNoRaw('<th>Checkbox</th>');
+    $this->assertNoRaw('<td>No</td>');
+
     // Clear default preview message.
     \Drupal::configFactory()->getEditable('webform.settings')
       ->set('settings.default_preview_message', '')
@@ -76,17 +90,33 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     $this->drupalPostForm('webform/test_form_preview', ['name' => 'test', 'email' => 'example@example.com'], t('Preview'));
     $this->assertNoRaw('Please review your submission. Your submission is not complete until you press the "Submit" button!');
 
-    // Set preview to include empty.
+    // Set preview and submission to include empty.
     $webform_preview->setSetting('preview_exclude_empty', FALSE);
     $webform_preview->setSetting('preview_exclude_empty_checkbox', FALSE);
+    $webform_preview->setSetting('submission_exclude_empty', FALSE);
+    $webform_preview->setSetting('submission_exclude_empty_checkbox', FALSE);
     $webform_preview->save();
 
-    // Check empty element is included from preview.
+    // Check empty elements are included in preview.
     $this->drupalPostForm('webform/test_form_preview', ['name' => '', 'email' => '', 'checkbox' => FALSE], t('Preview'));
     $this->assertRaw('<label>Name</label>' . PHP_EOL . '        {Empty}');
     $this->assertRaw('<div id="test_form_preview--email" class="webform-element webform-element-type-email js-form-item form-item js-form-type-item form-type-item js-form-item-email form-item-email">');
     $this->assertRaw('<label>Email</label>' . PHP_EOL . '        {Empty}');
     $this->assertRaw('<label>Checkbox</label>' . PHP_EOL . '        No');
+
+    // Check empty elements are included in submission view.
+    $sid = $this->postSubmission($webform_preview);
+    $this->drupalGet("admin/structure/webform/manage/test_form_preview/submission/$sid");
+    $this->assertRaw('<label>Name</label>');
+    $this->assertRaw('<label>Email</label>');
+    $this->assertRaw('<label>Checkbox</label>');
+
+    // Check submission table without values.
+    $this->drupalGet("admin/structure/webform/manage/test_form_preview/submission/$sid/table");
+    $this->assertRaw('<th>Name</th>');
+    $this->assertRaw('<th>Email</th>');
+    $this->assertRaw('<th>Checkbox</th>');
+    $this->assertRaw('<td>No</td>');
 
     // Add special character to title.
     $webform_preview->set('title', "This has special characters. '<>\"&");

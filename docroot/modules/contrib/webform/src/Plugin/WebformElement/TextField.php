@@ -24,10 +24,13 @@ class TextField extends TextBase {
     return [
       // Form display.
       'input_mask' => '',
+      'input_hide' => FALSE,
       // Form validation.
       'counter_type' => '',
+      'counter_minimum' => '',
+      'counter_minimum_message' => '',
       'counter_maximum' => '',
-      'counter_message' => '',
+      'counter_maximum_message' => '',
     ] + parent::getDefaultProperties() + $this->getDefaultMultipleProperties();
   }
 

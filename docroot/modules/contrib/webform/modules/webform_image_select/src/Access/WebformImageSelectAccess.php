@@ -23,7 +23,8 @@ class WebformImageSelectAccess {
    *   The access result.
    */
   public static function checkImagesSourceAccess(WebformImageSelectImagesInterface $webform_image_select_images, AccountInterface $account) {
-    return AccessResult::allowedIf($webform_image_select_images->access('update', $account) && $account->hasPermission('edit webform source'));
+    return $webform_image_select_images->access('update', $account, TRUE)
+      ->andIf(AccessResult::allowedIfHasPermission($account, 'edit webform source'));
   }
 
 }

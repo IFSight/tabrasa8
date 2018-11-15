@@ -39,7 +39,7 @@
         });
       });
     }
-  }
+  };
 
   /**
    * Display HTML5 range output in a floating bubble.
@@ -90,7 +90,7 @@
           // range's buttons so we only incrementally move the output bubble.
           var inputWidth = $input.outerWidth();
           var buttonPosition = Math.floor(inputWidth * (inputValue - $input.attr('min')) / ($input.attr('max') - $input.attr('min')));
-          var increment = Math.floor(inputWidth/5);
+          var increment = Math.floor(inputWidth / 5);
           var outputWidth = $output.outerWidth();
 
           // Set output left position.
@@ -105,7 +105,7 @@
             }
           }
           else if (buttonPosition <= increment * 3) {
-            left = (increment * 2.5) - (outputWidth/2);
+            left = (increment * 2.5) - (outputWidth / 2);
 
           }
           else if (buttonPosition <= increment * 4) {
@@ -121,29 +121,28 @@
           left = Math.floor($input.position().left + left);
 
           // Finally, position the output.
-          $output.css({top: top, left: left})
+          $output.css({top: top, left: left});
         })
-        // Fake a change to position output at page load.
-        .trigger('input');
+          // Fake a change to position output at page load.
+          .trigger('input');
 
         // Add fade in/out event handlers if opacity is defined.
         var defaultOpacity = $output.css('opacity');
         if (defaultOpacity < 1) {
           // Fade in/out on focus/blur of the input.
-          $input.on('focus mouseover', function() {
+          $input.on('focus mouseover', function () {
             $output.stop().fadeTo('slow', 1);
           });
-          $input.on('blur mouseout', function() {
+          $input.on('blur mouseout', function () {
             $output.stop().fadeTo('slow', defaultOpacity);
           });
           // Also fade in when focusing the output.
-          $output.on('touchstart mouseover', function() {
+          $output.on('touchstart mouseover', function () {
             $output.stop().fadeTo('slow', 1);
           });
         }
       });
     }
-  }
-
+  };
 
 })(jQuery, Drupal);

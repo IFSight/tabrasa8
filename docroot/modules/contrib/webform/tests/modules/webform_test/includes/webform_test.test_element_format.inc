@@ -5,7 +5,6 @@
  * Generate test elements with formatting.
  */
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\webform\WebformInterface;
 
 /**
@@ -106,7 +105,7 @@ function webform_test_test_element_format(WebformInterface $webform, $composite 
 
     // Set element category.
     $category_name = (string) $webform_element->getPluginDefinition()['category'] ?: 'Other elements';
-    $category_id = preg_replace('/[^a-zA-Z0-9]+/', '_', Unicode::strtolower($category_name));
+    $category_id = preg_replace('/[^a-zA-Z0-9]+/', '_', mb_strtolower($category_name));
     if (empty($data[$category_id])) {
       $data[$category_id] = [
         '#type' => 'details',

@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\Table;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\webform\Plugin\WebformElement\TableSelect;
 
 /**
  * Provides a webform element for a sortable tableselect element.
@@ -140,6 +141,11 @@ class WebformTableSelectSort extends Table {
     $element['#header'] = $header;
     $element['#rows'] = $rows;
 
+    // Attach table select UX improvements.
+    $element['#attributes']['class'][] = 'webform-tableselect';
+    $element['#attributes']['class'][] = 'js-webform-tableselect';
+    $element['#attached']['library'][] = 'webform/webform.element.tableselect';
+
     // Attach table sort.
     $element['#attributes']['class'][] = 'js-tableselect-sort';
     $element['#attributes']['class'][] = 'tableselect-sort';
@@ -197,17 +203,13 @@ class WebformTableSelectSort extends Table {
       foreach ($element['#options'] as $key => $choice) {
         // Do not overwrite manually created children.
         if (!isset($element[$key])) {
-          $checkbox_title = '';
-          $weight_title = '';
-          if (isset($element['#options'][$key]['title']) && is_array($element['#options'][$key]['title'])) {
-            if (!empty($element['#options'][$key]['title']['data']['#title'])) {
-              $checkbox_title = new TranslatableMarkup('Update @title', [
-                '@title' => $element['#options'][$key]['title']['data']['#title'],
-              ]);
-              $weight_title = new TranslatableMarkup('Weight for @title', [
-                '@title' => $element['#options'][$key]['title']['data']['#title'],
-              ]);
-            }
+          if ($title = TableSelect::getTableSelectOptionTitle($choice)) {
+            $checkbox_title = $title;
+            $weight_title = new TranslatableMarkup('Weight for @title', ['@title' => $title]);
+          }
+          else {
+            $checkbox_title = '';
+            $weight_title = '';
           }
 
           $element[$key]['checkbox'] = [

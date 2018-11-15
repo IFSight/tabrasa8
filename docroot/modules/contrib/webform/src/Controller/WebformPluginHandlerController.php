@@ -3,7 +3,6 @@
 namespace Drupal\webform\Controller;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Url;
@@ -19,13 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 class WebformPluginHandlerController extends ControllerBase implements ContainerInjectionInterface {
 
   /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
    * A webform handler plugin manager.
    *
    * @var \Drupal\Component\Plugin\PluginManagerInterface
@@ -33,15 +25,12 @@ class WebformPluginHandlerController extends ControllerBase implements Container
   protected $pluginManager;
 
   /**
-   * Constructs a WebformPluginHanderController object.
+   * Constructs a WebformPluginHandlerController object.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
    * @param \Drupal\Component\Plugin\PluginManagerInterface $plugin_manager
    *   A webform handler plugin manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, PluginManagerInterface $plugin_manager) {
-    $this->configFactory = $config_factory;
+  public function __construct(PluginManagerInterface $plugin_manager) {
     $this->pluginManager = $plugin_manager;
   }
 
@@ -50,7 +39,6 @@ class WebformPluginHandlerController extends ControllerBase implements Container
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('config.factory'),
       $container->get('plugin.manager.webform.handler')
     );
   }
@@ -231,6 +219,8 @@ class WebformPluginHandlerController extends ControllerBase implements Container
       '#attributes' => [
         'class' => ['webform-form-filter-text'],
         'data-element' => '.webform-handler-add-table',
+        'data-item-single' => $this->t('handler'),
+        'data-item-plural' => $this->t('handlers'),
         'title' => $this->t('Enter a part of the handler name to filter by.'),
         'autofocus' => 'autofocus',
       ],
@@ -240,6 +230,7 @@ class WebformPluginHandlerController extends ControllerBase implements Container
       '#type' => 'table',
       '#header' => $headers,
       '#rows' => $rows,
+      '#sticky' => TRUE,
       '#empty' => $this->t('No handler available.'),
       '#attributes' => [
         'class' => ['webform-handler-add-table'],

@@ -6,6 +6,7 @@ dependencies:
       - webform_examples_accessibility
 open: null
 close: null
+weight: 0
 uid: null
 template: false
 archive: false
@@ -14,24 +15,6 @@ title: 'Example: Accessibility Basic'
 description: 'Basic webform accessibility example.'
 category: 'Example: Accessibility'
 elements: |
-  general_elements:
-    '#type': details
-    '#title': 'General element'
-    '#open': true
-    form_element:
-      '#type': textfield
-      '#title': 'Form element'
-      '#placeholder': 'This is a placeholder'
-      '#description': 'This is a description.'
-      '#help': 'This is help text.'
-      '#more': 'This is more text'
-      '#field_prefix': 'prefix'
-      '#field_suffix': 'suffix'
-    form_element_tooltip:
-      '#type': textfield
-      '#title': 'Form element tooltip'
-      '#description': 'This is a description.'
-      '#description_display': tooltip
   text_elements:
     '#type': details
     '#title': 'Text elements'
@@ -115,6 +98,9 @@ elements: |
     '#type': details
     '#title': 'Advanced elements'
     '#open': true
+    color:
+      '#type': color
+      '#title': Color
     tel:
       '#type': tel
       '#title': Telephone
@@ -142,6 +128,7 @@ elements: |
     color:
       '#type': color
       '#title': Color
+  
 css: ''
 javascript: ''
 settings:
@@ -150,6 +137,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -172,15 +160,26 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
-  submission_login: false
-  submission_login_message: ''
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -189,7 +188,9 @@ settings:
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -219,9 +220,11 @@ settings:
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: null
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: null
   entity_limit_total_interval: null
   entity_limit_user: null

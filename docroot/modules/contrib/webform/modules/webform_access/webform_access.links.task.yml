@@ -1,0 +1,17 @@
+webform.config.webform_access:
+  title: 'Access'
+  route_name: entity.webform_access_group.collection
+  base_route: entity.webform.collection
+  weight: 40
+
+webform.config.webform_access_group:
+  title: 'Groups'
+  route_name: entity.webform_access_group.collection
+  parent_id: webform.config.webform_access
+  weight: 10
+
+webform.config.webform_access_type:
+  title: 'Types'
+  route_name: entity.webform_access_type.collection
+  parent_id: webform.config.webform_access
+  weight: 20

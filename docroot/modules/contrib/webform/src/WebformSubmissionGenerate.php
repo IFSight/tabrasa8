@@ -2,7 +2,6 @@
 
 namespace Drupal\webform;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -128,7 +127,7 @@ class WebformSubmissionGenerate implements WebformSubmissionGenerateInterface {
     }
     if ($maxlength) {
       foreach ($values as $index => $value) {
-        $values[$index] = Unicode::substr($value, 0, $maxlength);
+        $values[$index] = mb_substr($value, 0, $maxlength);
       }
     }
 

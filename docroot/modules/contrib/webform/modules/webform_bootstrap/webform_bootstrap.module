@@ -76,22 +76,17 @@ function webform_bootstrap_webform_element_alter(array &$element, FormStateInter
 
   // Tweak element types.
   if (isset($element['#type'])) {
-    switch ($element['#type']) {
-      case 'webform_checkboxes_other':
-      case 'webform_buttons':
-      case 'webform_buttons_other':
-      case 'webform_entity_checkboxes':
-      case 'webform_entity_radios':
-      case 'webform_radios_other':
-      case 'webform_select_other':
-      case 'webform_term_checkboxes':
-      case 'webform_toggles':
-        // Prevent elements that extend radios and checkboxes from being wrapped
-        // in a fieldset.
-        // @see \Drupal\bootstrap\Plugin\Alter\ElementInfo::alter
-        $element['#bootstrap_panel'] = FALSE;
-        break;
-
+    $element_info = \Drupal::service('element_info')->getInfo($element['#type']);
+    if (isset($element_info['#pre_render'])) {
+      foreach ($element_info['#pre_render'] as $pre_render) {
+        if (is_array($pre_render) && in_array($pre_render[1], ['preRenderCompositeFormElement', 'preRenderWebformCompositeFormElement'])) {
+          // Prevent elements that extend radios and checkboxes from being wrapped
+          // in a fieldset.
+          // @see \Drupal\bootstrap\Plugin\Alter\ElementInfo::alter
+          $element['#bootstrap_panel'] = FALSE;
+          break;
+        }
+      }
     }
   }
 }
@@ -104,11 +99,17 @@ function webform_bootstrap_js_alter(&$javascript, AttachedAssetsInterface $asset
     return;
   }
 
-  // Make sure jQuery tooltip is never loaded.
+  $path = drupal_get_path('module', 'webform_bootstrap');
+  // Make sure jQuery tooltip is never loaded and use custom
+  // webform.element.help.js.
   unset(
     $javascript['core/assets/vendor/jquery.ui/ui/tooltip-min.js'],
     $javascript['core/assets/vendor/jquery.ui/ui/widgets/tooltip-min.js']
   );
+
+  if (isset($javascript['modules/sandbox/webform/js/webform.element.help.js'])) {
+    $javascript['modules/sandbox/webform/js/webform.element.help.js']['data'] = $path . '/js/webform.element.help.js';
+  }
 }
 
 /**

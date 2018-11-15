@@ -43,6 +43,10 @@ webform_multiple_no_operations:
   - One
   - Two
   - Three
+webform_multiple_no_add_more:
+  - One
+  - Two
+  - Three
 webform_multiple_custom_label:
   - One
   - Two
@@ -112,7 +116,7 @@ webform_multiple_no_items: {  }");
     $this->assertRaw('<tr class="draggable odd" data-drupal-selector="edit-webform-multiple-default-items-0">');
     $this->assertRaw('<td><div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-webform-multiple-default-items-0--item- form-item-webform-multiple-default-items-0--item- form-no-label">');
     $this->assertRaw('<label for="edit-webform-multiple-default-items-0-item-" class="visually-hidden">Item value</label>');
-    $this->assertRaw('<input data-drupal-selector="edit-webform-multiple-default-items-0-item-" type="text" id="edit-webform-multiple-default-items-0-item-" name="webform_multiple_default[items][0][_item_]" value="One" size="60" maxlength="128" placeholder="Enter value" class="form-text" />');
+    $this->assertRaw('<input data-drupal-selector="edit-webform-multiple-default-items-0-item-" type="text" id="edit-webform-multiple-default-items-0-item-" name="webform_multiple_default[items][0][_item_]" value="One" size="60" maxlength="128" placeholder="Enter value…" class="form-text" />');
     $this->assertRaw('<td class="webform-multiple-table--weight"><div class="webform-multiple-table--weight js-form-item form-item js-form-type-number form-type-number js-form-item-webform-multiple-default-items-0-weight form-item-webform-multiple-default-items-0-weight form-no-label">');
     $this->assertRaw('<label for="edit-webform-multiple-default-items-0-weight" class="visually-hidden">Item weight</label>');
     $this->assertRaw('<input class="webform-multiple-sort-weight form-number" data-drupal-selector="edit-webform-multiple-default-items-0-weight" type="number" id="edit-webform-multiple-default-items-0-weight" name="webform_multiple_default[items][0][weight]" value="0" step="1" size="10" />');
@@ -122,6 +126,10 @@ webform_multiple_no_items: {  }");
     // Check that sorting is disabled.
     $this->assertNoRaw('<tr class="draggable odd" data-drupal-selector="edit-webform-multiple-no-sorting-items-0">');
     $this->assertRaw('<tr data-drupal-selector="edit-webform-multiple-no-sorting-items-0" class="odd">');
+
+    // Check that add more is removed.
+    $this->assertFieldByName('webform_multiple_no_operations[add][more_items]', '1');
+    $this->assertNoFieldByName('webform_multiple_no_add_more[add][more_items]', '1');
 
     // Check custom labels.
     $this->assertRaw('<input data-drupal-selector="edit-webform-multiple-custom-label-add-submit" formnovalidate="formnovalidate" type="submit" id="edit-webform-multiple-custom-label-add-submit" name="webform_multiple_custom_label_table_add" value="{add_more_button_label}" class="button js-form-submit form-submit" />');

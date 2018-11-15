@@ -27,6 +27,8 @@ class Radios extends OptionsBase {
       'options_description_display' => 'description',
       // iCheck settings.
       'icheck' => '',
+      // Wrapper.
+      'wrapper_type' => 'fieldset',
     ] + parent::getDefaultProperties();
   }
 

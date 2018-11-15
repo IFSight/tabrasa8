@@ -33,20 +33,20 @@ class WebformHandlerEmailRolesTest extends WebformTestBase {
     // creates 'administrator' role.
     // WORKAROUND: Create 'administrator' role so that SimpleTest and Drupal
     // are in-sync.
-    $this->createRole([], 'administrator');
+    $this->drupalCreateRole([], 'administrator');
 
     $webform = Webform::load('test_handler_email_roles');
 
-    $authenticated_user = $this->createUser();
+    $authenticated_user = $this->drupalCreateUser();
     $authenticated_user->set('mail', 'authenticated@example.com');
     $authenticated_user->save();
 
-    $blocked_user = $this->createUser();
+    $blocked_user = $this->drupalCreateUser();
     $blocked_user->set('mail', 'blocked@example.com');
     $blocked_user->block();
     $blocked_user->save();
 
-    $admin_user = $this->createUser();
+    $admin_user = $this->drupalCreateUser();
     $admin_user->set('mail', 'administrator@example.com');
     $admin_user->addRole('administrator');
     $admin_user->save();

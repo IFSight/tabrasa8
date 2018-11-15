@@ -2,13 +2,13 @@
 
 namespace Drupal\webform_ui\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Url;
 use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Form\WebformDialogFormTrait;
@@ -16,6 +16,7 @@ use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Utility\WebformYaml;
 use Drupal\webform\WebformEntityElementsValidatorInterface;
 use Drupal\webform\WebformInterface;
+use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -67,6 +68,13 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
   protected $elementsValidator;
 
   /**
+   * The token manager.
+   *
+   * @var \Drupal\webform\WebformTokenManagerInterface
+   */
+  protected $tokenManager;
+
+  /**
    * The webform.
    *
    * @var \Drupal\webform\WebformInterface
@@ -102,6 +110,13 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
   protected $originalType;
 
   /**
+   * The operation of the current webform.
+   *
+   * @var string
+   */
+  protected $operation;
+
+  /**
    * The action of the current webform.
    *
    * @var string
@@ -126,12 +141,15 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
    *   The webform element manager.
    * @param \Drupal\webform\WebformEntityElementsValidatorInterface $elements_validator
    *   Webform element validator.
+   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
+   *   The webform token manager.
    */
-  public function __construct(RendererInterface $renderer, EntityFieldManagerInterface $entity_field_manager, WebformElementManagerInterface $element_manager, WebformEntityElementsValidatorInterface $elements_validator) {
+  public function __construct(RendererInterface $renderer, EntityFieldManagerInterface $entity_field_manager, WebformElementManagerInterface $element_manager, WebformEntityElementsValidatorInterface $elements_validator, WebformTokenManagerInterface $token_manager) {
     $this->renderer = $renderer;
     $this->entityFieldManager = $entity_field_manager;
     $this->elementManager = $element_manager;
     $this->elementsValidator = $elements_validator;
+    $this->tokenManager = $token_manager;
   }
 
   /**
@@ -142,7 +160,8 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       $container->get('renderer'),
       $container->get('entity_field.manager'),
       $container->get('plugin.manager.webform.element'),
-      $container->get('webform.elements_validator')
+      $container->get('webform.elements_validator'),
+      $container->get('webform.token_manager')
     );
   }
 
@@ -200,7 +219,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
           '#type' => 'link',
           '#title' => $this->t('Cancel'),
           '#url' => new Url('entity.webform_ui.element.edit_form', $route_parameters),
-          '#attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button', 'button--small']),
+          '#attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button', 'button--small']),
         ];
         $form['properties']['element']['type']['#description'] = '(' . $this->t('Changing from %type', ['%type' => $original_webform_element->getPluginLabel()]) . ')';
       }
@@ -270,6 +289,21 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       '#button_type' => 'primary',
       '#_validate_form' => TRUE,
     ];
+    if ($this->operation === 'create' && $this->isAjax()) {
+      $form['actions']['save_add_element'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Save + Add element'),
+        '#_validate_form' => TRUE,
+      ];
+    }
+
+    // Add token links below the form and on every tab.
+    $form['token_tree_link'] = $this->tokenManager->buildTreeElement();
+    if ($form['token_tree_link']) {
+      $form['token_tree_link'] += [
+        '#weight' => 101,
+      ];
+    }
 
     $form = $this->buildDefaultValueForm($form, $form_state);
 
@@ -320,7 +354,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       $t_args = [':href' => Url::fromRoute('entity.webform.source_form', ['webform' => $webform->id()])->toString()];
       $form_state->setErrorByName('elements', $this->t('There has been error validating the elements. You may need to edit the <a href=":href">YAML source</a> to resolve the issue.', $t_args));
       foreach ($messages as $message) {
-        drupal_set_message($message, 'error');
+        $this->messenger()->addError($message);
       }
     }
   }
@@ -329,6 +363,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $op = $form_state->getValue('op');
     $parent_key = $form_state->getValue('parent_key');
     $key = $form_state->getValue('key');
 
@@ -354,18 +389,28 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       '%title' => (!empty($properties['title'])) ? $properties['title'] : $key,
       '@action' => $this->action,
     ];
-    drupal_set_message($this->t('%title has been @action.', $t_args));
+    $this->messenger()->addStatus($this->t('%title has been @action.', $t_args));
+
+    // Determine add element parent key.
+    $save_and_add_element = ($op == (string) $this->t('Save + Add element')) ? TRUE : FALSE;
+    $add_element = ($element_plugin->isContainer($this->getElement())) ? $key : $parent_key;
+    $add_element = $add_element ? Html::getClass($add_element) : '_root_';
 
     // Append ?update= to (redirect) destination.
     if ($this->requestStack->getCurrentRequest()->query->get('destination')) {
       $redirect_destination = $this->getRedirectDestination();
       $destination = $redirect_destination->get();
       $destination .= (strpos($destination, '?') !== FALSE ? '&' : '?') . 'update=' . $key;
+      $destination .= ($save_and_add_element) ? '&add_element=' . $add_element : '';
       $redirect_destination->set($destination);
     }
 
     // Still set the redirect URL just to be safe.
-    $form_state->setRedirectUrl($this->webform->toUrl('edit-form', ['query' => ['update' => $key]]));
+    $query = ['update' => $key];
+    if ($save_and_add_element) {
+      $query['add_element'] = $add_element;
+    }
+    $form_state->setRedirectUrl($this->webform->toUrl('edit-form', ['query' => $query]));
   }
 
   /**
@@ -459,13 +504,13 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
   /**
    * Get the default key for the current element.
    *
-   * Default key will be auto incremented when there are  duplicate keys.
+   * Default key will be auto incremented when there are duplicate keys.
    *
    * @return null|string
    *   An element's default key which will be incremented to prevent duplicate
    *   keys.
    */
-  protected function getDefaultKey() {
+  public function getDefaultKey() {
     $element_plugin = $this->getWebformElementPlugin();
     if (empty($element_plugin->getDefaultKey())) {
       return NULL;
@@ -537,9 +582,6 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       $form['properties']['#type'] = 'container';
       $form['properties']['#attributes']['style'] = 'display: none';
 
-      // Add tokens.
-      $form['token_tree_link'] = $form['properties']['token_tree_link'];
-
       // Disable client-side validation.
       $form['#attributes']['novalidate'] = TRUE;
 
@@ -547,10 +589,14 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       $form['actions']['submit'] = [
         '#type' => 'submit',
         '#value' => $this->t('Update default value'),
+        '#attributes' => ['data-hash' => 'webform-tab--advanced'],
         '#validate' => ['::validateDefaultValue'],
         '#submit' => ['::getDefaultValue'],
         '#button_type' => 'primary',
       ];
+
+      // Remove 'Save + Add element'.
+      unset($form['actions']['save_add_element']);
 
       if ($this->isAjax()) {
         $form['actions']['submit']['#ajax'] = [
@@ -601,7 +647,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
     $element_plugin = $this->getWebformElementPlugin();
     if (is_array($default_value)) {
       if ($element_plugin->isComposite()) {
-        $default_value = WebformYaml::tidy(Yaml::encode($default_value));
+        $default_value = WebformYaml::encode($default_value);
       }
       else {
         $default_value = implode(', ', $default_value);

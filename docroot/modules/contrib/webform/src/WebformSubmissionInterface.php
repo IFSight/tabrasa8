@@ -2,6 +2,7 @@
 
 namespace Drupal\webform;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\user\UserInterface;
@@ -240,6 +241,17 @@ interface WebformSubmissionInterface extends ContentEntityInterface, EntityOwner
   public function isSticky();
 
   /**
+   * Test whether the provided account is owner of this webform submission.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account whose ownership to test.
+   *
+   * @return bool
+   *   Whether the provided account is owner of this webform submission.
+   */
+  public function isOwner(AccountInterface $account);
+
+  /**
    * Checks submission notes.
    *
    * @return bool
@@ -334,7 +346,7 @@ interface WebformSubmissionInterface extends ContentEntityInterface, EntityOwner
   /**
    * Gets the webform submission's source entity.
    *
-   * @param boolean $translate
+   * @param bool $translate
    *   (optional) If TRUE the source entity will be translated.
    *
    * @return \Drupal\Core\Entity\EntityInterface|null
@@ -354,7 +366,7 @@ interface WebformSubmissionInterface extends ContentEntityInterface, EntityOwner
    * Gets the webform submission's secure tokenized URL.
    *
    * @return \Drupal\Core\Url
-   *   The the webform submission's secure tokenized URL.
+   *   The webform submission's secure tokenized URL.
    */
   public function getTokenUrl();
 
@@ -375,7 +387,7 @@ interface WebformSubmissionInterface extends ContentEntityInterface, EntityOwner
   public function invokeWebformElements($method);
 
   /**
-   * Convert anonymous submission to authenicated.
+   * Convert anonymous submission to authenticated.
    *
    * @param \Drupal\user\UserInterface $account
    *   An authenticated user account.

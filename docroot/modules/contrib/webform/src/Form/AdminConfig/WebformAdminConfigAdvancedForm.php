@@ -115,6 +115,13 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
       '#return_value' => TRUE,
       '#default_value' => $config->get('ui.details_save'),
     ];
+    $form['ui']['help_disabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Disable help'),
+      '#description' => $this->t('If checked, help text will be removed from every webform page and form.'),
+      '#return_value' => TRUE,
+      '#default_value' => $config->get('ui.help_disabled'),
+    ];
     $form['ui']['dialog_disabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Disable dialogs'),
@@ -128,7 +135,6 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
       '#description' => $this->t('If checked, all off-canvas system trays will be disabled.'),
       '#return_value' => TRUE,
       '#default_value' => $config->get('ui.offcanvas_disabled'),
-      '#access' => (floatval(\Drupal::VERSION) >= 8.5),
       '#states' => [
         'visible' => [
           ':input[name="ui[dialog_disabled]"]' => [
@@ -219,6 +225,7 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
       '#min' => 1,
       '#required' => TRUE,
       '#default_value' => $config->get('batch.default_batch_export_size'),
+      '#description' => $this->t('Batch export size is used when submissions are being exported/downloaded.'),
     ];
     $form['batch']['default_batch_update_size'] = [
       '#type' => 'number',
@@ -226,10 +233,12 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
       '#min' => 1,
       '#required' => TRUE,
       '#default_value' => $config->get('batch.default_batch_update_size'),
+      '#description' => $this->t('Batch update size is used when submissions are being bulk updated.'),
     ];
     $form['batch']['default_batch_delete_size'] = [
       '#type' => 'number',
       '#title' => $this->t('Batch delete size'),
+      '#description' => $this->t('Batch delete size is used when submissions are being cleared.'),
       '#min' => 1,
       '#required' => TRUE,
       '#default_value' => $config->get('batch.default_batch_delete_size'),
@@ -250,19 +259,33 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Update config and submit form.
     $config = $this->config('webform.settings');
     $config->set('ui', $form_state->getValue('ui'));
     $config->set('requirements', $form_state->getValue('requirements'));
     $config->set('test', $form_state->getValue('test'));
     $config->set('batch', $form_state->getValue('batch'));
-    $config->save();
 
-    // Clear render cache so that local tasks can be updated.
-    // @see webform_local_tasks_alter()
-    $this->renderCache->deleteAll();
-    $this->routerBuilder->rebuild();
+    // Track if help is disabled.
+    // @todo Figure out how to clear cached help block.
+    $is_help_disabled = ($config->getOriginal('ui.help_disabled') != $config->get('ui.help_disabled'));
 
     parent::submitForm($form, $form_state);
+
+    // Clear cached data.
+    if ($is_help_disabled) {
+      // Flush cache when help is being enabled.
+      // @see webform_help()
+      drupal_flush_all_caches();
+    }
+    else {
+      // Clear render cache so that local tasks can be updated to hide/show
+      // the 'Contribute' tab.
+      // @see webform_local_tasks_alter()
+      $this->renderCache->deleteAll();
+      $this->routerBuilder->rebuild();
+    }
+
   }
 
 }

@@ -11,6 +11,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -56,6 +57,7 @@ use Drupal\webform\WebformSubmissionInterface;
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/webform/manage/{webform}/submission/{webform_submission}",
+ *     "access-denied" = "/admin/structure/webform/manage/{webform}/submission/{webform_submission}/access-denied",
  *     "table" = "/admin/structure/webform/manage/{webform}/submission/{webform_submission}/table",
  *     "text" = "/admin/structure/webform/manage/{webform}/submission/{webform_submission}/text",
  *     "yaml" = "/admin/structure/webform/manage/{webform}/submission/{webform_submission}/yaml",
@@ -185,7 +187,7 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
 
     // Can't use entity reference without a target type because it defaults to
     // an integer which limits reference to only content entities (and not
-    // config entities like Views, Panels, etc...).
+    // config entities like Views, Panels, etc…).
     // @see \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem::propertyDefinitions()
     $fields['entity_id'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Submitted to: Entity ID'))
@@ -461,8 +463,10 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
    * {@inheritdoc}
    */
   public function getTokenUrl() {
-    return $this->getSourceUrl()
-      ->setOption('query', ['token' => $this->token->value]);
+    $uri = $this->getSourceUrl();
+    $options = $uri->getOptions();
+    $options['query']['token'] = $this->getToken();
+    return $uri->setOptions($options);
   }
 
   /**
@@ -555,6 +559,18 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
   /**
    * {@inheritdoc}
    */
+  public function isOwner(AccountInterface $account) {
+    if ($account->isAnonymous()) {
+      return !empty($_SESSION['webform_submissions']) && isset($_SESSION['webform_submissions'][$this->id()]);
+    }
+    else {
+      return $account->id() === $this->getOwnerId();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasNotes() {
     return $this->notes ? TRUE : FALSE;
   }
@@ -634,7 +650,7 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
 
     // Get temporary webform entity and store it in the static
     // WebformSubmission::$webform property.
-    // This could be reworked to use \Drupal\user\PrivateTempStoreFactory
+    // This could be reworked to use \Drupal\Core\TempStore\PrivateTempStoreFactory
     // but it might be overkill since we are just using this to validate
     // that a webform's elements can be rendered.
     // @see \Drupal\webform\WebformEntityElementsValidator::validateRendering()

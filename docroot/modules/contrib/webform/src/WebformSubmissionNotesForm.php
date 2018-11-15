@@ -29,8 +29,8 @@ class WebformSubmissionNotesForm extends ContentEntityForm {
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
-   * @param Drupal\webform\WebformRequestInterface $webform_request
-   *   The webform request.
+   * @param \Drupal\webform\WebformRequestInterface $webform_request
+   *   The webform request handler.
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
    *   The entity type bundle service.
    * @param \Drupal\Component\Datetime\TimeInterface $time
@@ -64,12 +64,12 @@ class WebformSubmissionNotesForm extends ContentEntityForm {
     list($webform_submission, $source_entity) = $this->requestHandler->getWebformSubmissionEntities();
 
     $form['navigation'] = [
-      '#theme' => 'webform_submission_navigation',
+      '#type' => 'webform_submission_navigation',
       '#webform_submission' => $webform_submission,
       '#access' => $this->isDialog() ? FALSE : TRUE,
     ];
     $form['information'] = [
-      '#theme' => 'webform_submission_information',
+      '#type' => 'webform_submission_information',
       '#webform_submission' => $webform_submission,
       '#source_entity' => $source_entity,
       '#access' => $this->isDialog() ? FALSE : TRUE,
@@ -97,17 +97,19 @@ class WebformSubmissionNotesForm extends ContentEntityForm {
       '#return_value' => TRUE,
       '#access' => $this->isDialog() ? FALSE : TRUE,
     ];
-    $form['uid'] = [
-      '#type' => 'entity_autocomplete',
-      '#title' => $this->t('Submitted by'),
-      '#description' => $this->t('The username of the user that submitted the webform.'),
-      '#target_type' => 'user',
-      '#selection_setttings' => [
-        'include_anonymous' => FALSE,
-      ],
-      '#required' => TRUE,
-      '#default_value' => $webform_submission->getOwner(),
-    ];
+    if ($this->currentUser()->hasPermission('administer users')) {
+      $form['uid'] = [
+        '#type' => 'entity_autocomplete',
+        '#title' => $this->t('Submitted by'),
+        '#description' => $this->t('The username of the user that submitted the webform.'),
+        '#target_type' => 'user',
+        '#selection_setttings' => [
+          'include_anonymous' => FALSE,
+        ],
+        '#required' => TRUE,
+        '#default_value' => $webform_submission->getOwner(),
+      ];
+    }
 
     $form['#attached']['library'][] = 'webform/webform.admin';
 
@@ -136,7 +138,7 @@ class WebformSubmissionNotesForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
-    drupal_set_message($this->t('Submission @sid notes saved.', ['@sid' => '#' . $this->entity->id()]));
+    $this->messenger()->addStatus($this->t('Submission @sid notes saved.', ['@sid' => '#' . $this->entity->id()]));
   }
 
   /**

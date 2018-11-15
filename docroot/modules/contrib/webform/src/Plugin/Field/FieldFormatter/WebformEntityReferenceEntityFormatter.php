@@ -2,6 +2,9 @@
 
 namespace Drupal\webform\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Serialization\Yaml;
@@ -9,6 +12,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\webform\Plugin\WebformSourceEntityManager;
 use Drupal\webform\WebformMessageManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -66,6 +70,8 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
    *   Third party settings.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -73,8 +79,8 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
    * @param \Drupal\webform\WebformMessageManagerInterface $message_manager
    *   The webform message manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, RendererInterface $renderer, RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, WebformMessageManagerInterface $message_manager) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $renderer);
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, RendererInterface $renderer, ConfigFactoryInterface $config_factory, RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, WebformMessageManagerInterface $message_manager) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $renderer, $config_factory);
 
     $this->routeMatch = $route_match;
     $this->entityTypeManager = $entity_type_manager;
@@ -94,6 +100,7 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
       $configuration['view_mode'],
       $configuration['third_party_settings'],
       $container->get('renderer'),
+      $container->get('config.factory'),
       $container->get('current_route_match'),
       $container->get('entity_type.manager'),
       $container->get('webform.message_manager')
@@ -122,11 +129,20 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $entity_type_definition = $this->entityTypeManager->getDefinition($this->fieldDefinition->getTargetEntityTypeId());
+    if ($this->fieldDefinition->getTargetEntityTypeId() === 'paragraph') {
+      $title = $this->t("Use this paragraph field's main entity as the webform submission's source entity.");
+      $description = $this->t("If unchecked, the current page's entity will be used as the webform submission's source entity.");
+    }
+    else {
+      $entity_type_definition = $this->entityTypeManager->getDefinition($this->fieldDefinition->getTargetEntityTypeId());
+      $title = $this->t("Use this field's %entity_type entity as the webform submission's source entity.", ['%entity_type' => $entity_type_definition->getLabel()]);
+      $description = $this->t("If unchecked, the current page's entity will be used as the webform submission's source entity. For example, if this webform was displayed on a node's page, the current node would be used as the webform submission's source entity.", ['%entity_type' => $entity_type_definition->getLabel()]);
+    }
+
     $form = parent::settingsForm($form, $form_state);
     $form['source_entity'] = [
-      '#title' => $this->t("Use this field's %entity_type entity as the webform submission's source entity.", ['%entity_type' => $entity_type_definition->getLabel()]),
-      '#description' => $this->t("If unchecked, the current page's entity will be used as the webform submission's source entity. For example, if this webform was displayed on a node's page, the current node would be used as the webform submission's source entity.", ['%entity_type' => $entity_type_definition->getLabel()]),
+      '#title' => $title,
+      '#description' => $description,
       '#type' => 'checkbox',
       '#return_type' => TRUE,
       '#default_value' => $this->getSetting('source_entity'),
@@ -138,20 +154,20 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+    // Get source entity.
     $source_entity = $items->getEntity();
-    $this->messageManager->setSourceEntity($source_entity);
+    $source_entity = WebformSourceEntityManager::getMainSourceEntity($source_entity);
 
-    // Determine if webform is previewed within a Paragraph on .edit_form.
-    $is_paragraph_edit_preview = ($source_entity->getEntityTypeId() === 'paragraph' && preg_match('/\.edit_form$/', $this->routeMatch->getRouteName())) ? TRUE : FALSE;
-
+    // Determine if webform is previewed within a Paragraph on .edit_form
+    // or .content_translation_add.
+    $route = $this->routeMatch->getRouteName();
+    $is_paragraph_edit_preview = ($source_entity->getEntityTypeId() === 'paragraph' &&
+      preg_match('/\.edit_form$/', $route)
+      || preg_match('/\.content_translation_add$/', $route)
+    ) ? TRUE : FALSE;
     $elements = [];
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $entity) {
-      // Do not display the webform if the current user can't
-      // create submissions.
-      if ($entity->id() && !$entity->access('submission_create')) {
-        $elements[$delta] = [];
-      }
-      elseif ($is_paragraph_edit_preview) {
+      if ($is_paragraph_edit_preview) {
         // Webform can not be nested within node edit form because the nested
         // <form> tags will cause unexpected validation issues.
         $elements[$delta] = [
@@ -161,21 +177,26 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
         ];
       }
       else {
-        $values = [];
-        if ($this->getSetting('source_entity')) {
-          $values += [
-            'entity_type' => $source_entity->getEntityTypeId(),
-            'entity_id' => $source_entity->id(),
-          ];
-        }
-        if (!empty($items[$delta]->default_data)) {
-          $values['data'] = Yaml::decode($items[$delta]->default_data);
-        }
-        $elements[$delta] = $entity->getSubmissionForm($values);
+        $elements[$delta] = [
+          '#type' => 'webform',
+          '#webform' => $entity,
+          '#default_data' => (!empty($items[$delta]->default_data)) ? Yaml::decode($items[$delta]->default_data) : [],
+          '#entity' => ($this->getSetting('source_entity')) ? $source_entity : NULL,
+        ];
       }
       $this->setCacheContext($elements[$delta], $entity, $items[$delta]);
     }
     return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function checkAccess(EntityInterface $entity) {
+    // Always allow access so that the Webform element can determine if the
+    // Webform is accessible or an access denied message should be displayed.
+    // @see \Drupal\webform\Element\Webform
+    return AccessResult::allowed();
   }
 
 }

@@ -22,20 +22,18 @@ class WebformImageSelectImagesTest extends WebformTestBase {
   public static $modules = ['webform_image_select', 'webform_image_select_test'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Tests webform image select images entity.
    */
   public function testWebformImageSelectImages() {
-    $this->drupalLogin($this->normalUser);
+    $normal_user = $this->drupalCreateUser();
+
+    $admin_user = $this->drupalCreateUser([
+      'administer webform',
+    ]);
+
+    /**************************************************************************/
+
+    $this->drupalLogin($normal_user);
 
     // Check get element images.
     $kittens = Yaml::decode("kitten_1:
@@ -102,7 +100,7 @@ dog_4:
     $this->assertResponse(403);
 
     // Check admin user access.
-    $this->drupalLogin($this->adminWebformUser);
+    $this->drupalLogin($admin_user);
     $this->drupalGet('admin/structure/webform/config/images/manage');
     $this->assertResponse(200);
     $this->drupalGet('admin/structure/webform/config/images/manage/add');

@@ -100,12 +100,16 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
 
     $header = $this->getTableHeader();
 
+    $elements = $this->getOrderableElements();
+
+    // Get (weight) delta parent options.
+    $delta = count($elements);
+    $parent_options = $this->getParentOptions($elements);
+
     // Build table rows for elements.
     $rows = [];
-    $elements = $this->getOrderableElements();
-    $delta = count($elements);
     foreach ($elements as $element) {
-      $rows[$element['#webform_key']] = $this->getElementRow($element, $delta);
+      $rows[$element['#webform_key']] = $this->getElementRow($element, $delta, $parent_options);
     }
 
     $form['webform_ui_elements'] = [
@@ -138,6 +142,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
 
     // Must preload libraries required by (modal) dialogs.
     WebformDialogHelper::attachLibraries($form);
+    $form['#attached']['library'][] = 'webform/webform.admin.tabledrag';
     $form['#attached']['library'][] = 'webform_ui/webform_ui';
 
     $form = parent::buildForm($form, $form_state);
@@ -169,12 +174,28 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
 
     // Validate parent key and add children to ordered elements.
     foreach ($webform_ui_elements as $key => $table_element) {
-      $parent_key = $table_element['parent_key'];
 
-      // Validate the parent key.
-      if ($parent_key && !isset($elements_flattened[$parent_key])) {
-        $form_state->setError($form['webform_ui_elements'], $this->t('Parent %parent_key does not exist.', ['%parent_key' => $parent_key]));
-        return;
+      // Validate parent key.
+      if ($parent_key = $table_element['parent_key']) {
+        // Validate missing parent key.
+        if (!isset($elements_flattened[$parent_key])) {
+          $form_state->setError($form['webform_ui_elements'][$key]['parent']['parent_key'], $this->t('Parent %parent_key does not exist.', ['%parent_key' => $parent_key]));
+          continue;
+        }
+
+        // Validate the parent keys and make sure there
+        // are no recursive parents.
+        $parent_keys = [$key];
+        $current_parent_key = $parent_key;
+        while ($current_parent_key) {
+          if (in_array($current_parent_key, $parent_keys)) {
+            $form_state->setError($form['webform_ui_elements'][$key]['parent']['parent_key'], $this->t('Parent %parent_key key is not valid.', ['%parent_key' => $parent_key]));
+            break;
+          }
+
+          $parent_keys[] = $current_parent_key;
+          $current_parent_key = (isset($webform_ui_elements[$current_parent_key]['parent_key'])) ? $webform_ui_elements[$current_parent_key]['parent_key'] : NULL;
+        }
       }
 
       // Set #required or remove the property.
@@ -191,6 +212,10 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
       $webform_ui_elements[$parent_key]['children'][$key] = $key;
     }
 
+    if ($form_state->hasAnyErrors()) {
+      return;
+    }
+
     // Rebuild elements to reflect new hierarchy.
     $elements_updated = [];
     // Preserve the original elements root properties.
@@ -205,6 +230,21 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
 
     // Update the webform's elements.
     $webform->setElements($elements_updated);
+
+    // Validate only elements required, hierarchy, and rendering.
+    $validate_options = [
+      'required' => TRUE,
+      'yaml' => FALSE,
+      'array' => FALSE,
+      'names' => FALSE,
+      'properties' => FALSE,
+      'submissions' => FALSE,
+      'hierarchy' => TRUE,
+      'rendering' => TRUE,
+    ];
+    if ($messages = $this->elementsValidator->validate($webform, $validate_options)) {
+      $form_state->setErrorByName(NULL, $this->t('There has been error validating the elements.'));
+    }
   }
 
   /**
@@ -222,7 +262,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     ];
     $t_args = ['%label' => $webform->label()];
     $this->logger('webform')->notice('Webform @label elements saved.', $context);
-    drupal_set_message($this->t('Webform %label elements saved.', $t_args));
+    $this->messenger()->addStatus($this->t('Webform %label elements saved.', $t_args));
   }
 
   /**
@@ -345,8 +385,14 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
       'data' => $this->t('Required'),
       'class' => ['webform-ui-element-required', RESPONSIVE_PRIORITY_LOW],
     ];
-    $header['weight'] = $this->t('Weight');
-    $header['parent'] = $this->t('Parent');
+    $header['weight'] = [
+      'data' => $this->t('Weight'),
+      'class' => ['webform-tabledrag-hide'],
+    ];
+    $header['parent'] = [
+      'data' => $this->t('Parent'),
+      'class' => ['webform-tabledrag-hide'],
+    ];
     $header['operations'] = [
       'data' => $this->t('Operations'),
       'class' => ['webform-ui-element-operations'],
@@ -355,17 +401,40 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
   }
 
   /**
+   * Get parent (container) elements as options.
+   *
+   * @param array $elements
+   *   A flattened array of elements.
+   *
+   * @return array
+   *   Parent (container) elements as options.
+   */
+  protected function getParentOptions(array $elements) {
+    $options = [];
+    foreach ($elements as $key => $element) {
+      $plugin_id = $this->elementManager->getElementPluginId($element);
+      $webform_element = $this->elementManager->createInstance($plugin_id);
+      if ($webform_element->isContainer($element)) {
+        $options[$key] = $element['#admin_title'] ?: $element['#title'];
+      }
+    }
+    return $options;
+  }
+
+  /**
    * Gets an row for a single element.
    *
    * @param array $element
    *   Webform element.
    * @param int $delta
-   *   The number of elements. @todo is this correct?
+   *   The number of elements.
+   * @param array $parent_options
+   *   An associative array of parent (container) options.
    *
    * @return array
    *   The row for the element.
    */
-  protected function getElementRow(array $element, $delta) {
+  protected function getElementRow(array $element, $delta, array $parent_options) {
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = $this->getEntity();
 
@@ -374,7 +443,8 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     $element_state_options = OptGroup::flattenOptions(WebformElementStates::getStateOptions());
     $element_dialog_attributes = WebformDialogHelper::getOffCanvasDialogAttributes();
     $key = $element['#webform_key'];
-
+    $title = $element['#admin_title'] ?: $element['#title'];
+    $title = (is_array($title)) ? $this->renderer->render($title) : $title;
     $plugin_id = $this->elementManager->getElementPluginId($element);
 
     /** @var \Drupal\webform\Plugin\WebformElementInterface $webform_element */
@@ -475,16 +545,20 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
           ['webform' => $webform->id(), 'key' => $key]
         ),
         '#attributes' => $element_dialog_attributes + [
-            // Add custom hash to current page's location.
-            // @see Drupal.behaviors.webformAjaxLink
-            'data-hash' => 'webform-tab--conditions',
-          ],
+          // Add custom hash to current page's location.
+          // @see Drupal.behaviors.webformAjaxLink
+          'data-hash' => 'webform-tab--conditions',
+          'title' => $this->t('Edit @states conditional', ['@states' => implode('; ', $states)]),
+          'aria-label' => $this->t('Edit @states conditional', ['@states' => implode('; ', $states)]),
+        ],
       ];
     }
 
     if ($webform_element->hasProperty('required')) {
       $row['required'] = [
         '#type' => 'checkbox',
+        '#title' => $this->t('Required for @title', ['@title' => $title]),
+        '#title_display' => 'invisible',
         '#default_value' => (empty($element['#required'])) ? FALSE : TRUE,
       ];
     }
@@ -494,15 +568,19 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
 
     $row['weight'] = [
       '#type' => 'weight',
-      '#title' => $this->t('Weight for ID @id', ['@id' => $key]),
+      '#title' => $this->t('Weight for @title', ['@title' => $title]),
       '#title_display' => 'invisible',
       '#default_value' => $element['#weight'],
+      '#wrapper_attributes' => ['class' => ['webform-tabledrag-hide']],
       '#attributes' => [
         'class' => ['row-weight'],
       ],
       '#delta' => $delta,
     ];
 
+    $row['parent'] = [
+      '#wrapper_attributes' => ['class' => ['webform-tabledrag-hide']],
+    ];
     $row['parent']['key'] = [
       '#parents' => ['webform_ui_elements', $key, 'key'],
       '#type' => 'hidden',
@@ -511,18 +589,30 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
         'class' => ['row-key'],
       ],
     ];
-    $row['parent']['parent_key'] = [
-      '#parents' => ['webform_ui_elements', $key, 'parent_key'],
-      '#type' => 'textfield',
-      '#size' => 20,
-      '#title' => $this->t('Parent'),
-      '#title_display' => 'invisible',
-      '#default_value' => $element['#webform_parent_key'],
-      '#attributes' => [
-        'class' => ['row-parent-key'],
-        'readonly' => 'readonly',
-      ],
-    ];
+    if ($parent_options) {
+      $row['parent']['parent_key'] = [
+        '#parents' => ['webform_ui_elements', $key, 'parent_key'],
+        '#type' => 'select',
+        '#options' => $parent_options,
+        '#empty_option' => '',
+        '#title' => $this->t('Parent element @title', ['@title' => $title]),
+        '#title_display' => 'invisible',
+        '#default_value' => $element['#webform_parent_key'],
+        '#attributes' => [
+          'class' => ['row-parent-key'],
+        ],
+      ];
+    }
+    else {
+      $row['parent']['parent_key'] = [
+        '#parents' => ['webform_ui_elements', $key, 'parent_key'],
+        '#type' => 'hidden',
+        '#default_value' => '',
+        '#attributes' => [
+          'class' => ['row-parent-key'],
+        ],
+      ];
+    }
 
     $row['operations'] = [
       '#type' => 'operations',
@@ -606,8 +696,8 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
       $row['conditions'] = ['#markup' => ''];
     }
     $row['required'] = ['#markup' => ''];
-    $row['weight'] = ['#markup' => ''];
-    $row['parent'] = ['#markup' => ''];
+    $row['weight'] = ['#markup' => '', '#wrapper_attributes' => ['class' => ['webform-tabledrag-hide']]];
+    $row['parent'] = ['#markup' => '', '#wrapper_attributes' => ['class' => ['webform-tabledrag-hide']]];
     $row['operations'] = [
       '#type' => 'operations',
       '#prefix' => '<div class="webform-dropbutton">',

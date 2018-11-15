@@ -27,20 +27,23 @@ class WebformOptionsTest extends WebformTestBase {
   protected static $testWebforms = ['test_options'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Tests webform options entity.
    */
   public function testWebformOptions() {
-    $this->drupalLogin($this->normalUser);
+    $normal_user = $this->drupalCreateUser();
+
+    $admin_user = $this->drupalCreateUser([
+      'access site reports',
+      'administer site configuration',
+      'administer webform',
+      'access webform submission log',
+      'create webform',
+      'administer users',
+    ]);
+
+    /**************************************************************************/
+
+    $this->drupalLogin($normal_user);
 
     // Check get element options.
     $yes_no_options = ['Yes' => 'Yes', 'No' => 'No'];
@@ -122,7 +125,7 @@ class WebformOptionsTest extends WebformTestBase {
     $this->assertResponse(403);
 
     // Check admin user access.
-    $this->drupalLogin($this->adminWebformUser);
+    $this->drupalLogin($admin_user);
     $this->drupalGet('admin/structure/webform/config/options/manage');
     $this->assertResponse(200);
     $this->drupalGet('admin/structure/webform/config/options/manage/add');

@@ -21,10 +21,11 @@ entity.node.webform.confirmation:
     _custom_access: '\Drupal\webform_node\Access\WebformNodeAccess::checkWebformAccess'
 
 entity.node.webform.user.submissions:
-  path: '/node/{node}/webform/submissions'
+  path: '/node/{node}/webform/submissions/{submission_view}'
   defaults:
     _entity_list: 'webform_submission'
     _title: 'Submissions'
+    submission_view: ''
     operation: ''
     entity_access: 'webform.submission_view_own'
   options:
@@ -35,10 +36,11 @@ entity.node.webform.user.submissions:
     _custom_access: '\Drupal\webform_node\Access\WebformNodeAccess::checkWebformAccess'
 
 entity.node.webform.user.drafts:
-  path: '/node/{node}/webform/drafts'
+  path: '/node/{node}/webform/drafts/{submission_view}'
   defaults:
     _entity_list: 'webform_submission'
     _title: 'Drafts'
+    submission_view: ''
     operation: view
     entity_access: 'webform.submission_create'
   options:
@@ -121,10 +123,11 @@ entity.node.webform.test_form:
     _custom_access: '\Drupal\webform_node\Access\WebformNodeAccess::checkWebformAccess'
 
 entity.node.webform.results_submissions:
-  path: '/node/{node}/webform/results/submissions'
+  path: '/node/{node}/webform/results/submissions/{submission_view}'
   defaults:
     _entity_list: 'webform_submission'
     _title_callback: '\Drupal\Core\Entity\Controller\EntityController::title'
+    submission_view: ''
     operation: webform_submission_view
     entity_access: 'webform.submission_view_any'
   options:

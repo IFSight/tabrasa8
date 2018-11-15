@@ -52,6 +52,14 @@ webform_image_select_element_images_custom:
   kitten_4:
     text: 'Cute Kitten 4'
     src: 'http://placekitten.com/270/200'");
+
+    // Check unique key validation with image src.
+    $edit = [
+      'webform_image_select_images[images][items][0][src]' => 'src01',
+      'webform_image_select_images[images][items][1][src]' => 'src02',
+    ];
+    $this->drupalPostForm('webform/test_element_images', $edit, t('Submit'));
+    $this->assertRaw("The <em class=\"placeholder\">Image value</em> '' is already in use. It must be unique.");
   }
 
 }

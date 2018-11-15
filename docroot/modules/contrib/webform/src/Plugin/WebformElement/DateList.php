@@ -258,20 +258,20 @@ class DateList extends DateBase {
     // the $form_state.
     $temp_form_state = clone $form_state;
 
-    // Clear error to ensure that we only capture datelist validation errors.
-    $temp_form_state->clearErrors();
-
     // Validate the date list element.
     DatelistElement::validateDatelist($element, $temp_form_state, $complete_form);
 
     // Copy $temp_form_state errors to $form_state error and alter
     // override default required error message is applicable.
+    $original_errors = $form_state->getErrors();
     $errors = $temp_form_state->getErrors();
     foreach ($errors as $name => $message) {
-      if ($message instanceof TranslatableMarkup && $message->getUntranslatedString() === "The %field date is required.") {
-        $message = $element['#required_error'];
+      if (empty($original_errors[$name])) {
+        if ($message instanceof TranslatableMarkup && $message->getUntranslatedString() === "The %field date is required.") {
+          $message = $element['#required_error'];
+        }
+        $form_state->setErrorByName($name, $message);
       }
-      $form_state->setErrorByName($name, $message);
     }
   }
 

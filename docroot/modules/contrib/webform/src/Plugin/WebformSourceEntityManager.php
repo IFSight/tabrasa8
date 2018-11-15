@@ -4,6 +4,7 @@ namespace Drupal\webform\Plugin;
 
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
@@ -38,6 +39,47 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
   /**
    * {@inheritdoc}
    */
+  protected function alterDefinitions(&$definitions) {
+    // Unset elements that are missing target element or dependencies.
+    foreach ($definitions as $element_key => $element_definition) {
+      // Check element's (module) dependencies exist.
+      foreach ($element_definition['dependencies'] as $dependency) {
+        if (!$this->moduleHandler->moduleExists($dependency)) {
+          unset($definitions[$element_key]);
+          continue;
+        }
+      }
+    }
+
+    // Additionally sort by weight so we always have them sorted in proper
+    // order.
+    uasort($definitions, [SortArray::class, 'sortByWeightElement']);
+
+    parent::alterDefinitions($definitions);
+  }
+
+  /**
+   * Get the main source entity. Applies to only paragraphs.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $source_entity
+   *   A source entity.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   The main source entity.
+   *
+   * @see \Drupal\webform\Plugin\Field\FieldFormatter\WebformEntityReferenceEntityFormatter::viewElements
+   * @see \Drupal\webform\Plugin\WebformSourceEntity\QueryStringWebformSourceEntity::getSourceEntity
+   */
+  public static function getMainSourceEntity(EntityInterface $source_entity) {
+    while ($source_entity->getEntityTypeId() === 'paragraph') {
+      $source_entity = $source_entity->getParentEntity();
+    }
+    return $source_entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSourceEntity($ignored_types = []) {
     if (!is_array($ignored_types)) {
       $ignored_types = [$ignored_types];
@@ -53,17 +95,6 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
     }
 
     return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function alterDefinitions(&$definitions) {
-    parent::alterDefinitions($definitions);
-
-    // Additionally sort by weight so we always have them sorted in proper
-    // order.
-    uasort($definitions, [SortArray::class, 'sortByWeightElement']);
   }
 
 }

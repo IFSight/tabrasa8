@@ -3,6 +3,7 @@
 namespace Drupal\webform_scheduled_email;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Delete as QueryDelete;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,6 +22,13 @@ use Psr\Log\LoggerInterface;
 class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterface {
 
   use StringTranslationTrait;
+
+  /**
+   * The time service.
+   *
+   * @var \Drupal\Component\Datetime\TimeInterface
+   */
+  protected $time;
 
   /**
    * The database connection.
@@ -67,18 +75,21 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
   /**
    * Constructs a WebformScheduledEmailManager object.
    *
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration object factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.
    */
-  public function __construct(Connection $database, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, WebformTokenManagerInterface $token_manager) {
+  public function __construct(TimeInterface $time, Connection $database, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, WebformTokenManagerInterface $token_manager) {
+    $this->time = $time;
     $this->database = $database;
     $this->configFactory = $config_factory;
     $this->webformStorage = $entity_type_manager->getStorage('webform');
@@ -178,6 +189,12 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       if (!in_array($state, $handler_configuration['settings']['states']) && $handler_configuration['settings']['unschedule']) {
         $this->unschedule($webform_submission, $handler_id);
         return self::EMAIL_UNSCHEDULED;
+      }
+
+      // Check if action should be triggered in the past.
+      if (!empty($handler_configuration['settings']['ignore_past']) && $send_timestamp < $this->time->getRequestTime()) {
+        $this->unschedule($webform_submission, $handler_id);
+        return self::EMAIL_IGNORED;
       }
 
       // Check recipient.
@@ -433,6 +450,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       self::EMAIL_UNSCHEDULED => $this->t('unscheduled'),
       self::EMAIL_SENT => $this->t('sent'),
       self::EMAIL_NOT_SENT => $this->t('not sent'),
+      self::EMAIL_SKIPPED => $this->t('skipped'),
     ];
     $summary = [];
     foreach ($stats as $type => $total) {
@@ -566,6 +584,7 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
     $stats = [
       self::EMAIL_SENT => 0,
       self::EMAIL_NOT_SENT => 0,
+      self::EMAIL_SKIPPED => 0,
     ];
     if (empty($limit)) {
       return $stats;
@@ -613,18 +632,24 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
         continue;
       }
 
-      // Get and send message.
-      $message = $handler->getMessage($webform_submission);
-      $status = $handler->sendMessage($webform_submission, $message);
-
-      $action = ($status) ? $this->t('sent') : $this->t('not sent');
+      if (!$handler->checkConditions($webform_submission)) {
+        // Skip sending email.
+        $action = $this->t('skipped (conditions not met)');
+        $stat = self::EMAIL_SKIPPED;
+      }
+      else {
+        $message = $handler->getMessage($webform_submission);
+        $status = $handler->sendMessage($webform_submission, $message);
+        $action = ($status) ? $this->t('sent') : $this->t('not sent');
+        $stat = ($status) ? self::EMAIL_SENT : self::EMAIL_NOT_SENT;
+      }
 
       // Log scheduled email sent to submission log table.
       if ($webform->hasSubmissionLog()) {
         $t_args = ['@action' => $action, '@handler' => $handler->label()];
         $this->submissionStorage->log($webform_submission, [
           'handler_id' => $handler_id,
-          'operation' => 'scheduled email sent',
+          'operation' => 'scheduled email skipped',
           'message' => $this->t('Scheduled email @action for @handler handler.', $t_args),
         ]);
       }
@@ -638,7 +663,8 @@ class WebformScheduledEmailManager implements WebformScheduledEmailManagerInterf
       ];
       $this->logger->notice('%submission: Scheduled email @action for %handler handler.', $context);
 
-      $stats[$stats ? self::EMAIL_SENT : self::EMAIL_NOT_SENT]++;
+      // Increment stat.
+      $stats[$stat]++;
     }
 
     // Delete sent emails from table.

@@ -47,7 +47,7 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
 
     $elements = $webform->getElementsDecoded();
     if (!empty($elements['#method'])) {
-      drupal_set_message($this->t('Form is being posted using a custom method. Confirmation page must be handled by the <a href=":href">custom form action</a>.', [':href' => $webform->toUrl('settings-form')->toString()]), 'warning');
+      $this->messenger()->addWarning($this->t('Form is being posted using a custom method. Confirmation page must be handled by the <a href=":href">custom form action</a>.', [':href' => $webform->toUrl('settings-form')->toString()]));
       return $form;
     }
 
@@ -71,7 +71,7 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
     $form['confirmation_type']['ajax_confirmation'] = [
       '#type' => 'webform_message',
       '#message_type' => 'warning',
-      '#message_message' => $this->t("Only 'Inline', 'Message', and 'Modal' confirmation types are fully supported by Ajax."),
+      '#message_message' => $this->t("Only 'Inline', 'Message', 'Modal', and 'None' confirmation types are fully supported by Ajax."),
       '#access' => $settings['ajax'],
       '#states' => [
         'invisible' => [
@@ -80,6 +80,8 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
           [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_MESSAGE]],
           'or',
           [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_MODAL]],
+          'or',
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_NONE]],
         ],
       ],
     ];
@@ -93,6 +95,7 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
         WebformInterface::CONFIRMATION_MODAL => $this->t('Modal (reloads the current page/form and displays the confirmation message in a modal dialog)'),
         WebformInterface::CONFIRMATION_URL => $this->t('URL (redirects to a custom path or URL)'),
         WebformInterface::CONFIRMATION_URL_MESSAGE => $this->t('URL with message (redirects to a custom path or URL and displays the confirmation message at the top of the page)'),
+        WebformInterface::CONFIRMATION_NONE => $this->t('None (reloads the current page and does not display a confirmation message)'),
       ],
       '#default_value' => $settings['confirmation_type'],
     ];
@@ -144,7 +147,7 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
       '#default_value' => $settings['confirmation_exclude_token'],
       '#access' => !$webform->isResultsDisabled(),
     ];
-    $form['confirmation_url']['token_tree_link'] = $this->tokenManager->buildTreeLink(
+    $form['confirmation_url']['token_tree_link'] = $this->tokenManager->buildTreeElement(
       ['webform', 'webform_submission', 'webform_handler'],
       $this->t('You may use tokens to pass query string parameters. Make sure all tokens include the urlencode suffix. (i.e. [webform-submission:values:email:urlencode])')
     );
@@ -156,7 +159,9 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
       '#open' => TRUE,
       '#states' => [
         'invisible' => [
-          ':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_URL],
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_URL]],
+          'or',
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_NONE]],
         ],
       ],
     ];
@@ -180,11 +185,13 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
       '#default_value' => $settings['confirmation_message'],
       '#states' => [
         'invisible' => [
-          ':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_URL],
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_URL]],
+          'or',
+          [':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_NONE]],
         ],
       ],
     ];
-    $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Attributes.
     $form['confirmation_attributes_container'] = [
@@ -248,7 +255,19 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
       '#classes' => $this->config('webform.settings')->get('settings.confirmation_back_classes'),
       '#default_value' => $settings['confirmation_back_attributes'],
     ];
-    $form['back']['back_container']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['back']['back_container']['token_tree_link'] = $this->tokenManager->buildTreeElement();
+
+    // None.
+    $form['confirmation_type']['none'] = [
+      '#type' => 'webform_message',
+      '#message_type' => 'warning',
+      '#message_message' => $this->t('This setting assumes that a webform handler will manage the displaying of a confirmation message.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_NONE],
+        ],
+      ],
+    ];
 
     $this->tokenManager->elementValidate($form);
 

@@ -22,25 +22,16 @@ class WebformSubmissionApiTest extends WebformTestBase {
   protected static $testWebforms = ['test_form_wizard_advanced', 'test_form_limit'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Test webform API.
    */
   public function testApi() {
+    $normal_user = $this->drupalCreateUser();
+
+    $contact_webform = Webform::load('contact');
 
     /**************************************************************************/
     // Basic form.
     /**************************************************************************/
-
-    $contact_webform = Webform::load('contact');
 
     // Check submitting a simple webform.
     $values = [
@@ -149,14 +140,14 @@ class WebformSubmissionApiTest extends WebformTestBase {
     WebformElementHelper::convertRenderMarkupToStrings($errors);
     // $this->debug($errors);
     $this->assertEqual($errors, [
-        'gender' => 'An illegal choice has been detected. Please contact the site administrator.',
+      'gender' => 'An illegal choice has been detected. Please contact the site administrator.',
     ]);
 
     /**************************************************************************/
     // Submission limit form.
     /**************************************************************************/
 
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
 
     $test_form_limit_webform = Webform::load('test_form_limit');
 
@@ -190,7 +181,7 @@ class WebformSubmissionApiTest extends WebformTestBase {
     // Check form closed message.
     $test_form_limit_webform->setStatus(FALSE)->save();
     $result = WebformSubmissionForm::isOpen($test_form_limit_webform);
-    $this->assertEqual($result['#markup'], 'Sorry...This form is closed to new submissions.');
+    $this->assertEqual($result['#markup'], 'Sorry…This form is closed to new submissions.');
   }
 
 }

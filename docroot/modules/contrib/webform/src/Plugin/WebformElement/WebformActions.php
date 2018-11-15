@@ -29,9 +29,7 @@ class WebformActions extends ContainerBase {
       'title' => '',
       // Attributes.
       'attributes' => [],
-      // Conditional logic.
-      'states' => [],
-    ];
+    ] + $this->getDefaultBaseProperties();
     foreach (WebformActionsElement::$buttons as $button) {
       $properties[$button . '_hide'] = FALSE;
       $properties[$button . '__label'] = '';
@@ -226,11 +224,17 @@ class WebformActions extends ContainerBase {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
-    /** @var \Drupal\webform\WebformInterface $webform */
-    $webform = $form_state->getFormObject()->getWebform();
+    /** @var \Drupal\webform_ui\Form\WebformUiElementEditForm $form_object */
+    $form_object = $form_state->getFormObject();
 
-    if (!$webform->hasActions()) {
-      $form['element']['title']['#default_value'] = $this->t('Submit button(s)');
+    if (!$form_object->getWebform()->hasActions()) {
+      $form['element']['title']['#default_value'] = (string) $this->t('Submit button(s)');
+    }
+
+    // Hide element settings for default 'actions' to prevent UX confusion.
+    $key = $form_object->getKey() ?: $form_object->getDefaultKey();
+    if ($key === 'actions') {
+      $form['element']['#access'] = FALSE;
     }
 
     return $form;

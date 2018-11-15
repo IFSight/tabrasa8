@@ -59,11 +59,11 @@ services:
 
   webform.message_manager:
     class: Drupal\webform\WebformMessageManager
-    arguments: ['@current_user', '@config.factory', '@entity_type.manager', '@logger.channel.webform', '@renderer', '@webform.request', '@webform.token_manager']
+    arguments: ['@current_user', '@config.factory', '@entity_type.manager', '@logger.channel.webform', '@renderer', '@messenger', '@webform.request', '@webform.token_manager']
 
   webform.translation_manager:
     class: Drupal\webform\WebformTranslationManager
-    arguments: ['@language_manager', '@config.factory', '@plugin.manager.webform.element']
+    arguments: ['@current_route_match', '@language_manager', '@config.factory', '@messenger', '@plugin.manager.webform.element']
 
   webform.request:
     class: Drupal\webform\WebformRequest
@@ -83,11 +83,15 @@ services:
 
   webform.token_manager:
     class: Drupal\webform\WebformTokenManager
-    arguments: ['@current_user', '@config.factory', '@module_handler', '@token']
+    arguments: ['@current_user', '@language_manager', '@config.factory', '@module_handler', '@token']
 
   webform.theme_manager:
     class: Drupal\webform\WebformThemeManager
-    arguments: ['@config.factory', '@renderer', '@theme.manager', '@theme.initialization']
+    arguments: ['@config.factory', '@renderer', '@theme.manager', '@theme_handler', '@theme.initialization']
+
+  webform.access_rules_manager:
+    class: Drupal\webform\WebformAccessRulesManager
+    arguments: ['@module_handler']
 
   webform_submission.conditions_validator:
     class: Drupal\webform\WebformSubmissionConditionsValidator
@@ -103,9 +107,9 @@ services:
 
   # Event subscriber.
 
-  webform.event_subscriber:
-    class: Drupal\webform\EventSubscriber\WebformSubscriber
-    arguments: ['@current_user', '@config.factory', '@renderer', '@redirect.destination', '@webform.token_manager']
+  webform.exception_html_subscriber:
+    class: Drupal\webform\EventSubscriber\WebformExceptionHtmlSubscriber
+    arguments: ['@http_kernel', '@logger.channel.php', '@redirect.destination', '@router.no_access_checks', '@current_user', '@config.factory', '@renderer', '@messenger', '@webform.token_manager']
     tags:
       - { name: event_subscriber }
 

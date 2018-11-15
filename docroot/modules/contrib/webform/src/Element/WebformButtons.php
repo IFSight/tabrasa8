@@ -22,14 +22,7 @@ class WebformButtons extends Radios {
     $element['#attributes']['class'][] = 'webform-buttons';
     $element['#options_display'] = 'side_by_side';
 
-    if (floatval(\Drupal::VERSION) < 8.4) {
-      // Buttonset is deprecated jQueryUI 1.12
-      // https://api.jqueryui.com/buttonset/
-      $element['#attached']['library'][] = 'webform/webform.element.buttons.buttonset';
-    }
-    else {
-      $element['#attached']['library'][] = 'webform/webform.element.buttons.checkboxradio';
-    }
+    $element['#attached']['library'][] = 'webform/webform.element.buttons';
 
     return $element;
   }

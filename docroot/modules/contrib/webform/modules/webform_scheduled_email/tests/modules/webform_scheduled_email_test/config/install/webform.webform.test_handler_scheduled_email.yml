@@ -8,6 +8,7 @@ dependencies:
     - webform_scheduled_email
 open: null
 close: null
+weight: 0
 uid: null
 template: false
 archive: false
@@ -16,6 +17,9 @@ title: 'Test: Handler: Test scheduled email'
 description: 'Test webform schedule email handler.'
 category: null
 elements: |
+  value:
+    '#type': textfield
+    '#title': value
   send:
     '#type': radios
     '#title': Send
@@ -25,7 +29,7 @@ elements: |
       last_year: 'Last year'
       draft_reminder: 'Draft reminder (+14 days)'
       broken: Broken
-      other: Other...
+      other: Other…
   date:
     '#type': datetime
     '#title': Date
@@ -35,6 +39,7 @@ elements: |
       visible:
         ':input[name="send"]':
           value: other
+  
 css: ''
 javascript: ''
 settings:
@@ -43,6 +48,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -65,16 +71,26 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: true
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
   submission_user_duplicate: false
-  submission_login: false
-  submission_login_message: ''
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -83,7 +99,9 @@ settings:
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -113,9 +131,11 @@ settings:
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: null
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: null
   entity_limit_total_interval: null
   entity_limit_user: null
@@ -198,6 +218,7 @@ handlers:
       exclude_empty_checkbox: false
       html: true
       attachments: false
+      theme_name: ''
       twig: false
       debug: true
       reply_to: ''
@@ -207,6 +228,7 @@ handlers:
       send: '[webform_submission:completed:html_date]'
       days: 1
       unschedule: false
+      ignore_past: false
   yesterday:
     id: scheduled_email
     label: Yesterday
@@ -237,6 +259,7 @@ handlers:
       html: true
       attachments: false
       twig: false
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -245,6 +268,7 @@ handlers:
       send: '[webform_submission:completed:html_date]'
       days: -1
       unschedule: false
+      ignore_past: false
   last_year:
     id: scheduled_email
     label: 'Last year'
@@ -275,6 +299,7 @@ handlers:
       html: true
       attachments: false
       twig: false
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -283,6 +308,7 @@ handlers:
       send: '2016-01-01'
       days: 0
       unschedule: false
+      ignore_past: true
   broken:
     id: scheduled_email
     label: Broken
@@ -313,6 +339,7 @@ handlers:
       html: true
       attachments: false
       twig: false
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -321,6 +348,7 @@ handlers:
       send: '[broken]'
       days: 0
       unschedule: false
+      ignore_past: false
   other:
     id: scheduled_email
     label: Other
@@ -353,6 +381,7 @@ handlers:
       html: true
       attachments: false
       twig: false
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -361,6 +390,7 @@ handlers:
       send: '[webform_submission:values:date:html_date]'
       days: 14
       unschedule: false
+      ignore_past: false
   draft_reminder:
     id: scheduled_email
     label: 'Draft reminder'
@@ -391,6 +421,7 @@ handlers:
       html: true
       attachments: false
       twig: false
+      theme_name: ''
       debug: true
       reply_to: ''
       return_path: ''
@@ -399,3 +430,4 @@ handlers:
       send: '[date:html_date]'
       days: 14
       unschedule: true
+      ignore_past: false

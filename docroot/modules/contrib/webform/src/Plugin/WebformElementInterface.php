@@ -259,6 +259,17 @@ interface WebformElementInterface extends PluginInspectionInterface, PluginFormI
   public function hasMultipleValues(array $element);
 
   /**
+   * Determine if the element is or includes a managed_file upload element.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return bool
+   *   TRUE if the element is or includes a managed_file upload element.
+   */
+  public function hasManagedFiles(array $element);
+
+  /**
    * Retrieves the default properties for the defined element type.
    *
    * @return array
@@ -335,7 +346,7 @@ interface WebformElementInterface extends PluginInspectionInterface, PluginFormI
    * @return bool
    *   TRUE is the element can be accessed by the user.
    *
-   * @see \Drupal\webform\Entity\Webform::checkAccessRules
+   * @see \Drupal\webform\WebformAccessRulesManagerInterface::checkWebformAccess
    */
   public function checkAccessRules($operation, array $element, AccountInterface $account = NULL);
 
@@ -566,6 +577,19 @@ interface WebformElementInterface extends PluginInspectionInterface, PluginFormI
    *   An element's format name.
    */
   public function getItemsFormat(array $element);
+
+  /**
+   * Checks if an empty element is excluded.
+   *
+   * @param array $element
+   *   An element.
+   * @param array $options
+   *   An array of options.
+   *
+   * @return bool
+   *   TRUE if an empty element is excluded.
+   */
+  public function isEmptyExcluded(array $element, array $options);
 
   /****************************************************************************/
   // Preview method.

@@ -62,6 +62,6 @@
         $input.timepicker(options);
       });
     }
-  }
+  };
 
 })(jQuery, Drupal);

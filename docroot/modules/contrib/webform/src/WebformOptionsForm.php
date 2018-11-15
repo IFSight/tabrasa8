@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\webform\Entity\WebformOptions;
 use Drupal\webform\Utility\WebformArrayHelper;
+use Drupal\webform\Utility\WebformDialogHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 
 /**
@@ -30,7 +31,7 @@ class WebformOptionsForm extends EntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\webform\WebformOptionsInterface $webform */
+    /** @var \Drupal\webform\WebformOptionsInterface $webform_options */
     $webform_options = $this->getEntity();
 
     // Customize title for duplicate and edit operation.
@@ -40,6 +41,7 @@ class WebformOptionsForm extends EntityForm {
         break;
 
       case 'edit':
+      case 'source':
         $form['#title'] = $webform_options->label();
         break;
     }
@@ -102,10 +104,10 @@ class WebformOptionsForm extends EntityForm {
         '@module' => new PluralTranslatableMarkup(count($module_names), $this->t('module'), $this->t('modules')),
       ];
       if (empty($webform_options->get('options'))) {
-        drupal_set_message($this->t('The %title options are being set by the %module_names @module. Altering any of the below options will override these dynamically populated options.', $t_args), 'warning');
+        $this->messenger()->addWarning($this->t('The %title options are being set by the %module_names @module. Altering any of the below options will override these dynamically populated options.', $t_args));
       }
       else {
-        drupal_set_message($this->t('The %title options have been customized. Resetting the below options will allow the %module_names @module to dynamically populate these options.', $t_args), 'warning');
+        $this->messenger()->addWarning($this->t('The %title options have been customized. Resetting the below options will allow the %module_names @module to dynamically populate these options.', $t_args));
       }
     }
 
@@ -132,6 +134,12 @@ class WebformOptionsForm extends EntityForm {
         '#value' => $this->t('Reset'),
         '#submit' => ['::submitForm', '::reset'],
       ];
+    }
+
+    // Open delete button in a modal dialog.
+    if (isset($actions['delete'])) {
+      $actions['delete']['#attributes'] = WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NARROW, $actions['delete']['#attributes']['class']);
+      WebformDialogHelper::attachLibraries($actions['delete']);
     }
 
     return $actions;
@@ -225,7 +233,7 @@ class WebformOptionsForm extends EntityForm {
     ];
     $this->logger('webform')->notice('Options @label have been reset.', $context);
 
-    drupal_set_message($this->t('Options %label have been reset.', ['%label' => $webform_options->label()]));
+    $this->messenger()->addStatus($this->t('Options %label have been reset.', ['%label' => $webform_options->label()]));
 
     $form_state->setRedirect('entity.webform_options.collection');
   }
@@ -244,7 +252,7 @@ class WebformOptionsForm extends EntityForm {
     ];
     $this->logger('webform')->notice('Options @label saved.', $context);
 
-    drupal_set_message($this->t('Options %label saved.', ['%label' => $webform_options->label()]));
+    $this->messenger()->addStatus($this->t('Options %label saved.', ['%label' => $webform_options->label()]));
 
     $form_state->setRedirect('entity.webform_options.collection');
   }

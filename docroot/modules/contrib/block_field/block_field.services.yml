@@ -1,4 +1,4 @@
 services:
   block_field.manager:
     class: Drupal\block_field\BlockFieldManager
-    arguments: ['@plugin.manager.block']
+    arguments: ['@plugin.manager.block', '@context.repository']

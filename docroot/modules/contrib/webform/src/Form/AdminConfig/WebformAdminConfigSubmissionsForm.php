@@ -4,6 +4,7 @@ namespace Drupal\webform\Form\AdminConfig;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -63,11 +64,11 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
-    $form['submission_settings']['default_submission_login_message'] = [
+    $form['submission_settings']['default_submission_access_denied_message'] = [
       '#type' => 'webform_html_editor',
-      '#title' => $this->t('Default login message when access denied to submission'),
+      '#title' => $this->t('Default access denied message'),
       '#required' => TRUE,
-      '#default_value' => $settings['default_submission_login_message'],
+      '#default_value' => $settings['default_submission_access_denied_message'],
     ];
     $form['submission_settings']['default_submission_exception_message'] = [
       '#type' => 'webform_html_editor',
@@ -105,7 +106,7 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
       '#required' => TRUE,
       '#default_value' => $settings['default_submission_label'],
     ];
-    $form['submission_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['submission_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Submission Behaviors.
     $form['submission_behaviors'] = [
@@ -147,7 +148,7 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
       '#title' => $this->t('Default per user submission limit message'),
       '#default_value' => $config->get('settings.default_limit_user_message'),
     ];
-    $form['submission_limits']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['submission_limits']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Submission purging.
     $form['purge'] = [
@@ -164,6 +165,33 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
       '#description' => $this->t('Enter the amount of submissions to be purged during single cron run. You may want to lower this number if you are facing memory or timeout issues when purging via cron.'),
     ];
 
+    // Submission views.
+    $form['views_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Submission views'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+    $form['views_settings']['default_submission_views'] = [
+      '#type' => 'webform_submission_views',
+      '#title' => $this->t('Submission views'),
+      '#title_display' => 'invisible',
+      '#global' => TRUE,
+      '#default_value' => $settings['default_submission_views'],
+    ];
+    $form['views_settings']['message'] = [
+      '#type' => 'webform_message',
+      '#message_type' => 'info',
+      '#message_message' => $this->t('Uncheck the below settings to allow webform administrators to choose which results should be replaced with submission views.'),
+      '#message_close' => TRUE,
+      '#message_storage' => WebformMessage::STORAGE_SESSION,
+    ];
+    $form['views_settings']['default_submission_views_replace'] = [
+      '#type' => 'webform_submission_views_replace',
+      '#global' => TRUE,
+      '#default_value' => $settings['default_submission_views_replace'],
+    ];
+
     $this->tokenManager->elementValidate($form);
 
     return parent::buildForm($form, $form_state);
@@ -175,13 +203,13 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $settings = $form_state->getValue('submission_settings')
       + $form_state->getValue('submission_behaviors')
-      + $form_state->getValue('submission_limits');
+      + $form_state->getValue('submission_limits')
+      + $form_state->getValue('views_settings');
 
+    // Update config and submit form.
     $config = $this->config('webform.settings');
     $config->set('settings', $settings + $config->get('settings'));
     $config->set('purge', $form_state->getValue('purge'));
-    $config->save();
-
     parent::submitForm($form, $form_state);
   }
 

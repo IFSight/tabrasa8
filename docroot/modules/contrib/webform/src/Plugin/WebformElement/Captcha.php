@@ -86,7 +86,6 @@ class Captcha extends WebformElementBase {
     parent::prepare($element, $webform_submission);
 
     $element['#after_build'][] = [get_class($this), 'afterBuildCaptcha'];
-
   }
 
   /**

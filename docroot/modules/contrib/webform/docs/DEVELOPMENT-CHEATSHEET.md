@@ -16,7 +16,10 @@ git diff 8.x-5.x > [project_name]-[issue-description]-[issue-number]-00.patch
 curl https://www.drupal.org/files/issues/[project_name]-[issue-description]-[issue-number]-00.patch | git apply -
 
 # Force apply patch
-patch -p1  < [project_name]-[issue-description]-[issue-number]-00.patch
+patch -p1 < webform_whitespace_inconsistencies-2989606-5.diff
+
+# Remove patch and untracked files
+git reset --hard; git clean -f -d
 
 # Create interdiff
 interdiff \
@@ -54,7 +57,7 @@ drush webform-libraries-composer > composer.json
 **Manually Execute an Update Hook**
 
 ```bash
-drush php-eval 'module_load_include('install', 'webform'); webform_update_8124()';
+drush php-eval 'module_load_include('install', 'webform'); webform_update_8144()';
 ```
 
 **Import and Export Configuration**
@@ -68,6 +71,7 @@ echo 'true' > modules/webform_examples/webform_examples.features.yml
 echo 'true' > modules/webform_examples_accessibility/webform_examples_accessibility.features.yml
 echo 'true' > modules/webform_example_element/webform_example_element.features.yml
 echo 'true' > modules/webform_example_composite/webform_example_composite.features.yml
+echo 'true' > modules/webform_example_handler/webform_example_handler.features.yml
 echo 'true' > modules/webform_example_element/webform_example_remote_post.features.yml
 
 echo 'true' > modules/webform_templates/webform_templates.features.yml
@@ -84,6 +88,7 @@ echo 'true' > modules/webform_scheduled_email/tests/modules/webform_scheduled_em
 
 echo 'true' > modules/webform_demo/webform_demo_application_evaluation/webform_demo_application_evaluation.features.yml
 echo 'true' > modules/webform_demo/webform_demo_event_registration/webform_demo_event_registration.features.yml
+echo 'true' > modules/webform_demo/webform_demo_region_contact/webform_demo_region_contact.features.yml
 
 echo 'true' > tests/modules/webform_test/webform_test.features.yml
 echo 'true' > tests/modules/webform_test_ajax/webform_test_ajax.features.yml
@@ -98,6 +103,7 @@ echo 'true' > tests/modules/webform_test_handler/webform_test_handler.features.y
 echo 'true' > tests/modules/webform_test_handler_remote_post/webform_test_handler_remote_post.features.yml
 echo 'true' > tests/modules/webform_test_options/webform_test_options.features.yml
 echo 'true' > tests/modules/webform_test_paragraphs/webform_test_paragraphs.features.yml
+echo 'true' > tests/modules/webform_test_rest/webform_test_rest.features.yml
 echo 'true' > tests/modules/webform_test_submissions/webform_test_submissions.features.yml
 echo 'true' > tests/modules/webform_test_third_party_settings/webform_test_third_party_settings.features.yml
 echo 'true' > tests/modules/webform_test_translation/webform_test_translation.features.yml
@@ -110,9 +116,11 @@ echo 'true' > tests/modules/webform_test_wizard_custom/webform_test_wizard_custo
 drush en -y webform\
   webform_demo_application_evaluation\
   webform_demo_event_registration\
+  webform_demo_region_contact\
   webform_examples\
   webform_examples_accessibility\
   webform_example_element\
+  webform_example_handler\
   webform_example_remote_post\
   webform_image_select\
   webform_node\
@@ -122,9 +130,10 @@ drush en -y webform\
   webform_test_handler\
   webform_test_handler_remote_post\
   webform_test_options\
-  webform_test_views\
+  webform_test_rest\
   webform_test_submissions\
   webform_test_translation\
+  webform_test_views\
   webform_image_select_test\
   webform_node_test_multiple\
   webform_node_test_translation\
@@ -134,14 +143,16 @@ drush en -y webform\
 drush features-diff webform
 drush features-diff webform_test
 
-# Export webform configuration from your site.          
+# Export webform configuration from your site.
 drush features-export -y webform
 drush features-export -y webform_demo_application_evaluation
 drush features-export -y webform_demo_event_registration
+drush features-export -y webform_demo_region_contact
 drush features-export -y webform_examples
 drush features-export -y webform_examples_accessibility
 drush features-export -y webform_example_element
 drush features-export -y webform_example_composite
+drush features-export -y webform_example_handler
 drush features-export -y webform_example_remote_post
 drush features-export -y webform_node
 drush features-export -y webform_image_select
@@ -152,9 +163,10 @@ drush features-export -y webform_test_element
 drush features-export -y webform_test_handler
 drush features-export -y webform_test_handler_remote_post
 drush features-export -y webform_test_options
-drush features-export -y webform_test_views
+drush features-export -y webform_test_rest
 drush features-export -y webform_test_submissions
 drush features-export -y webform_test_translation
+drush features-export -y webform_test_views
 drush features-export -y webform_test_paragraphs
 drush features-export -y webform_image_select_test
 drush features-export -y webform_node_test_multiple
@@ -164,14 +176,16 @@ drush features-export -y webform_scheduled_email_test
 # Revert all feature update to *.info.yml files.
 git checkout -- *.info.yml
 
-# Tidy webform configuration from your site.          
+# Tidy webform configuration from your site.
 drush webform:tidy -y --dependencies webform
 drush webform:tidy -y --dependencies webform_demo_application_evaluation
 drush webform:tidy -y --dependencies webform_demo_event_registration
+drush webform:tidy -y --dependencies webform_demo_region_contact
 drush webform:tidy -y --dependencies webform_examples
 drush webform:tidy -y --dependencies webform_examples_accessibility
 drush webform:tidy -y --dependencies webform_example_element
 drush webform:tidy -y --dependencies webform_example_composite
+drush webform:tidy -y --dependencies webform_example_handler
 drush webform:tidy -y --dependencies webform_example_remote_post
 drush webform:tidy -y --dependencies webform_image_select
 drush webform:tidy -y --dependencies webform_node
@@ -182,23 +196,26 @@ drush webform:tidy -y --dependencies webform_test_element
 drush webform:tidy -y --dependencies webform_test_handler
 drush webform:tidy -y --dependencies webform_test_handler_remote_post
 drush webform:tidy -y --dependencies webform_test_options
-drush webform:tidy -y --dependencies webform_test_views
+drush webform:tidy -y --dependencies webform_test_paragraphs
+drush webform:tidy -y --dependencies webform_test_rest
 drush webform:tidy -y --dependencies webform_test_submissions
 drush webform:tidy -y --dependencies webform_test_translation
-drush webform:tidy -y --dependencies webform_test_paragraphs
+drush webform:tidy -y --dependencies webform_test_views
 drush webform:tidy -y --dependencies webform_image_select_test
 drush webform:tidy -y --dependencies webform_node_test_multiple
 drush webform:tidy -y --dependencies webform_node_test_translation
 drush webform:tidy -y --dependencies webform_scheduled_email_test
 
-# Re-import all webform configuration into your site.      
+# Re-import all webform configuration into your site.
 drush features-import -y webform
 drush features-import -y webform_demo_application_evaluation
 drush features-import -y webform_demo_event_registration
+drush features-import -y webform_demo_region_contact
 drush features-import -y webform_examples
 drush features-import -y webform_examples_accessibility
 drush features-import -y webform_example_element
 drush features-import -y webform_example_composite
+drush features-import -y webform_example_handler
 drush features-import -y webform_example_remote_post
 drush features-import -y webform_node
 drush features-import -y webform_image_select
@@ -209,10 +226,11 @@ drush features-import -y webform_test_block_submission_limit
 drush features-import -y webform_test_handler
 drush features-import -y webform_test_handler_remote_post
 drush features-import -y webform_test_options
-drush features-import -y webform_test_views
+drush features-import -y webform_test_paragraphs
+drush features-import -y webform_test_rest
 drush features-import -y webform_test_submissions
 drush features-import -y webform_test_translation
-drush features-import -y webform_test_paragraphs
+drush features-import -y webform_test_views
 drush features-import -y webform_image_select_test
 drush features-import -y webform_node_test_multiple
 drush features-import -y webform_node_test_translation

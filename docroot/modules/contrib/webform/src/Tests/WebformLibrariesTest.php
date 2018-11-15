@@ -24,16 +24,6 @@ class WebformLibrariesTest extends WebformTestBase {
   protected static $testWebforms = ['test_libraries_optional'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Tests webform libraries.
    */
   public function testLibraries() {
@@ -50,8 +40,8 @@ class WebformLibrariesTest extends WebformTestBase {
 
     // Enable jquery.chosen and jquery.icheck.
     $edit = [
-      'libraries[excluded_libraries][jquery.chosen]' => TRUE,
-      'libraries[excluded_libraries][jquery.icheck]' => TRUE,
+      'excluded_libraries[jquery.chosen]' => TRUE,
+      'excluded_libraries[jquery.icheck]' => TRUE,
     ];
     $this->drupalPostForm('admin/structure/webform/config/libraries', $edit, t('Save configuration'));
 
@@ -59,7 +49,7 @@ class WebformLibrariesTest extends WebformTestBase {
     $this->drupalGet('webform/test_libraries_optional');
     $this->assertRaw('/select2.min.js');
     $this->assertRaw('/chosen.jquery.js');
-    $this->assertRaw('/jquery.word-and-character-counter.min.js');
+    $this->assertRaw('/textcounter.min.js');
     $this->assertRaw('/intlTelInput.min.js');
     $this->assertRaw('/jquery.inputmask.bundle.min.js');
     $this->assertRaw('/icheck.js');
@@ -74,17 +64,17 @@ class WebformLibrariesTest extends WebformTestBase {
 
     // Exclude optional libraries.
     $edit = [
-      'libraries[excluded_libraries][ckeditor.fakeobjects]' => FALSE,
-      'libraries[excluded_libraries][ckeditor.image]' => FALSE,
-      'libraries[excluded_libraries][ckeditor.link]' => FALSE,
-      'libraries[excluded_libraries][codemirror]' => FALSE,
-      'libraries[excluded_libraries][jquery.icheck]' => FALSE,
-      'libraries[excluded_libraries][jquery.inputmask]' => FALSE,
-      'libraries[excluded_libraries][jquery.intl-tel-input]' => FALSE,
-      'libraries[excluded_libraries][jquery.select2]' => FALSE,
-      'libraries[excluded_libraries][jquery.chosen]' => FALSE,
-      'libraries[excluded_libraries][jquery.timepicker]' => FALSE,
-      'libraries[excluded_libraries][jquery.word-and-character-counter]' => FALSE,
+      'excluded_libraries[ckeditor.fakeobjects]' => FALSE,
+      'excluded_libraries[ckeditor.image]' => FALSE,
+      'excluded_libraries[ckeditor.link]' => FALSE,
+      'excluded_libraries[codemirror]' => FALSE,
+      'excluded_libraries[jquery.icheck]' => FALSE,
+      'excluded_libraries[jquery.inputmask]' => FALSE,
+      'excluded_libraries[jquery.intl-tel-input]' => FALSE,
+      'excluded_libraries[jquery.select2]' => FALSE,
+      'excluded_libraries[jquery.chosen]' => FALSE,
+      'excluded_libraries[jquery.timepicker]' => FALSE,
+      'excluded_libraries[jquery.textcounter]' => FALSE,
     ];
     $this->drupalPostForm('admin/structure/webform/config/libraries', $edit, t('Save configuration'));
 
@@ -92,7 +82,7 @@ class WebformLibrariesTest extends WebformTestBase {
     $this->drupalGet('webform/test_libraries_optional');
     $this->assertNoRaw('/select2.min.js');
     $this->assertNoRaw('/chosen.jquery.js');
-    $this->assertNoRaw('/jquery.word-and-character-counter.min.js');
+    $this->assertNoRaw('/textcounter.min.js');
     $this->assertNoRaw('/intlTelInput.min.js');
     $this->assertNoRaw('/jquery.inputmask.bundle.min.js');
     $this->assertNoRaw('/icheck.js');
@@ -107,24 +97,23 @@ class WebformLibrariesTest extends WebformTestBase {
 
     // Check that status report excludes optional libraries.
     $this->drupalGet('admin/reports/status');
-    $this->assertText('The CKEditor: Fakeobjects library is excluded.');
-    $this->assertText('The CKEditor: Image library is excluded.');
-    $this->assertText('The CKEditor: Link library is excluded.');
-    $this->assertText('The Code Mirror library is excluded.');
-    $this->assertText('The jQuery: iCheck library is excluded.');
-    $this->assertText('The jQuery: Input Mask library is excluded.');
-    $this->assertText('The jQuery: Select2 library is excluded.');
-    $this->assertText('The jQuery: Chosen library is excluded.');
-    $this->assertText('The jQuery: Timepicker library is excluded.');
-    $this->assertText('The jQuery: Word and character counter plug-in! library is excluded.');
+    $this->assertNoText('CKEditor: Fakeobjects library ');
+    $this->assertNoText('CKEditor: Image library ');
+    $this->assertNoText('CKEditor: Link library ');
+    $this->assertNoText('Code Mirror library ');
+    $this->assertNoText('jQuery: iCheck library ');
+    $this->assertNoText('jQuery: Input Mask library ');
+    $this->assertNoText('jQuery: Select2 library ');
+    $this->assertNoText('jQuery: Chosen library ');
+    $this->assertNoText('jQuery: Timepicker library ');
+    $this->assertNoText('jQuery: Text Counter library ');
 
     // Issue #2934542: Fix broken Webform.Drupal\webform\Tests\WebformLibrariesTest
     // @see https://www.drupal.org/project/webform/issues/2934542
     /*
     // Exclude element types that require libraries.
     $edit = [
-      'excluded_elements[webform_image_select]' => FALSE,
-      'excluded_elements[webform_location]' => FALSE,
+      'excluded_elements[webform_location_geocomplete]' => FALSE,
       'excluded_elements[webform_rating]' => FALSE,
       'excluded_elements[webform_signature]' => FALSE,
       'excluded_elements[webform_toggle]' => FALSE,
@@ -134,11 +123,11 @@ class WebformLibrariesTest extends WebformTestBase {
 
     // Check that status report excludes libraries required by element types.
     $this->drupalGet('admin/reports/status');
-    $this->assertText('The jQuery: Geocoding and Places Autocomplete Plugin library is excluded because required element types (webform_location) are excluded.');
-    $this->assertText('The jQuery: Image Picker library is excluded because required element types (webform_image_select) are excluded.');
-    $this->assertText('The jQuery: RateIt library is excluded because required element types (webform_rating) are excluded.');
-    $this->assertText('The jQuery: Toggles library is excluded because required element types (webform_toggle; webform_toggles) are excluded.');
-    $this->assertText('The Signature Pad library is excluded because required element types (webform_signature) are excluded.');
+    $this->assertNoText('jQuery: Geocoding and Places Autocomplete Plugin library');
+    $this->assertNoText('jQuery: Image Picker library');
+    $this->assertNoText('jQuery: RateIt library');
+    $this->assertNoText('jQuery: Toggles library');
+    $this->assertNoText('Signature Pad library');
     */
   }
 

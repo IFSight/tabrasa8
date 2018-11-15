@@ -33,9 +33,6 @@ class WebformSettingsLimitsTest extends WebformTestBase {
   public function setUp() {
     parent::setUp();
 
-    // Create users.
-    $this->createUsers();
-
     // Place webform test blocks.
     $this->placeWebformBlocks('webform_test_block_submission_limit');
   }
@@ -44,7 +41,16 @@ class WebformSettingsLimitsTest extends WebformTestBase {
    * Tests webform submission form limits.
    */
   public function testFormLimits() {
+    $own_submission_user = $this->drupalCreateUser([
+      'view own webform submission',
+      'edit own webform submission',
+      'delete own webform submission',
+      'access webform submission user',
+    ]);
+
     $webform_limit = Webform::load('test_form_limit');
+
+    /**************************************************************************/
 
     $this->drupalGet('webform/test_form_limit');
 
@@ -57,7 +63,7 @@ class WebformSettingsLimitsTest extends WebformTestBase {
     $this->assertRaw('0 webform submission(s)');
     $this->assertRaw('4 webform limit (every minute)');
 
-    $this->drupalLogin($this->ownWebformSubmissionUser);
+    $this->drupalLogin($own_submission_user);
 
     // Check that draft does not count toward limit.
     $this->postSubmission($webform_limit, [], t('Save Draft'));

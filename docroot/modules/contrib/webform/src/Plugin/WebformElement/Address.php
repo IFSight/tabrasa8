@@ -9,7 +9,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Mail\MailFormatHelper;
-use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
@@ -34,8 +33,6 @@ use Drupal\webform\WebformSubmissionInterface;
  */
 class Address extends WebformCompositeBase {
 
-  use CompositeFormElementTrait;
-
   /**
    * {@inheritdoc}
    */
@@ -43,9 +40,10 @@ class Address extends WebformCompositeBase {
     $properties = [
       // Element settings.
       'title' => '',
-      'default_value' => '',
+      'default_value' => [],
       // Description/Help.
       'help' => '',
+      'help_title' => '',
       'description' => '',
       'more' => '',
       'more_title' => '',
@@ -78,12 +76,15 @@ class Address extends WebformCompositeBase {
 
     // Wrap the 'Address' element which contain multiple input in a fieldset.
     // This accessibility improvements make sense for the Webform module
-    // but not the core Address module.
+    // but not for the core Address module.
     // @see https://www.w3.org/WAI/tutorials/forms/grouping/
     $this->setElementDefaultCallback($element, 'pre_render');
-    $class = get_class($this);
-    $element['#pre_render'][] = [$class, 'preRenderCompositeFormElement'];
+    // Replace 'form_element' theme wrapper with composite form element.
+    // @see \Drupal\Core\Render\Element\PasswordConfirm
+    $element['#pre_render'] = [[get_called_class(), 'preRenderWebformCompositeFormElement']];
     $element['#theme_wrappers'] = [];
+
+    // #title display defaults to invisible.
     $element += [
       '#title_display' => 'invisible',
     ];
@@ -313,8 +314,9 @@ class Address extends WebformCompositeBase {
       '#options' => \Drupal::service('address.country_repository')->getList(),
       '#multiple' => TRUE,
       '#size' => 10,
+      '#select2' => TRUE,
     ];
-    WebformElementHelper::enhanceSelect($form['address']['available_countries'], TRUE);
+    WebformElementHelper::process($form['address']['available_countries']);
     $form['address']['langcode_override'] = [
       '#type' => 'select',
       '#title' => $this->t('Language override'),

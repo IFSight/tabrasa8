@@ -6,6 +6,7 @@ dependencies:
       - webform_examples
 open: null
 close: null
+weight: 0
 uid: null
 template: false
 archive: false
@@ -80,9 +81,9 @@ elements: |
       '#title': 'Checkboxes with descriptions'
       '#options_description_display': description
       '#options':
-        one: 'One -- This is a descripion.'
-        two: 'Two -- This is a descripion.'
-        three: 'Three -- This is a descripion.'
+        one: 'One -- This is a description.'
+        two: 'Two -- This is a description.'
+        three: 'Three -- This is a description.'
     checkboxes_icheck:
       '#type': checkboxes
       '#title': 'Checkboxes (iCheck)'
@@ -246,16 +247,6 @@ elements: |
     webform_terms_of_service:
       '#type': webform_terms_of_service
       '#terms_content': 'These are the terms of service.'
-    webform_toggle:
-      '#type': webform_toggle
-      '#title': Toggle
-    webform_toggles:
-      '#type': webform_toggles
-      '#title': Toggles
-      '#options':
-        one: One
-        two: Two
-        three: Three
     webform_likert:
       '#type': webform_likert
       '#title': Likert
@@ -354,8 +345,8 @@ elements: |
       '#type': webform_address
       '#title': Address
       '#flexbox': false
-    webform_location:
-      '#type': webform_location
+    webform_location_geocomplete:
+      '#type': webform_location_places
       '#title': Location
       '#map': true
       '#geolocation': true
@@ -376,7 +367,7 @@ elements: |
           '#type': textfield
           '#title': 'Last name'
         gender:
-          '#type': select
+          '#type': select_other
           '#options': gender
           '#title': Gender
         martial_status:
@@ -418,6 +409,11 @@ elements: |
       '#type': textfield
       '#title': 'Form element (Input mask: Phone)'
       '#input_mask': '(999) 999-9999'
+    form_element_input_hide:
+      '#type': textfield
+      '#title': 'Form element (Input hiding)'
+      '#input_hide': true
+      '#default_value': '{value}'
     title_display_before:
       '#type': textfield
       '#title': 'Title displayed before'
@@ -569,6 +565,7 @@ elements: |
       '#type': address
       '#title': Address
       '#description': '@see <a href="https://www.drupal.org/project/address">https://www.drupal.org/project/address</a>'
+  
 css: ''
 javascript: ''
 settings:
@@ -577,6 +574,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -599,16 +597,26 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
   submission_user_duplicate: false
-  submission_login: false
-  submission_login_message: ''
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -617,7 +625,9 @@ settings:
   wizard_progress_bar: true
   wizard_progress_pages: true
   wizard_progress_percentage: true
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -647,9 +657,11 @@ settings:
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: null
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: null
   entity_limit_total_interval: null
   entity_limit_user: null

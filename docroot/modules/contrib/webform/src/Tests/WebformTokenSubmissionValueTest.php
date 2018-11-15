@@ -46,7 +46,6 @@ class WebformTokenSubmissionValueTest extends WebformTestBase {
     $tokens = [
       // Emails.
       'webform_submission:values:email' => 'example@example.com',
-      'webform_submission:values:email:urlencode' => 'example%40example.com',
       'webform_submission:values:emails:0' => 'one@example.com',
       'webform_submission:values:emails:1' => 'two@example.com',
       'webform_submission:values:emails:2' => 'three@example.com',
@@ -104,7 +103,6 @@ john@example.com',
       'webform_submission:values:contacts:0:name' => 'John Smith',
       'webform_submission:values:contacts:1:name' => 'Jane Doe',
       'webform_submission:values:contacts:0:email:html' => '<a href="mailto:john@example.com">john@example.com</a>',
-      'webform_submission:values:contacts:0:email:urlencode' => 'john%40example.com',
       'webform_submission:values:contacts:1:email:raw:html' => 'jane@example.com',
 
       // Containers.
@@ -113,7 +111,6 @@ john@example.com',
 first_name: John
 last_name: Smith
 </pre>',
-      'webform_submission:values:fieldset:urlencode' => 'fieldset%0A--------%0Afirst_name%3A+John%0Alast_name%3A+Smith%0A',
 
       // Submission limits.
       'webform_submission:limit:webform' => '100',
@@ -130,6 +127,17 @@ last_name: Smith
       'webform_submission:values:missing:clear' => '',
       'webform:random:missing' => '[webform:random:missing]',
       'webform:random:missing:clear' => '',
+
+      // HTML decode.
+      'webform_submission:values:markup' => '&lt;b&gt;Bold&lt;/b&gt; &amp;amp; UPPERCASE',
+      'webform_submission:values:markup:htmldecode' => '<b>Bold</b> &amp; UPPERCASE',
+      'webform_submission:values:markup:htmldecode:striptags' => 'Bold &amp; UPPERCASE',
+      'webform_submission:values:script' => '&lt;script&gt;alert(&#039;hi&#039;);&lt;/script&gt;',
+      'webform_submission:values:script:htmldecode' => 'alert(&#039;hi&#039;);',
+
+      // URL encode.
+      'webform_submission:values:url' => 'http://example.com?query=param',
+      'webform_submission:values:url:urlencode' => 'http%3A%2F%2Fexample.com%3Fquery%3Dparam',
     ];
     foreach ($tokens as $token => $value) {
       $this->assertRaw("<tr><th width=\"50%\">$token</th><td width=\"50%\">$value</td></tr>");

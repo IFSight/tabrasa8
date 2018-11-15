@@ -18,12 +18,14 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
    * @var array
    */
   protected static $testWebforms = [
+    'test_form_states_server_clear',
     'test_form_states_server_custom',
     'test_form_states_server_comp',
     'test_form_states_server_multiple',
     'test_form_states_server_nested',
     'test_form_states_server_preview',
     'test_form_states_server_required',
+    'test_form_states_server_save',
     'test_form_states_server_wizard',
   ];
 
@@ -114,7 +116,14 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
       'minlength_hidden_trigger' => TRUE,
     ];
     $this->postSubmission($webform, $edit);
-    $this->assertRaw('<em class="placeholder">minlength_hidden_dependent</em> cannot be less than <em class="placeholder">1</em> characters but is currently <em class="placeholder">0</em> characters long.');
+    $this->assertNoRaw('<em class="placeholder">minlength_hidden_dependent</em> cannot be less than <em class="placeholder">5</em> characters');
+
+    $edit = [
+      'minlength_hidden_trigger' => TRUE,
+      'minlength_hidden_dependent' => 'X',
+    ];
+    $this->postSubmission($webform, $edit);
+    // $this->assertRaw('<em class="placeholder">minlength_hidden_dependent</em> cannot be less than <em class="placeholder">5</em> characters');
 
     /**************************************************************************/
     // checkboxes_trigger.
@@ -367,7 +376,7 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
 
     // Check basic composite.
     $this->assertRaw('First field is required.');
-    $this->assertRaw('<input data-drupal-selector="edit-webform-name-first" type="text" id="edit-webform-name-first" name="webform_name[first]" value="" size="60" maxlength="255" class="form-text error" aria-invalid="true" data-drupal-states="{&quot;required&quot;:{&quot;:input[name=\u0022webform_name_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
+    $this->assertRaw('<input data-drupal-selector="edit-webform-name-first" type="text" id="edit-webform-name-first" name="webform_name[first]" value="" size="60" maxlength="255" class="form-text error" aria-invalid="true" data-drupal-states="{&quot;required&quot;:{&quot;.webform-submission-test-form-states-server-comp-add-form :input[name=\u0022webform_name_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
 
     // Check multiple composite with custom error.
     $this->assertRaw("Custom error message for &#039;last&#039; element.");
@@ -375,7 +384,7 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
 
     // Check multiple table composite.
     $this->assertRaw('Last field is required.');
-    $this->assertRaw('<input data-drupal-selector="edit-webform-name-multiple-header-items-0-last" type="text" id="edit-webform-name-multiple-header-items-0-last" name="webform_name_multiple_header[items][0][last]" value="" size="60" maxlength="255" class="form-text error" aria-invalid="true" data-drupal-states="{&quot;required&quot;:{&quot;:input[name=\u0022webform_name_multiple_header_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
+    $this->assertRaw('<input data-drupal-selector="edit-webform-name-multiple-header-items-0-last" type="text" id="edit-webform-name-multiple-header-items-0-last" name="webform_name_multiple_header[items][0][last]" value="" size="60" maxlength="255" class="form-text error" aria-invalid="true" data-drupal-states="{&quot;required&quot;:{&quot;.webform-submission-test-form-states-server-comp-add-form :input[name=\u0022webform_name_multiple_header_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
 
     /**************************************************************************/
     // nested.
@@ -385,10 +394,10 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
 
     // Check sub elements.
     $this->drupalGet('webform/test_form_states_server_nested');
-    $this->assertRaw('<input data-drupal-selector="edit-visible-textfield" type="text" id="edit-visible-textfield" name="visible_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;:input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
-    $this->assertRaw('<input data-drupal-selector="edit-visible-custom-textfield" type="text" id="edit-visible-custom-textfield" name="visible_custom_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;:input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true},&quot;:input[name=\u0022visible_textfield\u0022]&quot;:{&quot;filled&quot;:true}}}" />');
-    $this->assertRaw('<input data-drupal-selector="edit-visible-slide-textfield" type="text" id="edit-visible-slide-textfield" name="visible_slide_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;:input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
-    $this->assertRaw('<input data-drupal-selector="edit-visible-slide-custom-textfield" type="text" id="edit-visible-slide-custom-textfield" name="visible_slide_custom_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;:input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true},&quot;:input[name=\u0022visible_slide_textfield\u0022]&quot;:{&quot;filled&quot;:true}}}" />');
+    $this->assertRaw('<input data-drupal-selector="edit-visible-textfield" type="text" id="edit-visible-textfield" name="visible_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;.webform-submission-test-form-states-server-nested-add-form :input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
+    $this->assertRaw('<input data-drupal-selector="edit-visible-custom-textfield" type="text" id="edit-visible-custom-textfield" name="visible_custom_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;.webform-submission-test-form-states-server-nested-add-form :input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true},&quot;.webform-submission-test-form-states-server-nested-add-form :input[name=\u0022visible_textfield\u0022]&quot;:{&quot;filled&quot;:true}}}" />');
+    $this->assertRaw('<input data-drupal-selector="edit-visible-slide-textfield" type="text" id="edit-visible-slide-textfield" name="visible_slide_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;.webform-submission-test-form-states-server-nested-add-form :input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true}}}" />');
+    $this->assertRaw('<input data-drupal-selector="edit-visible-slide-custom-textfield" type="text" id="edit-visible-slide-custom-textfield" name="visible_slide_custom_textfield" value="" size="60" maxlength="255" class="form-text" data-drupal-states="{&quot;required&quot;:{&quot;.webform-submission-test-form-states-server-nested-add-form :input[name=\u0022visible_trigger\u0022]&quot;:{&quot;checked&quot;:true},&quot;.webform-submission-test-form-states-server-nested-add-form :input[name=\u0022visible_slide_textfield\u0022]&quot;:{&quot;filled&quot;:true}}}" />');
 
     // Check nested element is required.
     $edit = [
@@ -515,13 +524,13 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
   }
 
   /**
-   * Tests conditions (#states) validator for elements .
+   * Tests visible conditions (#states) validator for elements .
    */
   public function testStatesValidatorElementVisible() {
-    $webform = Webform::load('test_form_states_server_preview');
+    $webform_preview = Webform::load('test_form_states_server_preview');
 
     // Check trigger unchecked and elements are conditionally hidden.
-    $this->postSubmission($webform, [], t('Preview'));
+    $this->postSubmission($webform_preview, [], t('Preview'));
     $this->assertRaw('trigger_checkbox');
     $this->assertNoRaw('dependent_checkbox');
     $this->assertNoRaw('dependent_markup');
@@ -530,13 +539,57 @@ class WebformSubmissionConditionsValidatorTest extends WebformTestBase {
     $this->assertNoRaw('nested_textfield');
 
     // Check trigger checked and elements are conditionally visible.
-    $this->postSubmission($webform, ['trigger_checkbox' => TRUE], t('Preview'));
+    $this->postSubmission($webform_preview, ['trigger_checkbox' => TRUE], t('Preview'));
     $this->assertRaw('trigger_checkbox');
     $this->assertRaw('dependent_checkbox');
     $this->assertRaw('dependent_markup');
     $this->assertRaw('dependent_message');
     $this->assertRaw('dependent_fieldset');
     $this->assertRaw('nested_textfield');
+
+    $webform_save = Webform::load('test_form_states_server_save');
+
+    // Check trigger unchecked and saved.
+    $this->postSubmission($webform_save, ['trigger_checkbox' => FALSE], t('Submit'));
+    $this->assertRaw("trigger_checkbox: 0
+dependent_hidden: ''
+dependent_checkbox: ''
+dependent_value: ''
+dependent_textfield: ''
+dependent_textfield_multiple: {  }
+dependent_details_textfield: ''");
+
+    // Check trigger checked and saved.
+    $this->postSubmission($webform_save, ['trigger_checkbox' => TRUE], t('Submit'));
+    $this->assertRaw("trigger_checkbox: 1
+dependent_hidden: '{dependent_hidden}'
+dependent_checkbox: 0
+dependent_value: '{value}'
+dependent_textfield: '{dependent_textfield}'
+dependent_textfield_multiple:
+  - '{dependent_textfield}'
+dependent_details_textfield: '{dependent_details_textfield}'");
+
+    $webform_clear = Webform::load('test_form_states_server_clear');
+
+    // Check trigger unchecked and not cleared.
+    $this->postSubmission($webform_clear, ['trigger_checkbox' => FALSE], t('Submit'));
+    $this->assertRaw("trigger_checkbox: 0
+dependent_hidden: '{dependent_hidden}'
+dependent_checkbox: 1
+dependent_radios: One
+dependent_value: '{value}'
+dependent_textfield: '{dependent_textfield}'
+dependent_textfield_multiple:
+  - '{dependent_textfield}'
+dependent_webform_name:
+  - title: ''
+    first: John
+    middle: ''
+    last: Smith
+    suffix: ''
+    degree: ''
+dependent_details_textfield: '{dependent_details_textfield}'");
   }
 
 }

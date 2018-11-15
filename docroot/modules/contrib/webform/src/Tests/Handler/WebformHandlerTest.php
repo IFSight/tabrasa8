@@ -101,7 +101,7 @@ class WebformHandlerTest extends WebformTestBase {
     $this->assertRaw('Invoked test: Drupal\webform_test_handler\Plugin\WebformHandler\TestWebformHandler:postLoad');
     $this->assertRaw('Invoked test: Drupal\webform_test_handler\Plugin\WebformHandler\TestWebformHandler:preDelete');
     $this->assertRaw('Invoked test: Drupal\webform_test_handler\Plugin\WebformHandler\TestWebformHandler:postDelete');
-    $this->assertRaw('Submission #' . $webform_submission->serial() . ' has been deleted.');
+    $this->assertRaw('<em class="placeholder">Test: Handler: Test invoke methods: Submission #' . $webform_submission->serial() . '</em> has been deleted.');
 
     // Check configuration settings.
     $this->drupalPostForm('admin/structure/webform/manage/test_handler_test/handlers/test/edit', ['settings[message]' => '{message}'], t('Save'));

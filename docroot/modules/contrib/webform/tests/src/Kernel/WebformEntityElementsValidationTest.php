@@ -64,6 +64,15 @@ class WebformEntityElementsValidationTest extends KernelTestBase {
         ],
       ],
 
+      // Check names.
+      [
+        'getElementsRaw' => "Not Valid:
+  '#type': textfield",
+        'messages' => [
+          'The element key <em class="placeholder">Not Valid</em> on line 1 must contain only lowercase letters, numbers, and underscores.',
+        ],
+      ],
+
       // Check duplicate names.
       [
         'getElementsRaw' => "name:

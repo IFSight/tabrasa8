@@ -6,8 +6,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\Render\Element;
+use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionConditionsValidatorInterface;
 use Drupal\webform\WebformSubmissionInterface;
@@ -29,6 +30,13 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
    * @var \Drupal\webform\WebformInterface
    */
   protected $webform = NULL;
+
+  /**
+   * The webform submission.
+   *
+   * @var \Drupal\webform\WebformSubmissionInterface
+   */
+  protected $webformSubmission = NULL;
 
   /**
    * The webform handler ID.
@@ -101,7 +109,7 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
    * webform. Make sure not include any services as a dependency injection
    * that directly connect to the database. This will prevent
    * "LogicException: The database connection is not serializable." exceptions
-   * from being thrown when a form is serialized via an Ajax callaback and/or
+   * from being thrown when a form is serialized via an Ajax callback and/or
    * form build.
    *
    * @param array $configuration
@@ -163,6 +171,21 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
   /**
    * {@inheritdoc}
    */
+  public function setWebformSubmission(WebformSubmissionInterface $webform_submission = NULL) {
+    $this->webformSubmission = $webform_submission;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getWebformSubmission() {
+    return $this->webformSubmission;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSummary() {
     return [
       '#theme' => 'webform_handler_' . $this->pluginId . '_summary',
@@ -197,6 +220,13 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
    */
   public function supportsConditions() {
     return $this->pluginDefinition['conditions'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function supportsTokens() {
+    return $this->pluginDefinition['tokens'];
   }
 
   /**
@@ -581,7 +611,7 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
     $default_configuration = $this->defaultConfiguration();
     foreach ($elements as $element_key => &$element) {
       // Only a form element can have #parents.
-      if (Element::property($element_key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $element_key)) {
         continue;
       }
 
@@ -636,6 +666,40 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
         'data' => $data,
       ]);
     }
+  }
+
+  /****************************************************************************/
+  // TEMP: Messenger methods to be remove once Drupal 8.6.x+ is supported version.
+  /****************************************************************************/
+
+  /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * Sets the messenger.
+   *
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
+   */
+  public function setMessenger(MessengerInterface $messenger) {
+    $this->messenger = $messenger;
+  }
+
+  /**
+   * Gets the messenger.
+   *
+   * @return \Drupal\Core\Messenger\MessengerInterface
+   *   The messenger.
+   */
+  public function messenger() {
+    if (!isset($this->messenger)) {
+      $this->messenger = \Drupal::messenger();
+    }
+    return $this->messenger;
   }
 
 }

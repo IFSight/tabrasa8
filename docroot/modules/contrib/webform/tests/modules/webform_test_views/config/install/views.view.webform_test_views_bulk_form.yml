@@ -943,13 +943,58 @@ display:
           content: 'No submissions available.'
           plugin_id: text_custom
       relationships: {  }
-      arguments: {  }
+      arguments:
+        webform_id:
+          id: webform_id
+          table: webform_submission
+          field: webform_id
+          entity_type: webform_submission
+          entity_field: webform_id
+          plugin_id: string
+        entity_type:
+          id: entity_type
+          table: webform_submission
+          field: entity_type
+          entity_type: webform_submission
+          entity_field: entity_type
+          plugin_id: string
+        entity_id:
+          id: entity_id
+          table: webform_submission
+          field: entity_id
+          entity_type: webform_submission
+          entity_field: entity_id
+          plugin_id: string
+        uid:
+          id: uid
+          table: webform_submission
+          field: uid
+          entity_type: webform_submission
+          entity_field: uid
+          plugin_id: numeric
       display_extenders: {  }
       filter_groups:
         operator: AND
         groups:
           1: AND
       title: 'Views bulk form'
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - user.permissions
+      tags: {  }
+  embed:
+    display_plugin: embed
+    id: embed
+    display_title: Embed
+    position: 2
+    display_options:
+      display_extenders: {  }
     cache_metadata:
       max-age: 0
       contexts:

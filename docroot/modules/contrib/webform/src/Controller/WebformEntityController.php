@@ -6,6 +6,7 @@ use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\webform\Element\Webform as WebformElement;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformRequestInterface;
 use Drupal\webform\WebformSubmissionInterface;
@@ -234,6 +235,32 @@ class WebformEntityController extends ControllerBase implements ContainerInjecti
   }
 
   /**
+   * Returns a webform's access denied page.
+   *
+   * @param \Drupal\webform\WebformInterface $webform
+   *   The webform.
+   *
+   * @return array
+   *   A renderable array containing an access denied page.
+   */
+  public function accessDenied(WebformInterface $webform) {
+    return WebformElement::buildAccessDenied($webform);
+  }
+
+  /**
+   * Returns a webform's access denied title.
+   *
+   * @param \Drupal\webform\WebformInterface $webform
+   *   The webform.
+   *
+   * @return string|\Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The webform submissions's access denied title.
+   */
+  public function accessDeniedTitle(WebformInterface $webform) {
+    return $webform->getSetting('form_access_denied_title') ?: $this->t('Access denied');
+  }
+
+  /**
    * Route title callback.
    *
    * @param \Drupal\webform\WebformInterface|null $webform
@@ -250,7 +277,42 @@ class WebformEntityController extends ControllerBase implements ContainerInjecti
     else {
       $source_entity = $this->requestHandler->getCurrentSourceEntity('webform');
     }
-    return ($source_entity) ? $source_entity->label() : $webform->label();
+
+    // If source entity does not exist or does not have a label always use
+    // the webform's label.
+    if (!$source_entity || !method_exists($source_entity, 'label')) {
+      return $webform->label();
+    }
+
+    // Handler duplicate titles.
+    if ($source_entity->label() === $webform->label()) {
+      return $webform->label();
+    }
+
+    // Get the webform's title.
+    switch ($webform->getSetting('form_title')) {
+      case WebformInterface::TITLE_SOURCE_ENTITY:
+        return $source_entity->label();
+
+      case WebformInterface::TITLE_WEBFORM:
+        return $webform->label();
+
+      case WebformInterface::TITLE_WEBFORM_SOURCE_ENTITY:
+        $t_args = [
+          '@source_entity' => $source_entity->label(),
+          '@webform' => $webform->label(),
+        ];
+        return $this->t('@webform: @source_entity', $t_args);
+
+      case WebformInterface::TITLE_SOURCE_ENTITY_WEBFORM:
+      default:
+        $t_args = [
+          '@source_entity' => $source_entity->label(),
+          '@webform' => $webform->label(),
+        ];
+        return $this->t('@source_entity: @webform', $t_args);
+
+    }
   }
 
 }

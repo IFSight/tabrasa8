@@ -14,28 +14,28 @@ webform.settings:
           label: 'Default base path'
         default_submit_button_label:
           type: label
-          label: 'Default webform submit button label'
+          label: 'Default submit button label'
         default_reset_button_label:
           type: label
-          label: 'Default webform reset button label'
+          label: 'Default reset button label'
         default_form_submit_once:
           type: boolean
           label: 'Prevent duplicate submissions'
         default_form_open_message:
           type: text
-          label: 'Default webform open message'
+          label: 'Default form open message'
         default_form_close_message:
           type: text
-          label: 'Default webform close message'
+          label: 'Default form close message'
         default_form_exception_message:
           type: text
-          label: 'Default webform exception message'
+          label: 'Default form exception message'
         default_form_confidential_message:
           type: text
-          label: 'Default webform confidential message'
-        default_form_login_message:
+          label: 'Default form confidential message'
+        default_form_access_denied_message:
           type: text
-          label: 'Default login message when access denied to webform'
+          label: 'Default form access denied message'
         default_form_novalidate:
           type: boolean
           label: 'Disable client-side validation'
@@ -60,6 +60,9 @@ webform.settings:
         default_form_details_toggle:
           type: boolean
           label: 'Display collapse/expand all details link'
+        default_form_file_limit:
+          type: string
+          label: 'Default file upload limit per form'
         default_wizard_prev_button_label:
           type: label
           label: 'Default wizard previous page button label'
@@ -114,9 +117,62 @@ webform.settings:
         default_submission_log:
           type: boolean
           label: 'Default submission logging'
-        default_submission_login_message:
+        default_submission_views:
+          type: sequence
+          label: 'Default submission views'
+          sequence:
+            type: mapping
+            label:  'Submission view'
+            mapping:
+              title:
+                type: text
+                label: 'Title'
+              view:
+                type: string
+                label: 'View name / Display ID'
+              global_routes:
+                type: sequence
+                label: 'Apply to global'
+                sequence:
+                  type: string
+                  label: 'Route'
+              webform_routes:
+                type: sequence
+                label: 'Apply to webform'
+                sequence:
+                  type: string
+                  label: 'Route'
+              node_routes:
+                type: sequence
+                label: 'Apply to node'
+                sequence:
+                  type: string
+                  label: 'Route'
+        default_submission_views_replace:
+          type: mapping
+          label: 'Default submission view replace'
+          mapping:
+            global_routes:
+              type: sequence
+              label: 'Replace to global'
+              sequence:
+                type: string
+                label: 'Route'
+            webform_routes:
+              type: sequence
+              label: 'Replace to webform'
+              sequence:
+                type: string
+                label: 'Route'
+            node_routes:
+              type: sequence
+              label: 'Replace to node'
+              sequence:
+                type: string
+                label: 'Route'
+        default_submission_access_denied_message:
           type: text
-          label: 'Default login message when access denied to submission'
+          label: 'Default submission access denied message'
         default_submission_exception_message:
           type: text
           label: 'Default submission exception message'
@@ -222,6 +278,12 @@ webform.settings:
         default_google_maps_api_key:
           type: string
           label: 'Default Google Maps API key'
+        default_algolia_places_app_id:
+          type: string
+          label: 'Default Algolia application id'
+        default_algolia_places_api_key:
+          type: string
+          label: 'Default Algolia API key'
         excluded_elements:
           type: ignore
           label: 'Excluded types'
@@ -232,12 +294,18 @@ webform.settings:
         disabled:
           type: boolean
           label: 'Disable HTML editor'
-        format:
+        element_format:
           type: string
-          label: 'Text format'
+          label: 'Element text format'
+        mail_format:
+          type: string
+          label: 'Mail text format'
         tidy:
           type: boolean
           label: 'Tidy HTML markup'
+        make_unused_managed_files_temporary:
+          type: boolean
+          label: 'Controls if unused HTML editor files should be marked temporary'
     file:
       type: mapping
       label: 'File upload default settings'
@@ -253,7 +321,7 @@ webform.settings:
           label: 'Login message when access denied to private file uploads.'
         default_max_filesize:
           type: string
-          label: 'Default maximum upload size'
+          label: 'Default maximum file upload size'
         default_managed_file_extensions:
           type: string
           label: 'Default allowed managed file extensions'
@@ -271,10 +339,10 @@ webform.settings:
           label: 'Default allowed document file extensions'
         make_unused_managed_files_temporary:
           type: boolean
-          label: 'Controls if unused files should be marked temporary'
+          label: 'Controls if unused webform submission files should be marked temporary'
         delete_temporary_managed_files:
           type: boolean
-          label: 'Immediately deleted temporary managed files'
+          label: 'Immediately deleted temporary managed webform submission files'
     format:
       type: ignore
       label: 'Format default settings'
@@ -426,6 +494,9 @@ webform.settings:
         video_display:
           type: string
           label: 'Video display'
+        help_disabled:
+          type: boolean
+          label: 'Disable help'
         dialog_disabled:
           type: boolean
           label: 'Disable dialogs'

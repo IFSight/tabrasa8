@@ -2,12 +2,15 @@
 
 namespace Drupal\webform;
 
-use Drupal\Component\Utility\Unicode;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 use Drupal\Core\Utility\Token;
 use Drupal\webform\Utility\WebformFormHelper;
 
@@ -16,12 +19,21 @@ use Drupal\webform\Utility\WebformFormHelper;
  */
 class WebformTokenManager implements WebformTokenManagerInterface {
 
+  use StringTranslationTrait;
+
   /**
    * The current user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
+
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
 
   /**
    * The configuration object factory.
@@ -49,6 +61,8 @@ class WebformTokenManager implements WebformTokenManagerInterface {
    *
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration object factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -56,8 +70,9 @@ class WebformTokenManager implements WebformTokenManagerInterface {
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    */
-  public function __construct(AccountInterface $current_user, ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, Token $token) {
+  public function __construct(AccountInterface $current_user, LanguageManagerInterface $language_manager, ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, Token $token) {
     $this->currentUser = $current_user;
+    $this->languageManager = $language_manager;
     $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;
     $this->token = $token;
@@ -71,8 +86,8 @@ class WebformTokenManager implements WebformTokenManagerInterface {
   public function replace($text, EntityInterface $entity = NULL, array $data = [], array $options = []) {
     // Replace tokens within an array.
     if (is_array($text)) {
-      foreach ($text as $key => $value) {
-        $text[$key] = $this->replace($value, $entity, $data, $options);
+      foreach ($text as $key => $token_value) {
+        $text[$key] = $this->replace($token_value, $entity, $data, $options);
       }
       return $text;
     }
@@ -88,6 +103,9 @@ class WebformTokenManager implements WebformTokenManagerInterface {
 
       // Set token data based on entity type.
       $this->setTokenData($data, $entity);
+
+      // Set token options based on entity.
+      $this->setTokenOptions($options, $entity);
     }
 
     // For anonymous users remove all [current-user] tokens to prevent
@@ -98,28 +116,53 @@ class WebformTokenManager implements WebformTokenManagerInterface {
       $text = preg_replace('/\[current-user:[^]]+\]/', '', $text);
     }
 
-    // Collect all tokens that include the clear suffix.
-    $tokens_clear = [];
-    if (preg_match_all('/\[(webform[^]]+):clear\]/', $text, $matches)) {
+    // Initializ token suffixes by wrapping them in temp
+    // {webform-token-suffixes} tags.
+    //
+    // [webform:token:clear:urlencode] becomes
+    // {webform-token-suffixes:clear:urlencode}[webform:token]{/webform-token-suffixes}.
+    if (preg_match_all('/\[(.+?)((?::clear|:htmldecode|:urlencode|:striptags)+)\]/', $text, $matches)) {
       foreach ($matches[0] as $index => $match) {
-        // Wrapping tokens in {webform-token-clear} so that only tokens with
-        // the :clear suffix are removed.
-        $token_base = '{webform-token-clear}[' . $matches[1][$index] . ']{/webform-token-clear}';
-        $text = str_replace($match, $token_base, $text);
-        $tokens_clear[] = $token_base;
+        $token_value = $matches[1][$index];
+        $token_suffixes = $matches[2][$index];
+        $token_wrapper = '{webform-token-suffixes' . $token_suffixes . '}[' . $token_value . ']{/webform-token-suffixes}';
+        $text = str_replace($match, $token_wrapper, $text);
       }
     }
 
     // Replace the webform related tokens.
     $text = $this->token->replace($text, $data, $options);
 
-    // Collect tokens that include the clear suffix.
-    if ($tokens_clear) {
-      foreach ($tokens_clear as $clear_token) {
-        $text = str_replace($clear_token, '', $text);
+    // Process token suffixes.
+    if (preg_match_all('/{webform-token-suffixes:([^}]+)}(.*?){\/webform-token-suffixes}/ms', $text, $matches)) {
+      foreach ($matches[0] as $index => $match) {
+        $token_search = $matches[0][$index];
+        $token_replace = $matches[2][$index];
+
+        $token_value = $matches[2][$index];
+        $token_suffixes = explode(':', $matches[1][$index]);
+        $token_suffixes = array_combine($token_suffixes, $token_suffixes);
+
+        // If token is not replaced then only the :clear suffix is applicable.
+        if (preg_match('/^\[[^}]+\]$/', $token_value)) {
+          // Clear token text or restore the original token.
+          $token_original = str_replace(']', ':' . $matches[1][$index] . ']', $token_value);
+          $token_replace = (isset($token_suffixes['clear'])) ? '' : $token_original;
+        }
+        else {
+          // Decode and XSS filter value first.
+          if (isset($token_suffixes['htmldecode'])) {
+            $token_replace = html_entity_decode($token_replace);
+            $token_replace = (isset($token_suffixes['striptags'])) ? strip_tags($token_replace) : html_entity_decode(Xss::filterAdmin($token_replace));
+          }
+          // Encode value second.
+          if (isset($token_suffixes['urlencode'])) {
+            $token_replace = urlencode($token_replace);
+          }
+        }
+
+        $text = str_replace($token_search, $token_replace, $text);
       }
-      // Replace {webform-token-clear} wrappers that are no longer needed.
-      $text = preg_replace('/{\/?webform-token-clear}/', '', $text);
     }
 
     // Clear current user tokens for undefined values.
@@ -133,7 +176,29 @@ class WebformTokenManager implements WebformTokenManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildTreeLink(array $token_types = ['webform', 'webform_submission', 'webform_handler'], $description = NULL) {
+  public function buildTreeLink(array $token_types = ['webform', 'webform_submission', 'webform_handler']) {
+    if (!$this->moduleHandler->moduleExists('token')) {
+      return [
+        '#type' => 'link',
+        '#title' => $this->t('You may use tokens.'),
+        '#url' => Url::fromUri('https://www.drupal.org/project/token'),
+      ];
+    }
+    else {
+      return [
+        '#theme' => 'token_tree_link',
+        '#text' => $this->t('You may use tokens.'),
+        '#token_types' => $token_types,
+        '#click_insert' => TRUE,
+        '#dialog' => TRUE,
+      ];
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildTreeElement(array $token_types = ['webform', 'webform_submission', 'webform_handler'], $description = NULL) {
     if (!$this->moduleHandler->moduleExists('token')) {
       return [];
     }
@@ -213,19 +278,38 @@ class WebformTokenManager implements WebformTokenManagerInterface {
   /**
    * Get token data based on an entity's type.
    *
-   * @param array $token_data
+   * @param array $data
    *   An array of token data.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   A Webform or Webform submission entity.
    */
-  protected function setTokenData(array &$token_data, EntityInterface $entity) {
+  protected function setTokenData(array &$data, EntityInterface $entity) {
     if ($entity instanceof WebformSubmissionInterface) {
-      $token_data['webform_submission'] = $entity;
-      $token_data['webform'] = $entity->getWebform();
+      $data['webform_submission'] = $entity;
+      $data['webform'] = $entity->getWebform();
     }
     elseif ($entity instanceof WebformInterface) {
-      $token_data['webform'] = $entity;
+      $data['webform'] = $entity;
     }
+  }
+
+  /**
+   * Set token option based on the entity.
+   *
+   * @param array $options
+   *   An array of token data.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   A Webform or Webform submission entity.
+   */
+  protected function setTokenOptions(array &$options, EntityInterface $entity) {
+    $token_options = [];
+    if ($entity instanceof WebformSubmissionInterface) {
+      $token_options['langcode'] = $entity->language()->getId();
+    }
+    elseif ($entity instanceof WebformInterface) {
+      $token_options['langcode'] = $this->languageManager->getCurrentLanguage()->getId();
+    }
+    $options += $token_options;
   }
 
   /**
@@ -237,12 +321,12 @@ class WebformTokenManager implements WebformTokenManagerInterface {
   public static function validateElement($element, FormStateInterface $form_state, &$complete_form) {
     $value = isset($element['#value']) ? $element['#value'] : $element['#default_value'];
 
-    if (!Unicode::strlen($value)) {
+    if (!mb_strlen($value)) {
       return $element;
     }
 
-    // Remove clear suffix which is not valid.
-    $element['#value'] = preg_replace('/\[(webform[^]]+):clear\]/', '[\1]', $value);
+    // Remove suffixes which are not valid.
+    $element['#value'] = preg_replace('/\[(webform[^]]+)((?::clear|:htmldecode|:urlencode|:striptags)+)\]/', '[\1]', $value);
 
     token_element_validate($element, $form_state);
   }

@@ -9,6 +9,7 @@ use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Entity\Webform;
+use Drupal\webform\Plugin\WebformHandler\EmailWebformHandler;
 
 /**
  * Implements hook_webform_submission_form_alter().
@@ -37,7 +38,7 @@ function maillog_webform_submission_form_alter(array &$form, FormStateInterface 
   $sends_email = FALSE;
   $handlers = $webform->getHandlers();
   foreach ($handlers as $handler) {
-    if ($handler instanceof \Drupal\webform\Plugin\WebformHandler\EmailWebformHandler) {
+    if ($handler instanceof EmailWebformHandler) {
       $sends_email = TRUE;
     }
   }
@@ -66,9 +67,13 @@ function maillog_webform_submission_form_alter(array &$form, FormStateInterface 
   }
 
   // Display warning if no emails are being sent.
-  $build[] = ['#markup' => t('No emails will be sent.'), '#prefix' => ' <b>', '#suffix' => '</b>'];
+  $build[] = [
+    '#markup' => t('No emails will be sent.'),
+    '#prefix' => ' <b>',
+    '#suffix' => '</b>',
+  ];
 
   if ($build) {
-    drupal_set_message(\Drupal::service('renderer')->renderPlain($build), 'warning');
+    \Drupal::messenger()->addWarning(\Drupal::service('renderer')->renderPlain($build));
   }
 }

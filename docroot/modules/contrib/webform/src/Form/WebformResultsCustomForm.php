@@ -123,12 +123,16 @@ class WebformResultsCustomForm extends FormBase {
     $form['sort'] = [
       '#prefix' => '<div class="container-inline">',
       '#type' => 'select',
+      '#title' => $this->t('Sort by'),
+      '#title_display' => 'invisible',
       '#field_prefix' => $this->t('Sort by'),
       '#options' => $sort_options,
       '#default_value' => $sort,
     ];
     $form['direction'] = [
       '#type' => 'select',
+      '#title' => $this->t('Direction'),
+      '#title_display' => 'invisible',
       '#field_prefix' => ' ' . $this->t('in', [], ['context' => 'Sort by {sort} in {direction} order']) . ' ',
       '#field_suffix' => ' ' . $this->t('order', [], ['context' => 'Sort by {sort} in {direction} order']),
       '#options' => [
@@ -143,6 +147,8 @@ class WebformResultsCustomForm extends FormBase {
     $limit = $this->webform->getState($this->getStateKey('limit'), NULL);
     $form['limit'] = [
       '#type' => 'select',
+      '#title' => $this->t('Results per page'),
+      '#title_display' => 'invisible',
       '#field_prefix' => $this->t('Show', [], ['context' => 'Show {limit} results per page']),
       '#field_suffix' => $this->t('results per page'),
       '#options' => [
@@ -154,7 +160,7 @@ class WebformResultsCustomForm extends FormBase {
         '1000' => '1000',
         '0' => $this->t('All'),
       ],
-      '#default_value' => ($limit !== NULL) ? $limit : 50,
+      '#default_value' => ($limit !== NULL) ? $limit : 20,
     ];
 
     // Default configuration.
@@ -202,11 +208,31 @@ class WebformResultsCustomForm extends FormBase {
       '#default_value' => $format['element_format'],
     ];
 
+    // Submission settings.
+    $form['submission'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Submission settings'),
+    ];
+    // Get link types.
+    // @see entity.webform_submission.* route names.
+    $link_type_options = [
+      'canonical' => $this->t('View'),
+      'table' => $this->t('Table'),
+    ];
+    $form['submission']['link_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Link submissions to…'),
+      '#descriptions' => $this->t('Please note: Drafts will always be linked to submission form.'),
+      '#options' => $link_type_options,
+      '#default_value' => $this->webform->getState($this->getStateKey('link_type'), 'canonical'),
+    ];
+
     // Build actions.
     $form['actions']['#type'] = 'actions';
     $form['actions']['save'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save'),
+      '#button_type' => 'primary',
     ];
     $form['actions']['delete'] = [
       '#type' => 'submit',
@@ -285,6 +311,7 @@ class WebformResultsCustomForm extends FormBase {
     $this->webform->setState($this->getStateKey('direction'), $form_state->getValue('direction'));
     $this->webform->setState($this->getStateKey('limit'), (int) $form_state->getValue('limit'));
     $this->webform->setState($this->getStateKey('format'), $form_state->getValue('format'));
+    $this->webform->setState($this->getStateKey('link_type'), $form_state->getValue('link_type'));
 
     // Set default.
     if (empty($this->sourceEntity)) {
@@ -292,7 +319,7 @@ class WebformResultsCustomForm extends FormBase {
     }
 
     // Display message.
-    drupal_set_message($this->t('The customized table has been saved.'));
+    $this->messenger()->addStatus($this->t('The customized table has been saved.'));
 
     // Set redirect.
     $redirect_url = $this->requestHandler->getUrl($this->webform, $this->sourceEntity, 'webform.results_submissions');
@@ -314,7 +341,7 @@ class WebformResultsCustomForm extends FormBase {
     $this->webform->deleteState($this->getStateKey('limit'));
     $this->webform->deleteState($this->getStateKey('default'));
     $this->webform->deleteState($this->getStateKey('format'));
-    drupal_set_message($this->t('The customized table has been reset.'));
+    $this->messenger()->addStatus($this->t('The customized table has been reset.'));
   }
 
   /**

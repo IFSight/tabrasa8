@@ -6,6 +6,7 @@ dependencies:
       - webform_templates
 open: null
 close: null
+weight: 0
 uid: null
 template: true
 archive: false
@@ -16,7 +17,7 @@ category: ''
 elements: |
   account_information:
     '#title': 'Your Account Information'
-    '#type': fieldset
+    '#type': webform_section
     user_name:
       '#type': textfield
       '#title': 'User Name'
@@ -28,7 +29,7 @@ elements: |
       '#file_extensions': 'gif jpg png svg'
   personal_information:
     '#title': 'Your Personal Information'
-    '#type': fieldset
+    '#type': webform_section
     first_name:
       '#title': 'First Name'
       '#type': textfield
@@ -42,7 +43,7 @@ elements: |
       '#title': Country
       '#options': country_names
     location:
-      '#type': webform_location
+      '#type': webform_location_places
       '#title': Location
       '#title_display': invisible
       '#description': 'Your location will be saved and may be shared.'
@@ -56,7 +57,7 @@ elements: |
       '#select2': true
       '#options': languages
     gender:
-      '#type': radios
+      '#type': webform_radios_other
       '#title': Gender
       '#options': gender
     biography:
@@ -80,7 +81,7 @@ elements: |
       '#description': 'Your GitHub user name.'
   work_information:
     '#title': 'Your Work Information'
-    '#type': fieldset
+    '#type': webform_section
     current_organization:
       '#type': textfield
       '#title': 'Current Organization'
@@ -99,7 +100,7 @@ elements: |
       '#select2': true
   email_settings:
     '#title': 'Email addresses'
-    '#type': fieldset
+    '#type': webform_section
     email:
       '#type': email
       '#title': 'Primary E-mall Address'
@@ -110,7 +111,7 @@ elements: |
       '#description': 'Enter multiple email addresses separated by commas.'
   regional_settings:
     '#title': 'Regional Settings'
-    '#type': fieldset
+    '#type': webform_section
     time_zone:
       '#type': select
       '#title': Timezone
@@ -124,6 +125,7 @@ elements: |
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': Register
+
 css: ''
 javascript: ''
 settings:
@@ -132,6 +134,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -154,16 +157,26 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
   submission_user_duplicate: false
-  submission_login: false
-  submission_login_message: ''
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -172,7 +185,9 @@ settings:
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -202,9 +217,11 @@ settings:
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: null
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: null
   entity_limit_total_interval: null
   entity_limit_user: null
@@ -286,6 +303,7 @@ handlers:
       html: true
       attachments: false
       twig: false
+      theme_name: ''
       debug: false
       reply_to: ''
       return_path: ''

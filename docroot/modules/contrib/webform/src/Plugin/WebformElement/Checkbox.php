@@ -34,32 +34,26 @@ class Checkbox extends BooleanBase {
   }
 
   /**
-   * Build an element as text or HTML.
-   *
-   * @param string $format
-   *   Format of the element, text or html.
-   * @param array $element
-   *   An element.
-   * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
-   *   A webform submission.
-   * @param array $options
-   *   An array of options.
-   *
-   * @return array
-   *   A render array representing an element as text or HTML.
+   * {@inheritdoc}
    */
   protected function build($format, array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
-    $options += [
-      'exclude_empty_checkbox' => FALSE,
-    ];
-
-    $exclude_empty = $this->getElementProperty($element, 'exclude_empty') ?: $options['exclude_empty_checkbox'];
-    if ($exclude_empty && !$this->getValue($element, $webform_submission, $options)) {
+    if ($this->isEmptyExcluded($element, $options) && !$this->getValue($element, $webform_submission, $options)) {
       return NULL;
     }
     else {
       return parent::build($format, $element, $webform_submission, $options);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isEmptyExcluded(array $element, array $options) {
+    $options += [
+      'exclude_empty_checkbox' => FALSE,
+    ];
+
+    return $this->getElementProperty($element, 'exclude_empty') ?: $options['exclude_empty_checkbox'];
   }
 
   /**

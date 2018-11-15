@@ -127,10 +127,10 @@ class WebformAdminConfigExportersForm extends WebformAdminConfigBaseForm {
     // Copied from: system_check_directory().
     $temp_directory = $form_state->getValue('temp_directory');
     if (!is_dir($temp_directory) && !$this->fileSystem->mkdir($temp_directory, NULL, TRUE)) {
-      $form_state->setErrorByName('temp_directory', t('The directory %directory does not exist and could not be created.', ['%directory' => $temp_directory]));
+      $form_state->setErrorByName('temp_directory', $this->t('The directory %directory does not exist and could not be created.', ['%directory' => $temp_directory]));
     }
     if (is_dir($temp_directory) && !is_writable($temp_directory) && !$this->fileSystem->chmod($temp_directory)) {
-      $form_state->setErrorByName('temp_directory', t('The directory %directory exists but is not writable and could not be made writable.', ['%directory' => $temp_directory]));
+      $form_state->setErrorByName('temp_directory', $this->t('The directory %directory exists but is not writable and could not be made writable.', ['%directory' => $temp_directory]));
     }
     parent::validateForm($form, $form_state);
   }
@@ -148,10 +148,9 @@ class WebformAdminConfigExportersForm extends WebformAdminConfigBaseForm {
     // Set custom temp directory.
     $export['temp_directory'] = ($values['temp_directory'] === file_directory_temp()) ? '' : $values['temp_directory'];
 
+    // Update config and submit form.
     $config = $this->config('webform.settings');
     $config->set('export', $export);
-    $config->save();
-
     parent::submitForm($form, $form_state);
   }
 

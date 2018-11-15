@@ -109,7 +109,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $form['page_settings']['default_page_base_path'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Default base path for webform URLs'),
-      '#description' => $this->t('Leave blank to display the automatic generation of URL aliases for all webforms.'),
+      '#description' => $this->t('Leave blank to disable the automatic generation of URL aliases for all webforms.'),
       '#default_value' => $settings['default_page_base_path'],
     ];
     $form['page_settings']['default_page_base_path_message'] = [
@@ -162,10 +162,11 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#required' => TRUE,
       '#default_value' => $settings['default_form_confidential_message'],
     ];
-    $form['form_settings']['default_form_login_message'] = [
+    $form['form_settings']['default_form_access_denied_message'] = [
       '#type' => 'webform_html_editor',
-      '#title' => $this->t('Default login message when access denied to webform'),
-      '#default_value' => $settings['default_form_login_message'],
+      '#title' => $this->t('Default access denied message'),
+      '#required' => TRUE,
+      '#default_value' => $settings['default_form_access_denied_message'],
     ];
     $form['form_settings']['default_form_required_label'] = [
       '#type' => 'textfield',
@@ -200,7 +201,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#description' => $this->t('A list of classes that will be provided in "Button CSS classes" dropdown. Enter one or more classes on each line. These styles should be available in your theme\'s CSS file.'),
       '#default_value' => $settings['button_classes'],
     ];
-    $form['form_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['form_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Form Behaviors.
     $form['form_behaviors'] = [
@@ -242,7 +243,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
         'group' => $this->t('Validation'),
         'title' => $this->t('Disable inline form errors for all webforms'),
         'description' => $this->t('If checked, <a href=":href">inline form errors</a>  will be disabled for all webforms.', [':href' => 'https://www.drupal.org/docs/8/core/modules/inline-form-errors/inline-form-errors-module-overview']),
-        'access' => (\Drupal::moduleHandler()->moduleExists('inline_form_errors') && floatval(\Drupal::VERSION) >= 8.5),
+        'access' => \Drupal::moduleHandler()->moduleExists('inline_form_errors'),
       ],
       'default_form_required' => [
         'group' => $this->t('Validation'),
@@ -362,6 +363,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#description' => $this->t('A list of classes that will be provided in the "Preview CSS classes" dropdown. Enter one or more classes on each line. These styles should be available in your theme\'s CSS file.'),
       '#default_value' => $config->get('settings.preview_classes'),
     ];
+    $form['preview_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Draft settings.
     $form['draft_settings'] = [
@@ -387,7 +389,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#title' => $this->t('Default draft load message'),
       '#default_value' => $settings['default_draft_loaded_message'],
     ];
-    $form['draft_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['draft_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Confirmation settings.
     $form['confirmation_settings'] = [
@@ -419,7 +421,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#description' => $this->t('A list of classes that will be provided in the "Confirmation back link CSS classes" dropdown. Enter one or more classes on each line. These styles should be available in your theme\'s CSS file.'),
       '#default_value' => $settings['confirmation_back_classes'],
     ];
-    $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Dialog settings.
     $form['dialog_settings'] = [
@@ -452,29 +454,29 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
         'name' => [
           '#type' => 'textfield',
           '#title' => $this->t('Dialog machine name'),
-          '#title_display' => $this->t('invisible'),
-          '#placeholder' => $this->t('Enter machine name'),
+          '#title_display' => 'invisible',
+          '#placeholder' => $this->t('Enter machine name…'),
           '#pattern' => '^[a-z0-9_]*$',
           '#error_no_message' => TRUE,
         ],
         'title' => [
           '#type' => 'textfield',
           '#title' => $this->t('Dialog title'),
-          '#placeholder' => $this->t('Enter title'),
-          '#title_display' => $this->t('invisible'),
+          '#placeholder' => $this->t('Enter title…'),
+          '#title_display' => 'invisible',
           '#error_no_message' => TRUE,
         ],
         'width' => [
           '#type' => 'number',
           '#title' => $this->t('Dialog width'),
-          '#title_display' => $this->t('invisible'),
+          '#title_display' => 'invisible',
           '#field_suffix' => 'px',
           '#error_no_message' => TRUE,
         ],
         'height' => [
           '#type' => 'number',
           '#title' => $this->t('Dialog height'),
-          '#title_display' => $this->t('invisible'),
+          '#title_display' => 'invisible',
           '#field_suffix' => 'px',
           '#error_no_message' => TRUE,
         ],
@@ -486,7 +488,9 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $form['dialog_settings']['dialog'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable site-wide dialog support'),
-      '#description' => $this->t('If checked, the webform dialog library will be added to every page on your website, this allows any webform to be opened in a modal dialog. Webform specific dialog links will be included on all webform settings form.'),
+      '#description' => $this->t('If checked, the webform dialog library will be added to every page on your website, this allows any webform to be opened in a modal dialog.')
+        . '<br /><br />'
+        . $this->t('Webform specific dialog links will be included on all webform settings form.'),
       '#return_value' => TRUE,
       '#default_value' => $settings['dialog'],
     ];
@@ -597,10 +601,11 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       $settings['dialog_options'][$dialog_name] = array_filter($dialog_options);
     }
 
+    // Update config and submit form.
     $config = $this->config('webform.settings');
     $config->set('settings', $settings + $config->get('settings'));
     $config->set('third_party_settings', $form_state->getValue('third_party_settings') ?: []);
-    $config->save();
+    parent::submitForm($form, $form_state);
 
     /* Update paths */
 
@@ -611,8 +616,6 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
         $webform->updatePaths();
       }
     }
-
-    parent::submitForm($form, $form_state);
   }
 
 }

@@ -46,13 +46,19 @@ class WebformCheckboxesOther extends Checkboxes implements WebformOtherInterface
   public function getElementSelectorInputValue($selector, $trigger, array $element, WebformSubmissionInterface $webform_submission) {
     $input_name = WebformSubmissionConditionsValidator::getSelectorInputName($selector);
     $other_type = WebformSubmissionConditionsValidator::getInputNameAsArray($input_name, 1);
-    $value = $this->getRawValue($element, $webform_submission);
+    $value = $this->getRawValue($element, $webform_submission) ?: [];
     if ($other_type === 'other') {
       $other_value = array_diff($value, array_keys($element['#options']));
       return ($other_value) ? implode(', ', $other_value) : NULL;
     }
     else {
-      return array_intersect($value, array_keys($element['#options']));
+      $option_value = WebformSubmissionConditionsValidator::getInputNameAsArray($input_name, 2);
+      if (in_array($option_value, $value, TRUE)) {
+        return (in_array($trigger, ['checked', 'unchecked'])) ? TRUE : $value;
+      }
+      else {
+        return (in_array($trigger, ['checked', 'unchecked'])) ? FALSE : NULL;
+      }
     }
   }
 

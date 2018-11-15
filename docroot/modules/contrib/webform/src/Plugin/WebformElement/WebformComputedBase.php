@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\Core\Render\Element;
+use Drupal\webform\Element\WebformComputedTwig as WebformComputedTwigElement;
 use Drupal\webform\Element\WebformComputedBase as WebformComputedBaseElement;
 use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\Plugin\WebformElementDisplayOnInterface;
@@ -13,7 +14,7 @@ use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
- * Provides a base clase for 'webform_computed' elements.
+ * Provides a base class for 'webform_computed' elements.
  */
 abstract class WebformComputedBase extends WebformElementBase implements WebformElementDisplayOnInterface {
 
@@ -30,6 +31,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
       'display_on' => static::DISPLAY_ON_BOTH,
       // Description/Help.
       'help' => '',
+      'help_title' => '',
       'description' => '',
       'more' => '',
       'more_title' => '',
@@ -195,6 +197,15 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
       '#mode' => 'text',
       '#title' => $this->t('Computed value/markup'),
     ];
+    $form['computed']['whitespace'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Remove whitespace around the'),
+      '#empty_option' => $this->t('- None -'),
+      '#options' => [
+        WebformComputedTwigElement::WHITESPACE_TRIM => $this->t('computed value'),
+        WebformComputedTwigElement::WHITESPACE_SPACELESS => $this->t('computed value and between HTML tags'),
+      ],
+    ];
     $form['computed']['hide_empty'] = [
       '#type' => 'checkbox',
       '#return_value' => TRUE,
@@ -213,7 +224,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
       '#title' => $this->t('Automatically update the computed value using Ajax'),
       '#description' => $this->t('If checked, any element used within the computed value/markup will trigger any automatic update.'),
     ];
-    $form['computed']['tokens'] = ['#access' => TRUE, '#weight' => 10] + $this->tokenManager->buildTreeLink();
+    $form['computed']['tokens'] = ['#access' => TRUE, '#weight' => 10] + $this->tokenManager->buildTreeElement();
     return $form;
   }
 
@@ -236,13 +247,49 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
     $key = $element['#webform_key'];
     $data = $webform_submission->getData();
     if (!empty($element['#store'])) {
-      $data[$key] = $this->processValue($element, $webform_submission);
+      $data[$key] = (string) $this->processValue($element, $webform_submission);
     }
     else {
       // Always unset the value.
       unset($data[$key]);
     }
     $webform_submission->setData($data);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(array &$element, WebformSubmissionInterface $webform_submission, $update = TRUE) {
+    if ($update || empty($element['#store']) || $webform_submission->getWebform()->getSetting('results_disabled')) {
+      return;
+    }
+
+    // Recalculate the stored computed value to account new a submission's
+    // generated sid and serial.
+    $key = $element['#webform_key'];
+    $value = (string) $this->processValue($element, $webform_submission);
+
+    // Update the submission's value.
+    $webform_submission->setElementData($key, $value);
+
+    // The below database update is a one-off solution because there is
+    // currently no other instances where a single element's value
+    // needs to be updated.
+    // @see \Drupal\webform\WebformSubmissionStorage::saveData
+    $fields = [
+      'webform_id' => $webform_submission->getWebform()->id(),
+      'sid' => $webform_submission->id(),
+      'name' => $key,
+      'property' => '',
+      'delta' => 0,
+      'value' => $value,
+    ];
+    \Drupal::database()->update('webform_submission_data')
+      ->fields($fields)
+      ->condition('webform_id', $fields['webform_id'])
+      ->condition('sid', $fields['sid'])
+      ->condition('name', $fields['name'])
+      ->execute();
   }
 
   /**

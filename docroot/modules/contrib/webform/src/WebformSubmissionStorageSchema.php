@@ -14,7 +14,7 @@ class WebformSubmissionStorageSchema extends SqlContentEntityStorageSchema {
    * {@inheritdoc}
    */
   protected function getEntitySchema(ContentEntityTypeInterface $entity_type, $reset = FALSE) {
-    $schema = parent::getEntitySchema($entity_type, $reset = FALSE);
+    $schema = parent::getEntitySchema($entity_type, $reset);
 
     $schema['webform_submission_data'] = [
       'description' => 'Stores all submitted data for webform submissions.',

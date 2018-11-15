@@ -12,17 +12,6 @@
   Drupal.webform.iCheck = Drupal.webform.iCheck || {};
   Drupal.webform.iCheck.options = Drupal.webform.iCheck.options || {};
 
-  function initializeCheckbox($input, options) {
-    $input.addClass('js-webform-icheck')
-      .iCheck(options)
-      // @see https://github.com/fronteed/iCheck/issues/244
-      .on('ifChecked', function (e) {
-        $(e.target).attr('checked', 'checked').change();
-      })
-      .on('ifUnchecked', function (e) {
-        $(e.target).removeAttr('checked').change();
-      });
-  }
   /**
    * Enhance checkboxes and radios using iCheck.
    *
@@ -92,12 +81,12 @@
 
           $(this).iCheck(options);
         })
-        .on('ifChanged', function () {
-          var _index = $(this).parents('th').index() + 1;
-          $(this).parents('thead').next('tbody').find('tr td:nth-child(' + _index + ') input')
-            .iCheck(!$(this).is(':checked') ? 'check' : 'uncheck')
-            .iCheck($(this).is(':checked') ? 'check' : 'uncheck');
-        });
+          .on('ifChanged', function () {
+            var _index = $(this).parents('th').index() + 1;
+            $(this).parents('thead').next('tbody').find('tr td:nth-child(' + _index + ') input')
+              .iCheck(!$(this).is(':checked') ? 'check' : 'uncheck')
+              .iCheck($(this).is(':checked') ? 'check' : 'uncheck');
+          });
       });
     }
   };

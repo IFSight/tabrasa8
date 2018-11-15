@@ -28,7 +28,7 @@ class WebformTestAjaxBlock extends BlockBase implements ContainerFactoryPluginIn
   protected $redirectDestination;
 
   /**
-   * Creates a WebformBlock instance.
+   * Creates a WebformTestAjaxBlock instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -62,7 +62,7 @@ class WebformTestAjaxBlock extends BlockBase implements ContainerFactoryPluginIn
   public function build() {
     $webforms = Webform::loadMultiple();
 
-    $links = [];
+    $ajax_links = [];
     foreach ($webforms as $webform_id => $webform) {
       if (strpos($webform_id, 'test_ajax') !== 0 && $webform_id != 'test_form_wizard_long_100') {
         continue;
@@ -77,7 +77,7 @@ class WebformTestAjaxBlock extends BlockBase implements ContainerFactoryPluginIn
         $route_options = [];
       }
 
-      $links[$webform_id] = [
+      $ajax_links[$webform_id] = [
         'title' => $this->t('Open @webform_id', ['@webform_id' => $webform_id]),
         'url' => $webform->toUrl('canonical', $route_options),
         'attributes' => [
@@ -92,9 +92,35 @@ class WebformTestAjaxBlock extends BlockBase implements ContainerFactoryPluginIn
       ];
     }
 
+    $webform = Webform::load('contact');
+    $inline_links = [
+      'webform' => [
+        'title' => $this->t('Open Contact'),
+        'url' => $webform->toUrl('canonical'),
+        'attributes' => [
+          'class' => ['webform-dialog', 'webform-dialog-normal'],
+        ],
+      ],
+      'source_entity' => [
+        'title' => $this->t('Open Contact with Source Entity'),
+        'url' => $webform->toUrl('canonical', ['query' => ['source_entity_type' => 'ENTITY_TYPE', 'source_entity_id' => 'ENTITY_ID']]),
+        'attributes' => [
+          'class' => ['webform-dialog', 'webform-dialog-normal'],
+        ],
+      ],
+    ];
+
     return [
-      '#theme' => 'links',
-      '#links' => $links,
+      'ajax' => [
+        '#prefix' => '<h3>' . $this->t('Ajax links') . '</h3>',
+        '#theme' => 'links',
+        '#links' => $ajax_links,
+      ],
+      'inline' => [
+        '#prefix' => '<h3>' . $this->t('Inline (Global) links') . '</h3>',
+        '#theme' => 'links',
+        '#links' => $inline_links,
+      ],
       '#attached' => ['library' => ['core/drupal.ajax']],
     ];
   }

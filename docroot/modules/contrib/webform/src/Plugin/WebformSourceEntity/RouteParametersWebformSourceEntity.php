@@ -28,18 +28,6 @@ class RouteParametersWebformSourceEntity extends PluginBase implements WebformSo
   protected $routeMatch;
 
   /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('current_route_match')
-    );
-  }
-
-  /**
    * RouteParametersWebformSourceEntity constructor.
    *
    * @param array $configuration
@@ -60,7 +48,25 @@ class RouteParametersWebformSourceEntity extends PluginBase implements WebformSo
   /**
    * {@inheritdoc}
    */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('current_route_match')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSourceEntity(array $ignored_types) {
+    // Use current account when viewing a user's submissions.
+    // @see \Drupal\webform\WebformSubmissionListBuilder
+    if ($this->routeMatch->getRouteName() === 'entity.webform_submission.user') {
+      return NULL;
+    }
+
     // Get the most specific source entity available in the current route's
     // parameters.
     $parameters = $this->routeMatch->getParameters()->all();

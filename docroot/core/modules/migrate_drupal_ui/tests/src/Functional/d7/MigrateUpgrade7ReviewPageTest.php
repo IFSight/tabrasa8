@@ -15,6 +15,24 @@ class MigrateUpgrade7ReviewPageTest extends MigrateUpgradeReviewPageTestBase {
   /**
    * {@inheritdoc}
    */
+  public static $modules = [
+    'language',
+    'content_translation',
+    'telephone',
+    'aggregator',
+    'book',
+    'forum',
+    'statistics',
+    'syslog',
+    'tracker',
+    'update',
+    // Required for translation migrations.
+    'migrate_drupal_multilingual',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
     $this->loadFixture(drupal_get_path('module', 'migrate_drupal') . '/tests/fixtures/drupal7.php');
@@ -41,7 +59,6 @@ class MigrateUpgrade7ReviewPageTest extends MigrateUpgradeReviewPageTestBase {
       'date',
       'dblog',
       'email',
-      'entity_translation',
       'field',
       'field_sql_storage',
       'file',
@@ -59,6 +76,7 @@ class MigrateUpgrade7ReviewPageTest extends MigrateUpgradeReviewPageTestBase {
       'path',
       'phone',
       'profile',
+      'rdf',
       'search',
       'shortcut',
       'statistics',
@@ -92,6 +110,7 @@ class MigrateUpgrade7ReviewPageTest extends MigrateUpgradeReviewPageTestBase {
       'entity_feature',
       'entity_token',
       'entityreference',
+      'entity_translation',
       'field_ui',
       'help',
       'openid',
@@ -105,6 +124,7 @@ class MigrateUpgrade7ReviewPageTest extends MigrateUpgradeReviewPageTestBase {
       'simpletest',
       'stylizer',
       'term_depth',
+      'title',
       'toolbar',
       'translation',
       'trigger',
@@ -118,7 +138,29 @@ class MigrateUpgrade7ReviewPageTest extends MigrateUpgradeReviewPageTestBase {
    */
   protected function getMissingPaths() {
     return [
-      'rdf',
+      'entity_translation_i18n_menu',
+      'entity_translation_upgrade',
+      'i18n',
+      'i18n_block',
+      'i18n_contact',
+      'i18n_field',
+      'i18n_forum',
+      'i18n_menu',
+      'i18n_node',
+      'i18n_path',
+      'i18n_redirect',
+      'i18n_select',
+      'i18n_string',
+      'i18n_sync',
+      'i18n_taxonomy',
+      'i18n_translation',
+      'i18n_user',
+      'i18n_variable',
+      'variable',
+      'variable_admin',
+      'variable_realm',
+      'variable_store',
+      'variable_views',
       'views',
     ];
   }

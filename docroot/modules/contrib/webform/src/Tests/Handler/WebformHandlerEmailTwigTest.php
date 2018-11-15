@@ -41,6 +41,7 @@ class WebformHandlerEmailTwigTest extends WebformTestBase {
   <b>Subject</b><br />{subject}<br /><br />
 
   <b>Message</b><br />{message}<br /><br />');
+
   }
 
 }

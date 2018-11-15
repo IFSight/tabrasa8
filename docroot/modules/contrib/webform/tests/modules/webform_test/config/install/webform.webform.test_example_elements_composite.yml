@@ -6,6 +6,7 @@ dependencies:
       - webform_test
 open: null
 close: null
+weight: 0
 uid: null
 template: false
 archive: false
@@ -111,18 +112,18 @@ elements: |
       '#title': 'Link multiple'
       '#multiple': true
       '#multiple__header': true
-  webform_location_example:
+  webform_location_geocomplete_example:
     '#type': details
     '#title': Location
     '#open': true
-    webform_location:
-      '#type': webform_location
+    webform_location_geocomplete:
+      '#type': webform_location_places
       '#title': Location
       '#map': true
       '#geolocation': true
       '#format': map
-    webform_location_multiple:
-      '#type': webform_location
+    webform_location_geocomplete_multiple:
+      '#type': webform_location_places
       '#title': 'Location multiple'
       '#map': true
       '#geolocation': true
@@ -175,6 +176,7 @@ elements: |
       '#type': text_format
       '#title': 'Text format'
       '#description': '<b>Known Issues:</b><br /><a href="https://www.drupal.org/node/997826">Issue #997826: #states doesn''t work correctly with type text_format</a><br /><a href="https://www.drupal.org/node/2625128">Issue #2625128: Text format selection stays visible when using editor and a hidden webform state</a><br /><a href="https://www.drupal.org/node/1954968">Issue #1954968: Required CKEditor fields always fail HTML5 validation</a>'
+  
 css: ''
 javascript: ''
 settings:
@@ -183,6 +185,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
+  form_title: source_entity_webform
   form_submit_once: false
   form_exception_message: ''
   form_open_message: ''
@@ -205,16 +208,26 @@ settings:
   form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
-  form_login: false
-  form_login_message: ''
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
   submission_label: ''
   submission_log: false
+  submission_views: {  }
+  submission_views_replace: {  }
   submission_user_columns: {  }
   submission_user_duplicate: false
-  submission_login: false
-  submission_login_message: ''
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
   submission_exception_message: ''
   submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -223,7 +236,9 @@ settings:
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
+  wizard_progress_link: false
   wizard_start_label: ''
+  wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
@@ -253,9 +268,11 @@ settings:
   limit_total: null
   limit_total_interval: null
   limit_total_message: ''
+  limit_total_unique: false
   limit_user: null
   limit_user_interval: null
   limit_user_message: ''
+  limit_user_unique: false
   entity_limit_total: null
   entity_limit_total_interval: null
   entity_limit_user: null

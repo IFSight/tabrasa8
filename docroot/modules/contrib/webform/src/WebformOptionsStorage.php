@@ -3,13 +3,13 @@
 namespace Drupal\webform;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Component\Serialization\Yaml;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\ElementInfoManagerInterface;
+use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Element\WebformCompositeBase;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

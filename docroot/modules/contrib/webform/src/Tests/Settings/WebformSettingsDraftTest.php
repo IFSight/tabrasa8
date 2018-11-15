@@ -21,19 +21,14 @@ class WebformSettingsDraftTest extends WebformTestBase {
   protected static $testWebforms = ['test_form_draft_authenticated', 'test_form_draft_anonymous', 'test_form_draft_multiple', 'test_form_preview'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Test webform submission form draft.
    */
   public function testDraft() {
+    $normal_user = $this->drupalCreateUser();
+
+    $admin_submission_user = $this->drupalCreateUser([
+      'administer webform submission',
+    ]);
 
     /**************************************************************************/
     // Autosave for anonymous draft to authenticated draft.
@@ -47,7 +42,7 @@ class WebformSettingsDraftTest extends WebformTestBase {
       $is_authenticated = ($webform_id == 'test_form_draft_authenticated') ? TRUE : FALSE;
 
       // Login draft account.
-      ($is_authenticated) ? $this->drupalLogin($this->normalUser) : $this->drupalLogout();
+      ($is_authenticated) ? $this->drupalLogin($normal_user) : $this->drupalLogout();
 
       $webform = Webform::load($webform_id);
 
@@ -66,15 +61,23 @@ class WebformSettingsDraftTest extends WebformTestBase {
       $this->assertRaw('You have an existing draft');
       $this->assertFieldByName('name', 'John Smith');
 
+      // Check no draft message when webform is closed.
+      $webform->setStatus(FALSE)->save();
+      $this->drupalGet("webform/$webform_id");
+      $this->assertNoRaw('You have an existing draft');
+      $this->assertNoFieldByName('name', 'John Smith');
+      $this->assertRaw('Sorry…This form is closed to new submissions.');
+      $webform->setStatus(TRUE)->save();
+
       // Login admin account.
-      $this->drupalLogin($this->adminSubmissionUser);
+      $this->drupalLogin($admin_submission_user);
 
       // Check submission.
       $this->drupalGet("admin/structure/webform/manage/$webform_id/submission/$sid");
       $this->assertRaw('<div><b>Is draft:</b> Yes</div>');
 
       // Login draft account.
-      ($is_authenticated) ? $this->drupalLogin($this->normalUser) : $this->drupalLogout();
+      ($is_authenticated) ? $this->drupalLogin($normal_user) : $this->drupalLogout();
 
       // Check update draft and bypass validation.
       $this->drupalPostForm("webform/$webform_id", [
@@ -132,19 +135,19 @@ class WebformSettingsDraftTest extends WebformTestBase {
     $this->assertFieldByName('name', 'John Smith');
 
     // Login the normal user.
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
 
     // Check that submission is now owned by the normal user.
     \Drupal::entityTypeManager()->getStorage('webform_submission')->resetCache();
     $webform_submission = WebformSubmission::load($sid);
-    $this->assertEqual($webform_submission->getOwnerId(), $this->normalUser->id());
+    $this->assertEqual($webform_submission->getOwnerId(), $normal_user->id());
 
     // Check that drafts are not convert when form_convert_anonymous = FALSE.
     $this->drupalLogout();
     $webform->setSetting('form_convert_anonymous', FALSE)->save();
 
     $sid = $this->postSubmission($webform, ['name' => 'John Smith']);
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
 
     // Check that submission is still owned by anonymous user.
     \Drupal::entityTypeManager()->getStorage('webform_submission')->resetCache();
@@ -171,12 +174,12 @@ class WebformSettingsDraftTest extends WebformTestBase {
     $this->assertRaw('You have an existing draft');
 
     // Login the normal user.
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
 
     \Drupal::entityTypeManager()->getStorage('webform_submission')->resetCache();
     $webform_submission = WebformSubmission::load($sid);
     // Check that submission is NOT owned by the normal user.
-    $this->assertNotEqual($webform_submission->getOwnerId(), $this->normalUser->id());
+    $this->assertNotEqual($webform_submission->getOwnerId(), $normal_user->id());
 
     // Check that submission is still anonymous.
     $this->assertEqual($webform_submission->getOwnerId(), 0);
@@ -185,7 +188,7 @@ class WebformSettingsDraftTest extends WebformTestBase {
     // Export.
     /**************************************************************************/
 
-    $this->drupalLogin($this->adminSubmissionUser);
+    $this->drupalLogin($admin_submission_user);
 
     // Check export with draft settings.
     $this->drupalGet('admin/structure/webform/manage/test_form_draft_authenticated/results/download');
@@ -207,13 +210,12 @@ class WebformSettingsDraftTest extends WebformTestBase {
     $this->drupalGet('webform/test_form_draft_authenticated');
     $this->assertRaw('You have an existing draft');
     $this->assertRaw('<label>Name</label>' . PHP_EOL . '        John Smith');
-  }
 
-  /**
-   * Test webform draft multiple.
-   */
-  public function testDraftMultiple() {
-    $this->drupalLogin($this->normalUser);
+    /**************************************************************************/
+    // Test webform draft multiple.
+    /**************************************************************************/
+
+    $this->drupalLogin($normal_user);
 
     $webform = Webform::load('test_form_draft_multiple');
 
@@ -270,12 +272,11 @@ class WebformSettingsDraftTest extends WebformTestBase {
     $this->drupalGet('webform/test_form_draft_multiple');
     $this->clickLink('Load your pending draft');
     $this->assertFieldByName('name', 'Jane Doe');
-  }
 
-  /**
-   * Test webform submission form reset draft.
-   */
-  public function testResetDraft() {
+    /**************************************************************************/
+    // Test webform submission form reset draft.
+    /**************************************************************************/
+
     $this->drupalLogin($this->rootUser);
 
     $webform = Webform::load('test_form_draft_authenticated');

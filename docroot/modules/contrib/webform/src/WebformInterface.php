@@ -4,7 +4,6 @@ namespace Drupal\webform;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\webform\Plugin\WebformHandlerInterface;
 
@@ -12,6 +11,26 @@ use Drupal\webform\Plugin\WebformHandlerInterface;
  * Provides an interface defining a webform entity.
  */
 interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollectionInterface, EntityOwnerInterface {
+
+  /**
+   * Webform title.
+   */
+  const TITLE_WEBFORM = 'webform';
+
+  /**
+   * Source entity title.
+   */
+  const TITLE_SOURCE_ENTITY = 'source_entity';
+
+  /**
+   * Both source entity and webform title.
+   */
+  const TITLE_SOURCE_ENTITY_WEBFORM = 'source_entity_webform';
+
+  /**
+   * Both webform and source entity title.
+   */
+  const TITLE_WEBFORM_SOURCE_ENTITY = 'webform_source_entity';
 
   /**
    * Denote drafts are not allowed.
@@ -90,12 +109,47 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
   const CONFIRMATION_DEFAULT = 'default';
 
   /**
+   * Webform confirmation none.
+   */
+  const CONFIRMATION_NONE = 'none';
+
+  /**
+   * Display standard 403 access denied page.
+   */
+  const ACCESS_DENIED_DEFAULT = 'default';
+
+  /**
+   * Display customized access denied message.
+   */
+  const ACCESS_DENIED_MESSAGE = 'message';
+
+  /**
+   * Display customized 403 access denied page.
+   */
+  const ACCESS_DENIED_PAGE = 'page';
+
+  /**
+   * Redirect to user login with custom message.
+   */
+  const ACCESS_DENIED_LOGIN = 'login';
+
+  /**
    * Returns the webform's (original) langcode.
    *
    * @return string
    *   The webform's (original) langcode.
    */
   public function getLangcode();
+
+  /**
+   * Returns the webform's weight.
+   *
+   * Only applies to when multiple webforms are attached to a single node.
+   *
+   * @return int
+   *   The webform's weight.
+   */
+  public function getWeight();
 
   /**
    * Determine if the webform has page or is attached to other entities.
@@ -466,18 +520,18 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
   public function setPropertyOverride($property_name, $value);
 
   /**
-   * Returns the webform access controls.
+   * Returns the webform access rules.
    *
    * @return array
-   *   A structured array containing all the webform access controls.
+   *   A structured array containing all the webform access rules.
    */
   public function getAccessRules();
 
   /**
-   * Sets the webform access.
+   * Sets the webform access rules.
    *
    * @param array $access
-   *   The structured array containing all the webform access controls.
+   *   The structured array containing all the webform access rules.
    *
    * @return $this
    */
@@ -490,30 +544,6 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    *   A structured array containing all the webform default settings.
    */
   public static function getDefaultSettings();
-
-  /**
-   * Returns the webform default access controls.
-   *
-   * @return array
-   *   A structured array containing all the webform default access controls.
-   */
-  public static function getDefaultAccessRules();
-
-  /**
-   * Checks webform access to an operation on a webform's submission.
-   *
-   * @param string $operation
-   *   The operation access should be checked for.
-   *   Usually "create", "view", "update", "delete", "purge", or "admin".
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user session for which to check access.
-   * @param \Drupal\webform\WebformSubmissionInterface|null $webform_submission
-   *   (optional) A webform submission.
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   *   The access result.
-   */
-  public function checkAccessRules($operation, AccountInterface $account, WebformSubmissionInterface $webform_submission = NULL);
 
   /**
    * Get webform submission webform.
@@ -627,6 +657,14 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    *   Webform elements flattened into an associative array keyed by element key.
    */
   public function getElementsInitializedFlattenedAndHasValue($operation = NULL);
+
+  /**
+   * Get webform manager file elements.
+   *
+   * @return array
+   *   Webform managed file elements.
+   */
+  public function getElementsManagedFiles();
 
   /**
    * Get webform elements selectors as options.
@@ -790,7 +828,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Invoke a handlers method.
    *
    * @param string $method
-   *   The handle method to be invoked.
+   *   The handler method to be invoked.
    * @param mixed $data
    *   The argument to passed by reference to the handler method.
    * @param mixed $context1
@@ -804,7 +842,7 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Invoke elements method.
    *
    * @param string $method
-   *   The handle method to be invoked.
+   *   The handler method to be invoked.
    * @param mixed $data
    *   The argument to passed by reference to the handler method.
    * @param mixed $context1

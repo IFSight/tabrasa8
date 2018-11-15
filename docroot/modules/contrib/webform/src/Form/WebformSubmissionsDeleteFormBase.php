@@ -4,7 +4,6 @@ namespace Drupal\webform\Form;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformRequestInterface;
@@ -13,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Base webform for deleting webform submission.
  */
-abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
+abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
 
   /**
    * Default number of submission to be deleted during batch processing.
@@ -61,6 +60,8 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
   public function __construct(EntityTypeManagerInterface $entity_type_manager, WebformRequestInterface $request_handler) {
     $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
     $this->requestHandler = $request_handler;
+
+    list($this->webform, $this->sourceEntity) = $this->requestHandler->getWebformEntities();
   }
 
   /**
@@ -83,22 +84,32 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    list($this->webform, $this->sourceEntity) = $this->requestHandler->getWebformEntities();
-    return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->setRedirectUrl($this->getCancelUrl());
     if ($this->submissionStorage->getTotal($this->webform, $this->sourceEntity) < $this->getBatchLimit()) {
       $this->submissionStorage->deleteAll($this->webform, $this->sourceEntity);
-      drupal_set_message($this->getFinishedMessage());
+      $this->messenger()->addStatus($this->getFinishedMessage());
     }
     else {
       $this->batchSet($this->webform, $this->sourceEntity);
+    }
+  }
+
+  /**
+   * Get webform or source entity label.
+   *
+   * @return null|string
+   *   Webform or source entity label.
+   */
+  public function getLabel() {
+    if ($this->sourceEntity) {
+      return $this->sourceEntity->label();
+    }
+    elseif ($this->webform->label()) {
+      return $this->webform->label();
+    }
+    else {
+      return '';
     }
   }
 
@@ -111,6 +122,10 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
   public function getFinishedMessage() {
     return $this->t('Webform submissions cleared.');
   }
+
+  /****************************************************************************/
+  // Batch API.
+  /****************************************************************************/
 
   /**
    * Batch API; Initialize batch operations.
@@ -180,7 +195,7 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
     // Track progress.
     $context['sandbox']['progress'] += $this->submissionStorage->deleteAll($webform, $entity, $this->getBatchLimit(), $max_sid);
 
-    $context['message'] = $this->t('Deleting @count of @total submissions...', ['@count' => $context['sandbox']['progress'], '@total' => $context['sandbox']['max']]);
+    $context['message'] = $this->t('Deleting @count of @total submissions…', ['@count' => $context['sandbox']['progress'], '@total' => $context['sandbox']['max']]);
 
     // Track finished.
     if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
@@ -200,10 +215,10 @@ abstract class WebformSubmissionsDeleteFormBase extends ConfirmFormBase {
    */
   public function batchFinish($success = FALSE, array $results, array $operations) {
     if (!$success) {
-      drupal_set_message($this->t('Finished with an error.'));
+      $this->messenger()->addStatus($this->t('Finished with an error.'));
     }
     else {
-      drupal_set_message($this->getFinishedMessage());
+      $this->messenger()->addStatus($this->getFinishedMessage());
     }
   }
 

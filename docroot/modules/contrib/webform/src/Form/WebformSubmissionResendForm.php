@@ -147,12 +147,12 @@ class WebformSubmissionResendForm extends FormBase {
     // Add submission navigation.
     $source_entity = $this->requestHandler->getCurrentSourceEntity('webform_submission');
     $form['navigation'] = [
-      '#theme' => 'webform_submission_navigation',
+      '#type' => 'webform_submission_navigation',
       '#webform_submission' => $webform_submission,
       '#weight' => -20,
     ];
     $form['information'] = [
-      '#theme' => 'webform_submission_information',
+      '#type' => 'webform_submission_information',
       '#webform_submission' => $webform_submission,
       '#source_entity' => $source_entity,
       '#weight' => -19,
@@ -179,7 +179,7 @@ class WebformSubmissionResendForm extends FormBase {
     $t_args = [
       '%label' => $message_handler->label(),
     ];
-    drupal_set_message($this->t('Successfully re-sent %label.', $t_args));
+    $this->messenger()->addStatus($this->t('Successfully re-sent %label.', $t_args));
   }
 
   /**

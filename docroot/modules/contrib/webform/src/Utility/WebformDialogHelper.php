@@ -21,7 +21,7 @@ class WebformDialogHelper {
   /**
    * Width for normal dialog. (modal: 800px; off-canvas: 600px)
    *
-   * Used by: Add and edit element/handler, etc...
+   * Used by: Add and edit element/handler, etc…
    *
    * @var string
    */
@@ -30,7 +30,7 @@ class WebformDialogHelper {
   /**
    * Width for narrow dialog. (modal: 700px; off-canvas: 500px)
    *
-   * Used by: Duplicate and delete entity, notes, etc...
+   * Used by: Duplicate and delete entity, notes, etc…
    *
    * @var string
    */
@@ -43,7 +43,7 @@ class WebformDialogHelper {
    *   TRUE if outside_in.module is enabled and system trays are not disabled.
    */
   public static function useOffCanvas() {
-    return ((floatval(\Drupal::VERSION) >= 8.5) && !\Drupal::config('webform.settings')->get('ui.offcanvas_disabled')) ? TRUE : FALSE;
+    return (!\Drupal::config('webform.settings')->get('ui.offcanvas_disabled')) ? TRUE : FALSE;
   }
 
   /**
@@ -54,6 +54,9 @@ class WebformDialogHelper {
    */
   public static function attachLibraries(array &$build) {
     $build['#attached']['library'][] = 'webform/webform.admin.dialog';
+    if (static::useOffCanvas()) {
+      $build['#attached']['library'][] = 'webform/webform.off_canvas';
+    }
     // @see \Drupal\webform\Element\WebformHtmlEditor::preRenderWebformHtmlEditor
     if (\Drupal::moduleHandler()->moduleExists('imce') && \Drupal\imce\Imce::access()) {
       $build['#attached']['library'][] = 'imce/drupal.imce.ckeditor';

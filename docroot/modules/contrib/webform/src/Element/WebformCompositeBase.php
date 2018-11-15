@@ -6,13 +6,14 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
-use Drupal\webform\Plugin\WebformElement\WebformManagedFileBase as WebformManagedFileBasePlugin;
 use Drupal\webform\Utility\WebformElementHelper;
 
 /**
  * Provides an base composite webform element.
  */
 abstract class WebformCompositeBase extends FormElement implements WebformCompositeInterface {
+
+  use WebformCompositeFormElementTrait;
 
   /**
    * {@inheritdoc}
@@ -27,7 +28,7 @@ abstract class WebformCompositeBase extends FormElement implements WebformCompos
         [$class, 'processAjaxForm'],
       ],
       '#pre_render' => [
-        [$class, 'preRenderCompositeFormElement'],
+        [$class, 'preRenderWebformCompositeFormElement'],
       ],
       '#title_display' => 'invisible',
       '#required' => FALSE,
@@ -253,13 +254,12 @@ abstract class WebformCompositeBase extends FormElement implements WebformCompos
         $composite_element['#empty_option'] = $composite_element['#placeholder'];
       }
 
-      // Note: File uploads are not supported because uploaded file
-      // destination save and delete callbacks are not setup.
-      // @see \Drupal\webform\Plugin\WebformElement\WebformManagedFileBase::postSave
-      // @see \Drupal\webform\Plugin\WebformElement\WebformManagedFileBase::postDelete
-      if ($element_plugin instanceof WebformManagedFileBasePlugin) {
-        throw new \Exception('File upload element is not supported within composite elements.');
+      // Apply #select2 and #chosen to select elements.
+      if (isset($composite_element['#type']) && strpos($composite_element['#type'], 'select') !== FALSE) {
+        $select_properties = ['#select2' => '#select2', '#chosen' => '#chosen'];
+        $composite_element += array_intersect_key($element, $select_properties);
       }
+
       if ($element_plugin->hasMultipleValues($composite_element)) {
         throw new \Exception('Multiple elements are not supported within composite elements.');
       }

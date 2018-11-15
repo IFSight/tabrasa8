@@ -5,7 +5,7 @@ namespace Drupal\Tests\content_moderation\Kernel;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
-use Drupal\workflows\Entity\Workflow;
+use Drupal\Tests\content_moderation\Traits\ContentModerationTestTrait;
 
 /**
  * @coversDefaultClass \Drupal\content_moderation\Plugin\Field\ModerationStateFieldItemList
@@ -13,6 +13,8 @@ use Drupal\workflows\Entity\Workflow;
  * @group content_moderation
  */
 class ModerationStateFieldItemListTest extends KernelTestBase {
+
+  use ContentModerationTestTrait;
 
   /**
    * {@inheritdoc}
@@ -51,7 +53,7 @@ class ModerationStateFieldItemListTest extends KernelTestBase {
       'type' => 'example',
     ]);
     $node_type->save();
-    $workflow = Workflow::load('editorial');
+    $workflow = $this->createEditorialWorkflow();
     $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'example');
     $workflow->save();
 
@@ -100,20 +102,70 @@ class ModerationStateFieldItemListTest extends KernelTestBase {
   }
 
   /**
-   * Tests the computed field when it is unset or set to an empty value.
+   * Tests the item list when it is emptied and appended to.
    */
-  public function testSetEmptyState() {
+  public function testEmptyStateAndAppend() {
+    // This test case mimics the lifecycle of an entity that is being patched in
+    // a rest resource.
+    $this->testNode->moderation_state->setValue([]);
+    $this->assertTrue($this->testNode->moderation_state->isEmpty());
+    $this->assertEmptiedModerationFieldItemList();
+
+    $this->testNode->moderation_state->appendItem();
+    $this->assertEquals(1, $this->testNode->moderation_state->count());
+    $this->assertEquals(NULL, $this->testNode->moderation_state->value);
+    $this->assertEmptiedModerationFieldItemList();
+  }
+
+  /**
+   * Test an empty value assigned to the field item.
+   */
+  public function testEmptyFieldItem() {
     $this->testNode->moderation_state->value = '';
-    $this->assertEquals('draft', $this->testNode->moderation_state->value);
+    $this->assertEquals('', $this->testNode->moderation_state->value);
+    $this->assertEmptiedModerationFieldItemList();
+  }
 
+  /**
+   * Test an empty value assigned to the field item list.
+   */
+  public function testEmptyFieldItemList() {
     $this->testNode->moderation_state = '';
-    $this->assertEquals('draft', $this->testNode->moderation_state->value);
+    $this->assertEquals('', $this->testNode->moderation_state->value);
+    $this->assertEmptiedModerationFieldItemList();
+  }
 
+  /**
+   * Test the field item when it is unset.
+   */
+  public function testUnsetItemList() {
     unset($this->testNode->moderation_state);
-    $this->assertEquals('draft', $this->testNode->moderation_state->value);
+    $this->assertEquals(NULL, $this->testNode->moderation_state->value);
+    $this->assertEmptiedModerationFieldItemList();
+  }
 
+  /**
+   * Test the field item when it is assigned NULL.
+   */
+  public function testAssignNullItemList() {
     $this->testNode->moderation_state = NULL;
-    $this->assertEquals('draft', $this->testNode->moderation_state->value);
+    $this->assertEquals(NULL, $this->testNode->moderation_state->value);
+    $this->assertEmptiedModerationFieldItemList();
+  }
+
+  /**
+   * Assert the set of expectations when the moderation state field is emptied.
+   */
+  protected function assertEmptiedModerationFieldItemList() {
+    $this->assertTrue($this->testNode->moderation_state->isEmpty());
+    // Test the empty value causes a violation in the entity.
+    $violations = $this->testNode->validate();
+    $this->assertCount(1, $violations);
+    $this->assertEquals('This value should not be null.', $violations->get(0)->getMessage());
+    // Test that incorrectly saving the entity regardless will not produce a
+    // change in the moderation state.
+    $this->testNode->save();
+    $this->assertEquals('draft', Node::load($this->testNode->id())->moderation_state->value);
   }
 
   /**
@@ -129,6 +181,7 @@ class ModerationStateFieldItemListTest extends KernelTestBase {
 
     $unmoderated_node->moderation_state = NULL;
     $this->assertEquals(0, $unmoderated_node->moderation_state->count());
+    $this->assertCount(0, $unmoderated_node->validate());
   }
 
   /**
@@ -245,6 +298,36 @@ class ModerationStateFieldItemListTest extends KernelTestBase {
         'published',
         TRUE,
         TRUE,
+      ],
+    ];
+  }
+
+  /**
+   * Test saving a moderated node with an existing ID.
+   *
+   * @dataProvider moderatedEntityWithExistingIdTestCases
+   */
+  public function testModeratedEntityWithExistingId($state) {
+    $node = Node::create([
+      'title' => 'Test title',
+      'type' => 'example',
+      'nid' => 999,
+      'moderation_state' => $state,
+    ]);
+    $node->save();
+    $this->assertEquals($state, $node->moderation_state->value);
+  }
+
+  /**
+   * Test cases for ::testModeratedEntityWithExistingId.
+   */
+  public function moderatedEntityWithExistingIdTestCases() {
+    return [
+      'Draft non-default state' => [
+        'draft',
+      ],
+      'Published default state' => [
+        'published',
       ],
     ];
   }

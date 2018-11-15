@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Controller;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Database;
@@ -77,7 +76,7 @@ class WebformElementController extends ControllerBase {
     ];
 
     // Check minimum number of characters.
-    if (Unicode::strlen($q) < (int) $element['#autocomplete_match']) {
+    if (mb_strlen($q) < (int) $element['#autocomplete_match']) {
       return new JsonResponse([]);
     }
 

@@ -17,7 +17,7 @@ class WebformEntityTranslationTest extends WebformTestBase {
    *
    * @var array
    */
-  public static $modules = ['block', 'webform', 'webform_test_translation'];
+  public static $modules = ['block', 'webform', 'webform_ui', 'webform_test_translation'];
 
   /**
    * {@inheritdoc}
@@ -36,6 +36,10 @@ class WebformEntityTranslationTest extends WebformTestBase {
     // Login admin user.
     $this->drupalLogin($this->rootUser);
 
+    // Set [site:name] to 'Test Website' and translate it into Spanish.
+    $this->drupalPostForm('/admin/config/system/site-information', ['site_name' => 'Test Website'], t('Save configuration'));
+    $this->drupalPostForm('/admin/config/system/site-information/translate/es/add', ['translation[config_names][system.site][name]' => 'Sitio web de prueba'], t('Save translation'));
+
     /** @var \Drupal\webform\WebformTranslationManagerInterface $translation_manager */
     $translation_manager = \Drupal::service('webform.translation_manager');
 
@@ -49,12 +53,30 @@ class WebformEntityTranslationTest extends WebformTestBase {
 
     // Check translations.
     $this->drupalGet('admin/structure/webform/manage/test_translation/translate');
+    $this->assertRaw('<a href="' . base_path() . 'webform/test_translation"><strong>English (original)</strong></a>');
+    $this->assertRaw('<a href="' . base_path() . 'es/webform/test_translation" hreflang="es">Spanish</a>');
+    $this->assertNoRaw('<a href="' . base_path() . 'fr/webform/test_translation" hreflang="fr">French</a>');
     $this->assertRaw('<a href="' . base_path() . 'admin/structure/webform/manage/test_translation/translate/es/edit">Edit</a>');
 
-    // Check Spanish translations.
+    // Check Spanish translation.
     $this->drupalGet('admin/structure/webform/manage/test_translation/translate/es/edit');
     $this->assertFieldByName('translation[config_names][webform.webform.test_translation][title]', 'Prueba: Traducción');
     $this->assertField('translation[config_names][webform.webform.test_translation][elements]');
+
+    // Check form builder is not translated.
+    $this->drupalGet('es/admin/structure/webform/manage/test_translation');
+    $this->assertLink('Text field');
+    $this->assertNoLink('Campo de texto');
+
+    // Check form builder is not translated when reset.
+    $this->drupalPostAjaxForm('es/admin/structure/webform/manage/test_translation', [], ['op' => t('Reset')]);
+    $this->assertLink('Text field');
+    $this->assertNoLink('Campo de texto');
+
+    // Check element edit form is not translated.
+    $this->drupalGet('es/admin/structure/webform/manage/test_translation/element/textfield/edit');
+    $this->assertFieldByName('properties[title]', 'Text field');
+    $this->assertNoFieldByName('properties[title]', 'Campo de texto');
 
     // Check translated webform options.
     $this->drupalGet('es/webform/test_translation');
@@ -70,16 +92,23 @@ class WebformEntityTranslationTest extends WebformTestBase {
     $this->assertRaw('<th class="composite-table--age webform-multiple-table--age">Edad</th>');
     $this->assertRaw('<span class="field-suffix">años. antiguo</span>');
 
+    // Check translated webform token.
+    $this->assertRaw('Site name: Sitio web de prueba');
+
     // Check that webform is not translated into French.
     $this->drupalGet('fr/webform/test_translation');
     $this->assertRaw('<label for="edit-textfield">Text field</label>');
     $this->assertRaw('<option value="1">One</option>');
     $this->assertRaw('<option value="4">Four</option>');
+    $this->assertRaw('Site name: Test Website');
 
     // Check that French config elements returns the default languages elements.
     // Please note: This behavior might change.
     $translation_element = $translation_manager->getElements($webform, 'fr', TRUE);
     $this->assertEqual($elements, $translation_element);
+
+    // Translate [site:name] into French.
+    $this->drupalPostForm('/admin/config/system/site-information/translate/fr/add', ['translation[config_names][system.site][name]' => 'Site Web de test'], t('Save translation'));
 
     // Create French translation.
     $translation_elements = [
@@ -99,6 +128,13 @@ class WebformEntityTranslationTest extends WebformTestBase {
     // Check French translation.
     $this->drupalGet('fr/webform/test_translation');
     $this->assertRaw('<label for="edit-textfield">French</label>');
+    $this->assertRaw('Site name: Site Web de test');
+
+    // Check translations.
+    $this->drupalGet('admin/structure/webform/manage/test_translation/translate');
+    $this->assertRaw('<a href="' . base_path() . 'webform/test_translation"><strong>English (original)</strong></a>');
+    $this->assertRaw('<a href="' . base_path() . 'es/webform/test_translation" hreflang="es">Spanish</a>');
+    $this->assertRaw('<a href="' . base_path() . 'fr/webform/test_translation" hreflang="fr">French</a>');
 
     // Check French config elements only contains translated properties and
     // custom properties are removed.
@@ -123,8 +159,20 @@ class WebformEntityTranslationTest extends WebformTestBase {
     $this->assertRaw('>Seleccione (personalizado)<');
     $this->assertRaw('>Compuesto<');
 
+    // Create translated submissions.
+    $this->drupalPostForm('webform/test_translation', ['textfield' => 'English Submission'], 'Send message');
+    $this->drupalPostForm('es/webform/test_translation', ['textfield' => 'Spanish Submission'], 'Enviar mensaje');
+    $this->drupalPostForm('fr/webform/test_translation', ['textfield' => 'French Submission'], 'Send message');
+
+    // Check computed token is NOT translated for each language because only
+    // one language can be loaded for a config translation.
+    $this->drupalGet('admin/structure/webform/manage/test_translation/results/submissions');
+    $this->assertRaw('Site name: Test Website');
+    $this->assertNoRaw('Site name: Sitio web de prueba');
+    $this->assertNoRaw('Site name: Sitio web de prueba');
+
     /**************************************************************************/
-    // Site wide language
+    // Site wide language.
     /**************************************************************************/
 
     // Make sure the site language is English (en).
@@ -170,7 +218,7 @@ class WebformEntityTranslationTest extends WebformTestBase {
     ];
     $this->drupalPostForm('admin/structure/webform/manage/test_translation/duplicate', $edit, t('Save'));
 
-    // Check duplicate  English translation.
+    // Check duplicate English translation.
     $this->drupalGet('webform/duplicate', ['language' => $language_manager->getLanguage('en')]);
     $this->assertRaw('<label for="edit-textfield">Text field</label>');
 

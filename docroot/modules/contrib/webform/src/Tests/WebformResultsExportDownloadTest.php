@@ -29,16 +29,6 @@ class WebformResultsExportDownloadTest extends WebformTestBase {
   protected static $testWebforms = ['test_element_managed_file'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Tests download files.
    */
   public function testDownloadFiles() {

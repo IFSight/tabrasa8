@@ -3,11 +3,10 @@
  * JavaScript behaviors for computed elements.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, debounce) {
 
   'use strict';
 
-  // @see http://qwertypants.github.io/jQuery-Word-and-Character-Counter-Plugin/
   Drupal.webform = Drupal.webform || {};
   Drupal.webform.computed = Drupal.webform.computed || {};
   Drupal.webform.computed.delay = Drupal.webform.computed.delay || 500;
@@ -31,9 +30,9 @@
         }
 
         // Add event handler to elements that are used by the computed element.
-        $.each(elementKeys, function( i, key) {
+        $.each(elementKeys, function (i, key) {
           $form.find(':input[name^="' + key + '"]')
-            .on('keyup change', setUpdate);
+            .on('keyup change', debounce(triggerUpdate, Drupal.webform.computed.delay));
         });
 
         // Initialize computed element update which refreshes the displayed
@@ -41,19 +40,25 @@
         // computed element.
         triggerUpdate();
 
-        // Update timer
-        var timer;
-
-        function setUpdate() {
-          window.clearTimeout(timer);
-          timer = window.setTimeout(triggerUpdate, Drupal.webform.computed.delay);
-        }
-
         function triggerUpdate() {
+          // Prevent duplicate computations.
+          // @see Drupal.behaviors.formSingleSubmit
+          var formValues = $form.find('input[name!=form_build_id]').serialize();
+          var previousValues = $element.attr('data-webform-computed-last');
+          if (previousValues === formValues) {
+            return;
+          }
+          $element.attr('data-webform-computed-last', formValues);
+
+          // Add loading class to computed wrapper.
+          $element.find('.js-webform-computed-wrapper')
+            .addClass('webform-computed-loading');
+
+          // Trigger computation.
           $element.find('.js-form-submit').mousedown();
         }
       });
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, Drupal.debounce);

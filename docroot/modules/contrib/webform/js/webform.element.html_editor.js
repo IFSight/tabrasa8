@@ -41,11 +41,13 @@
           && drupalSettings.yamlEditor.source
           && drupalSettings.yamlEditor.source.indexOf('noconflict') !== -1) {
           delete plugins.codemirror;
-          ('console' in window) && window.console.log('YAML Editor module is not compatible with the ckeditor.codemirror plugin. @see Issue #2936147: ckeditor.codemirror plugin breaks admin textarea.');
+          if ('console' in window) {
+            window.console.log('YAML Editor module is not compatible with the ckeditor.codemirror plugin. @see Issue #2936147: ckeditor.codemirror plugin breaks admin textarea.');
+          }
         }
 
         for (var plugin_name in plugins) {
-          if(plugins.hasOwnProperty(plugin_name)) {
+          if (plugins.hasOwnProperty(plugin_name)) {
             CKEDITOR.plugins.addExternal(plugin_name, plugins[plugin_name]);
           }
         }
@@ -114,7 +116,7 @@
 
         // Catch and suppress
         // "Uncaught TypeError: Cannot read property 'getEditor' of undefined".
-        // 
+        //
         // Steps to reproduce this error.
         // - Goto any form elements.
         // - Edit an element.

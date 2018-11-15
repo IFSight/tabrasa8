@@ -24,6 +24,12 @@ class WebformUiElementTypeSelectForm extends WebformUiElementTypeFormBase {
   public function buildForm(array $form, FormStateInterface $form_state, WebformInterface $webform = NULL) {
     $parent = $this->getRequest()->query->get('parent');
 
+    if ($parent) {
+      $parent_element = $webform->getElement($parent);
+      $t_args = ['@parent' => $parent_element['#admin_title'] ?: $parent_element['#title'] ?: $parent_element['#webform_key']];
+      $form['#title'] = $this->t('Select an element to add to "@parent"', $t_args);
+    }
+
     $elements = $this->elementManager->getInstances();
     $definitions = $this->getDefinitions();
     $category_index = 0;
@@ -35,8 +41,8 @@ class WebformUiElementTypeSelectForm extends WebformUiElementTypeFormBase {
       /** @var \Drupal\webform\Plugin\WebformElementInterface $webform_element */
       $webform_element = $elements[$element_type];
 
-      // Skip hidden plugins.
-      if ($webform_element->isHidden()) {
+      // Skip disabled or hidden.
+      if ($webform_element->isDisabled() || $webform_element->isHidden()) {
         continue;
       }
 

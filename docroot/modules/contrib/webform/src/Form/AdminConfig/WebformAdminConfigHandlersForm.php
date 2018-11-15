@@ -77,7 +77,7 @@ class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
     ];
     $form['mail']['roles'] = [
       '#type' => 'webform_roles',
-      '#title' => $this->t('Recipent roles'),
+      '#title' => $this->t('Recipient roles'),
       '#description' => $this->t("Select roles that can be assigned to receive a webform's email. <em>Please note: Selected roles will be available to all webforms.</em>"),
       '#include_anonymous' => FALSE,
       '#default_value' => $config->get('mail.roles'),
@@ -148,7 +148,7 @@ class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
       '#required' => TRUE,
       '#default_value' => $config->get('mail.default_body_html'),
     ];
-    $form['mail']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['mail']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Email / Handler: Types.
     $form['handler_types'] = [
@@ -188,11 +188,10 @@ class WebformAdminConfigHandlersForm extends WebformAdminConfigBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $excluded_handlers = $this->convertIncludedToExcludedPluginIds($this->handlerManager, $form_state->getValue('excluded_handlers'));
 
+    // Update config and submit form.
     $config = $this->config('webform.settings');
     $config->set('handler', ['excluded_handlers' => $excluded_handlers]);
     $config->set('mail', $form_state->getValue('mail'));
-    $config->save();
-
     parent::submitForm($form, $form_state);
   }
 

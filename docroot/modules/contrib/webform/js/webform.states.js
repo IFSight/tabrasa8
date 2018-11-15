@@ -20,7 +20,7 @@
    * @param {string} data
    *   The data attribute name.
    *
-   * @returns {boolean}
+   * @return {boolean}
    *   TRUE if an element has a specified data attribute.
    */
   $.fn.hasData = function (data) {
@@ -30,7 +30,7 @@
   /**
    * Check if element is within the webform or not.
    *
-   * @returns {boolean}
+   * @return {boolean}
    *   TRUE if element is within the webform.
    */
   $.fn.isWebform = function () {
@@ -163,6 +163,10 @@
         }
       }
 
+      // Issue #2986017: Fieldsets shouldn't have required attribute.
+      if ($target.is('fieldset')) {
+        $target.removeAttr('required aria-required');
+      }
     }
 
   });
@@ -192,11 +196,11 @@
     }
   });
 
-  $document.bind('state:visible-slide', function(e) {
+  $document.bind('state:visible-slide', function (e) {
     if (e.trigger && $(e.target).isWebform()) {
       var effect = e.value ? 'slideDown' : 'slideUp';
       var duration = Drupal.webform.states[effect].duration;
-      $(e.target).closest('.js-form-item, .js-form-submit, .js-form-wrapper')[effect ](duration);
+      $(e.target).closest('.js-form-item, .js-form-submit, .js-form-wrapper')[effect](duration);
     }
   });
   Drupal.states.State.aliases['invisible-slide'] = '!visible-slide';
@@ -208,11 +212,11 @@
       $(e.target)
         .prop('disabled', e.value)
         .closest('.js-form-item, .js-form-submit, .js-form-wrapper').toggleClass('form-disabled', e.value)
-        .find('select, input, textarea').prop('disabled', e.value);
+        .find('select, input, textarea, button').prop('disabled', e.value);
 
       // Trigger webform:disabled.
       $(e.target).trigger('webform:disabled')
-        .find('select, input, textarea').trigger('webform:disabled');
+        .find('select, input, textarea, button').trigger('webform:disabled');
     }
   });
 
@@ -234,7 +238,7 @@
   /**
    * Trigger an input's event handlers.
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function triggerEventHandlers(input) {
@@ -267,7 +271,7 @@
   /**
    * Backup an input's current value and required attribute
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function backupValueAndRequired(input) {
@@ -301,7 +305,7 @@
   /**
    * Restore an input's value and required attribute.
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function restoreValueAndRequired(input) {
@@ -340,7 +344,7 @@
   /**
    * Clear an input's value and required attributes.
    *
-   * @param input
+   * @param {element} input
    *   An input.
    */
   function clearValueAndRequired(input) {

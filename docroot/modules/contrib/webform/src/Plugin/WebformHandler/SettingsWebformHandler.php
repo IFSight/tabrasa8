@@ -27,6 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   cardinality = \Drupal\webform\Plugin\WebformHandlerInterface::CARDINALITY_UNLIMITED,
  *   results = \Drupal\webform\Plugin\WebformHandlerInterface::RESULTS_PROCESSED,
  *   submission = \Drupal\webform\Plugin\WebformHandlerInterface::SUBMISSION_OPTIONAL,
+ *   tokens = TRUE,
  * )
  */
 class SettingsWebformHandler extends WebformHandlerBase {
@@ -75,16 +76,20 @@ class SettingsWebformHandler extends WebformHandlerBase {
    * {@inheritdoc}
    */
   public function getSummary() {
+    $configuration = $this->getConfiguration();
+    $settings = $configuration['settings'];
+
     $setting_definitions = $this->getSettingsDefinitions();
-    $settings = $this->getSettingsOverride();
-    foreach ($settings as $name => $value) {
-      $settings[$name] = [
+    $setting_override = $this->getSettingsOverride();
+    foreach ($setting_override as $name => $value) {
+      $settings['settings'][$name] = [
         'title' => $setting_definitions[$name]['label'],
         'value' => $value,
       ];
     }
+
     return [
-      '#settings' => $this->configuration + ['settings' => $settings],
+      '#settings' => $settings,
     ] + parent::getSummary();
   }
 
@@ -125,7 +130,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#description' => $this->t('A message to be displayed on the preview page.'),
       '#default_value' => $this->configuration['preview_message'],
     ];
-    $form['preview_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['preview_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Confirmation settings.
     $confirmation_type = $this->getWebform()->getSetting('confirmation_type');
@@ -159,7 +164,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#default_value' => $this->configuration['confirmation_message'],
       '#access' => !empty($this->configuration['confirmation_message']) || $has_confirmation_message,
     ];
-    $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeLink();
+    $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
     // Custom settings.
     $custom_settings = $this->configuration;
@@ -331,7 +336,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#header' => $header,
       '#rows' => $rows,
     ];
-    drupal_set_message(\Drupal::service('renderer')->renderPlain($build), 'warning', FALSE);
+    $this->messenger()->addWarning(\Drupal::service('renderer')->renderPlain($build));
   }
 
   /****************************************************************************/

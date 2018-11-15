@@ -23,6 +23,7 @@ settings:
   label_display: '0'
   webform_id: demo_application_evaluation
   default_data: ''
+  redirect: false
 visibility:
   webform:
     id: webform

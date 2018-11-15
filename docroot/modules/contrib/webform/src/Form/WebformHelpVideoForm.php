@@ -91,7 +91,7 @@ class WebformHelpVideoForm extends FormBase {
       '#title' => $this->t('Additional resources'),
       'links' => [
         '#theme' => 'links',
-        '#links' => $this->helpManager->getVideoLinks($id),
+        '#links' => $this->helpManager->getVideoLinks($this->videoId),
       ],
     ];
 

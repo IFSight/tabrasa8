@@ -17,9 +17,13 @@
  * Update progress text to show completed and active.
  */
 .webform-progress-tracker .progress-step .progress-text {
-  color: #b6b6b6;
+  color: #656565;
   padding-top: 5px;
   padding-bottom: 0;
+}
+
+.webform-progress-tracker .progress-step::after {
+  background-color: #656565;
 }
 
 .webform-progress-tracker .progress-step.is-active .progress-text {
@@ -37,8 +41,9 @@
 /**
  * Disable hover state because webform wizard progress markers are not clickable.
  */
+.webform-progress-tracker .progress-step:not(.is-active) .progress-marker,
 .webform-progress-tracker .progress-step:hover .progress-marker {
-  background-color: #b6b6b6;
+  background-color: #656565;
 }
 
 .webform-progress-tracker .progress-step.is-complete:hover .progress-marker {

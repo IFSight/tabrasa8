@@ -20,6 +20,10 @@
   vertical-align: top;
 }
 
+.webform-multiple-table td .description {
+  white-space: normal;
+}
+
 .webform-multiple-table td.webform-multiple-table--handle {
   padding: 0 0 0 1em;
   width: 26px;
@@ -87,6 +91,13 @@
 }
 
 /**
+ * Add margin between stacked form items.
+ */
+.webform-multiple-table .form-item + .form-item {
+  margin-top: .2em;
+}
+
+/**
  * Remove margin from no messages.
  */
 .webform-multiple-table--no-items-message .messages__wrapper {
@@ -104,8 +115,16 @@
 /**
  * Tweak tabledrag toggle weight.
  */
-.webform-multiple-tabledrag-toggle-weight {
+.tabledrag-toggle-weight-wrapper.webform-multiple-tabledrag-toggle-weight {
   float: right;
+  display: inherit;
+  position: inherit;
+}
+
+.tabledrag-toggle-weight-wrapper.webform-multiple-tabledrag-toggle-weight button {
+  position: inherit;
+  top: inherit;
+  right: inherit;
 }
 
 /**

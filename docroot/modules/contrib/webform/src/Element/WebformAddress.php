@@ -43,7 +43,7 @@ class WebformAddress extends WebformCompositeBase {
     ];
     $elements['postal_code'] = [
       '#type' => 'textfield',
-      '#title' => t('Zip/Postal Code'),
+      '#title' => t('ZIP/Postal Code'),
     ];
     // Any webform options prefixed with 'country' will automatically
     // be included within the Composite Element UI.

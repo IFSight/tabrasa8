@@ -3,6 +3,7 @@
 namespace Drupal\webform;
 
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -98,6 +99,13 @@ class WebformMessageManager implements WebformMessageManagerInterface {
   protected $webformSubmission;
 
   /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Constructs a WebformMessageManager object.
    *
    * @param \Drupal\Core\Session\AccountInterface $current_user
@@ -105,22 +113,28 @@ class WebformMessageManager implements WebformMessageManagerInterface {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration object factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
+   *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
    * @param \Drupal\webform\WebformRequestInterface $request_handler
    *   The webform request handler.
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(AccountInterface $current_user, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, RendererInterface $renderer, WebformRequestInterface $request_handler, WebformTokenManagerInterface $token_manager) {
+  public function __construct(AccountInterface $current_user, ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, RendererInterface $renderer, MessengerInterface $messenger, WebformRequestInterface $request_handler, WebformTokenManagerInterface $token_manager) {
     $this->currentUser = $current_user;
     $this->configFactory = $config_factory;
     $this->entityStorage = $entity_type_manager->getStorage('webform_submission');
     $this->logger = $logger;
     $this->renderer = $renderer;
+    $this->messenger = $messenger;
     $this->requestHandler = $request_handler;
     $this->tokenManager = $token_manager;
   }
@@ -172,7 +186,7 @@ class WebformMessageManager implements WebformMessageManagerInterface {
    */
   public function display($key, $type = 'status') {
     if ($build = $this->build($key)) {
-      drupal_set_message($this->renderer->renderPlain($build), $type);
+      $this->messenger->addMessage($this->renderer->renderPlain($build), $type);
     }
   }
 
@@ -247,12 +261,9 @@ class WebformMessageManager implements WebformMessageManagerInterface {
         $t_args = [':href' => $webform->toUrl('settings')->toString()];
         return $this->t('This webform is <a href=":href">archived</a>. Only submission administrators are allowed to access this webform and create new submissions.', $t_args);
 
-      case WebformMessageManagerInterface::ADMIN_ARCHIVED:
-        return $this->t('This webform is <a href=":settings_href">archived</a>. Only submission administrators are allowed to access this webform and create new submissions.', $t_args);
-
       case WebformMessageManagerInterface::SUBMISSION_DEFAULT_CONFIRMATION:
         $t_args = ['%form' => ($source_entity) ? $source_entity->label() : $webform->label()];
-        return $this->t('New submission added to %form.',$t_args);
+        return $this->t('New submission added to %form.', $t_args);
 
       case WebformMessageManagerInterface::FORM_SAVE_EXCEPTION:
         $t_args = [
@@ -267,8 +278,7 @@ class WebformMessageManager implements WebformMessageManagerInterface {
 
       case WebformMessageManagerInterface::DRAFT_PREVIOUS:
         $webform_draft = $this->entityStorage->loadDraft($webform, $source_entity, $this->currentUser);
-        $webform_draft_entity = ($source_entity && $source_entity->hasLinkTemplate('canonical')) ? $source_entity : $webform;
-        $t_args = [':href' => $webform_draft_entity->toUrl('canonical', ['query' => ['token' => $webform_draft->getToken()]])->toString()];
+        $t_args = [':href' => $webform_draft->getTokenUrl()->toString()];
         return $this->t('You have a pending draft for this webform.') . ' ' . $this->t('<a href=":href">Load your pending draft</a>.', $t_args);
 
       case WebformMessageManagerInterface::DRAFTS_PREVIOUS:

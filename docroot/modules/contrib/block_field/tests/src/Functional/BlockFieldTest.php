@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\block_field\Functional;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -11,8 +10,6 @@ use Drupal\Tests\BrowserTestBase;
  * @group block_field
  */
 class BlockFieldTest extends BrowserTestBase {
-
-  use StringTranslationTrait;
 
   /**
    * Modules to enable.
@@ -47,19 +44,19 @@ class BlockFieldTest extends BrowserTestBase {
     // Check that add more and ajax callbacks are working as expected.
     $this->drupalPostForm('node/add/block_field_test', [
       'title[0][value]' => 'Block field test',
-    ], $this->t('Add another item'));
-    $this->drupalPostForm(NULL, [], $this->t('Add another item'));
+    ], 'Add another item');
+    $this->drupalPostForm(NULL, [], 'Add another item');
     $this->drupalPostForm(NULL, [
       'field_block_field_test[0][plugin_id]' => 'block_field_test_authenticated',
       'field_block_field_test[1][plugin_id]' => 'block_field_test_content',
       'field_block_field_test[2][plugin_id]' => 'block_field_test_time',
-    ], $this->t('Add another item'));
+    ], 'Add another item');
     $this->drupalPostForm(NULL, [
       'field_block_field_test[0][plugin_id]' => 'block_field_test_authenticated',
       'field_block_field_test[1][plugin_id]' => 'block_field_test_content',
       'field_block_field_test[2][plugin_id]' => 'block_field_test_time',
-    ], $this->t('Add another item'));
-    $this->drupalPostForm(NULL, [], $this->t('Save'));
+    ], 'Add another item');
+    $this->drupalPostForm(NULL, [], 'Save');
 
     // Check blocks displayed to authenticated.
     $node = $this->drupalGetNodeByTitle('Block field test');
@@ -80,7 +77,7 @@ class BlockFieldTest extends BrowserTestBase {
     $this->drupalPostForm(NULL, [
       'field_block_field_test[0][_weight]' => 1,
       'field_block_field_test[1][_weight]' => 0,
-    ], $this->t('Save'));
+    ], 'Save');
     $this->drupalGet($node->toUrl('edit-form'));
     // Plugin id and label should be switched.
     $assert->fieldValueEquals('field_block_field_test[0][plugin_id]', 'block_field_test_content');
@@ -160,7 +157,7 @@ class BlockFieldTest extends BrowserTestBase {
     $assert->responseNotContains($time);
 
     $this->drupalGet('admin/structure/types/manage/block_field_test/fields/node.block_field_test.field_block_field_test');
-    $this->drupalPostForm(NULL, ['settings[plugin_ids][page_title_block]' => FALSE], $this->t('Save settings'));
+    $this->drupalPostForm(NULL, ['settings[plugin_ids][page_title_block]' => FALSE], 'Save settings');
 
     $this->drupalGet('admin/structure/types/manage/block_field_test/fields/node.block_field_test.field_block_field_test');
     $assert->statusCodeEquals(200);

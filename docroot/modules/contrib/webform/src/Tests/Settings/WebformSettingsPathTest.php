@@ -14,12 +14,14 @@ use Drupal\webform\WebformInterface;
  */
 class WebformSettingsPathTest extends WebformTestBase {
 
-  public static $modules = ['path', 'webform'];
+  public static $modules = ['path', 'webform', 'node'];
 
   /**
    * Tests YAML page and title.
    */
   public function testPaths() {
+    $node = $this->drupalCreateNode();
+
     $webform = Webform::create([
       'langcode' => 'en',
       'status' => WebformInterface::STATUS_OPEN,
@@ -50,6 +52,15 @@ class WebformSettingsPathTest extends WebformTestBase {
     $this->assertNoRaw('Only webform administrators are allowed to access this page and create new submissions.');
     $this->drupalGet('form/' . str_replace('_', '-', $webform->id()));
     $this->assertResponse(404, 'Submit URL alias does not exist');
+
+    // Check page hidden with source entity.
+    $this->drupalGet('webform/' . $webform->id(), ['query' => ['source_entity_type' => 'node', 'source_entity_id' => $node->id()]]);
+    $this->assertResponse(403, 'Submit system path access denied');
+
+    // Check page visible with source entity.
+    $webform->setSettings(['form_prepopulate_source_entity' => TRUE])->save();
+    $this->drupalGet('webform/' . $webform->id(), ['query' => ['source_entity_type' => 'node', 'source_entity_id' => $node->id()]]);
+    $this->assertResponse(200, 'Submit system path exists');
 
     // Check hidden page visible to admin.
     $this->drupalLogin($this->rootUser);

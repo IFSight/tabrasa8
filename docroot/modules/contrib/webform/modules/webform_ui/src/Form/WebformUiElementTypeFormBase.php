@@ -98,6 +98,7 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
     $form['#prefix'] = '<div id="webform-ui-element-type-ajax-wrapper">';
     $form['#suffix'] = '</div>';
 
+    $form['#attached']['library'][] = 'webform/webform.admin';
     $form['#attached']['library'][] = 'webform/webform.form';
     $form['#attached']['library'][] = 'webform/webform.tooltip';
     $form['#attached']['library'][] = 'webform_ui/webform_ui';
@@ -131,16 +132,28 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
       '#attributes' => [
         'class' => ['webform-form-filter-text'],
         'data-element' => '.webform-ui-element-type-table',
+        'data-item-single' => $this->t('element'),
+        'data-item-plural' => $this->t('elements'),
+        'data-no-results' => '.webform-element-no-results',
         'title' => $this->t('Enter a part of the element name to filter by.'),
         'autofocus' => 'autofocus',
       ],
+    ];
+
+    // No results.
+    $form['no_results'] = [
+      '#type' => 'webform_message',
+      '#message_message' => $this->t('No elements found. Try a different search.'),
+      '#message_type' => 'info',
+      '#attributes' => ['class' => ['webform-element-no-results']],
+      '#weight' => 1000,
     ];
 
     return $form;
   }
 
   /**
-   * Never trigge validation.
+   * Never trigger validation.
    */
   public function noValidate(array &$form, FormStateInterface $form_state) {
     $form_state->clearErrors();
@@ -234,6 +247,7 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
     $row['type']['help'] = [
       '#type' => 'webform_help',
       '#help' => $webform_element->getPluginDescription(),
+      '#help_title' => $webform_element->getPluginLabel(),
     ];
 
     // Preview.
@@ -361,8 +375,10 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
 
     // Custom element type specific attributes.
     switch ($webform_element->getTypeName()) {
+      case 'details':
       case 'fieldset':
       case 'webform_email_confirm':
+        // Title needs to be displayed.
         unset($element['#title_display']);
         break;
 
@@ -414,7 +430,7 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
         ];
         break;
 
-      case 'webform_location':
+      case 'webform_location_geocomplete':
         unset($element['#map'], $element['#geolocation']);
         break;
 
@@ -477,11 +493,7 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
     foreach ($grouped_definitions as $grouped_definition) {
       $sorted_definitions += $grouped_definition;
     }
-    foreach ($sorted_definitions as &$plugin_definition) {
-      if (empty($plugin_definition['category'])) {
-        $plugin_definition['category'] = $this->t('Other elements');
-      }
-    }
+
     return $sorted_definitions;
   }
 

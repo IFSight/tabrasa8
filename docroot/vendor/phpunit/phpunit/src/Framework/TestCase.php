@@ -755,7 +755,7 @@ abstract class TestCase extends Assert implements Test, SelfDescribing
      *
      * @param TestResult $result
      *
-     * @return TestResult|null
+     * @return TestResult
      *
      * @throws Exception
      */
@@ -778,7 +778,7 @@ abstract class TestCase extends Assert implements Test, SelfDescribing
         if (!$this instanceof WarningTestCase &&
             !$this instanceof SkippedTestCase &&
             !$this->handleDependencies()) {
-            return;
+            return $result;
         }
 
         $runEntireClass =  $this->runClassInSeparateProcess && !$this->runTestInSeparateProcess;
@@ -1640,7 +1640,8 @@ abstract class TestCase extends Assert implements Test, SelfDescribing
     protected function getMockFromWsdl($wsdlFile, $originalClassName = '', $mockClassName = '', array $methods = [], $callOriginalConstructor = true, array $options = [])
     {
         if ($originalClassName === '') {
-            $originalClassName = \pathinfo(\basename(\parse_url($wsdlFile)['path']), PATHINFO_FILENAME);
+            $fileName          = \pathinfo(\basename(\parse_url($wsdlFile)['path']), PATHINFO_FILENAME);
+            $originalClassName = \preg_replace('/[^a-zA-Z0-9_]/', '', $fileName);
         }
 
         if (!\class_exists($originalClassName)) {

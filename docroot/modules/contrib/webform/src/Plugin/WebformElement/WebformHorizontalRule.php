@@ -82,7 +82,7 @@ class WebformHorizontalRule extends WebformElementBase implements WebformElement
       return [];
     }
 
-    return PHP_EOL . '---' . PHP_EOL;
+    return ['#plain_text' => PHP_EOL . '---' . PHP_EOL];
   }
 
   /**

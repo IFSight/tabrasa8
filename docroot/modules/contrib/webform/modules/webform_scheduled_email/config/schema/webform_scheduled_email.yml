@@ -78,6 +78,9 @@ webform.handler.scheduled_email:
     twig:
       type: boolean
       label: 'Twig'
+    theme_name:
+      type: string
+      label: 'Theme name'
     debug:
       type: boolean
       label: 'Enable debugging'
@@ -87,6 +90,9 @@ webform.handler.scheduled_email:
     days:
       type: integer
       label: 'After/before days'
+    ignore_past:
+      type: boolean
+      label: 'Prevent scheduling past actions'
     unschedule:
       type: boolean
       label: 'Unschedule email when draft or submission is saved'

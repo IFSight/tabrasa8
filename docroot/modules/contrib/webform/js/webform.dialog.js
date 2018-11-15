@@ -42,6 +42,20 @@
         }
 
         var href = $a.attr('href');
+
+        // Replace ENTITY_TYPE and ENTITY_ID placeholders and update the href.
+        // @see webform_page_attachments()
+        if (href.indexOf('?source_entity_type=ENTITY_TYPE&source_entity_id=ENTITY_ID') !== -1) {
+          if (drupalSettings.webform.dialog.entity_type && drupalSettings.webform.dialog.entity_id) {
+            href = href.replace('ENTITY_TYPE', encodeURIComponent(drupalSettings.webform.dialog.entity_type));
+            href = href.replace('ENTITY_ID', encodeURIComponent(drupalSettings.webform.dialog.entity_id));
+          }
+          else {
+            href = href.replace('?source_entity_type=ENTITY_TYPE&source_entity_id=ENTITY_ID', '');
+          }
+          $a.attr('href', href);
+        }
+
         // Append _webform_dialog=1 to href to trigger Ajax support.
         // @see \Drupal\webform\WebformSubmissionForm::setEntity
         href += (href.indexOf('?') === -1 ? '?' : '&') + '_webform_dialog=1';

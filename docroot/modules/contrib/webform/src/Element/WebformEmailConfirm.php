@@ -2,10 +2,8 @@
 
 namespace Drupal\webform\Element;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\webform\Utility\WebformElementHelper;
 
 /**
@@ -18,7 +16,7 @@ use Drupal\webform\Utility\WebformElementHelper;
  */
 class WebformEmailConfirm extends FormElement {
 
-  use CompositeFormElementTrait;
+  use WebformCompositeFormElementTrait;
 
   /**
    * {@inheritdoc}
@@ -31,11 +29,10 @@ class WebformEmailConfirm extends FormElement {
       '#process' => [
         [$class, 'processWebformEmailConfirm'],
       ],
-      '#theme_wrappers' => ['form_element'],
+      '#pre_render' => [
+        [$class, 'preRenderWebformCompositeFormElement'],
+      ],
       '#required' => FALSE,
-      // Add '#markup' property to add an 'id' attribute to the form element.
-      // @see template_preprocess_form_element()
-      '#markup' => '',
     ];
   }
 
@@ -126,7 +123,7 @@ class WebformEmailConfirm extends FormElement {
     $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
     if ($has_access) {
       if ((!empty($mail_1) || !empty($mail_2)) && strcmp($mail_1, $mail_2)) {
-        $form_state->setError($element['mail_2'], t('The specified email addresses do not match.'));
+        $form_state->setError($element, t('The specified email addresses do not match.'));
       }
       else {
         // NOTE: Only mail_1 needs to be validated since mail_2 is the same value.
@@ -136,11 +133,11 @@ class WebformEmailConfirm extends FormElement {
           WebformElementHelper::setRequiredError($element, $form_state, $required_error_title);
         }
         // Verify that the value is not longer than #maxlength.
-        if (isset($element['mail_1']['#maxlength']) && Unicode::strlen($mail_1) > $element['mail_1']['#maxlength']) {
+        if (isset($element['mail_1']['#maxlength']) && mb_strlen($mail_1) > $element['mail_1']['#maxlength']) {
           $t_args = [
             '@name' => $element['mail_1']['#title'],
             '%max' => $element['mail_1']['#maxlength'],
-            '%length' => Unicode::strlen($mail_1),
+            '%length' => mb_strlen($mail_1),
           ];
           $form_state->setError($element, t('@name cannot be longer than %max characters but is currently %length characters long.', $t_args));
         }

@@ -2,12 +2,13 @@
 
 namespace Drupal\webform\Element;
 
-use Drupal\Component\Serialization\Yaml;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Plugin\WebformElement\WebformCompositeBase as WebformCompositeBaseElement;
 use Drupal\webform\Utility\WebformArrayHelper;
+use Drupal\webform\Utility\WebformYaml;
 
 /**
  * Provides a element for the composite elements.
@@ -17,7 +18,7 @@ use Drupal\webform\Utility\WebformArrayHelper;
 class WebformElementComposite extends FormElement {
 
   /**
-   * List of supported  element properties.
+   * List of supported element properties.
    *
    * @var array
    */
@@ -66,7 +67,7 @@ class WebformElementComposite extends FormElement {
           $composite_properties = array_intersect_key($composite_element, static::$supportedProperties);
           // Move 'unsupported' properties to 'custom'.
           $custom_properties = array_diff_key($composite_element, static::$supportedProperties);
-          $composite_properties['custom'] = $custom_properties ? trim(Yaml::encode($custom_properties)) : '';
+          $composite_properties['custom'] = $custom_properties ? WebformYaml::encode($custom_properties) : '';
           $default_value[] = $composite_properties;
         }
         $element['#default_value'] = $default_value;
@@ -128,21 +129,23 @@ class WebformElementComposite extends FormElement {
       '#empty_items' => 0,
       '#min_items' => 1,
       '#header' => TRUE,
+      '#add' => FALSE,
       '#default_value' => (isset($element['#default_value'])) ? $element['#default_value'] : NULL,
       '#error_no_message' => TRUE,
       '#element' => [
-        'key_type_options' => [
+        'settings' => [
           '#type' => 'container',
-          '#title' => ($edit_source) ? t('Key / Type / Options / Custom Properties') : t('Key / Type / Options '),
+          '#title' => t('Settings'),
           '#help' => '<b>' . t('Key') . ':</b> ' . t('A unique machine-readable name. Can only contain lowercase letters, numbers, and underscores.') .
-            '<br/><br/>' . '<b>' . t('Type') . ':</b> ' . t('The type of element to be displayed.') .
-            '<br/><br/>' . '<b>' . t('Options') . ':</b> ' . t('Please select predefined options or enter custom options.') . ' ' . t('Key-value pairs MUST be specified as "safe_key: \'Some readable options\'". Use of only alphanumeric characters and underscores is recommended in keys. One option per line.') .
-            ($edit_source ? '<br/><br/>' . '<b>' . t('Custom Properties') . ':</b> ' . t('Properties do not have to be prepended with a hash (#) character, the hash character will be automatically added to the custom properties.') : ''),
+            '<hr/>' . '<b>' . t('Type') . ':</b> ' . t('The type of element to be displayed.') .
+            '<hr/>' . '<b>' . t('Options') . ':</b> ' . t('Please select predefined options or enter custom options.') . ' ' . t('Key-value pairs MUST be specified as "safe_key: \'Some readable options\'". Use of only alphanumeric characters and underscores is recommended in keys. One option per line.') .
+            ($edit_source ? '<hr/>' . '<b>' . t('Custom Properties') . ':</b> ' . t('Properties do not have to be prepended with a hash (#) character, the hash character will be automatically added to the custom properties.') : '') .
+            '<hr/>' . '<b>' . t('Required') . ':</b> ' . t('Check this option if the user must enter a value.'),
           'key' => [
             '#type' => 'textfield',
             '#title' => t('Key'),
             '#title_display' => 'invisible',
-            '#placeholder' => t('Enter key'),
+            '#placeholder' => t('Enter key…'),
             '#pattern' => '^[a-z0-9_]+$',
             '#attributes' => [
               'title' => t('Enter a unique machine-readable name. Can only contain lowercase letters, numbers, and underscores.'),
@@ -154,6 +157,8 @@ class WebformElementComposite extends FormElement {
             '#type' => 'select',
             '#title' => t('Type'),
             '#title_display' => 'invisible',
+            '#description' => t('The type of element to be displayed.'),
+            '#description_display' => 'invisible',
             '#options' => $type_options,
             '#empty_option' => t('- Select type -'),
             '#required' => TRUE,
@@ -165,6 +170,8 @@ class WebformElementComposite extends FormElement {
             '#yaml' => TRUE,
             '#title' => t('Options'),
             '#title_display' => 'invisible',
+            '#description' => t('Please select predefined options or enter custom options.') . ' ' . t('Key-value pairs MUST be specified as "safe_key: \'Some readable options\'". Use of only alphanumeric characters and underscores is recommended in keys. One option per line.'),
+            '#description_display' => 'invisible',
             '#wrapper_attributes' => [
               'data-composite-types' => implode(',', $options_elements),
               'data-composite-required' => 'data-composite-required',
@@ -182,25 +189,36 @@ class WebformElementComposite extends FormElement {
             '#mode' => 'yaml',
             '#title' => t('Custom properties'),
             '#title_display' => 'invisible',
-            '#placeholder' => t('Enter custom properties'),
+            '#description' => t('Properties do not have to be prepended with a hash (#) character, the hash character will be automatically added to the custom properties.'),
+            '#description_display' => 'invisible',
+            '#placeholder' => t('Enter custom properties…'),
             '#error_no_message' => TRUE,
           ] : [
             '#type' => 'hidden',
           ],
+          // Note: Setting #return_value: TRUE is not returning any value.
+          'required' => [
+            '#type' => 'checkbox',
+            '#title' => t('Required'),
+            '#description' => t('Check this option if the user must enter a value.'),
+            '#description_display' => 'invisible',
+            '#error_no_message' => TRUE,
+          ],
         ],
-        'title_placeholder_description_help' => [
+        'labels' => [
           '#type' => 'container',
-          '#title' => t('Title / Placeholder / Description / Help'),
-          '#help' => '<b>' . t('Title') . ':</b> ' . t('This is used as a descriptive label when displaying this webform element.') . '<br/><br/>' .
-            '<b>' . t('Placeholder') . ':</b> ' . t('The placeholder will be shown in the element until the user starts entering a value.') . '<br/><br/>' .
-            '<b>' . t('Description') . ':</b> ' . t('A short description of the element used as help for the user when he/she uses the webform.') . '<br/><br/>' .
-            '<b>' . t('Help text') . ':</b> ' . t('A tooltip displayed after the title.'),
-
+          '#title' => t('Labels'),
+          '#help' => '<b>' . t('Title') . ':</b> ' . t('This is used as a descriptive label when displaying this webform element.') .
+            '<hr/><b>' . t('Placeholder') . ':</b> ' . t('The placeholder will be shown in the element until the user starts entering a value.') .
+            '<hr/><b>' . t('Description') . ':</b> ' . t('A short description of the element used as help for the user when he/she uses the webform.') .
+            '<hr/><b>' . t('Help text') . ':</b> ' . t('A tooltip displayed after the title.'),
           'title' => [
             '#type' => 'textfield',
             '#title' => t('Title'),
             '#title_display' => 'invisible',
-            '#placeholder' => t('Enter title'),
+            '#description' => t('This is used as a descriptive label when displaying this webform element.'),
+            '#description_display' => 'invisible',
+            '#placeholder' => t('Enter title…'),
             '#required' => TRUE,
             '#error_no_message' => TRUE,
           ],
@@ -208,15 +226,19 @@ class WebformElementComposite extends FormElement {
             '#type' => 'textfield',
             '#title' => t('Placeholder'),
             '#title_display' => 'invisible',
-            '#placeholder' => t('Enter placeholder'),
+            '#description' => t('The placeholder will be shown in the element until the user starts entering a value.'),
+            '#description_display' => 'invisible',
+            '#placeholder' => t('Enter placeholder…'),
             '#attributes' => ['data-composite-types' => implode(',', $placeholder_elements)],
             '#error_no_message' => TRUE,
           ],
           'description' => [
             '#type' => 'textarea',
             '#title' => t('Description'),
+            '#description' => t('A short description of the element used as help for the user when he/she uses the webform.'),
+            '#description_display' => 'invisible',
             '#title_display' => 'invisible',
-            '#placeholder' => t('Enter description'),
+            '#placeholder' => t('Enter description…'),
             '#rows' => 2,
             '#error_no_message' => TRUE,
           ],
@@ -224,18 +246,12 @@ class WebformElementComposite extends FormElement {
             '#type' => 'textarea',
             '#title' => t('Help text'),
             '#title_display' => 'invisible',
-            '#placeholder' => t('Enter help text'),
+            '#description' => t('A tooltip displayed after the title.'),
+            '#description_display' => 'invisible',
+            '#placeholder' => t('Enter help text…'),
             '#rows' => 2,
             '#error_no_message' => TRUE,
           ],
-        ],
-        // Note: Setting #return_value: TRUE is not returning any value.
-        'required' => [
-          '#type' => 'checkbox',
-          '#title' => t('Req.'),
-          '#title_display' => 'invisible',
-          '#help' => '<b>' . t('Required') . ':</b> ' . t('Check this option if the user must enter a value.'),
-          '#error_no_message' => TRUE,
         ],
       ],
     ];

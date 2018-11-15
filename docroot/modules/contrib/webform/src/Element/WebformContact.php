@@ -56,7 +56,7 @@ class WebformContact extends WebformCompositeBase {
     ];
     $elements['postal_code'] = [
       '#type' => 'textfield',
-      '#title' => t('Zip/Postal Code'),
+      '#title' => t('ZIP/Postal Code'),
     ];
     $elements['country'] = [
       '#type' => 'select',

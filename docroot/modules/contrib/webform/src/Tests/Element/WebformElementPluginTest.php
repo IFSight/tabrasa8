@@ -100,7 +100,7 @@ class WebformElementPluginTest extends WebformElementTestBase {
     $this->drupalPostForm('/admin/structure/webform/manage/test_element_plugin/submission/' . $sid . '/delete', [], t('Delete'));
     $this->assertRaw('Invoked: Drupal\webform_test_element\Plugin\WebformElement\WebformTestElement:preDelete');
     $this->assertRaw('Invoked: Drupal\webform_test_element\Plugin\WebformElement\WebformTestElement:postDelete');
-    $this->assertRaw('Test: Element: Test (plugin): Submission #' . $webform_submission->serial() . ' has been deleted.');
+    $this->assertRaw('<em class="placeholder">Test: Element: Test (plugin): Submission #' . $webform_submission->serial() . '</em> has been deleted.');
   }
 
 }

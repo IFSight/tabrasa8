@@ -33,7 +33,7 @@ class WebformBlockCacheTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->authenticatedUser = $this->drupalCreateUser([
+    $this->authenticatedUser = $this->createUser([
       'access content',
     ]);
 
@@ -78,13 +78,17 @@ class WebformBlockCacheTest extends BrowserTestBase {
    * Test that if an Webform is access restricted the page can still be cached.
    */
   public function testAuthenticatedAndRestrictedVisitIsCacheable() {
+    /** @var \Drupal\webform\WebformAccessRulesManagerInterface $access_rules_manager */
+    $access_rules_manager = \Drupal::service('webform.access_rules_manager');
+    $default_access_rules = $access_rules_manager->getDefaultAccessRules();
+
     $access_rules = [
       'create' => [
         'roles' => [],
         'users' => [],
         'permissions' => ['access content'],
       ],
-    ] + Webform::getDefaultAccessRules();
+    ] + $default_access_rules;
 
     Webform::load('contact')->setAccessRules($access_rules)->save();
 

@@ -83,6 +83,9 @@ class Range extends NumericBase {
       // Create output (number) element.
       $output = [
         '#type' => 'number',
+        '#title' => $element['#title'],
+        '#title_display' => 'invisible',
+        '#id' => $webform_key . '__output',
         '#name' => $webform_key . '__output',
       ];
 
@@ -90,7 +93,7 @@ class Range extends NumericBase {
       $properties = ['#min', '#max', '#step', '#disabled'];
       $output += array_intersect_key($element, array_combine($properties, $properties));
 
-      // Copy custom output properties to ouput element.
+      // Copy custom output properties to output element.
       foreach ($element as $key => $value) {
         if (strpos($key, '#output__') === 0) {
           $output_key = str_replace('#output__', '#', $key);

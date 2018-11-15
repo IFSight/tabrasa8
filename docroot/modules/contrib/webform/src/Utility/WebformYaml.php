@@ -2,13 +2,42 @@
 
 namespace Drupal\webform\Utility;
 
+use Drupal\Component\Serialization\SerializationInterface;
 use Drupal\Core\Serialization\Yaml;
-use Symfony\Component\Yaml\Unescaper;
+use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 
 /**
  * Provides YAML tidy function.
  */
-class WebformYaml {
+class WebformYaml implements SerializationInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function encode($data) {
+    $dumper = new Dumper(2);
+    $yaml = $dumper->dump($data, PHP_INT_MAX, 0, SymfonyYaml::DUMP_EXCEPTION_ON_INVALID_TYPE | SymfonyYaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+
+    // Remove return after array delimiter.
+    $yaml = preg_replace('#((?:\n|^)[ ]*-)\n[ ]+(\w|[\'"])#', '\1 \2', $yaml);
+
+    return trim($yaml);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function decode($raw) {
+    return Yaml::decode($raw);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getFileExtension() {
+    return 'yml';
+  }
 
   /**
    * Determine if string is valid YAML.
@@ -51,50 +80,13 @@ class WebformYaml {
    *
    * @return string
    *   The encoded data.
+   *
+   * @see https://www.drupal.org/project/drupal/issues/2844452
+   * @see \Drupal\Component\Serialization\YamlSymfony::encode
    */
   public static function tidy($yaml) {
-    static $unescaper;
-    if (!isset($unescaper)) {
-      $unescaper = new Unescaper();
-    }
-
-    // Remove return after array delimiter.
-    $yaml = preg_replace('#((?:\n|^)[ ]*-)\n[ ]+(\w|[\'"])#', '\1 \2', $yaml);
-
-    // Support YAML newlines preserved syntax via pipe (|).
-    $lines = explode(PHP_EOL, $yaml);
-    foreach ($lines as $index => $line) {
-      if (empty($line) || strpos($line, '\n') === FALSE) {
-        continue;
-      }
-
-      if (preg_match('/^([ ]*(?:- )?)([a-z_]+|\'[^\']+\'|"[^"]+"): (\'|")(.+)\3$/', $line, $match)) {
-        $prefix = $match[1];
-        $indent = str_repeat(' ', strlen($prefix));
-        $name = $match[2];
-        $quote = $match[3];
-        $value = $match[4];
-
-        if ($quote == "'") {
-          $value = rtrim($unescaper->unescapeSingleQuotedString($value));
-        }
-        else {
-          $value = rtrim($unescaper->unescapeDoubleQuotedString($value));
-        }
-
-        if (strpos($value, '<') === FALSE) {
-          $lines[$index] = $prefix . $name . ": |\n$indent  " . str_replace(PHP_EOL, "\n$indent  ", $value);
-        }
-        else {
-          $value = preg_replace('~\R~u', PHP_EOL, $value);
-          $value = preg_replace('#\s*</p>#', '</p>', $value);
-          $value = str_replace(PHP_EOL, "\n$indent  ", $value);
-          $lines[$index] = $prefix . $name . ": |\n$indent  " . $value;
-        }
-      }
-    }
-    $yaml = implode(PHP_EOL, $lines);
-    return trim($yaml);
+    $data = self::decode($yaml);
+    return self::encode($data);
   }
 
 }

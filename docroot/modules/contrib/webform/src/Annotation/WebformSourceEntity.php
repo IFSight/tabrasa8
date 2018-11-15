@@ -54,4 +54,13 @@ class WebformSourceEntity extends Plugin {
    */
   public $weight = 0;
 
+  /**
+   * The element's module dependencies.
+   *
+   * @var array
+   *
+   * @see webform_webform_element_info_alter()
+   */
+  public $dependencies = [];
+
 }

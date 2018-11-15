@@ -86,7 +86,7 @@ entity.webform_ui.element.delete_form:
     _custom_access: '\Drupal\webform_ui\Access\WebformUiAccess::checkWebformEditAccess'
 
 webform.reports_plugins.elements.test:
-  path: '/admin/structure/webform/config/elements/{type}/test'
+  path: '/admin/reports/webform-plugins/elements/{type}/test'
   defaults:
     _form: '\Drupal\webform_ui\Form\WebformUiElementTestForm'
     _title: 'Test element'

@@ -20,20 +20,14 @@ class WebformSubmissionTokenUpdateTest extends WebformTestBase {
   protected static $testWebforms = ['test_token_update'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Test updating webform submission using tokenized URL.
    */
   public function testTokenUpdateTest() {
+    $normal_user = $this->drupalCreateUser();
+
     $webform = Webform::load('test_token_update');
+
+    /**************************************************************************/
 
     // Post test submission.
     $this->drupalLogin($this->rootUser);
@@ -41,7 +35,7 @@ class WebformSubmissionTokenUpdateTest extends WebformTestBase {
     $webform_submission = WebformSubmission::load($sid);
 
     // Check token update access allowed.
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
     $this->drupalGet($webform_submission->getTokenUrl());
     $this->assertResponse(200);
     $this->assertRaw('Submission information');
@@ -49,7 +43,7 @@ class WebformSubmissionTokenUpdateTest extends WebformTestBase {
 
     // Check token update access denied.
     $webform->setSetting('token_update', FALSE)->save();
-    $this->drupalLogin($this->normalUser);
+    $this->drupalLogin($normal_user);
     $this->drupalGet($webform_submission->getTokenUrl());
     $this->assertResponse(200);
     $this->assertNoRaw('Submission information');

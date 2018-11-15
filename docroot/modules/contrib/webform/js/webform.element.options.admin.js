@@ -15,7 +15,7 @@
    */
   Drupal.behaviors.webformOptionsAdmin = {
     attach: function (context) {
-      $(context).find('.js-form-type-webform-options .js-webform-options-value').once('webform-options-value').each(function() {
+      $(context).find('.js-webform-options-sync').once('js-webform-options-sync').each(function () {
         // Target input name and not id because the id will be changing via
         // Ajax callbacks.
         var name = this.name;
@@ -47,7 +47,7 @@
           }
         });
 
-      })
+      });
     }
   };
 

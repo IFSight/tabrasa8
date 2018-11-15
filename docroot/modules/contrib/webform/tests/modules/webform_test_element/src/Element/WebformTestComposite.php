@@ -110,7 +110,6 @@ class WebformTestComposite extends WebformCompositeBase {
     // @see \Drupal\webform\Element\WebformCompositeBase::processWebformComposite
     // $elements['checkboxes'] = ['#type' => 'checkboxes'];
     // $elements['likert'] = ['#type' => 'webform_likert'];
-    // $elements['likert'] = ['#type' => 'managed_file'];
     // $elements['datetime'] = ['#type' => 'datetime'];
     return $elements;
   }

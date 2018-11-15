@@ -8,14 +8,31 @@ table td {
   vertical-align: top;
 }
 
+td > .form-item:first-of-type,
+tr.odd .form-item:first-of-type,
+tr.even .form-item:first-of-type {
+  margin-top: 0;
+}
+
+td > .form-item:last-of-type,
+tr.odd .form-item:last-of-type,
+tr.even .form-item:last-of-type {
+  margin-bottom: 0;
+}
+
 /* Add margin around HR tags */
 table hr {
   margin: .5em 0;
 }
 
 /* Add background to nested details */
-details details {
+details details /* < 8.5.x  */,
+details.seven-details details.seven-details /* >= 8.6.x */ {
   background-color: #f8f8f8;
+}
+
+details details details {
+  background-color: #fff;
 }
 
 /* Reduce the width of number inputs */
@@ -23,8 +40,12 @@ input.form-number {
   width: 6em;
 }
 
-details details details {
-  background-color: #fff;
+code {
+  font-weight: bold;
+  border: 1px solid #333;
+  background-color: #f8f8f8;
+  padding: 2px 4px;
+  color: #333;
 }
 
 /* Add yellow background to tooltips and tabs */
@@ -36,6 +57,23 @@ details details details {
 .webform-tabs .ui-tabs-active.ui-state-active {
   background: #fe6;
   border: 1px solid #ed5;
+}
+
+.webform-tabs .ui-tabs-active.ui-state-active.ui-state-focus a {
+  text-decoration: underline;
+}
+
+/** Compress tabs for mobile */
+@media screen and (max-width: 600px) {
+  .webform-tabs.ui-tabs .ui-tabs-nav {
+    padding: 5px 0 4px 0;
+  }
+  .webform-tabs.ui-tabs .ui-tabs-nav li {
+    padding: 0;
+  }
+  .webform-tabs.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    padding: .5em .7em;
+  }
 }
 
 /* Accordion icon */
@@ -67,6 +105,17 @@ pre.webform-codemirror-runmode {
   }
 }
 
+/**
+ * Form action are moved to a dialogs footer and don't need to be visually
+ * hidden.
+
+ * @see Drupal.behaviors.dialog.prepareDialogButtons
+ */
+.webform-ui-dialog .form-actions input[type=submit],
+.webform-ui-dialog .form-actions a.button {
+  display: none !important;
+}
+
 /* System tray divider */
 .ui-dialog.ui-dialog-off-canvas .ui-resizable-w {
   background-color: #bfbfba;
@@ -75,6 +124,10 @@ pre.webform-codemirror-runmode {
 }
 
 /* System tray title bar */
+.ui-dialog.ui-dialog-off-canvas {
+  background: #fff;
+}
+
 .ui-dialog.ui-dialog-off-canvas .ui-dialog-titlebar {
   border-radius: 0;
 }
@@ -96,6 +149,21 @@ pre.webform-codemirror-runmode {
   border: solid 1px #ed5;
 }
 
+/* jQuery UI tooltip */
+.ui-tooltip hr {
+  background: #666;
+  margin: .3em 0;
+  height: 1px;
+}
+
+.ui-tooltip code {
+  font-weight: bold;
+  white-space: nowrap;
+  background-color: #f5f5f2;
+  font-size: .9em;
+  padding: .2em;
+}
+
 /* jQuery UI tabs */
 .ui-tabs .ui-tabs-panel {
   padding: 0;
@@ -109,4 +177,10 @@ pre.webform-codemirror-runmode {
 .webform-details-toggle-state:hover,
 .webform-details-toggle-statelink:focus {
   text-decoration: underline;
+}
+
+
+/* Token tree */
+.token-tree ul {
+  margin: 0;
 }

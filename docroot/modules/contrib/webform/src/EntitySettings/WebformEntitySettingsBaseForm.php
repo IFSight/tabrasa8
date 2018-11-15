@@ -4,7 +4,8 @@ namespace Drupal\webform\EntitySettings;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
+use Drupal\webform\Utility\WebformDialogHelper;
+use Drupal\webform\Utility\WebformElementHelper;
 
 /**
  * Base webform entity settings form.
@@ -31,6 +32,13 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
     if ($this->operation != 'settings') {
       unset($actions['delete']);
     }
+
+    // Open delete button in a modal dialog.
+    if (isset($actions['delete'])) {
+      $actions['delete']['#attributes'] = WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NARROW, $actions['delete']['#attributes']['class']);
+      WebformDialogHelper::attachLibraries($actions['delete']);
+    }
+
     return $actions;
   }
 
@@ -49,7 +57,7 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
     ];
     $this->logger('webform')->notice('Webform settings @label has been saved.', $context);
 
-    drupal_set_message($this->t('Webform settings %label has been saved.', ['%label' => $webform->label()]));
+    $this->messenger()->addStatus($this->t('Webform settings %label has been saved.', ['%label' => $webform->label()]));
   }
 
   /**
@@ -62,8 +70,7 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
    */
   protected function appendDefaultValueToElementDescriptions(array &$form, array $default_settings) {
     foreach ($form as $key => &$element) {
-      // Skip if not a FAPI element.
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 
@@ -71,10 +78,12 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
         if (!isset($element['#description'])) {
           $element['#description'] = '';
         }
-        $element['#description'] .= ($element['#description'] ? '<br /><br />' : '');
-        // @todo: Stop quotes from being encoded. (i.e. "Submit" => &quot;Submit&quote;)
         $value = $default_settings["default_$key"];
-        $element['#description'] .= $this->t('Defaults to: %value', ['%value' => $value]);
+        if (!is_array($value)) {
+          $element['#description'] .= ($element['#description'] ? '<br /><br />' : '');
+          // @todo: Stop quotes from being encoded. (i.e. "Submit" => &quot;Submit&quote;)
+          $element['#description'] .= $this->t('Defaults to: %value', ['%value' => $value]);
+        }
       }
 
       $this->appendDefaultValueToElementDescriptions($element, $default_settings);

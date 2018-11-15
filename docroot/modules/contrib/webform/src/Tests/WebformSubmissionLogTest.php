@@ -20,22 +20,19 @@ class WebformSubmissionLogTest extends WebformTestBase {
   protected static $testWebforms = ['test_submission_log'];
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Create users.
-    $this->createUsers();
-  }
-
-  /**
    * Test webform submission log.
    */
   public function testSubmissionLog() {
     global $base_path;
 
+    $admin_user = $this->drupalCreateUser([
+      'administer webform',
+      'access webform submission log',
+    ]);
+
     $webform = Webform::load('test_submission_log');
+
+    /**************************************************************************/
 
     // Check submission created.
     $sid_1 = $this->postSubmission($webform);
@@ -90,32 +87,32 @@ class WebformSubmissionLogTest extends WebformTestBase {
     $this->assertNull($log->entity_id);
 
     // Login admin user.
-    $this->drupalLogin($this->adminWebformUser);
+    $this->drupalLogin($admin_user);
 
     $submission_log = $this->getSubmissionLog();
 
     // Check submission #2 converted.
     $log = $submission_log[0];
     $this->assertEqual($log->lid, 6);
-    $this->assertEqual($log->uid, $this->adminWebformUser->id());
+    $this->assertEqual($log->uid, $admin_user->id());
     $this->assertEqual($log->sid, 2);
     $this->assertEqual($log->operation, 'submission converted');
-    $this->assertEqual($log->message, 'Test: Submission: Logging: Submission #2 converted from anonymous to ' . $this->adminWebformUser->label() . '.');
+    $this->assertEqual($log->message, 'Test: Submission: Logging: Submission #2 converted from anonymous to ' . $admin_user->label() . '.');
 
     // Check submission #1 converted.
     $log = $submission_log[1];
     $this->assertEqual($log->lid, 5);
-    $this->assertEqual($log->uid, $this->adminWebformUser->id());
+    $this->assertEqual($log->uid, $admin_user->id());
     $this->assertEqual($log->sid, 1);
     $this->assertEqual($log->operation, 'submission converted');
-    $this->assertEqual($log->message, 'Test: Submission: Logging: Submission #1 converted from anonymous to ' . $this->adminWebformUser->label() . '.');
+    $this->assertEqual($log->message, 'Test: Submission: Logging: Submission #1 converted from anonymous to ' . $admin_user->label() . '.');
 
     // Check submission updated.
     $this->drupalPostForm("admin/structure/webform/manage/test_submission_log/submission/$sid_2/edit", [], t('Save'));
     $log = $this->getLastSubmissionLog();
     $this->assertEqual($log->lid, 7);
     $this->assertEqual($log->sid, 2);
-    $this->assertEqual($log->uid, $this->adminWebformUser->id());
+    $this->assertEqual($log->uid, $admin_user->id());
     $this->assertEqual($log->handler_id, '');
     /**************************************************************************/
     // $this->assertEqual($log->operation, 'submission completed');

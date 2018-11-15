@@ -72,6 +72,66 @@ class WebformElementHelper {
   protected static $ignoredSubPropertiesRegExp;
 
   /**
+   * Determine if an element and its key is a renderable array.
+   *
+   * @param array|mixed $element
+   *   An element.
+   * @param string
+   *   The element key.
+   *
+   * @return bool
+   *   TRUE if an element and its key is a renderable array.
+   */
+  public static function isElement($element, $key) {
+    return (Element::child($key) && is_array($element));
+  }
+
+  /**
+   * Determine if an element is a webform element and should be enhanced.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return bool
+   *   TRUE if an element is a webform element.
+   */
+  public static function isWebformElement(array $element) {
+    if (isset($element['#webform_key']) || isset($element['#webform_element'])) {
+      return TRUE;
+    }
+    elseif (\Drupal::service('webform.request')->isWebformAdminRoute()) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
+   * Determine if a webform element is a specified #type.
+   *
+   * @param array $element
+   *   A webform element.
+   * @param string|array $type
+   *   An element type.
+   *
+   * @return bool
+   *   TRUE if a webform element is a specified #type.
+   */
+  public static function isType(array $element, $type) {
+    if (!isset($element['#type'])) {
+      return FALSE;
+    }
+
+    if (is_array($type)) {
+      return in_array($element['#type'], $type);
+    }
+    else {
+      return ($element['#type'] === $type);
+    }
+  }
+
+  /**
    * Determine if a webform element's title is displayed.
    *
    * @param array $element
@@ -139,52 +199,22 @@ class WebformElementHelper {
   }
 
   /**
-   * Enhance select menu with the Select2 or the Chosen library.
+   * Process a form element and apply webform element specific enhancements.
    *
-   * Please Note: Select2 is preferred library for Webform administrative
-   * forms.
+   * This method allows any form API element to be enhanced using webform
+   * specific features include custom validation, external libraries,
+   * accessibility improvements, etc…
    *
    * @param array $element
-   *   A select element.
-   * @param bool $library
-   *   Flag to automatically detect and apply library.
+   *   An associative array containing an element with a #type property.
    *
    * @return array
-   *   The select element with Select2 or Chosen class and library attached.
+   *   The processed form element with webform element specific enhancements.
    */
-  public static function enhanceSelect(array &$element, $library = FALSE) {
-    // If automatic is FALSE, look at the element's #select2 and #chosen
-    // property.
-    if (!$library) {
-      if (isset($element['#select2'])) {
-        $library = 'select2';
-      }
-      elseif (isset($element['#chosen'])) {
-        $library = 'chosen';
-      }
-    }
-
-    if ($library === FALSE) {
-      return $element;
-    }
-
-    /** @var \Drupal\webform\WebformLibrariesManagerInterface $libaries_manager */
-    $libaries_manager = \Drupal::service('webform.libraries_manager');
-
-    // Add select2 library and classes.
-    if (($library === TRUE || $library === 'select2') && $libaries_manager->isIncluded('jquery.select2')) {
-      $element['#attached']['library'][] = 'webform/webform.element.select2';
-      $element['#attributes']['class'][] = 'js-webform-select2';
-      $element['#attributes']['class'][] = 'webform-select2';
-    }
-    // Add chosen library and classes.
-    elseif (($library === TRUE || $library === 'chosen') && $libaries_manager->isIncluded('jquery.chosen')) {
-      $element['#attached']['library'][] = 'webform/webform.element.chosen';
-      $element['#attributes']['class'][] = 'js-webform-chosen';
-      $element['#attributes']['class'][] = 'webform-chosen';
-    }
-
-    return $element;
+  public static function process(array &$element) {
+    /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element */
+    $element_manager = \Drupal::service('plugin.manager.webform.element');
+    return $element_manager->processElement($element);
   }
 
   /**
@@ -385,7 +415,7 @@ class WebformElementHelper {
   public static function getFlattened(array $elements) {
     $flattened_elements = [];
     foreach ($elements as $key => &$element) {
-      if (Element::property($key) || !is_array($element)) {
+      if (!WebformElementHelper::isElement($element, $key)) {
         continue;
       }
 
@@ -442,7 +472,7 @@ class WebformElementHelper {
   /****************************************************************************/
   // ISSUE: Hidden elements still need to call #element_validate because
   // certain elements, including managed_file, checkboxes, password_confirm,
-  // etc..., will also massage the submitted values via #element_validate.
+  // etc…, will also massage the submitted values via #element_validate.
   //
   // SOLUTION: Call #element_validate for all hidden elements but suppresses
   // #element_validate errors.
@@ -594,6 +624,35 @@ class WebformElementHelper {
       $required_states['optional'] = $states['invisible'];
     }
     return $required_states;
+  }
+
+  /**
+   * Randomoize an associative array of element values and disable page caching.
+   *
+   * @param array $values
+   *   An associative array of element values,
+   *
+   * @return array
+   *   Randomized associative array of element values.
+   */
+  public static function randomize(array $values) {
+    // Make sure randomized elements and options are never cached by the
+    // current page.
+    \Drupal::service('page_cache_kill_switch')->trigger();
+    return WebformArrayHelper::shuffle($values);
+  }
+
+  /**
+   * Form API callback. Remove unchecked options and returns an array of values.
+   */
+  public static function filterValues(array &$element, FormStateInterface $form_state, array &$completed_form) {
+    $values = $element['#value'];
+    $values = array_filter($values, function ($value) {
+      return $value !== 0;
+    });
+    $values = array_values($values);
+    $element['#value'] = $values;
+    $form_state->setValueForElement($element, $values);
   }
 
 }
