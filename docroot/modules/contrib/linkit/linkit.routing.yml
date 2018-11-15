@@ -29,37 +29,6 @@ entity.linkit_profile.delete_form:
   requirements:
     _permission: 'administer linkit profiles'
 
-linkit.attributes:
-  path: '/admin/config/content/linkit/manage/{linkit_profile}/attributes'
-  defaults:
-    _form: '\Drupal\linkit\Form\Attribute\OverviewForm'
-    _title: 'Manage attributes'
-  requirements:
-    _permission: 'administer linkit profiles'
-
-linkit.attribute.add:
-  path: '/admin/config/content/linkit/manage/{linkit_profile}/attributes/add'
-  defaults:
-    _form: '\Drupal\linkit\Form\Attribute\AddForm'
-    _title: 'Add attribute'
-  requirements:
-    _permission: 'administer linkit profiles'
-
-linkit.attribute.delete:
-  path: '/admin/config/content/linkit/manage/{linkit_profile}/attributes/{plugin_instance_id}/delete'
-  defaults:
-    _form: '\Drupal\linkit\Form\Attribute\DeleteForm'
-  requirements:
-    _permission: 'administer linkit profiles'
-
-linkit.attribute.edit:
-  path: '/admin/config/content/linkit/manage/{linkit_profile}/attributes/{plugin_instance_id}'
-  defaults:
-    _form: '\Drupal\linkit\Form\Attribute\EditForm'
-    _title_callback: 'Drupal\linkit\Controller\LinkitController::attributeTitle'
-  requirements:
-    _permission: 'administer linkit profiles'
-
 linkit.matchers:
   path: '/admin/config/content/linkit/manage/{linkit_profile}/matchers'
   defaults:
@@ -91,21 +60,12 @@ linkit.matcher.edit:
   requirements:
     _permission: 'administer linkit profiles'
 
-linkit.linkit_dialog:
-  path: '/linkit/dialog/linkit/{filter_format}'
-  defaults:
-    _form: '\Drupal\linkit\Form\LinkitEditorDialog'
-    _title: 'Add link'
-  requirements:
-    _entity_access: 'filter_format.use'
-  options:
-    _theme: ajax_base_page
-
 linkit.autocomplete:
   path: '/linkit/autocomplete/{linkit_profile_id}'
   defaults:
     _controller: '\Drupal\linkit\Controller\AutocompleteController::autocomplete'
   requirements:
+    # Access is handled by the matchers.
     _access: 'TRUE'
   options:
     _theme: ajax_base_page

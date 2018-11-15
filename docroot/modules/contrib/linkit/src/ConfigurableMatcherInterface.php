@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\ConfigurableMatcherInterface.
- */
-
-
 namespace Drupal\linkit;
 
 use Drupal\Core\Plugin\PluginFormInterface;

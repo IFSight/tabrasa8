@@ -28,7 +28,7 @@
         "drupal/google_analytics": "^2.1",
         "drupal/inline_entity_form": "^1.0@beta",
         "drupal/libraries": "^3.0@alpha",
-        "drupal/linkit": "^4.0",
+        "drupal/linkit": "^5.0",
         "drupal/mailsystem": "^4.1",
         "drupal/masquerade": "^2.0@beta",
         "drupal/menu_block": "^1.4",

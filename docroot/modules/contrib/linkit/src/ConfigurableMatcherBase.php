@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\ConfigurableMatcherBase.
- */
-
 namespace Drupal\linkit;
 
 /**

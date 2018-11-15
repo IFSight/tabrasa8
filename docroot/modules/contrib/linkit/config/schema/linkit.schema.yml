@@ -10,42 +10,10 @@ linkit.linkit_profile.*:
       type: string
     description:
       type: string
-    attributes:
-      type: sequence
-      sequence:
-        type: linkit.attribute
     matchers:
       type: sequence
       sequence:
         type: linkit.matcher
-
-linkit.attribute:
-  type: mapping
-  mapping:
-    id:
-      type: string
-    settings:
-      type: linkit.attribute.[%parent.id]
-    weight:
-      type: integer
-
-linkit.attribute.*:
-  type: mapping
-  label: 'Attribute settings'
-
-# Plugin \Drupal\linkit\Plugin\Linkit\Attribute\Target
-linkit.attribute.target:
-  type: linkit.attribute
-  mapping:
-    widget_type:
-      type: string
-
-# Plugin \Drupal\linkit\Plugin\Linkit\Attribute\Title
-linkit.attribute.title:
-  type: linkit.attribute
-  mapping:
-    automatic_title:
-      type: boolean
 
 linkit.matcher:
   type: mapping
@@ -66,7 +34,7 @@ linkit.matcher.*:
 linkit.matcher.entity:
   type: mapping
   mapping:
-    result_description:
+    metadata:
       type: string
     bundles:
       type: sequence
@@ -75,6 +43,8 @@ linkit.matcher.entity:
       nullable: true
     group_by_bundle:
       type: boolean
+    substitution_type:
+      type: string
 
 linkit.matcher.entity:*:
   type: linkit.matcher.entity
@@ -83,6 +53,11 @@ linkit.matcher.entity:*:
 linkit.matcher.entity:file:
   type: linkit.matcher.entity
   mapping:
+    file_extensions:
+      type: string
+    file_status:
+      type: integer
+      default: 1
     images:
       type: mapping
       mapping:
@@ -113,19 +88,25 @@ linkit.matcher.entity:user:
     include_blocked:
       type: boolean
 
-# Third party settings on behalf of the imce module.
-linkit.linkit_profile.*.third_party.imce:
-  type: mapping
+# Plugin \Drupal\linkit\Plugin\Filter\LinkitFilter
+filter_settings.linkit:
+  type: filter
+  label: 'Linkit'
   mapping:
-    use:
+    title:
       type: boolean
-    scheme:
-      type: string
+      label: 'Automatically set the "title" attribute'
 
-ckeditor.plugin.linkit:
+# Plugin \Drupal\ckeditor\Plugin\CKEditorPlugin\DrupalLink
+# Linkit alters the plugin to save Linkit specific information used by the
+# altered plugin.
+ckeditor.plugin.drupallink:
   type: mapping
-  label: 'Profile dropdown'
+  label: 'Drupal link'
   mapping:
+    linkit_enabled:
+      type: boolean
+      label: 'Use Linkit'
     linkit_profile:
       type: string
-      label: 'List of profiles'
+      label: 'Linkit profile'

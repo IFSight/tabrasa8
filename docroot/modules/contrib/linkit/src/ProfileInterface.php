@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\ProfileInterface.
- */
-
 namespace Drupal\linkit;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -31,58 +26,6 @@ interface ProfileInterface extends ConfigEntityInterface {
    * @return $this
    */
   public function setDescription($description);
-
-  /**
-   * Returns a specific attribute.
-   *
-   * @param string $attribute_id
-   *   The attribute ID.
-   *
-   * @return \Drupal\linkit\AttributeInterface
-   *   The attribute object.
-   */
-  public function getAttribute($attribute_id);
-
-  /**
-   * Returns the attributes for this profile.
-   *
-   * @return \Drupal\linkit\AttributeCollection|\Drupal\linkit\AttributeInterface[]
-   *   The attribute collection.
-   */
-  public function getAttributes();
-
-  /**
-   * Adds an attribute to this profile.
-   *
-   * @param array $configuration
-   *   An array of attribute configuration.
-   *
-   * @return String
-   *   The ID of the attribute.
-   */
-  public function addAttribute(array $configuration);
-
-  /**
-   * Removes an attribute from this profile.
-   *
-   * @param string $attribute_id
-   *  The attribute ID.
-   *
-   * @return $this
-   */
-  public function removeAttribute($attribute_id);
-
-  /**
-   * Sets the configuration for an attribute instance.
-   *
-   * @param string $attribute_id
-   *   The ID of the attribute to set the configuration for.
-   * @param array $configuration
-   *   The attribute configuration to set.
-   *
-   * @return $this
-   */
-  public function setAttributeConfig($attribute_id, array $configuration);
 
   /**
    * Returns a specific matcher.
@@ -118,7 +61,7 @@ interface ProfileInterface extends ConfigEntityInterface {
    * Removes a matcher from this profile.
    *
    * @param \Drupal\linkit\MatcherInterface $matcher
-   *  The matcher object.
+   *   The matcher object.
    *
    * @return $this
    */

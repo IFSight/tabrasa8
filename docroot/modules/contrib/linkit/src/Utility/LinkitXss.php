@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\Utility\LinkitXss.
- */
-
 namespace Drupal\linkit\Utility;
 
 use Drupal\Component\Utility\Xss;
@@ -17,7 +12,7 @@ class LinkitXss extends Xss {
   /**
    * Description filter helper.
    *
-   * @param $string
+   * @param string $string
    *   The string with raw HTML in it. It will be stripped of everything that
    *   can cause an XSS attack.
    *

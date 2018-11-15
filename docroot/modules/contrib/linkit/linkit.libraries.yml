@@ -26,18 +26,7 @@ linkit.autocomplete:
     - core/jquery.ui.autocomplete
     - core/underscore
 
-linkit.attribute.title:
+linkit.filter_html.admin:
   version: VERSION
   js:
-    js/attribute/title.js: {}
-  dependencies:
-    - linkit/linkit.base
-    - linkit/linkit.autocomplete
-
-linkit.imce:
-  version: VERSION
-  js:
-    js/linkit.imce.js: {}
-  dependencies:
-    - core/jquery.once
-    - linkit/linkit.base
+    js/linkit.filter_html.admin.js: {}

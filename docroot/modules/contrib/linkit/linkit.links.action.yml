@@ -9,10 +9,3 @@ linkit.matcher.add:
   title: 'Add matcher'
   appears_on:
     - linkit.matchers
-
-linkit.attribute.add:
-  route_name: linkit.attribute.add
-  title: 'Add attribute'
-  appears_on:
-    - linkit.attributes
-

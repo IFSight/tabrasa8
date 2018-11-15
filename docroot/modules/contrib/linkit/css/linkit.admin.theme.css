@@ -9,7 +9,6 @@
   line-height: 1.2em;
 }
 
-.linkit-matcher-add-form tbody td:first-child,
-.linkit-attribute-add-form tbody td:first-child {
+.linkit-matcher-add-form tbody td:first-child {
   width: 1%;
 }

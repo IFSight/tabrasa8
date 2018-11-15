@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\MatcherManager.
- */
-
 namespace Drupal\linkit;
 
 use Drupal\Core\Cache\CacheBackendInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\Form\Matcher\AddForm.
- */
-
 namespace Drupal\linkit\Form\Matcher;
 
 use Drupal\Core\Form\FormBase;
@@ -87,11 +82,6 @@ class AddForm extends FormBase {
       '#tableselect' => TRUE,
       '#button_type' => 'primary',
     ];
-
-    $options = [];
-    foreach ($this->manager->getDefinitions() as $id => $plugin) {
-      $options[$id] = $plugin['label'];
-    }
 
     return $form;
   }

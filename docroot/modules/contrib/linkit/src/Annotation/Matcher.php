@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\linkit\Annotation\Matcher.
- */
-
 namespace Drupal\linkit\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
@@ -12,7 +7,7 @@ use Drupal\Component\Annotation\Plugin;
 /**
  * Defines a matcher annotation object.
  *
- * Plugin Namespace: Plugin\Linkit\Matcher
+ * Plugin Namespace: Plugin\Linkit\Matcher.
  *
  * @see \Drupal\linkit\MatcherInterface
  * @see \Drupal\linkit\MatcherBase
@@ -38,12 +33,5 @@ class Matcher extends Plugin {
    * @var \Drupal\Core\Annotation\Translation
    */
   public $label;
-
-  /**
-   * The entity type that is managed by this matcher.
-   *
-   * @var string
-   */
-  public $entity_type;
 
 }
