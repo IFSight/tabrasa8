@@ -1,0 +1,22 @@
+uuid: ce73e9a2-aba2-4bc3-b913-b2d653c1334d
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: ZuLg3phg5UwflqD27NWS7cQi4m6wY9sCIqiYEAAKIls
+id: paladin_content
+theme: paladin
+region: content
+weight: 0
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: system
+  label_display: '0'
+visibility: {  }

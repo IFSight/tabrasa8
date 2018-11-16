@@ -1,0 +1,20 @@
+uuid: d32fc7e0-e1d1-41d0-926a-ce5d2413cf22
+langcode: en
+status: true
+dependencies:
+  theme:
+    - paladin
+_core:
+  default_config_hash: nF-N8WT2XdR5rMKxwc4ghq-D-VC9QbXR8CPxuWTsCmA
+id: paladin_page_title
+theme: paladin
+region: header
+weight: -50
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility: {  }

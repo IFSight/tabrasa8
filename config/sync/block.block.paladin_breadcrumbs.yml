@@ -1,0 +1,22 @@
+uuid: 3a6a9cde-e8b5-471e-bbc5-1c073a4b3b36
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: zqQW-cCLELp537tLXoT5ppzkCSUJeoO8u4E6IpC1Ang
+id: paladin_breadcrumbs
+theme: paladin
+region: header
+weight: 0
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  provider: system
+  label_display: '0'
+visibility: {  }

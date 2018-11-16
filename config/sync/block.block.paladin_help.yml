@@ -1,0 +1,22 @@
+uuid: 0c3b4bde-fd49-4173-bc1c-b43a27b7550d
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - paladin
+_core:
+  default_config_hash: nLe-6orj-WfNG3pzv9uU2VlrFztFMUEtlx1mIWw-gk4
+id: paladin_help
+theme: paladin
+region: header
+weight: -30
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  provider: help
+  label_display: '0'
+visibility: {  }

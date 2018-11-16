@@ -1,0 +1,22 @@
+uuid: 5302b2ed-0d1d-4a52-af51-20162c7a1d6a
+langcode: en
+status: true
+dependencies:
+  module:
+    - search
+  theme:
+    - paladin
+_core:
+  default_config_hash: 54eXac8D0kIqNDgjkD-pJNQrdcHAcnnwk8CEA8NwRsY
+id: paladin_search
+theme: paladin
+region: sidebar_first
+weight: -1
+provider: null
+plugin: search_form_block
+settings:
+  id: search_form_block
+  label: Search
+  provider: search
+  label_display: visible
+visibility: {  }

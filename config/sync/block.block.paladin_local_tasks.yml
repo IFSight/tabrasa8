@@ -1,0 +1,22 @@
+uuid: d60c0d49-dd32-42d6-aee7-78e57b2c19b9
+langcode: en
+status: true
+dependencies:
+  theme:
+    - paladin
+_core:
+  default_config_hash: zbUDIb2Tpk7QZLaqPh2Bt3cxr26OQoZyiDfrScAo7u8
+id: paladin_local_tasks
+theme: paladin
+region: content
+weight: -40
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility: {  }

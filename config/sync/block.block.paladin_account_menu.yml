@@ -1,0 +1,26 @@
+uuid: a00a3bcc-329e-4100-8ffd-60d1515cf7b2
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.account
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: 62GOWsUIJ8RbpqLjupxQBdw4su7zGf-naKMmIIt7bqU
+id: paladin_account_menu
+theme: paladin
+region: header
+weight: 0
+provider: null
+plugin: 'system_menu_block:account'
+settings:
+  id: 'system_menu_block:account'
+  label: 'User account menu'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+visibility: {  }

@@ -1,0 +1,22 @@
+uuid: b7b76285-6df8-43e2-82cd-0756fef0b73b
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: eKB0NGo1YUhWhX3mBmlVZUTqzDzO5WNFdT0veR062SQ
+id: paladin_powered
+theme: paladin
+region: footer
+weight: 10
+provider: null
+plugin: system_powered_by_block
+settings:
+  id: system_powered_by_block
+  label: 'Powered by Drupal'
+  provider: system
+  label_display: '0'
+visibility: {  }

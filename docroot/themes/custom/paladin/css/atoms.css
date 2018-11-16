@@ -20,20 +20,6 @@
 /* ============================================================
   Placeholders for repeat styles.
   ============================================================ */
-.button {
-  color: #fff;
-  background: #123A7E;
-  font-size: 1.25em;
-  padding: .5em 2em;
-  display: block;
-  border: 2px solid transparent; }
-  .button:hover {
-    background: linear-gradient(44.37deg, #123A7E 0%, #0275B7 100%); }
-  .light.button {
-    color: #123A7E;
-    background: #fff;
-    border: 2px solid #123A7E; }
-
 
 .nomargin {
   margin: 0 !important; }
@@ -46,13 +32,6 @@
 .nospacing {
   margin: 0 !important;
   padding: 0 !important; }
-
-input[type='text'], select {
-  font-family: "Open Sans", sans-serif;
-  border: 2px solid rgba(57, 57, 57, 0.25);
-  border-radius: 3px;
-  width: 100%;
-  padding: 1.6em; }
 
 /* ============================================================
   Styles for the breadcrumb.
@@ -67,7 +46,6 @@ input[type='text'], select {
         font-weight: 600;
         text-decoration: none; }
       #block-breadcrumbs ol li svg {
-        color: #123A7E;
         font-size: 1.6em;
         margin: 0 .2em;
         position: relative;
@@ -118,8 +96,7 @@ input[type='text']:-ms-input-placeholder {
       top: .15em;
       left: 0;
       width: 16px;
-      height: 16px;
-      border: 1px solid #123A7E; }
+      height: 16px; }
     .checkbox label::after {
       content: '';
       display: inline-block;
@@ -128,12 +105,9 @@ input[type='text']:-ms-input-placeholder {
       top: .35em;
       height: 6px;
       width: 11px;
-      border-left: 2px solid #123A7E;
-      border-bottom: 2px solid #123A7E;
       transform: rotate(-45deg); }
 
 label {
-  color: #123A7E;
   padding: .5em 0;
   font-weight: 600; }
 
@@ -176,14 +150,13 @@ img {
 /* ============================================================
   Styles for general typography and links.
   ============================================================ */
-a {
-  color: #123A7E; }
-  a:hover {
-    text-decoration: underline; }
-  a[href$='.pdf'] {
-    display: inline-block;
-    background: url("/core/themes/classy/images/icons/application-pdf.png") no-repeat left center;
-    padding: 0 0 0 1.2em; }
+a:hover {
+  text-decoration: underline; }
+
+a[href$='.pdf'] {
+  display: inline-block;
+  background: url("/core/themes/classy/images/icons/application-pdf.png") no-repeat left center;
+  padding: 0 0 0 1.2em; }
 
 p {
   margin: 0 0 1em; }

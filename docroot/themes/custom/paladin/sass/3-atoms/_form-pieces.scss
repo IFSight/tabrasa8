@@ -3,7 +3,7 @@
   ============================================================ */
 
   input[type='text'] {
-    @extend %form-box;
+    // @extend %form-box;
   
       // Placeholders don't accept placeholders and need their own declarations :-/
       &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
@@ -63,7 +63,7 @@
         left: 0;
         width: 16px;
         height: 16px;
-        border: 1px solid $dark-blue;  
+        // border: 1px solid $dark-blue;  
       }
 
       &::after {
@@ -74,21 +74,21 @@
         top: .35em;
         height: 6px;
         width: 11px;
-        border-left: 2px solid $dark-blue;
-        border-bottom: 2px solid $dark-blue;
+        // border-left: 2px solid $dark-blue;
+        // border-bottom: 2px solid $dark-blue;
         transform: rotate(-45deg);
       }  
     }
   }
 
   label {
-    color: $dark-blue;
+    // color: $dark-blue;
     padding: .5em 0;
     font-weight: 600;
   }
 
   select {
-    @extend %form-box;
+    // @extend %form-box;
     height: 50px;
     font-size: 1.125rem;
     background: #fff;

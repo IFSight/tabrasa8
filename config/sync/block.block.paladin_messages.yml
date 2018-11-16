@@ -1,0 +1,22 @@
+uuid: df83831c-7e8e-4ff1-ad9c-f8ced0d56294
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: LWUQcJE6RJo39QeCtt00vOT9lUmfEarV-kHEQ5cXSh4
+id: paladin_messages
+theme: paladin
+region: header
+weight: 0
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Status messages'
+  provider: system
+  label_display: '0'
+visibility: {  }

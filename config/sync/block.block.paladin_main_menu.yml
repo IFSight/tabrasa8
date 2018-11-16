@@ -1,0 +1,26 @@
+uuid: a112bf99-3d3f-42db-bdae-a7e268dc8223
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: NYNUBu9xfBQAXnbIwYvAt7rpUi4bjpvLsawZgEfXoCw
+id: paladin_main_menu
+theme: paladin
+region: header
+weight: 0
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation'
+  provider: system
+  label_display: '0'
+  level: 1
+  depth: 1
+visibility: {  }

@@ -1,0 +1,25 @@
+uuid: a95cb00c-33bd-4cb2-9f91-d16c9fd17521
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: XLiDtprfkEaA4leg4efBKN4ozNOpnbTX1aOwF2vA2_w
+id: paladin_branding
+theme: paladin
+region: header
+weight: 0
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Site branding'
+  provider: system
+  label_display: '0'
+  use_site_logo: true
+  use_site_name: true
+  use_site_slogan: true
+visibility: {  }

@@ -1,0 +1,26 @@
+uuid: fc2c95cf-8a9b-4282-8b37-4a123b6a87d6
+langcode: en
+status: true
+dependencies:
+  config:
+    - system.menu.tools
+  module:
+    - system
+  theme:
+    - paladin
+_core:
+  default_config_hash: 6nxq-OvNXPYyLsYmgzp-WIT7KQcjAzesc6SNE94z20k
+id: paladin_tools
+theme: paladin
+region: sidebar_first
+weight: 0
+provider: null
+plugin: 'system_menu_block:tools'
+settings:
+  id: 'system_menu_block:tools'
+  label: Tools
+  provider: system
+  label_display: visible
+  level: 1
+  depth: 0
+visibility: {  }

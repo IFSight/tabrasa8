@@ -1,0 +1,20 @@
+uuid: 81e47f66-0327-4ad9-be49-7338e6e9035b
+langcode: en
+status: true
+dependencies:
+  theme:
+    - paladin
+_core:
+  default_config_hash: Ygq1ev38pb83MNqPX3vIQzLmb44dbydjV5EAl-yfqkY
+id: paladin_local_actions
+theme: paladin
+region: content
+weight: -20
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  provider: core
+  label_display: '0'
+visibility: {  }
