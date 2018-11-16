@@ -1,0 +1,8 @@
+/* ============================================================
+  Styles for components that are shared across the whole site. Individual SCSS files in this directory are separate libraries that are added in templates, etc.
+  ============================================================ */
+
+@import '../1-settings-tools/settings-tools';
+@import 'footer';
+@import 'header';
+@import 'main-menu';

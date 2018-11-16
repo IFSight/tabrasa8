@@ -1,0 +1,95 @@
+/* ============================================================
+  Base styles for forms. Do not be specific here: create a molecule instead.
+  ============================================================ */
+
+  input[type='text'] {
+    @extend %form-box;
+  
+      // Placeholders don't accept placeholders and need their own declarations :-/
+      &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        color: #000;
+        opacity: 1;
+        font-size: 1.25em;
+      }
+    
+      &::-moz-placeholder { /* Firefox 19+ */
+        color: #000;
+        opacity: 1;
+        font-size: 1.25em;
+      }
+    
+      &:-ms-input-placeholder { /* IE 10+ */
+        color: #000;
+        opacity: 1;
+        font-size: 1.25em;
+      }
+  }
+
+  //  Make pretty checkboxes.
+  .checkbox {
+    padding: .5em 0;
+
+    // Make the original checkbox invisible
+    input[type='checkbox'] {
+      opacity: 0;
+    }
+
+    // Don't show the new checkbox by default.
+    input[type="checkbox"] + label::after {
+      content: none;
+    }
+
+    // Show the new checkbox when checked.
+    input[type="checkbox"]:checked + label::after {
+      content: '';
+    }
+
+    // Accessibility outline
+     input[type="checkbox"]:focus + label::before {
+      outline: rgb(59, 153, 252) auto 5px;
+    }
+  
+    // Style with pseudo-elements accordingly.
+    label {
+      position: relative;
+      padding: 0 0 0 1.5em;
+      display: inline-block;
+
+      &::before {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        top: .15em;
+        left: 0;
+        width: 16px;
+        height: 16px;
+        border: 1px solid $dark-blue;  
+      }
+
+      &::after {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        left: .15em;
+        top: .35em;
+        height: 6px;
+        width: 11px;
+        border-left: 2px solid $dark-blue;
+        border-bottom: 2px solid $dark-blue;
+        transform: rotate(-45deg);
+      }  
+    }
+  }
+
+  label {
+    color: $dark-blue;
+    padding: .5em 0;
+    font-weight: 600;
+  }
+
+  select {
+    @extend %form-box;
+    height: 50px;
+    font-size: 1.125rem;
+    background: #fff;
+  }

@@ -1,0 +1,23 @@
+name: Paladin
+type: theme
+description: Paladin is a lightweight subtheme of Stable that crusades in the name of "good and order" for its SCSS and overall structure.
+core: 8.x
+# Defines the base theme
+base theme: stable
+# Defines libraries group in which we can add css/js.
+libraries:
+  - paladin/atoms
+  - paladin/fonts
+  - paladin/generic
+  - paladin/helpers
+  - paladin/molecules
+  - paladin/organisms
+  - paladin/translate
+# Regions
+regions:
+  header: Header
+  content_top: Content Top
+  content: Content
+  sidebar_first: First sidebar
+  sidebar_second: Second sidebar
+  footer: Footer

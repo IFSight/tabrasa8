@@ -1,0 +1,35 @@
+/* ============================================================
+  Alignment and display helpers.
+  ============================================================ */
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.block {
+  display: block;
+}
+
+.padding-top-05 {
+  padding-top: .5em;
+}
+
+.padding-bottom-05 {
+  padding-bottom: .5em;
+}
+
+.offscreen {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  color: #000;
+  background: #fff;
+}

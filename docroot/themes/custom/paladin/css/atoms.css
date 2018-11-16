@@ -1,0 +1,191 @@
+/* ============================================================
+  Styles for bare HTML elements (h1, a, p, etc.)
+  ============================================================ */
+/* ============================================================
+  Preprocessors, fonts, variables.
+  These ITCSS naming conventions and structure are inspired by Lindsay Grizzard's article on Medium: https://medium.com/gusto-design/creating-the-perfect-css-system-fa38f5bcdd9e
+  ============================================================ */
+/* ============================================================
+  Vendor-specific styles.
+  ============================================================ */
+/* ============================================================
+  Breakpoints
+  ============================================================ */
+/* ============================================================
+  Colors
+  ============================================================ */
+/* ============================================================
+  Styles for fonts/typefaces.
+  ============================================================ */
+/* ============================================================
+  Placeholders for repeat styles.
+  ============================================================ */
+.button {
+  color: #fff;
+  background: #123A7E;
+  font-size: 1.25em;
+  padding: .5em 2em;
+  display: block;
+  border: 2px solid transparent; }
+  .button:hover {
+    background: linear-gradient(44.37deg, #123A7E 0%, #0275B7 100%); }
+  .light.button {
+    color: #123A7E;
+    background: #fff;
+    border: 2px solid #123A7E; }
+
+
+.nomargin {
+  margin: 0 !important; }
+
+
+.nopadding {
+  padding: 0 !important; }
+
+#block-breadcrumbs ol,
+.nospacing {
+  margin: 0 !important;
+  padding: 0 !important; }
+
+input[type='text'], select {
+  font-family: "Open Sans", sans-serif;
+  border: 2px solid rgba(57, 57, 57, 0.25);
+  border-radius: 3px;
+  width: 100%;
+  padding: 1.6em; }
+
+/* ============================================================
+  Styles for the breadcrumb.
+  ============================================================ */
+#block-breadcrumbs {
+  margin: 0 0 2em; }
+  #block-breadcrumbs ol {
+    list-style: none; }
+    #block-breadcrumbs ol li {
+      display: inline-block; }
+      #block-breadcrumbs ol li a {
+        font-weight: 600;
+        text-decoration: none; }
+      #block-breadcrumbs ol li svg {
+        color: #123A7E;
+        font-size: 1.6em;
+        margin: 0 .2em;
+        position: relative;
+        top: .175em; }
+
+/* ============================================================
+  Styles for buttons.
+  ============================================================ */
+/* ============================================================
+  Base styles for forms. Do not be specific here: create a molecule instead.
+  ============================================================ */
+input[type='text']::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: #000;
+  opacity: 1;
+  font-size: 1.25em; }
+
+input[type='text']::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #000;
+  opacity: 1;
+  font-size: 1.25em; }
+
+input[type='text']:-ms-input-placeholder {
+  /* IE 10+ */
+  color: #000;
+  opacity: 1;
+  font-size: 1.25em; }
+
+.checkbox {
+  padding: .5em 0; }
+  .checkbox input[type='checkbox'] {
+    opacity: 0; }
+  .checkbox input[type="checkbox"] + label::after {
+    content: none; }
+  .checkbox input[type="checkbox"]:checked + label::after {
+    content: ''; }
+  .checkbox input[type="checkbox"]:focus + label::before {
+    outline: #3b99fc auto 5px; }
+  .checkbox label {
+    position: relative;
+    padding: 0 0 0 1.5em;
+    display: inline-block; }
+    .checkbox label::before {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      top: .15em;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #123A7E; }
+    .checkbox label::after {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      left: .15em;
+      top: .35em;
+      height: 6px;
+      width: 11px;
+      border-left: 2px solid #123A7E;
+      border-bottom: 2px solid #123A7E;
+      transform: rotate(-45deg); }
+
+label {
+  color: #123A7E;
+  padding: .5em 0;
+  font-weight: 600; }
+
+select {
+  height: 50px;
+  font-size: 1.125rem;
+  background: #fff; }
+
+/* ============================================================
+  Styles for heading typography.
+  ============================================================ */
+h1, h2, h3, h4, h5 {
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 600; }
+
+h1 {
+  font-size: 2.375rem; }
+
+h2 {
+  font-size: 2.125rem; }
+
+h3 {
+  font-size: 1.875rem; }
+
+h4 {
+  font-size: 1.75rem; }
+
+h5 {
+  font-size: 1.5rem; }
+
+/* ============================================================
+  Styles for images.
+  ============================================================ */
+img {
+  width: 100%;
+  display: block;
+  max-width: 100%;
+  height: auto; }
+
+/* ============================================================
+  Styles for general typography and links.
+  ============================================================ */
+a {
+  color: #123A7E; }
+  a:hover {
+    text-decoration: underline; }
+  a[href$='.pdf'] {
+    display: inline-block;
+    background: url("/core/themes/classy/images/icons/application-pdf.png") no-repeat left center;
+    padding: 0 0 0 1.2em; }
+
+p {
+  margin: 0 0 1em; }
+
+/*# sourceMappingURL=atoms.css.map */

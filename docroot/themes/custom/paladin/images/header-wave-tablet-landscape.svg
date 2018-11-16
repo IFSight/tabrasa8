@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="80px" viewBox="0 0 1024 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.3 (67297) - http://www.bohemiancoding.com/sketch -->
+    <title>wave-cut</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Comps-v2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home---Tablet/Landscape" transform="translate(0.000000, -221.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M-0.435046642,221.76619 C263.422433,230.653646 529.611504,270.059632 675.429809,270.059632 C806.452758,270.059632 886.521022,270.41156 1025.48633,252.948747 C1025.48633,266.26677 1025.30082,282.168861 1024.92981,300.65502 L-0.861206635,300.65502 C-0.577099973,271.551673 -0.435046642,245.255397 -0.435046642,221.76619 Z" id="wave-cut" transform="translate(512.312561, 261.210605) scale(-1, 1) translate(-512.312561, -261.210605) "></path>
+        </g>
+    </g>
+</svg>

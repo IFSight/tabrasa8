@@ -1,0 +1,44 @@
+accordion:
+  js:
+    js/accordion.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.ui.accordion
+
+atoms:
+  css:
+    component:
+      css/atoms.css: {}
+
+fonts:
+  license:
+    name: SIL Open Font License, 1.1
+    url: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+  css:
+    theme:
+      //fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro:400,600: { type: external }
+
+generic:
+  css:
+    component:
+      css/generic.css: {}
+
+helpers:
+  css:
+    component:
+      css/helpers.css: {}
+
+molecules:
+  css:
+    component:
+      css/molecules.css: {}
+
+organisms:
+  css:
+    component:
+      css/organisms.css: {}
+
+translate:
+  js:
+    js/translate.js: {}
+    //translate.google.com/translate_a/element.js?cb=googleTranslateElementInit: { type: external }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1924px" height="82px" viewBox="0 0 1924 82" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="0%" y1="50%" x2="96.7846821%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#123A7E" offset="0%"></stop>
+            <stop stop-color="#0275B7" offset="46.832099%"></stop>
+            <stop stop-color="#00A3CD" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(1.000000, 0.000000)" fill-rule="nonzero">
+            <path d="M0,50.117138 C270.926266,74.1947136 507.57877,83.7222359 709.95751,78.6997049 C1013.52562,71.1659085 1199.77187,27.9043892 1357.89863,27.9043892 C1578.48433,22.2548515 1766.18444,30.4998601 1920.99896,52.639415 L1920.99896,0 L0,0 L0,50.117138 Z" id="Path-4" fill="#FFFFFF"></path>
+            <path d="M0,55.9779681 C760.912467,-13.4441376 1054.7569,57.595133 1219.8354,71.2800787 C1384.91391,84.9650244 1716.58257,88.25024 1922,53.8676631" id="Path-4-Copy-2" stroke="url(#linearGradient-1)" stroke-width="2" transform="translate(961.000000, 53.500000) scale(-1, 1) rotate(-180.000000) translate(-961.000000, -53.500000) "></path>
+        </g>
+    </g>
+</svg>

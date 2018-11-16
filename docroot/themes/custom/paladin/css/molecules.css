@@ -1,0 +1,530 @@
+@charset "UTF-8";
+/* ============================================================
+  Styles for components that are shared across the whole site. Individual SCSS files in this directory are separate libraries that are added in templates, etc.
+  ============================================================ */
+/* ============================================================
+  Preprocessors, fonts, variables.
+  These ITCSS naming conventions and structure are inspired by Lindsay Grizzard's article on Medium: https://medium.com/gusto-design/creating-the-perfect-css-system-fa38f5bcdd9e
+  ============================================================ */
+/* ============================================================
+  Vendor-specific styles.
+  ============================================================ */
+/* ============================================================
+  Breakpoints
+  ============================================================ */
+/* ============================================================
+  Colors
+  ============================================================ */
+/* ============================================================
+  Styles for fonts/typefaces.
+  ============================================================ */
+/* ============================================================
+  Placeholders for repeat styles.
+  ============================================================ */
+#block-secondary-menu {
+  font-family: "Source Sans Pro", sans-serif;
+  position: relative; }
+  #block-secondary-menu li {
+    display: block; }
+    @media (min-width: 1024px) {
+      #block-secondary-menu li {
+        display: inline-block; } }
+  #block-secondary-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    display: block;
+    width: 100%;
+    height: 100%; }
+    #block-secondary-menu a:hover {
+      text-decoration: underline; }
+
+.search-trigger {
+  padding: .75em; }
+  @media (min-width: 1280px) {
+    .search-trigger {
+      padding: 1em; } }
+
+.search-box .search-button {
+  color: #fff;
+  background: #123A7E;
+  font-size: 1.25em;
+  padding: .5em 2em;
+  display: block;
+  border: 2px solid transparent; }
+  .search-box .search-button:hover {
+    background: linear-gradient(44.37deg, #123A7E 0%, #0275B7 100%); }
+  .search-box .light.search-button {
+    color: #123A7E;
+    background: #fff;
+    border: 2px solid #123A7E; }
+
+
+.nomargin {
+  margin: 0 !important; }
+
+
+.nopadding {
+  padding: 0 !important; }
+
+
+.nospacing {
+  margin: 0 !important;
+  padding: 0 !important; }
+
+.action-tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center; }
+
+/* ============================================================
+  Styles for accordions.
+  ============================================================ */
+.accordion-container .ui-state-default,
+.accordion-container .ui-accordion-content {
+  border: 0;
+  background: transparent; }
+
+.accordion-container .title {
+  font-size: 1.5rem;
+  font-family: "Source Sans Pro", sans-serif;
+  padding: .5em 0;
+  border-bottom: 2px solid rgba(57, 57, 57, 0.25);
+  position: relative; }
+  .accordion-container .title::after {
+    content: '+';
+    font-size: 3rem;
+    position: absolute;
+    right: 0;
+    top: 0; }
+  .accordion-container .title.ui-state-active::after {
+    content: '–'; }
+
+.accordion-container .body {
+  font-family: "Open Sans", sans-serif;
+  padding: 1em 0;
+  font-size: 1.125rem;
+  line-height: 1.7; }
+  .accordion-container .body img {
+    float: left;
+    width: 215px;
+    height: 215px;
+    margin: 0 1em 0 0; }
+
+/* ============================================================
+  Styles for action tiles.
+  ============================================================ */
+.action-tile {
+  width: 250px;
+  height: 250px;
+  color: #fff; }
+  .action-tile svg {
+    font-size: 4rem; }
+  .action-tile .title {
+    font-size: 1.375rem;
+    margin: 1em 0 0; }
+
+/* ============================================================
+  Styles for a contextual highlight card.
+  ============================================================ */
+.contextual-highlight-card {
+  display: block;
+  text-decoration: none; }
+  .contextual-highlight-card:hover {
+    text-decoration: none; }
+  .contextual-highlight-card .content {
+    padding: 0 1em 2em; }
+    .contextual-highlight-card .content h5 {
+      margin: .5rem 0; }
+    .contextual-highlight-card .content span:hover {
+      text-decoration: underline; }
+
+/* ============================================================
+  Styles for the "Did you know?" box that will appear in 
+  the sidebar or (maybe) as a paragraph.
+  ============================================================ */
+.did-you-know {
+  position: relative;
+  width: 335px;
+  padding: 15px;
+  margin: 1em 0 5em;
+  border: 1px solid #123A7E;
+  background: #fff;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px; }
+  .did-you-know::before {
+    content: "";
+    position: absolute;
+    bottom: -80px;
+    left: 110px;
+    border-width: 80px 80px 0 0;
+    border-style: solid;
+    border-color: #123A7E transparent transparent transparent;
+    display: block;
+    width: 0; }
+  .did-you-know::after {
+    content: "";
+    position: absolute;
+    bottom: -77px;
+    left: 111px;
+    border-width: 78px 78px 0 0;
+    border-style: solid;
+    border-color: #fff transparent;
+    display: block;
+    width: 0; }
+  .did-you-know h4 {
+    margin: .5rem 0;
+    color: #123A7E; }
+
+/* ============================================================
+  Styles for the iframe paragraph
+  ============================================================ */
+.paragraph--type--iframe {
+  padding: 2em;
+  margin: 2em 0; }
+  .paragraph--type--iframe .fullscreen {
+    float: right;
+    margin: .5em 0; }
+
+/* ============================================================
+  Styles for the menu cards (landing pages).
+  ============================================================ */
+.menu-card {
+  padding: 1.5em;
+  position: relative;
+  margin: 0 0 1.5em; }
+  .menu-card h4 {
+    margin: 0 0 .5em; }
+  .menu-card li {
+    margin: .5em 0 1em;
+    position: relative; }
+    .menu-card li a {
+      text-decoration: none;
+      display: inline-block;
+      margin: 0 0 0 .5em; }
+      .menu-card li a:hover {
+        text-decoration: underline; }
+    .menu-card li.menu-item--active-trail {
+      font-weight: 600; }
+    .menu-card li svg {
+      color: #00A3CD;
+      position: relative;
+      top: .05em; }
+
+/* ============================================================
+  Styles for the search bar (in the menu).
+  ============================================================ */
+.search-trigger {
+  text-align: left;
+  display: none;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: "Source Sans Pro", sans-serif; }
+  @media (min-width: 1024px) {
+    .search-trigger {
+      display: inline-block; }
+      .search-trigger:hover {
+        text-decoration: underline; } }
+  .search-trigger.active {
+    background: #123A7E; }
+  .search-trigger svg {
+    position: relative;
+    left: -.3em;
+    top: .1em; }
+
+.search-box {
+  padding: 1.4em;
+  width: 100%;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  justify-content: center;
+  transform: scaleY(0); }
+  .mobile .search-box {
+    transform: scaleY(1); }
+  .front .search-box {
+    z-index: 400;
+    bottom: 4.5em;
+    transform: scaleY(1); }
+    @media (min-width: 444px) {
+      .front .search-box {
+        bottom: 3em; } }
+    .front .search-box.active {
+      transform: scaleY(0); }
+      @media (min-width: 1024px) {
+        .front .search-box.active {
+          transform: scaleY(1); } }
+    @media (min-width: 1024px) {
+      .front .search-box {
+        bottom: auto;
+        transform: scaleY(0); } }
+  @media (min-width: 1024px) {
+    .search-box {
+      background: linear-gradient(rgba(18, 58, 126, 0.8), rgba(18, 58, 126, 0.8));
+      flex-wrap: nowrap;
+      position: relative;
+      text-align: left;
+      justify-content: center;
+      align-items: center;
+      bottom: auto;
+      display: flex;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform .3s; }
+      .search-box.active {
+        transform: scaleY(1); } }
+  .search-box h3 {
+    width: 100%;
+    margin: 0;
+    padding: .5em 0;
+    font-size: 1.3em; }
+    @media (min-width: 444px) {
+      .search-box h3 {
+        font-size: 1.875rem; } }
+    @media (min-width: 1024px) {
+      .search-box h3 {
+        width: 42%;
+        margin: 0;
+        padding: 0;
+        text-align: center; } }
+  @media (min-width: 1024px) {
+    .search-box input {
+      width: 50%;
+      font-size: 1.2em;
+      padding: .5em; } }
+  .search-box .search-button {
+    position: absolute;
+    bottom: 1.5em;
+    right: 1.5em;
+    width: 38px;
+    height: 38px;
+    border-radius: 3px; }
+    @media (min-width: 1024px) {
+      .search-box .search-button {
+        position: relative;
+        right: 2.3em;
+        bottom: auto; } }
+  .search-box .close {
+    display: none; }
+    @media (min-width: 1024px) {
+      .search-box .close {
+        display: block; }
+        .search-box .close svg {
+          font-size: 1.8em;
+          margin: 0 0 .1em .11em;
+          display: block;
+          position: relative;
+          top: .2em; } }
+
+/* ============================================================
+  Styles for spotlights (news, events, etc.) that appear on the 
+  homepage and (probably) in paragraphs.
+  ============================================================ */
+.event-spotlight {
+  width: 370px;
+  height: 270px;
+  color: #fff;
+  background: #123A7E;
+  background: linear-gradient(linear-gradient(rgba(18, 58, 126, 0.8), rgba(18, 58, 126, 0.8)), linear-gradient(rgba(18, 58, 126, 0.8), rgba(18, 58, 126, 0.8))), url("/themes/custom/paladin/images/styleguide/drops.jpg");
+  padding: 1.5em;
+  position: relative; }
+  .event-spotlight h4 {
+    margin: 0 0 .5em; }
+  .event-spotlight .link {
+    color: #fff;
+    text-align: right;
+    display: block; }
+
+.news-spotlight {
+  display: flex;
+  align-items: center;
+  width: 640px;
+  text-decoration: none; }
+  .news-spotlight p {
+    color: #000; }
+  .news-spotlight img {
+    width: 250px;
+    height: 250px;
+    float: left; }
+  .news-spotlight .content {
+    padding: 1.5em; }
+    .news-spotlight .content h4 {
+      margin: 0 0 .5em; }
+
+/* ============================================================
+  Styles for utilities (pay bill, account telephone molecule).
+  ============================================================ */
+#block-utilities {
+  position: relative;
+  font-family: "Source Sans Pro", sans-serif; }
+  @media (min-width: 1024px) {
+    #block-utilities {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 200; } }
+  #block-utilities .phone,
+  #block-utilities .languages,
+  #block-utilities #google_translate_element,
+  #block-utilities .account-tools {
+    display: inline-block;
+    color: #fff; }
+  #block-utilities .phone,
+  #block-utilities .languages {
+    padding: 0 1em 0; }
+    #block-utilities .phone svg,
+    #block-utilities .languages svg {
+      margin: 0 .25em 0 0; }
+    #block-utilities .phone a,
+    #block-utilities .languages a {
+      color: #fff;
+      text-decoration: none; }
+  #block-utilities .phone {
+    display: none; }
+    @media (min-width: 1024px) {
+      #block-utilities .phone {
+        position: relative;
+        top: auto;
+        left: auto;
+        font-size: 1em;
+        text-align: left;
+        width: auto;
+        display: inline-block; } }
+    .front #block-utilities .phone {
+      display: block;
+      position: absolute;
+      top: 11.5em;
+      width: 100%;
+      text-align: center;
+      font-size: 1.5em; }
+      @media (min-width: 444px) {
+        .front #block-utilities .phone {
+          top: 12.5em; } }
+      @media (min-width: 1024px) {
+        .front #block-utilities .phone {
+          position: relative;
+          top: auto;
+          left: auto;
+          font-size: 1em;
+          text-align: left;
+          width: auto;
+          display: inline-block; } }
+  #block-utilities .languages {
+    display: none;
+    position: absolute;
+    top: 32em;
+    z-index: 500; }
+    #block-utilities .languages.active {
+      display: inline-block; }
+    @media (min-width: 1024px) {
+      #block-utilities .languages {
+        position: relative;
+        z-index: auto;
+        top: auto;
+        display: inline-block; } }
+  #block-utilities .goog-te-gadget {
+    font-family: "Source Sans Pro", sans-serif; }
+    #block-utilities .goog-te-gadget .goog-te-gadget-simple {
+      background: transparent;
+      border: 0 !important;
+      font-size: 1rem !important; }
+      #block-utilities .goog-te-gadget .goog-te-gadget-simple::after {
+        content: '＞';
+        transform: rotate(90deg);
+        position: absolute;
+        color: #fff; }
+    #block-utilities .goog-te-gadget span {
+      color: #fff;
+      border: 0 !important; }
+      #block-utilities .goog-te-gadget span:nth-child(1) {
+        position: relative;
+        top: -.15em; }
+      #block-utilities .goog-te-gadget span:nth-child(5) {
+        display: none; }
+    #block-utilities .goog-te-gadget img {
+      display: none; }
+  #block-utilities .account-tools {
+    vertical-align: top;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: absolute;
+    top: 6em;
+    z-index: 200;
+    padding: 0 1.75em; }
+    @media (min-width: 1024px) {
+      #block-utilities .account-tools {
+        margin: 0 0 0 2em;
+        display: inline-block;
+        width: auto;
+        position: relative;
+        top: auto;
+        z-index: auto;
+        padding: 0; } }
+    #block-utilities .account-tools a {
+      color: #fff;
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 600;
+      border: 2px solid #fff;
+      border-radius: 3px;
+      font-size: 1.2em;
+      letter-spacing: 0.025em;
+      padding: .75em 0;
+      text-align: center;
+      width: 100%;
+      margin: 0 auto; }
+      @media (min-width: 768px) {
+        #block-utilities .account-tools a {
+          width: 40%; } }
+      @media (min-width: 1024px) {
+        #block-utilities .account-tools a {
+          border-top: 0;
+          border-left: 0;
+          border-right: 0;
+          border-radius: 0;
+          padding: .75em 1em;
+          width: auto;
+          text-align: left; } }
+      #block-utilities .account-tools a.manage-account {
+        background: #0D772A; }
+        @media (min-width: 1024px) {
+          #block-utilities .account-tools a.manage-account {
+            border-left: 2px solid #fff; } }
+        #block-utilities .account-tools a.manage-account:hover {
+          background: #08491a; }
+
+#block-secondary-menu {
+  position: absolute;
+  background: #0275B7;
+  display: none;
+  top: 35.25em;
+  left: 1em; }
+  #block-secondary-menu.active {
+    display: block;
+    z-index: 500; }
+  #block-secondary-menu li {
+    margin: 0 0 1.25em; }
+    #block-secondary-menu li:last-of-type {
+      margin: 0; }
+    @media (min-width: 1024px) {
+      #block-secondary-menu li {
+        margin: 0 1.25em 0 !important; } }
+  @media (min-width: 1024px) {
+    #block-secondary-menu {
+      right: 0;
+      top: 5em;
+      left: auto;
+      z-index: 200;
+      background: transparent;
+      display: block; }
+      #block-secondary-menu a {
+        font-weight: 600;
+        padding: 0; } }
+
+/*# sourceMappingURL=molecules.css.map */

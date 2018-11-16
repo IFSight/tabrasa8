@@ -1,0 +1,85 @@
+/* ============================================================
+  Resets/normalizing files.
+  ============================================================ */
+/* ============================================================
+  Preprocessors, fonts, variables.
+  These ITCSS naming conventions and structure are inspired by Lindsay Grizzard's article on Medium: https://medium.com/gusto-design/creating-the-perfect-css-system-fa38f5bcdd9e
+  ============================================================ */
+/* ============================================================
+  Vendor-specific styles.
+  ============================================================ */
+/* ============================================================
+  Breakpoints
+  ============================================================ */
+/* ============================================================
+  Colors
+  ============================================================ */
+/* ============================================================
+  Styles for fonts/typefaces.
+  ============================================================ */
+/* ============================================================
+  Placeholders for repeat styles.
+  ============================================================ */
+
+.nomargin {
+  margin: 0 !important; }
+
+
+.nopadding {
+  padding: 0 !important; }
+
+
+.nospacing {
+  margin: 0 !important;
+  padding: 0 !important; }
+
+/* ============================================================
+  Styles for layout structure, including a column system!
+  ============================================================ */
+.layout-container {
+  max-width: 1440px;
+  margin: 0 auto; }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -1em 0 0 -1em; }
+  .row .col {
+    flex: 1;
+    padding: 1em 0 0 1em;
+    margin: .5em 0 0; }
+    .row .col.percent-25 {
+      flex: 0 0 26%;
+      padding: 1em 2em 1em 0; }
+
+.half {
+  width: 50%;
+  margin: 0 auto; }
+
+/* ============================================================
+  Reset styles.
+  ============================================================ */
+* {
+  box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  font-family: "Open Sans", sans-serif; }
+
+button {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 1em; }
+
+ul {
+  margin: 0;
+  padding: 0; }
+  ul li {
+    list-style: none; }
+
+/*# sourceMappingURL=generic.css.map */

@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * @file
+ * Contains the theme's functions to manipulate Drupal's default markup.
+ *
+ * Complete documentation for this file is available online.
+ * @see https://drupal.org/node/1728096
+ */
+
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function paladin_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // If on an individual node page, add the node type to theme suggestions.
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $first_suggestion = array_shift($suggestions);
+
+    if (!is_object($node)) {
+      $node = Node::load($node);
+    }
+
+    array_unshift($suggestions, 'page__node__' . $node->bundle());
+    if ($first_suggestion) {
+      array_unshift($suggestions, $first_suggestion);
+    }
+    // Add suggestion for edit page.
+    if (in_array('page__node__edit', $suggestions)) {
+      $suggestions[] = 'page__node__edit__' . $node->bundle();
+    }
+  }
+  // Get the current path.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $result = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
+
+  // Clean up the path.
+  $path_alias = trim($result, '/');
+  $path_alias = str_replace('/', '-', $path_alias);
+
+  // Create a page suggestion based on the cleaned-up path.
+  $suggestions[] = 'page__' . $path_alias;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function paladin_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  if (isset($variables['elements']['content']['#block_content'])) {
+    array_splice($suggestions, 1, 0, 'block__' . $variables['elements']['content']['#block_content']->bundle());
+  }
+}

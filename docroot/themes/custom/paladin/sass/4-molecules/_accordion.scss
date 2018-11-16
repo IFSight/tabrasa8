@@ -1,0 +1,48 @@
+/* ============================================================
+  Styles for accordions.
+  ============================================================ */
+.accordion-container {
+
+  // accordion-specific resets
+  .ui-state-default,
+  .ui-accordion-content {
+    border: 0;
+    background: transparent;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    font-family: $headline;
+    padding: .5em 0;
+    border-bottom: 2px solid $border-gray;
+    position: relative;
+
+    &::after {
+      content: '+';
+      font-size: 3rem;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    &.ui-state-active {
+      &::after {
+        content: '–';
+      }
+    }
+  }
+
+  .body {
+    font-family: $body-copy;
+    padding: 1em 0;
+    font-size: 1.125rem;
+    line-height: 1.7;
+
+    img {
+      float: left;
+      width: 215px;
+      height: 215px;
+      margin: 0 1em 0 0;
+    }
+  }
+}

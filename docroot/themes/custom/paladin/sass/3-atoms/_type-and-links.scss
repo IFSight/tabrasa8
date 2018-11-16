@@ -1,0 +1,21 @@
+/* ============================================================
+  Styles for general typography and links.
+  ============================================================ */
+
+a {
+  color: $dark-blue;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &[href$='.pdf'] {
+    display: inline-block;
+    background: url("/core/themes/classy/images/icons/application-pdf.png") no-repeat left center;
+    padding: 0 0 0 1.2em;
+  }
+}
+
+p {
+  margin: 0 0 1em;
+}
