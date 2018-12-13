@@ -39,6 +39,7 @@ module:
   geolocation: 0
   help: 0
   history: 0
+  if_varnish_purge_tags: 0
   image: 0
   inline_entity_form: 0
   libraries: 0
@@ -81,7 +82,6 @@ module:
   twig_tweak: 0
   update: 0
   user: 0
-  varnish_purge_tags: 0
   varnish_purger: 0
   video_embed_field: 0
   views_ui: 0

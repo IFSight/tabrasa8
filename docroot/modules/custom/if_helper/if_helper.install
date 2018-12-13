@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Install, uninstall and update functionality for the if_helper module.
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Remove old modules.
+ */
+function if_helper_update_8001() {
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'outside_in')
+    ->condition('name', 'media_entity')
+    ->condition('name', 'media_entity_image')
+    ->execute();
+}

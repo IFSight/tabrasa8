@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Contains if_helper.module.
+ */
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function if_helper_element_info_alter(array &$types) {
+  $types['datetime']['#process'][] = 'if_helper_datetime_set_format';
+}
+
+/**
+ * Element process callback for datetime fields.
+ */
+function if_helper_datetime_set_format($element) {
+
+  // Remove seconds from in time format.
+  $element['time']['#attributes']['title'] = t('Enter a valid time - e.g. @format', [
+    '@format' => (new \DateTime())->format('h:i'),
+  ]);
+  // Remove seconds in browsers that support HTML5 type=date.
+  $element['time']['#attributes']['step'] = 60;
+  return $element;
+}
+
+/**
+ * Force paste plaintext in CKEditor.
+ */
+function if_helper_editor_js_settings_alter(array &$settings) {
+  if (!empty($settings['editor']['formats']['basic_html'])) {
+    $settings['editor']['formats']['basic_html']['editorSettings']['forcePasteAsPlainText'] = 'true';
+  }
+
+  if (!empty($settings['editor']['formats']['simple'])) {
+    $settings['editor']['formats']['simple']['editorSettings']['forcePasteAsPlainText'] = 'true';
+  }
+
+  if (!empty($settings['editor']['formats']['simple_plus_link'])) {
+    $settings['editor']['formats']['simple_plus_link']['editorSettings']['forcePasteAsPlainText'] = 'true';
+  }
+}

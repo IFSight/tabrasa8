@@ -1,0 +1,3 @@
+services:
+  if_helper.loadmedia:
+    class: Drupal\if_helper\LoadMedia
