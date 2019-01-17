@@ -18,3 +18,21 @@ function if_helper_update_8001() {
     ->condition('name', 'media_entity_image')
     ->execute();
 }
+
+/**
+ * Remove old modules.
+ */
+function if_helper_update_8002() {
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'outside_in')
+    ->execute();
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'media_entity')
+    ->execute();
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'media_entity_image')
+    ->execute();
+}
