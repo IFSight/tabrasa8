@@ -718,9 +718,6 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
 #   include __DIR__ . '/settings.local.php';
 # }
 
-foreach (array('/fulcrum/fulcrum.php', "{$_SERVER['HOME']}/fulcrum/etc/fulcrum/php/fulcrum.php", "{$_SERVER['HOME']}/fulcrum/php/fulcrum.php") as $f) {
-  if (is_file($f) && (include $f) && isset($_FULCRUM)) {
-    fulcrum_cfg('pre', $_FULCRUM['conf'], $settings, $databases);
-    break;
-  }
+if (function_exists('fulcrum_config')) {
+  fulcrum_config('pre', $settings, $databases);
 }
