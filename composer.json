@@ -1,7 +1,7 @@
 {
     "name": "IFSight/tabrasa8",
     "description": "IF Tabla Rasa 8.",
-    "type": "drupal-docroot",
+    "type": "drupal-core",
     "license": "GPL-2.0+",
     "require": {
         "composer/installers": "^1.6"
