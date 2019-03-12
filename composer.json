@@ -4,6 +4,31 @@
     "type": "drupal-core",
     "license": "GPL-2.0+",
     "require": {
-        "composer/installers": "^1.6"
-    }
+        "composer/installers": "^1.6",
+        "if/tabras8-docroot": "^1.0"
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "installer-paths": {
+            "docroot": ["type:drupal-core"]
+        }
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "if/tabras8-docroot",
+                "version": "v1.0.0",
+                "type": "drupal-core",
+                "dist": {
+                    "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v1.0.0.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ]
 }
