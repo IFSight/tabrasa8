@@ -1,31 +1,72 @@
 {
     "name": "IFSight/tabrasa8",
     "description": "IF Tabla Rasa 8.",
-    "type": "drupal-core",
+    "type": "project",
     "license": "GPL-2.0+",
     "require": {
         "composer/installers": "^1.6",
-        "if/tabras8-docroot": "^1.0"
+        "cweagans/composer-patches": "^1.6",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "wikimedia/composer-merge-plugin": "^1.4",
+        "if/tabrasa8-docroot": "^1.0"
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "autoloader-suffix": "Drupal8"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
+        "_readme": [
+            "By default Drupal loads the autoloader from ./vendor/autoload.php.",
+            "To change the autoloader you can edit ./autoload.php.",
+            "This file specifies the packages.drupal.org repository.",
+            "You can read more about this composer repository at:",
+            "https://www.drupal.org/node/2718229"
+        ],
+        "merge-plugin": {
+            "merge-extra": true,
+            "merge-extra-deep": true,
+            "merge-scripts": true,
+            "recurse": true
+        },
+        "scripts": {
+            "pre-autoload-dump": "Drupal\\Core\\Composer\\Composer::preAutoloadDump",
+            "post-autoload-dump": [
+              "Drupal\\Core\\Composer\\Composer::ensureHtaccess"
+            ],
+            "post-package-install": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup",
+            "post-package-update": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup"
+        },
+        "installer-types": [
+            "library",
+            "ifsight-docroot"
+        ],
         "installer-paths": {
-            "docroot": ["type:drupal-core"]
+            "docroot": ["type:ifsight-docroot"],
+            "docroot/core": ["type:drupal-core"],
+            "docroot/modules/contrib/{$name}": ["type:drupal-module"],
+            "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
+            "docroot/drush/contrib/{$name}": ["type:drupal-drush"],
+            "docroot/modules/custom/{$name}": ["type:drupal-custom-module"],
+            "docroot/themes/custom/{$name}": ["type:drupal-custom-theme"],
+            "docroot/vendor/{$name}": ["type:library"]
         }
     },
     "repositories": [
         {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
             "type": "package",
             "package": {
-                "name": "if/tabras8-docroot",
-                "version": "v1.0.0",
-                "type": "drupal-core",
+                "name": "if/tabrasa8-docroot",
+                "version": "v1.0.1",
+                "type": "ifsight-docroot",
                 "dist": {
-                    "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v1.0.0.zip",
+                    "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v1.0.1.zip",
                     "type": "zip"
                 }
             }

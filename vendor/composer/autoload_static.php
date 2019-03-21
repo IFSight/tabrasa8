@@ -4,9 +4,21 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInited1f06d34f0b5c6e32c37bb1ba5cef1c
+class ComposerStaticInitDrupal8
 {
     public static $prefixLengthsPsr4 = array (
+        'c' => 
+        array (
+            'cweagans\\Composer\\' => 18,
+        ),
+        'W' => 
+        array (
+            'Wikimedia\\Composer\\' => 19,
+        ),
+        'O' => 
+        array (
+            'OomphInc\\ComposerInstallersExtender\\' => 36,
+        ),
         'C' => 
         array (
             'Composer\\Installers\\' => 20,
@@ -14,6 +26,18 @@ class ComposerStaticInited1f06d34f0b5c6e32c37bb1ba5cef1c
     );
 
     public static $prefixDirsPsr4 = array (
+        'cweagans\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
+        ),
+        'Wikimedia\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wikimedia/composer-merge-plugin/src',
+        ),
+        'OomphInc\\ComposerInstallersExtender\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
+        ),
         'Composer\\Installers\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
@@ -23,8 +47,8 @@ class ComposerStaticInited1f06d34f0b5c6e32c37bb1ba5cef1c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInited1f06d34f0b5c6e32c37bb1ba5cef1c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInited1f06d34f0b5c6e32c37bb1ba5cef1c::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitDrupal8::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitDrupal8::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }
