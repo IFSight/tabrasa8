@@ -42,7 +42,6 @@
             "post-package-update": "Drupal\\Core\\Composer\\Composer::vendorTestCodeCleanup"
         },
         "installer-types": [
-            "library",
             "ifsight-docroot"
         ],
         "installer-paths": {
@@ -53,8 +52,7 @@
             "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
             "docroot/drush/contrib/{$name}": ["type:drupal-drush"],
             "docroot/modules/custom/{$name}": ["type:drupal-custom-module"],
-            "docroot/themes/custom/{$name}": ["type:drupal-custom-theme"],
-            "docroot/vendor/{$name}": ["type:library"]
+            "docroot/themes/custom/{$name}": ["type:drupal-custom-theme"]
         }
     },
     "repositories": [
