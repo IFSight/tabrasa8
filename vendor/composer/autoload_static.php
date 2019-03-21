@@ -19,6 +19,13 @@ class ComposerStaticInitDrupal8
         array (
             'OomphInc\\ComposerInstallersExtender\\' => 36,
         ),
+        'D' => 
+        array (
+            'Drupal\\Driver\\' => 14,
+            'Drupal\\Core\\Composer\\' => 21,
+            'Drupal\\Core\\' => 12,
+            'Drupal\\Component\\' => 17,
+        ),
         'C' => 
         array (
             'Composer\\Installers\\' => 20,
@@ -38,10 +45,36 @@ class ComposerStaticInitDrupal8
         array (
             0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
         ),
+        'Drupal\\Driver\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/docroot/drivers/lib/Drupal/Driver',
+        ),
+        'Drupal\\Core\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Composer',
+        ),
+        'Drupal\\Core\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core',
+        ),
+        'Drupal\\Component\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component',
+        ),
         'Composer\\Installers\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
+    );
+
+    public static $classMap = array (
+        'Drupal' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal.php',
+        'Drupal\\Component\\Utility\\Timer' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Utility/Timer.php',
+        'Drupal\\Component\\Utility\\Unicode' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Utility/Unicode.php',
+        'Drupal\\Core\\Database\\Database' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Database/Database.php',
+        'Drupal\\Core\\DrupalKernel' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/DrupalKernel.php',
+        'Drupal\\Core\\DrupalKernelInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/DrupalKernelInterface.php',
+        'Drupal\\Core\\Site\\Settings' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Site/Settings.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -49,6 +82,7 @@ class ComposerStaticInitDrupal8
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitDrupal8::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitDrupal8::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitDrupal8::$classMap;
 
         }, null, ClassLoader::class);
     }

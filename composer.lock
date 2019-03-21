@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0b34165b6935161269d563348dd6a8f",
+    "content-hash": "cfe3c3746a6ba120e141b0efc4b335a0",
     "packages": [
         {
             "name": "composer/installers",
@@ -172,10 +172,10 @@
         },
         {
             "name": "if/tabrasa8-docroot",
-            "version": "v1.0.1",
+            "version": "v8.6.13",
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v1.0.1.zip",
+                "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v8.6.13.zip",
                 "reference": null,
                 "shasum": null
             },

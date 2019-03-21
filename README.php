@@ -13,7 +13,9 @@
  *   Step 3: Update the composer.json file in this directory, changing the
  *     version of the tabras8-docroot package, and updating the url to the
  *     latest zip path.
- *   Step 4: Run composer require if/tabrasa8-docroot to download the latest
+ *   Step 4: Run composer clear-cache to ensure you retrieve the latest version
+ *     of the zip and not a cached version.
+ *   Step 5: Run composer require if/tabrasa8-docroot to download the latest
  *      version from github.
- *   Step 5: Stage and commit the changes and create a pull request.
+ *   Step 6: Stage and commit the changes and create a pull request.
  */

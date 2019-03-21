@@ -169,11 +169,11 @@
     },
     {
         "name": "if/tabrasa8-docroot",
-        "version": "v1.0.1",
-        "version_normalized": "1.0.1.0",
+        "version": "v8.6.13",
+        "version_normalized": "8.6.13.0",
         "dist": {
             "type": "zip",
-            "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v1.0.1.zip",
+            "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v8.6.13.zip",
             "reference": null,
             "shasum": null
         },

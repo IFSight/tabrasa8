@@ -56,7 +56,10 @@
         "drupal/webform": "^5.0",
         "drupal/youtube": "^1.0@beta",
         "drupal/console": "~1.0",
-        "moxiecode/plupload": "^3.1"
+        "moxiecode/plupload": "^3.1",
+        "drupal/cloudflare": "^1.0@alpha",
+        "drupal/elasticsearch_connector": "^6.0@alpha",
+        "drupal/search_api": "^1.12"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

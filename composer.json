@@ -8,7 +8,7 @@
         "cweagans/composer-patches": "^1.6",
         "oomphinc/composer-installers-extender": "^1.1",
         "wikimedia/composer-merge-plugin": "^1.4",
-        "if/tabrasa8-docroot": "^1.0"
+        "if/tabrasa8-docroot": "^8.6"
     },
     "config": {
         "preferred-install": "dist",
@@ -25,10 +25,13 @@
             "https://www.drupal.org/node/2718229"
         ],
         "merge-plugin": {
-            "merge-extra": true,
-            "merge-extra-deep": true,
-            "merge-scripts": true,
-            "recurse": true
+            "include": [
+                "docroot/composer.json",
+                "docroot/core/composer.json"
+            ],
+            "recurse": false,
+            "replace": false,
+            "merge-extra": false
         },
         "scripts": {
             "pre-autoload-dump": "Drupal\\Core\\Composer\\Composer::preAutoloadDump",
@@ -63,10 +66,10 @@
             "type": "package",
             "package": {
                 "name": "if/tabrasa8-docroot",
-                "version": "v1.0.1",
+                "version": "v8.6.13",
                 "type": "ifsight-docroot",
                 "dist": {
-                    "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v1.0.1.zip",
+                    "url": "https://github.com/IFSight/tabrasa8-docroot/archive/v8.6.13.zip",
                     "type": "zip"
                 }
             }

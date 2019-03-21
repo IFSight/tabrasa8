@@ -9,5 +9,9 @@ return array(
     'cweagans\\Composer\\' => array($vendorDir . '/cweagans/composer-patches/src'),
     'Wikimedia\\Composer\\' => array($vendorDir . '/wikimedia/composer-merge-plugin/src'),
     'OomphInc\\ComposerInstallersExtender\\' => array($vendorDir . '/oomphinc/composer-installers-extender/src'),
+    'Drupal\\Driver\\' => array($baseDir . '/docroot/drivers/lib/Drupal/Driver'),
+    'Drupal\\Core\\Composer\\' => array($baseDir . '/docroot/core/lib/Drupal/Core/Composer'),
+    'Drupal\\Core\\' => array($baseDir . '/docroot/core/lib/Drupal/Core'),
+    'Drupal\\Component\\' => array($baseDir . '/docroot/core/lib/Drupal/Component'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
 );
