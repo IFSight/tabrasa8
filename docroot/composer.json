@@ -91,11 +91,6 @@
             "drush/contrib/{$name}": ["type:drupal-drush"],
             "modules/custom/{$name}": ["type:drupal-custom-module"],
             "themes/custom/{$name}": ["type:drupal-custom-theme"]
-        },
-        "patches" : {
-            "drupal/core": {
-                "Replaces 'thumbnail' text with actual alt text for thumbnail formatter": "sites/patches/core/media-IFCUSTOM-fix-thumbnail-image-alt-text.patch"
-            }
         }
     },
     "autoload": {
