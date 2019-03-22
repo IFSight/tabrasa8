@@ -277,6 +277,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Enhancement.
     /**************************************************************************/
 
+    // Enhancement: Webform Confirmation File.
+    $projects['webform_confirmation_file'] = [
+      'title' => $this->t('Webform Confirmation File'),
+      'description' => $this->t('Provides a webform handler that streams the contents of a file to a user after completing a webform.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_confirmation_file'),
+      'category' => 'enhancement',
+    ];
+
     // Enhancement: Webform Embed.
     $projects['webform_embed'] = [
       'title' => $this->t('Webform Embed'),
@@ -293,6 +301,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
+    // Enhancement: Webform Feedback.
+    $projects['webform_feedback'] = [
+      'title' => $this->t('Webform Feedback'),
+      'description' => $this->t('Provides a feedback button for your website which allows you to gather customer/client feedback.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_feedback'),
+      'category' => 'enhancement',
+    ];
+
     // Enhancement: Webform Protected Downloads.
     $projects['webform_protected_downloads'] = [
       'title' => $this->t('Webform Protected Downloads'),
@@ -304,7 +320,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Enhancement: Webform Wizard Full Title.
     $projects['webform_wizard_full_title'] = [
       'title' => $this->t('Webform Wizard Full Title'),
-      'description' => $this->t('Extends functionality of Webform so on wizard forms, the title of the wizard page can override the form title'),
+      'description' => $this->t('Extends functionality of Webform so on wizard forms, the title of the wizard page can override the form title.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_wizard_full_title'),
       'category' => 'enhancement',
     ];
@@ -343,8 +359,16 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: Druminate Webforms.
     $projects['druminate'] = [
       'title' => $this->t('Druminate Webforms'),
-      'description' => $this->t('Allows editors to send webform submissions to Luminate Online Surveys'),
+      'description' => $this->t('Allows editors to send webform submissions to Luminate Online Surveys.'),
       'url' => Url::fromUri('https://www.drupal.org/project/druminate'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Webform Eloqua.
+    $projects['webform_eloqua'] = [
+      'title' => $this->t('Webform Eloqua'),
+      'description' => $this->t('Integrates Drupal 8 Webforms with Oracle Eloqua.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_eloqua'),
       'category' => 'integration',
     ];
 
@@ -385,6 +409,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('OpenInbound for Drupal'),
       'description' => $this->t('OpenInbound tracks contacts and their interactions on websites.'),
       'url' => Url::fromUri('https://www.drupal.org/project/openinbound'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Rules Webform.
+    $projects['rules_webform'] = [
+      'title' => $this->t('Rules Webform'),
+      'description' => $this->t("Provides integration of 'Rules' and 'Webform' modules. It enables to get access to webform submission data from rules. Also it provides possibility of altering and removing webform submission data from rules."),
+      'url' => Url::fromUri('https://www.drupal.org/project/rules_webform'),
       'category' => 'integration',
     ];
 

@@ -71,7 +71,7 @@ class WebformSourceEntityManager extends DefaultPluginManager implements Webform
    * @see \Drupal\webform\Plugin\WebformSourceEntity\QueryStringWebformSourceEntity::getSourceEntity
    */
   public static function getMainSourceEntity(EntityInterface $source_entity) {
-    while ($source_entity->getEntityTypeId() === 'paragraph') {
+    while ($source_entity && $source_entity->getEntityTypeId() === 'paragraph') {
       $source_entity = $source_entity->getParentEntity();
     }
     return $source_entity;

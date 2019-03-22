@@ -154,20 +154,25 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    // Get source entity.
-    $source_entity = $items->getEntity();
-    $source_entity = WebformSourceEntityManager::getMainSourceEntity($source_entity);
+    // Get items entity, which is the entity that the webform
+    // is directly attached to.  For Paragraphs this would be the field's
+    // paragraph entity.
+    $items_entity = $items->getEntity();
 
-    // Determine if webform is previewed within a Paragraph on .edit_form
-    // or .content_translation_add.
+    // Get (main) source entity, which is the main parent entity for
+    // a paragraph entity.
+    $source_entity = WebformSourceEntityManager::getMainSourceEntity($items_entity);
+
+    // Determine if webform is previewed within a Paragraph on
+    // node edit forms (via *.edit_form or .content_translation_add routes).
     $route = $this->routeMatch->getRouteName();
-    $is_paragraph_edit_preview = ($source_entity->getEntityTypeId() === 'paragraph' &&
-      preg_match('/\.edit_form$/', $route)
-      || preg_match('/\.content_translation_add$/', $route)
-    ) ? TRUE : FALSE;
+    $is_node_edit = (preg_match('/\.edit_form$/', $route) || preg_match('/\.content_translation_add$/', $route));
+    $is_paragraph = ($items_entity && $items_entity->getEntityTypeId() === 'paragraph');
+    $is_paragraph_node_edit = ($is_paragraph && $is_node_edit);
+
     $elements = [];
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $entity) {
-      if ($is_paragraph_edit_preview) {
+      if ($is_paragraph_node_edit) {
         // Webform can not be nested within node edit form because the nested
         // <form> tags will cause unexpected validation issues.
         $elements[$delta] = [

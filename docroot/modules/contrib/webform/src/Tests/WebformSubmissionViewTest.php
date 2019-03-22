@@ -44,7 +44,7 @@ class WebformSubmissionViewTest extends WebformTestBase {
   public function testView() {
     $admin_submission_user = $this->drupalCreateUser([
       'administer webform submission',
-    ]); 
+    ]);
 
     /**************************************************************************/
 

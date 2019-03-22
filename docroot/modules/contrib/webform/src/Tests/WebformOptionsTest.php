@@ -36,7 +36,6 @@ class WebformOptionsTest extends WebformTestBase {
       'access site reports',
       'administer site configuration',
       'administer webform',
-      'access webform submission log',
       'create webform',
       'administer users',
     ]);

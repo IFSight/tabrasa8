@@ -240,6 +240,34 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
   public function getNumberOfWizardPages();
 
   /**
+   * Returns the webform's current operation.
+   *
+   * @return string
+   *   The webform's operation.
+   */
+  public function getOperation();
+
+  /**
+   * Sets the webform's current operation .
+   *
+   * @param string $operation
+   *   The webform's operation.
+   *
+   * @return $this
+   *
+   * @see \Drupal\webform\WebformSubmissionForm
+   */
+  public function setOperation($operation);
+
+  /**
+   * Determine if the webform is being tested.
+   *
+   * @return bool
+   *   TRUE if the webform is being tested.
+   */
+  public function isTest();
+
+  /**
    * Sets the webform settings and properties override state.
    *
    * Setting the override state to TRUE allows modules to alter a webform's
@@ -329,9 +357,18 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
    * Returns the webform confidential indicator.
    *
    * @return bool
-   *   TRUE if the webform is confidential .
+   *   TRUE if the webform is confidential.
    */
   public function isConfidential();
+
+
+  /**
+   * Determine if remote IP address is being stored.
+   *
+   * @return bool
+   *   TRUE if remote IP address is being stored.
+   */
+  public function hasRemoteAddr();
 
   /**
    * Determine if the saving of submissions is disabled.
@@ -667,12 +704,20 @@ interface WebformInterface extends ConfigEntityInterface, EntityWithPluginCollec
   public function getElementsManagedFiles();
 
   /**
-   * Get webform elements selectors as options.
+   * Get webform element's selectors as options.
    *
    * @return array
    *   Webform elements selectors as options.
    */
   public function getElementsSelectorOptions();
+
+  /**
+   * Get webform element options as autocomplete source values.
+   *
+   * @return array
+   *   Webform element options as autocomplete source values.
+   */
+  public function getElementsSelectorSourceValues();
 
   /**
    * Get webform elements that can be prepopulated.

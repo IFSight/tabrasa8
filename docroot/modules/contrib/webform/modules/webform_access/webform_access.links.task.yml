@@ -15,3 +15,15 @@ webform.config.webform_access_type:
   route_name: entity.webform_access_type.collection
   parent_id: webform.config.webform_access
   weight: 20
+
+entity.webform_access_group.edit_form:
+  route_name: entity.webform_access_group.edit_form
+  base_route: entity.webform_access_group.edit_form
+  title: 'Edit'
+  weight: 0
+
+entity.webform_access_type.edit_form:
+  route_name: entity.webform_access_type.edit_form
+  base_route: entity.webform_access_type.edit_form
+  title: 'Edit'
+  weight: 0

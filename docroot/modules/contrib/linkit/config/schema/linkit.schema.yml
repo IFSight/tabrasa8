@@ -45,6 +45,8 @@ linkit.matcher.entity:
       type: boolean
     substitution_type:
       type: string
+    limit:
+      type: integer
 
 linkit.matcher.entity:*:
   type: linkit.matcher.entity

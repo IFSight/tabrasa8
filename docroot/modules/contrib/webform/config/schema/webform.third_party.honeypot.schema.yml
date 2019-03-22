@@ -8,7 +8,6 @@ webform.admin_settings.third_party.honeypot:
     time_restriction:
       type: boolean
       label: 'Add time limit to all webforms'
-
 webform.settings.third_party.honeypot:
   type: mapping
   label: 'Webform test third party settings'

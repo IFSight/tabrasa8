@@ -42,7 +42,7 @@ class WebformAccessEntityRulesTest extends WebformTestBase {
     /** @var \Drupal\webform\WebformSubmissionInterface[] $submissions */
     $submissions = array_values(\Drupal::entityTypeManager()->getStorage('webform_submission')->loadByProperties(['webform_id' => 'test_submissions']));
 
-    $account = $this->drupalCreateUser(['access content']);
+    $account = $this->drupalCreateUser(['access content', 'edit webform source']);
 
     $webform_id = $webform->id();
     $sid = $submissions[0]->id();

@@ -27,17 +27,17 @@ elements: |
       '#help': 'This is help text.'
       '#more': 'This is more text'
       '#required': true
-      '#field_prefix': 'prefix'
-      '#field_suffix': 'suffix'
+      '#field_prefix': prefix
+      '#field_suffix': suffix
     datelist_element:
       '#type': datelist
-      '#title': 'Datelist'
+      '#title': Datelist
       '#placeholder': 'This is a placeholder'
       '#description': 'This is a description.'
       '#help': 'This is help text.'
       '#more': 'This is more text'
-      '#field_prefix': 'prefix'
-      '#field_suffix': 'suffix'
+      '#field_prefix': prefix
+      '#field_suffix': suffix
   element_title:
     '#type': details
     '#title': 'Element title'
@@ -60,7 +60,6 @@ elements: |
       '#title': 'Title displayed inline composite'
       '#title_display': inline
       '#description': 'This is a description.'
-      '#title_display': inline
       '#options':
         one: One
         two: Two
@@ -89,7 +88,7 @@ elements: |
     '#open': true
     help:
       '#type': textfield
-      '#title': 'Help'
+      '#title': Help
       '#help': 'This is help.'
   element_more:
     '#type': details
@@ -97,7 +96,7 @@ elements: |
     '#open': true
     more:
       '#type': textfield
-      '#title': 'More'
+      '#title': More
       '#more': 'This is more text.'
   fieldset_elements:
     '#type': details
@@ -105,13 +104,13 @@ elements: |
     '#open': true
     fieldset:
       '#type': fieldset
-      '#title': 'Fieldset'
+      '#title': Fieldset
       '#description': 'This is a description.'
       '#help': 'This is help text.'
       '#more': 'This is more text'
       '#required': true
-      '#field_prefix': 'prefix'
-      '#field_suffix': 'suffix'
+      '#field_prefix': prefix
+      '#field_suffix': suffix
     fieldset_description:
       '#type': fieldset
       '#title': 'Fieldset description'
@@ -135,7 +134,7 @@ elements: |
     '#open': true
     details:
       '#type': details
-      '#title': 'details'
+      '#title': details
       '#description': 'This is a description.'
       '#help': 'This is help text.'
       '#more': 'This is more text'
@@ -198,6 +197,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -327,6 +327,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

@@ -91,6 +91,19 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
   protected $formBuilder;
 
   /**
+   * Element keys/names that are reserved.
+   *
+   * @var array
+   */
+  public static $reservedNames = [
+    'add',
+    'form_build_id',
+    'form_id',
+    'form_token',
+    'op',
+  ];
+
+  /**
    * Constructs a WebformEntityElementsValidator object.
    *
    * @param \Drupal\Core\Render\RendererInterface $renderer
@@ -240,6 +253,14 @@ class WebformEntityElementsValidator implements WebformEntityElementsValidatorIn
           '@line_number' => WebformArrayHelper::toString($line_numbers),
         ];
         $messages[] = $this->t('The element key %name on line @line_number must contain only lowercase letters, numbers, and underscores.', $t_args);
+      }
+      elseif (in_array($name, static::$reservedNames)) {
+        $line_numbers = $this->getLineNumbers('/^\s*(["\']?)' . preg_quote($name, '/') . '\1\s*:/');
+        $t_args = [
+          '%name' => $name,
+          '@line_number' => WebformArrayHelper::toString($line_numbers),
+        ];
+        $messages[] = $this->t('The element key %name on line @line_number is a reserved key.', $t_args);
       }
     }
     return $messages;

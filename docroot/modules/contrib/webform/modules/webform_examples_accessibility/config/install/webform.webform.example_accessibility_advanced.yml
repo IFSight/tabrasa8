@@ -34,7 +34,7 @@ elements: |
     '#open': true
     select_select2:
       '#type': select
-      '#title': 'Select2'
+      '#title': Select2
       '#options':
         one: One
         two: Two
@@ -133,14 +133,14 @@ elements: |
     '#open': true
     textfield_input_hide:
       '#type': textfield
-      '#title': "Textfield with input hiding"
+      '#title': 'Textfield with input hiding'
       '#input_hide': true
       '#default_value': '{value}'
     email_input_hide:
       '#type': email
-      '#title': "Email with input hiding"
+      '#title': 'Email with input hiding'
       '#input_hide': true
-      '#default_value': 'example@example.com'
+      '#default_value': example@example.com
   widget_elements:
     '#type': details
     '#title': 'Widget elements'
@@ -192,7 +192,7 @@ elements: |
     '#title': 'Composite elements'
     '#open': true
     address:
-      '#title': 'Address'
+      '#title': Address
       '#type': webform_address
   multiple_elements:
     '#type': details
@@ -229,6 +229,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -358,6 +359,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

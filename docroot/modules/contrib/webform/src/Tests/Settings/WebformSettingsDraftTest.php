@@ -24,7 +24,7 @@ class WebformSettingsDraftTest extends WebformTestBase {
    * Test webform submission form draft.
    */
   public function testDraft() {
-    $normal_user = $this->drupalCreateUser();
+    $normal_user = $this->drupalCreateUser(['view own webform submission']);
 
     $admin_submission_user = $this->drupalCreateUser([
       'administer webform submission',

@@ -48,6 +48,7 @@ class WebformCodeMirror extends Textarea {
       '#skip_validation' => FALSE,
       '#cols' => 60,
       '#rows' => 5,
+      '#wrap' => TRUE,
       '#resizable' => 'vertical',
       '#process' => [
         [$class, 'processWebformCodeMirror'],
@@ -101,6 +102,11 @@ class WebformCodeMirror extends Textarea {
           '#message_message' => t("Only webform administrators and user's assigned the 'Edit webform Twig templates' permission are allowed to edit this Twig template."),
         ];
       }
+    }
+
+    // Set wrap off.
+    if (empty($element['#wrap'])) {
+      $element['#attributes']['wrap'] = 'off';
     }
 
     // Add validate callback.

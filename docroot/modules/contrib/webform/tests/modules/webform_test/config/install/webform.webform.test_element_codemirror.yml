@@ -20,7 +20,12 @@ elements: |
   text_basic:
     '#type': webform_codemirror
     '#title': text_basic
-    '#default_value': 'Hello'
+    '#default_value': Hello
+  text_basic_no_wrap:
+    '#type': webform_codemirror
+    '#title': text_basic_no_wrap
+    '#wrap': false
+    '#default_value': 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus,'
   yaml_basic:
     '#type': webform_codemirror
     '#mode': yaml
@@ -67,12 +72,13 @@ elements: |
           </script>
         </body>
       </html>
+      
   twig_basic:
     '#type': webform_codemirror
     '#mode': twig
     '#title': twig_basic
     '#default_value': |
-  
+      
       {% set value = "Hello" %}
       {{ value }}
   
@@ -92,6 +98,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -221,6 +228,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

@@ -242,7 +242,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
       'hierarchy' => TRUE,
       'rendering' => TRUE,
     ];
-    if ($messages = $this->elementsValidator->validate($webform, $validate_options)) {
+    if ($this->elementsValidator->validate($webform, $validate_options)) {
       $form_state->setErrorByName(NULL, $this->t('There has been error validating the elements.'));
     }
   }

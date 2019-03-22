@@ -114,6 +114,17 @@ function webform_access_field_storage_config_delete(EntityInterface $entity) {
  * @see \Drupal\Core\Menu\Plugin\Block\LocalTasksBlock::build
  */
 function webform_access_menu_local_tasks_alter(&$data, $route_name) {
+  // Change config entities 'Translate *' tab to be just label 'Translate'.
+  $webform_entities = [
+    'webform_access_group',
+    'webform_access_type',
+  ];
+  foreach ($webform_entities as $webform_entity) {
+    if (isset($data['tabs'][0]["config_translation.local_tasks:entity.$webform_entity.config_translation_overview"]['#link']['title'])) {
+      $data['tabs'][0]["config_translation.local_tasks:entity.$webform_entity.config_translation_overview"]['#link']['title'] = t('Translate');
+    }
+  }
+
   $route_name = \Drupal::routeMatch()->getRouteName();
   if ($route_name !== 'entity.node.canonical' && strpos($route_name, 'entity.node.webform.') !== 0) {
     return;
@@ -322,6 +333,19 @@ function _webform_access_form_node_form_submit(&$form, FormStateInterface $form_
  * Add the webform access group to an individual user's account page.
  */
 function webform_access_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  // Make sure some webform access groups exist before displaying
+  // the webform access details widget.
+  if (!WebformAccessGroup::loadMultiple()) {
+    return;
+  }
+
+  // Only display the webform access detail widget if the current user can
+  // administer webform and users.
+  if (!\Drupal::currentUser()->hasPermission('administer webform')
+    || !\Drupal::currentUser()->hasPermission('administer users')) {
+    return;
+  }
+
   $account = $form_state->getFormObject()->getEntity();
   $default_value = \Drupal::database()->select('webform_access_group_user', 'gu')
     ->fields('gu', ['group_id'])
@@ -339,6 +363,7 @@ function webform_access_form_user_form_alter(&$form, FormStateInterface $form_st
     $form,
     $form_state
   );
+
   $form['actions']['submit']['#submit'][] = '_webform_access_user_profile_form_submit';
 }
 

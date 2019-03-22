@@ -56,15 +56,6 @@ webform.config.advanced:
   requirements:
     _permission: 'administer webform'
 
-# Help
-
-webform.help.video:
-  path: '/admin/help/webform/video/{id}'
-  defaults:
-    _form: '\Drupal\webform\Form\WebformHelpVideoForm'
-  requirements:
-    _permission: 'access content'
-
 # Add-ons
 
 webform.addons:
@@ -74,6 +65,24 @@ webform.addons:
     _title: 'Webforms: Add-ons'
   requirements:
     _permission: 'administer webform'
+
+# Help
+
+# webform.help is dynamically added.
+# @see \Drupal\webform\Routing\WebformRouteSubscriber
+webform.help:
+  path: '/admin/structure/webform/help'
+  defaults:
+    _controller: '\Drupal\webform\Controller\WebformHelpController::index'
+  requirements:
+    _permission: 'access content'
+
+webform.help.video:
+  path: '/admin/help/webform/video/{id}'
+  defaults:
+    _form: '\Drupal\webform\Form\WebformHelpVideoForm'
+  requirements:
+    _permission: 'access content'
 
 # Contribute
 
@@ -414,20 +423,6 @@ entity.webform.results_clear:
     _entity_access: 'webform.submission_purge_any'
     _custom_access: '\Drupal\webform\Access\WebformEntityAccess:checkResultsAccess'
 
-entity.webform.results_log:
-  path: '/admin/structure/webform/manage/{webform}/results/log'
-  defaults:
-    _controller: '\Drupal\webform\Controller\WebformSubmissionLogController::overview'
-    _title_callback: '\Drupal\webform\Controller\WebformEntityController::title'
-  options:
-    parameters:
-      webform:
-        type: 'entity:webform'
-  requirements:
-    _permission: 'access webform submission log'
-    _entity_access: 'webform.submission_view_any'
-    _custom_access: '\Drupal\webform\Access\WebformEntityAccess:checkLogAccess'
-
 # Webform options
 
 entity.webform_options.collection:
@@ -435,6 +430,13 @@ entity.webform_options.collection:
   defaults:
     _entity_list: 'webform_options'
     _title: 'Webforms: Options'
+  requirements:
+    _permission: 'administer webform'
+
+entity.webform_options.autocomplete:
+  path: '/admin/structure/webform/config/options/autocomplete'
+  defaults:
+    _controller: '\Drupal\webform\Controller\WebformOptionsController::autocomplete'
   requirements:
     _permission: 'administer webform'
 
@@ -504,17 +506,6 @@ entity.webform_submission.user:
       user:
         type: entity:user
 
-# Webform log (submissions)
-
-entity.webform_submission.collection_log:
-  path: '/admin/structure/webform/submissions/log'
-  defaults:
-    _controller: '\Drupal\webform\Controller\WebformSubmissionLogController::overview'
-    _title: 'Webforms: Submissions log'
-  requirements:
-    _permission: 'access webform submission log'
-    _custom_access: '\Drupal\webform\Access\WebformAccountAccess:checkSubmissionAccess'
-
 # Webform submissions
 
 entity.webform_submission.canonical:
@@ -560,17 +551,8 @@ entity.webform_submission.yaml:
     _title_callback: '\Drupal\webform\Controller\WebformSubmissionViewController::title'
     view_mode: 'yaml'
   requirements:
+    _permission: 'edit webform source'
     _entity_access: 'webform_submission.view_any'
-
-entity.webform_submission.log:
-  path: '/admin/structure/webform/manage/{webform}/submission/{webform_submission}/log'
-  defaults:
-    _controller: '\Drupal\webform\Controller\WebformSubmissionLogController::overview'
-    _title_callback: '\Drupal\webform\Controller\WebformSubmissionViewController::title'
-  requirements:
-    _permission: 'access webform submission log'
-    _entity_access: 'webform_submission.view_any'
-    _custom_access: '\Drupal\webform\Access\WebformEntityAccess::checkLogAccess'
 
 entity.webform_submission.edit_form:
   path: '/admin/structure/webform/manage/{webform}/submission/{webform_submission}/edit'

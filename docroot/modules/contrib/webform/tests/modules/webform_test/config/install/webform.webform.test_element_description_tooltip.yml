@@ -351,15 +351,15 @@ elements: |
     webform_computed_token:
       '#type': webform_computed_token
       '#title': 'Computed token'
-      '#value': 'This is a Computed token value.'
       '#description': 'This is a description for the ''webform_computed_token'' element.'
       '#description_display': tooltip
+      '#template': 'This is a Computed token value.'
     webform_computed_twig:
       '#type': webform_computed_twig
       '#title': 'Computed Twig'
-      '#value': 'This is a Computed Twig value.'
       '#description': 'This is a description for the ''webform_computed_twig'' element.'
       '#description_display': tooltip
+      '#template': 'This is a Computed Twig value.'
   date_time_elements:
     '#type': details
     '#title': 'Date/time elements'
@@ -490,6 +490,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -619,6 +620,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

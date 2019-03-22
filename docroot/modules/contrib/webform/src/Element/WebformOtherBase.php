@@ -115,6 +115,7 @@ abstract class WebformOtherBase extends FormElement {
     $element[$type]['#pre_render'] = [];
 
     // Build other textfield.
+    $element += ['other' => []];
     foreach ($element as $key => $value) {
       if (strpos($key, '#other__') === 0) {
         $other_key = str_replace('#other__', '#', $key);

@@ -148,16 +148,14 @@ class QueryStringWebformSourceEntity extends PluginBase implements WebformSource
     // Check that the webform is referenced by the source entity.
     if (!$webform->getSetting('form_prepopulate_source_entity')) {
       // Get source entity's webform field.
-      $webform_field_name = $this->webformEntityReferenceManager->getFieldName($source_entity);
-      if (!$webform_field_name) {
-        return NULL;
-      }
-
-      // Check that source entity's reference webform is the
-      // current webform.
-      foreach ($source_entity->$webform_field_name as $item) {
-        if ($item->target_id === $webform->id()) {
-          return WebformSourceEntityManager::getMainSourceEntity($source_entity);
+      $webform_field_names = $this->webformEntityReferenceManager->getFieldNames($source_entity);
+      foreach ($webform_field_names as $webform_field_name) {
+        // Check that source entity's reference webform is the
+        // current webform.
+        foreach ($source_entity->$webform_field_name as $item) {
+          if ($item->target_id === $webform->id()) {
+            return WebformSourceEntityManager::getMainSourceEntity($source_entity);
+          }
         }
       }
 

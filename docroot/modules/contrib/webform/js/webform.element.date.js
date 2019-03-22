@@ -41,6 +41,16 @@
           changeYear: true
         }, Drupal.webform.datePicker.options);
 
+        // Add datepicker button.
+        if ($input.hasData('datepicker-button')) {
+          options = $.extend({
+            showOn: 'both',
+            buttonImage: settings.webform.datePicker.buttonImage,
+            buttonImageOnly: true,
+            buttonText: Drupal.t('Select date')
+          }, Drupal.webform.datePicker.options);
+        }
+
         var dateFormat = $input.data('drupalDateFormat');
 
         // The date format is saved in PHP style, we need to convert to jQuery
@@ -77,6 +87,11 @@
 
         // First day of the week.
         options.firstDay = settings.webform.dateFirstDay;
+
+        // Disable autocomplete.
+        // @see https://gist.github.com/niksumeiko/360164708c3b326bd1c8
+        var isChrome = /Chrome/.test(window.navigator.userAgent) && /Google Inc/.test(window.navigator.vendor);
+        $input.attr('autocomplete', (isChrome) ? 'off' : 'false');
 
         $input.datepicker(options);
       });

@@ -599,7 +599,24 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
    *
    * This helper method looks looks for the handler default configuration keys
    * within a form and set a matching element's #parents property to
-   * ['settings', '{element_kye}']
+   * ['settings', '{element_key}']
+   *
+   * @param array $elements
+   *   An array of form elements.
+   *
+   * @return array
+   *   Form element with #parents set.
+   */
+  protected function setSettingsParents(array &$elements) {
+    return $this->setSettingsParentsRecursively($elements);
+  }
+
+  /**
+   * Set configuration settings parents.
+   *
+   * This helper method looks looks for the handler default configuration keys
+   * within a form and set a matching element's #parents property to
+   * ['settings', '{element_key}']
    *
    * @param array $elements
    *   An array of form elements.
@@ -621,7 +638,14 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
         continue;
       }
 
-      if (array_key_exists($element_key, $default_configuration) && isset($element['#type'])) {
+      // Only set #parents when #element has…
+      // - Default configuration.
+      // - Is an input.
+      // - #default_value or #value (aka input).
+      // - Not a container with children.
+      if (array_key_exists($element_key, $default_configuration)
+        && isset($element['#type'])
+        && !WebformElementHelper::hasChildren($element)) {
         $element['#parents'] = ['settings', $element_key];
       }
       else {
@@ -636,13 +660,16 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
   /****************************************************************************/
 
   /**
-   * Get webform logger.
+   * Get webform or webform_submission logger.
+   *
+   * @param string $channel
+   *   The logger channel. Defaults to 'webform'.
    *
    * @return \Drupal\Core\Logger\LoggerChannelInterface
    *   Webform logger
    */
-  protected function getLogger() {
-    return $this->loggerFactory->get('webform');
+  protected function getLogger($channel = 'webform') {
+    return $this->loggerFactory->get($channel);
   }
 
   /**
@@ -656,6 +683,18 @@ abstract class WebformHandlerBase extends PluginBase implements WebformHandlerIn
    *   The message to be logged.
    * @param array $data
    *   The data to be saved with log record.
+   *
+   * @deprecated Instead call the 'webform_submission' logger channel directly.
+   *
+   *  $message = 'Some message with an %argument.'
+   *  $context = [
+   *    '%argument' => 'Some value'
+   *    'link' => $webform_submission->toLink($this->t('Edit'), 'edit-form')->toString(),
+   *    'webform_submission' => $webform_submission,
+   *    'handler_id' => NULL,
+   *    'data' => [],
+   *  ];
+   *  \Drupal::logger('webform_submission')->notice($message, $context);
    */
   protected function log(WebformSubmissionInterface $webform_submission, $operation, $message = '', array $data = []) {
     if ($webform_submission->getWebform()->hasSubmissionLog()) {

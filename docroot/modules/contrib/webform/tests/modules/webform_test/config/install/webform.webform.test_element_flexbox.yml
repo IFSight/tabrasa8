@@ -220,21 +220,21 @@ elements: |
     flex_webform_computed_token_left:
       '#type': webform_computed_token
       '#title': 'Computed token 01'
-      '#value': 'This is a Computed token value.'
+      '#template': 'This is a Computed token value.'
     flex_webform_computed_token_right:
       '#type': webform_computed_token
       '#title': 'Computed token 02'
-      '#value': 'This is a Computed token value.'
+      '#template': 'This is a Computed token value.'
   flexbox_webform_computed_twig:
     '#type': webform_flexbox
     flex_webform_computed_twig_left:
       '#type': webform_computed_twig
       '#title': 'Computed Twig 01'
-      '#value': 'This is a Computed Twig value.'
+      '#template': 'This is a Computed Twig value.'
     flex_webform_computed_twig_right:
       '#type': webform_computed_twig
       '#title': 'Computed Twig 02'
-      '#value': 'This is a Computed Twig value.'
+      '#template': 'This is a Computed Twig value.'
   flexbox_webform_contact:
     '#type': webform_flexbox
     flex_webform_contact_left:
@@ -983,6 +983,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -1112,6 +1113,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

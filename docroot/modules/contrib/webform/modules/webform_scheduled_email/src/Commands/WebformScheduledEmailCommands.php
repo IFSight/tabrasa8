@@ -56,6 +56,8 @@ class WebformScheduledEmailCommands extends DrushCommands {
    * @option send_limit
    *   The maximum number of emails to be sent. If set to 0 no emails will be sent. (Default 500)
    * @aliases wfsec
+   *
+   * @see webform_scheduled_email_cron_process()
    */
   public function drush_webform_scheduled_email_cron($webform_id = NULL, $handler_id = NULL, array $options = ['schedule_limit' => 1000, 'send_limit' => 500]) {
     $webform = ($webform_id) ? Webform::load($webform_id) : NULL;

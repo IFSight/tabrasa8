@@ -237,65 +237,6 @@ abstract class WebformTestBase extends WebTestBase {
   }
 
   /****************************************************************************/
-  // Log.
-  /****************************************************************************/
-
-  /**
-   * Get the last submission id.
-   *
-   * @return int
-   *   The last submission id.
-   */
-  protected function getLastSubmissionLog() {
-    $query = \Drupal::database()->select('webform_submission_log', 'l');
-    $query->leftJoin('webform_submission', 'ws', 'l.sid = ws.sid');
-    $query->fields('l', [
-      'lid',
-      'uid',
-      'sid',
-      'handler_id',
-      'operation',
-      'message',
-      'timestamp',
-    ]);
-    $query->fields('ws', [
-      'webform_id',
-      'entity_type',
-      'entity_id',
-    ]);
-    $query->orderBy('l.lid', 'DESC');
-    $query->range(0, 1);
-    return $query->execute()->fetch();
-  }
-
-  /**
-   * Get the entire submission log.
-   *
-   * @return int
-   *   The last submission id.
-   */
-  protected function getSubmissionLog() {
-    $query = \Drupal::database()->select('webform_submission_log', 'l');
-    $query->leftJoin('webform_submission', 'ws', 'l.sid = ws.sid');
-    $query->fields('l', [
-      'lid',
-      'uid',
-      'sid',
-      'handler_id',
-      'operation',
-      'message',
-      'timestamp',
-    ]);
-    $query->fields('ws', [
-      'webform_id',
-      'entity_type',
-      'entity_id',
-    ]);
-    $query->orderBy('l.lid', 'DESC');
-    return $query->execute()->fetchAll();
-  }
-
-  /****************************************************************************/
   // Export.
   /****************************************************************************/
 
@@ -358,7 +299,7 @@ abstract class WebformTestBase extends WebTestBase {
   /**
    * Passes if the substring is contained within text, fails otherwise.
    */
-  protected function assertContains($haystack, $needle, $message = '', $group = 'Other') {
+  protected function assertContains($needle, $haystack, $message = '') {
     if (!$message) {
       $t_args = [
         '@haystack' => Unicode::truncate($haystack, 150, TRUE, TRUE),
@@ -370,13 +311,13 @@ abstract class WebformTestBase extends WebTestBase {
     if (!$result) {
       $this->verbose($haystack);
     }
-    return $this->assert($result, $message, $group);
+    $this->assert($result, $message);
   }
 
   /**
    * Passes if the substring is not contained within text, fails otherwise.
    */
-  protected function assertNotContains($haystack, $needle, $message = '', $group = 'Other') {
+  protected function assertNotContains($needle, $haystack, $message = '') {
     if (!$message) {
       $t_args = [
         '@haystack' => Unicode::truncate($haystack, 150, TRUE, TRUE),
@@ -389,7 +330,7 @@ abstract class WebformTestBase extends WebTestBase {
     if (!$result) {
       $this->verbose($haystack);
     }
-    return $this->assert($result, $message, $group);
+    $this->assert($result, $message);
   }
 
   /**

@@ -34,7 +34,7 @@ elements: |
     '#title': 'webform_html_editor (format)'
     '#required': true
     '#default_value': 'Hello <b>World!!!</b>'
-    '#format': 'basic_html'
+    '#format': basic_html
   webform_html_editor_codemirror:
     '#type': webform_html_editor
     '#title': 'webform_html_editor_codemirror (none)'
@@ -58,6 +58,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -187,6 +188,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

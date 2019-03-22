@@ -37,8 +37,8 @@ elements: |
       '#type': container
       '#attributes':
         class:
-          - 'container-inline'
-          - 'calculation'
+          - container-inline
+          - calculation
       a:
         '#type': number
         '#title': a
@@ -61,8 +61,8 @@ elements: |
         '#type': webform_computed_twig
         '#title': c
         '#title_display': invisible
-        '#value': '{% if data.a|length and data.b|length %}{{ data.a + data.b }}{% else %}c{% endif %}'
         '#ajax': true
+        '#template': '{% if data.a|length and data.b|length %}{{ data.a + data.b }}{% else %}c{% endif %}'
   user_information:
     '#type': fieldset
     '#title': 'User information'
@@ -78,33 +78,33 @@ elements: |
     user_ud:
       '#type': webform_computed_token
       '#title': 'User: ID'
-      '#value': '[webform_submission:values:user:entity:uid:clear]'
       '#ajax': true
       '#hide_empty': true
+      '#template': '[webform_submission:values:user:entity:uid:clear]'
     user_display_name:
       '#type': webform_computed_token
       '#title': 'User: Display name'
-      '#value': '[webform_submission:values:user:entity:display-name:clear]'
       '#ajax': true
       '#hide_empty': true
+      '#template': '[webform_submission:values:user:entity:display-name:clear]'
     user_mail:
       '#type': webform_computed_token
       '#title': 'User: Email'
-      '#value': '[webform_submission:values:user:entity:mail:clear]'
       '#ajax': true
       '#hide_empty': true
+      '#template': '[webform_submission:values:user:entity:mail:clear]'
     user_url:
       '#type': webform_computed_token
       '#title': 'User: URL'
-      '#value': '[webform_submission:values:user:entity:url:clear]'
       '#ajax': true
       '#hide_empty': true
+      '#template': '[webform_submission:values:user:entity:url:clear]'
     user_created:
       '#type': webform_computed_token
       '#title': 'User: Created'
-      '#value': '[webform_submission:values:user:entity:created:clear]'
       '#ajax': true
       '#hide_empty': true
+      '#template': '[webform_submission:values:user:entity:created:clear]'
   
 css: |
   .calculation {
@@ -130,6 +130,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -259,6 +260,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

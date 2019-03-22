@@ -29,7 +29,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal
     minimal_radios:
       '#type': radios
@@ -51,7 +51,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-grey
     minimal_grey_radios:
       '#type': radios
@@ -73,7 +73,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-yellow
     minimal_yellow_radios:
       '#type': radios
@@ -95,7 +95,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-orange
     minimal_orange_radios:
       '#type': radios
@@ -117,7 +117,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-red
     minimal_red_radios:
       '#type': radios
@@ -139,7 +139,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-pink
     minimal_pink_radios:
       '#type': radios
@@ -161,7 +161,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-purple
     minimal_purple_radios:
       '#type': radios
@@ -183,7 +183,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-blue
     minimal_blue_radios:
       '#type': radios
@@ -205,7 +205,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-green
     minimal_green_radios:
       '#type': radios
@@ -227,7 +227,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': minimal-aero
     minimal_aero_radios:
       '#type': radios
@@ -253,7 +253,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat
     flat_radios:
       '#type': radios
@@ -275,7 +275,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-grey
     flat_grey_radios:
       '#type': radios
@@ -297,7 +297,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-yellow
     flat_yellow_radios:
       '#type': radios
@@ -319,7 +319,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-orange
     flat_orange_radios:
       '#type': radios
@@ -341,7 +341,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-red
     flat_red_radios:
       '#type': radios
@@ -363,7 +363,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-pink
     flat_pink_radios:
       '#type': radios
@@ -385,7 +385,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-purple
     flat_purple_radios:
       '#type': radios
@@ -407,7 +407,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-blue
     flat_blue_radios:
       '#type': radios
@@ -429,7 +429,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-green
     flat_green_radios:
       '#type': radios
@@ -451,7 +451,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': flat-aero
     flat_aero_radios:
       '#type': radios
@@ -477,7 +477,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line
     line_radios:
       '#type': radios
@@ -499,7 +499,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-grey
     line_grey_radios:
       '#type': radios
@@ -521,7 +521,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-yellow
     line_yellow_radios:
       '#type': radios
@@ -543,7 +543,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-orange
     line_orange_radios:
       '#type': radios
@@ -565,7 +565,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-red
     line_red_radios:
       '#type': radios
@@ -587,7 +587,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-pink
     line_pink_radios:
       '#type': radios
@@ -609,7 +609,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-purple
     line_purple_radios:
       '#type': radios
@@ -631,7 +631,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-blue
     line_blue_radios:
       '#type': radios
@@ -653,7 +653,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-green
     line_green_radios:
       '#type': radios
@@ -675,7 +675,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': line-aero
     line_aero_radios:
       '#type': radios
@@ -701,7 +701,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square
     square_radios:
       '#type': radios
@@ -723,7 +723,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-grey
     square_grey_radios:
       '#type': radios
@@ -745,7 +745,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-yellow
     square_yellow_radios:
       '#type': radios
@@ -767,7 +767,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-orange
     square_orange_radios:
       '#type': radios
@@ -789,7 +789,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-red
     square_red_radios:
       '#type': radios
@@ -811,7 +811,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-pink
     square_pink_radios:
       '#type': radios
@@ -833,7 +833,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-purple
     square_purple_radios:
       '#type': radios
@@ -855,7 +855,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-blue
     square_blue_radios:
       '#type': radios
@@ -877,7 +877,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-green
     square_green_radios:
       '#type': radios
@@ -899,7 +899,7 @@ elements: |
         three: Three
       '#default_value': one
       '#wrapper_attributes':
-        class: container-inline
+        - class: container-inline
       '#icheck': square-aero
     square_aero_radios:
       '#type': radios
@@ -928,6 +928,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -1057,6 +1058,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

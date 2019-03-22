@@ -607,7 +607,8 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
     }
     else {
       // Add 'Set default value' button.
-      $form['properties']['default']['set_default_value'] = [
+      $form['properties']['default']['actions'] = ['#type' => 'container'];
+      $form['properties']['default']['actions']['set_default_value'] = [
         '#type' => 'submit',
         '#value' => $this->t('Set default value'),
         '#submit' => ['::setDefaultValue'],
@@ -618,7 +619,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       ];
 
       if ($this->isAjax()) {
-        $form['properties']['default']['set_default_value']['#ajax'] = [
+        $form['properties']['default']['actions']['set_default_value']['#ajax'] = [
           'callback' => '::submitAjaxForm',
           'event' => 'click',
         ];

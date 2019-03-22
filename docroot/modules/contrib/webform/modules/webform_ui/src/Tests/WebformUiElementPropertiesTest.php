@@ -29,7 +29,7 @@ class WebformUiElementPropertiesTest extends WebformTestBase {
     'example_element_states',
     'test_element',
     'test_element_access',
-    'test_form_states_triggers',
+    'test_states_triggers',
     'test_example_elements',
     'test_example_elements_composite',
   ];

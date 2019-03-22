@@ -29,19 +29,20 @@ elements: |
   webform_computed_token_a:
     '#type': webform_computed_token
     '#title': a
-    '#value': '[webform_submission:values:a:clear]'
-    '#ajax': TRUE
-    '#hide_empty': TRUE
+    '#ajax': true
+    '#hide_empty': true
+    '#template': '[webform_submission:values:a:clear]'
   webform_computed_token_b:
     '#type': webform_computed_token
     '#title': b
-    '#value': '[webform_submission:values:b:clear]'
-    '#ajax': TRUE
-    '#hide_empty': TRUE
+    '#ajax': true
+    '#hide_empty': true
+    '#template': '[webform_submission:values:b:clear]'
   webform_computed_twig:
     '#type': webform_computed_twig
     '#title': webform_computed_twig_data
-    '#value': |
+    '#ajax': true
+    '#template': |
       {% spaceless %}
       {% if data.a|length and data.b|length %}
       {{ data.a }} + {{ data.b }} = {{ data.a + data.b }}
@@ -49,11 +50,12 @@ elements: |
       Please enter a value for a and b.
       {% endif %}
       {% endspaceless %}
-    '#ajax': TRUE
+      
   webform_computed_twig_token:
     '#type': webform_computed_twig
     '#title': webform_computed_twig_token
-    '#value': |
+    '#ajax': true
+    '#template': |
       {% spaceless %}
       {% set a = webform_token('[webform_submission:values:a:clear]', webform_submission) %}
       {% set b = webform_token('[webform_submission:values:b:clear]', webform_submission) %}
@@ -63,7 +65,6 @@ elements: |
       Please enter a value for a and b.
       {% endif %}
       {% endspaceless %}
-    '#ajax': TRUE
   
 css: ''
 javascript: ''
@@ -81,6 +82,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -210,6 +212,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

@@ -59,7 +59,7 @@ class WebformTime extends WebformElementBase {
     $format = $this->getItemFormat($element);
     if ($format == 'value') {
       $time_format = (isset($element['#time_format'])) ? $element['#time_format'] : 'H:i';
-      return date($time_format, strtotime($value));
+      return static::formatTime($time_format, strtotime($value));
     }
 
     return parent::formatTextItem($element, $webform_submission, $options);
@@ -90,10 +90,10 @@ class WebformTime extends WebformElementBase {
       '#type' => 'webform_select_other',
       '#title' => $this->t('Time format'),
       '#options' => [
-        'H:i' => $this->t('24 hour - @format (@time)', ['@format' => 'H:i', '@time' => date('H:i')]),
-        'H:i:s' => $this->t('24 hour with seconds - @format (@time)', ['@format' => 'H:i:s', '@time' => date('H:i:s')]),
-        'g:i A' => $this->t('12 hour - @format (@time)', ['@format' => 'g:i A', '@time' => date('g:i A')]),
-        'g:i:s A' => $this->t('12 hour with seconds - @format (@time)', ['@format' => 'g:i:s A', '@time' => date('g:i:s A')]),
+        'H:i' => $this->t('24 hour - @format (@time)', ['@format' => 'H:i', '@time' => static::formatTime('H:i')]),
+        'H:i:s' => $this->t('24 hour with seconds - @format (@time)', ['@format' => 'H:i:s', '@time' => static::formatTime('H:i:s')]),
+        'g:i A' => $this->t('12 hour - @format (@time)', ['@format' => 'g:i A', '@time' => static::formatTime('g:i A')]),
+        'g:i:s A' => $this->t('12 hour with seconds - @format (@time)', ['@format' => 'g:i:s A', '@time' => static::formatTime('g:i:s A')]),
       ],
       '#other__option_label' => $this->t('Custom…'),
       '#other__placeholder' => $this->t('Custom time format…'),
@@ -102,12 +102,12 @@ class WebformTime extends WebformElementBase {
     $form['time']['time_container'] = $this->getFormInlineContainer();
     $form['time']['time_container']['min'] = [
       '#type' => 'webform_time',
-      '#title' => $this->t('Min'),
+      '#title' => $this->t('Minimum'),
       '#description' => $this->t('Specifies the minimum time.'),
     ];
     $form['time']['time_container']['max'] = [
       '#type' => 'webform_time',
-      '#title' => $this->t('Max'),
+      '#title' => $this->t('Maximum'),
       '#description' => $this->t('Specifies the maximum time.'),
     ];
     $form['time']['step'] = [
@@ -126,6 +126,23 @@ class WebformTime extends WebformElementBase {
       '#other__description' => $this->t('Enter interval in seconds.'),
     ];
     return $form;
+  }
+
+  /**
+   * Format custom time.
+   *
+   * @param string $custom_format
+   *   A PHP date format string suitable for input to date().
+   * @param int $timestamp
+   *   (optional) A UNIX timestamp to format.
+   *
+   * @return string
+   *   Formatted time.
+   */
+   protected static function formatTime($custom_format, $timestamp = NULL) {
+    /** @var \Drupal\Core\Datetime\DateFormatterInterface $date_formatter */
+    $date_formatter = \Drupal::service('date.formatter');
+    return $date_formatter->format($timestamp ?: time(), 'custom', $custom_format);
   }
 
 }

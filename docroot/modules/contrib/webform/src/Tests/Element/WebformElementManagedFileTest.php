@@ -78,6 +78,20 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
 
     $this->checkFileUpload('single', $this->files[0], $this->files[1]);
     $this->checkFileUpload('multiple', $this->files[2], $this->files[3]);
+    
+    /* File placeholder */
+
+    // Check placeholder is displayed.
+    $this->drupalGet('webform/test_element_managed_file');
+    $this->assertRaw('<div class="webform-managed-file-placeholder managed-file-placeholder js-form-wrapper form-wrapper" data-drupal-selector="edit-managed-file-single-placeholder-file-placeholder" id="edit-managed-file-single-placeholder-file-placeholder">This is the single file upload placeholder</div>');
+    $this->assertRaw('<div class="webform-managed-file-placeholder managed-file-placeholder js-form-wrapper form-wrapper" data-drupal-selector="edit-managed-file-multiple-placeholder-file-placeholder" id="edit-managed-file-multiple-placeholder-file-placeholder">This is the multiple file upload placeholder</div>');
+
+    $this->drupalLogin($this->rootUser);
+
+    // Check placeholder is not displayed when files are uploaded.
+    $this->drupalGet('webform/test_element_managed_file/test');
+    $this->assertNoRaw('<div class="webform-managed-file-placeholder managed-file-placeholder js-form-wrapper form-wrapper" data-drupal-selector="edit-managed-file-single-placeholder-file-placeholder" id="edit-managed-file-single-placeholder-file-placeholder">This is the single file upload placeholder</div>');
+    $this->assertNoRaw('<div class="webform-managed-file-placeholder managed-file-placeholder js-form-wrapper form-wrapper" data-drupal-selector="edit-managed-file-multiple-placeholder-file-placeholder" id="edit-managed-file-multiple-placeholder-file-placeholder">This is the multiple file upload placeholder</div>');
   }
 
   /**
@@ -85,7 +99,7 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
    *
    * The property #file_name_pattern is tested.
    */
-  protected function testFileRename() {
+  public function testFileRename() {
     $webform = Webform::load('test_element_managed_file_name');
 
     $source_for_filename = $this->randomMachineName();
@@ -124,7 +138,7 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
   /**
    * Test file management.
    */
-  protected function testFileManagement() {
+  public function testFileManagement() {
     $this->drupalLogin($this->rootUser);
 
     $webform = Webform::load('test_element_managed_file');
@@ -191,7 +205,7 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
   /**
    * Test file upload with disabled results.
    */
-  protected function testFileUploadWithDisabledResults() {
+  public function testFileUploadWithDisabledResults() {
     $this->drupalLogin($this->rootUser);
 
     $webform = Webform::load('test_element_managed_file_dis');

@@ -152,10 +152,9 @@ class WebformMultiple extends FormElement {
     }
 
     // Add wrapper to the element.
-    $element += [
-      '#prefix' => '<div id="' . $table_id . '">',
-      '#suffix' => '</div>',
-    ];
+    $element += ['#prefix' => '', '#suffix' => ''];
+    $element['#prefix'] = '<div id="' . $table_id . '">' . $element['#prefix'];
+    $element['#suffix'] .= '</div>';
 
     // DEBUG:
     // Disable Ajax callback by commenting out the below callback and wrapper.
@@ -774,7 +773,7 @@ class WebformMultiple extends FormElement {
     $action_key = static::getStorageKey($element, 'action');
     $form_state->set($action_key, TRUE);
 
-    // Rebuild the webform.
+    // Rebuild the form.
     $form_state->setRebuild();
   }
 
@@ -811,7 +810,7 @@ class WebformMultiple extends FormElement {
     $action_key = static::getStorageKey($element, 'action');
     $form_state->set($action_key, TRUE);
 
-    // Rebuild the webform.
+    // Rebuild the form.
     $form_state->setRebuild();
   }
 
@@ -847,7 +846,7 @@ class WebformMultiple extends FormElement {
     $action_key = static::getStorageKey($element, 'action');
     $form_state->set($action_key, TRUE);
 
-    // Rebuild the webform.
+    // Rebuild the form.
     $form_state->setRebuild();
   }
 

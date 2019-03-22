@@ -52,7 +52,7 @@ class WebformContributeFunctionalTest extends BrowserTestBase {
     $this->assertSession()->responseNotContains('<strong><a href="https://www.drupal.org/u/jrockowitz">Jacob Rockowitz</a></strong>');
 
     // Check that 'Contribute' local task is visible.
-    $this->drupalGet('/admin/structure/webform');
+    $this->drupalGet('/admin/structure/webform/help');
     $this->assertSession()->linkExists('Contribute');
 
     // Check that 'Contribute' route is accessible.
@@ -64,7 +64,7 @@ class WebformContributeFunctionalTest extends BrowserTestBase {
     $this->drupalPostForm('/admin/structure/webform/config/advanced', $edit, t('Save'));
 
     // Check that 'Contribute' local task is hidden.
-    $this->drupalGet('/admin/structure/webform');
+    $this->drupalGet('/admin/structure/webform/help');
     $this->assertSession()->linkNotExists('Contribute');
 
     // Check that 'Contribute' route is removed.

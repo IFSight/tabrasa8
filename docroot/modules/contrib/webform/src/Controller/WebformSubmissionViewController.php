@@ -69,6 +69,13 @@ class WebformSubmissionViewController extends EntityViewController {
     $webform = $this->requestHandler->getCurrentWebform();
     $source_entity = $this->requestHandler->getCurrentSourceEntity('webform_submission');
 
+    // Set webform submission template.
+    $build = [
+      '#theme' => 'webform_submission',
+      '#view_mode' => $view_mode,
+      '#webform_submission' => $webform_submission,
+    ];
+
     // Navigation.
     $build['navigation'] = [
       '#type' => 'webform_submission_navigation',

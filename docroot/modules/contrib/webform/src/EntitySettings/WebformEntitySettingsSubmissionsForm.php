@@ -277,6 +277,19 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       ],
       '#weight' => -99,
     ];
+    $form['submission_behaviors']['form_remote_addr'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Track user IP address'),
+      '#description' => $this->t("If checked, a user's IP address will be recorded."),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['form_remote_addr'],
+      '#states' => [
+        'visible' => [
+          ':input[name="form_confidential"]' => ['checked' => FALSE],
+        ],
+      ],
+      '#weight' => -98,
+    ];
     $form['submission_behaviors']['form_convert_anonymous'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Convert anonymous user drafts and submissions to authenticated user'),
@@ -288,7 +301,7 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
           ':input[name="form_confidential"]' => ['checked' => FALSE],
         ],
       ],
-      '#weight' => -98,
+      '#weight' => -97,
     ];
     $behavior_elements = [
       // Form specific behaviors.

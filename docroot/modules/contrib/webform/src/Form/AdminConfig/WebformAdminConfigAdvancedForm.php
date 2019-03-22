@@ -8,6 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
+use Drupal\webform\Commands\WebformCliService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -37,6 +38,13 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
   protected $routerBuilder;
 
   /**
+   * The (drush) command-line service.
+   *
+   * @var \Drupal\webform\Commands\WebformCliService
+   */
+  protected $cliService;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -54,12 +62,15 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
    *   The render cache service.
    * @param \Drupal\Core\Routing\RouteBuilderInterface $router_builder
    *   The router builder service.
+   * @param \Drupal\webform\Commands\WebformCliService $cli_service
+   *   The (drush) command-line service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, CacheBackendInterface $render_cache, RouteBuilderInterface $router_builder) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, CacheBackendInterface $render_cache, RouteBuilderInterface $router_builder, WebformCliService $cli_service) {
     parent::__construct($config_factory);
     $this->renderCache = $render_cache;
     $this->moduleHandler = $module_handler;
     $this->routerBuilder = $router_builder;
+    $this->cliService = $cli_service;
   }
 
   /**
@@ -70,7 +81,8 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
       $container->get('config.factory'),
       $container->get('module_handler'),
       $container->get('cache.render'),
-      $container->get('router.builder')
+      $container->get('router.builder'),
+      $container->get('webform.cli_service')
     );
   }
 
@@ -252,6 +264,24 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
       '#default_value' => $config->get('batch.default_batch_email_size'),
     ];
 
+    // Repair.
+    $form['repair'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Repair webform configuration'),
+      '#open' => TRUE,
+      '#description' => '<p>' . $this->t('If older Webform configuration files are imported after the Webform module has been updated this may cause the older configuration to be out-of-sync and result in unexpected behaviors and errors.') . '</p>' .
+        '<p>' . $this->t("Running the below 'Repair' command will apply all missing settings to older Webform configuration files.") . '</p>',
+      '#help' => FALSE,
+    ];
+    $form['repair']['action'] = ['#type' => 'actions'];
+    $form['repair']['action']['repair_configuration'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Repair configuration'),
+      '#attributes' => [
+        'onclick' => 'return confirm("' . $this->t('Are you sure you want to repair webform configuration?') . '\n' . $this->t('This cannot be undone!!!') . '");',
+      ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -259,33 +289,62 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Update config and submit form.
-    $config = $this->config('webform.settings');
-    $config->set('ui', $form_state->getValue('ui'));
-    $config->set('requirements', $form_state->getValue('requirements'));
-    $config->set('test', $form_state->getValue('test'));
-    $config->set('batch', $form_state->getValue('batch'));
+    $op = (string) $form_state->getValue('op');
+    if ($op === (string) $this->t('Repair configuration')) {
+      // Copied from:
+      // @see \Drupal\webform\Commands\WebformCliService::drush_webform_repair
+      module_load_include('install', 'webform');
 
-    // Track if help is disabled.
-    // @todo Figure out how to clear cached help block.
-    $is_help_disabled = ($config->getOriginal('ui.help_disabled') != $config->get('ui.help_disabled'));
+      $this->messenger()->addMessage($this->t('Repairing webform submission storage schema…'));
+      _webform_update_webform_submission_storage_schema();
 
-    parent::submitForm($form, $form_state);
+      $this->messenger()->addMessage($this->t('Repairing admin settings…'));
+      _webform_update_admin_settings(TRUE);
 
-    // Clear cached data.
-    if ($is_help_disabled) {
-      // Flush cache when help is being enabled.
-      // @see webform_help()
+      $this->messenger()->addMessage($this->t('Repairing webform settings…'));
+      _webform_update_webform_settings();
+
+      $this->messenger()->addMessage($this->t('Repairing webform handlers…'));
+      _webform_update_webform_handler_settings();
+
+      $this->messenger()->addMessage($this->t('Repairing webform field storage definitions…'));
+      _webform_update_field_storage_definitions();
+
+      $this->messenger()->addMessage($this->t('Repairing webform submission storage schema…'));
+      _webform_update_webform_submission_storage_schema();
+
       drupal_flush_all_caches();
+
+      $this->messenger()->addStatus($this->t('Webform configuration has been repaired.'));
     }
     else {
-      // Clear render cache so that local tasks can be updated to hide/show
-      // the 'Contribute' tab.
-      // @see webform_local_tasks_alter()
-      $this->renderCache->deleteAll();
-      $this->routerBuilder->rebuild();
-    }
+      // Update config and submit form.
+      $config = $this->config('webform.settings');
+      $config->set('ui', $form_state->getValue('ui'));
+      $config->set('requirements', $form_state->getValue('requirements'));
+      $config->set('test', $form_state->getValue('test'));
+      $config->set('batch', $form_state->getValue('batch'));
 
+      // Track if help is disabled.
+      // @todo Figure out how to clear cached help block.
+      $is_help_disabled = ($config->getOriginal('ui.help_disabled') != $config->get('ui.help_disabled'));
+
+      parent::submitForm($form, $form_state);
+
+      // Clear cached data.
+      if ($is_help_disabled) {
+        // Flush cache when help is being enabled.
+        // @see webform_help()
+        drupal_flush_all_caches();
+      }
+      else {
+        // Clear render cache so that local tasks can be updated to hide/show
+        // the 'Contribute' tab.
+        // @see webform_local_tasks_alter()
+        $this->renderCache->deleteAll();
+        $this->routerBuilder->rebuild();
+      }
+    }
   }
 
 }

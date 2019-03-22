@@ -129,6 +129,27 @@ class WebformLibrariesTest extends WebformTestBase {
     $this->assertNoText('jQuery: Toggles library');
     $this->assertNoText('Signature Pad library');
     */
+
+    // Check that chosen and select2 using webform's CDN URLs.
+    $edit = [
+      'excluded_libraries[jquery.select2]' => TRUE,
+      'excluded_libraries[jquery.chosen]' => TRUE,
+    ];
+    $this->drupalPostForm('admin/structure/webform/config/libraries', $edit, t('Save configuration'));
+    $this->drupalGet('webform/test_libraries_optional');
+    $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
+    $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
+
+    // Install chosen and select2 modules.
+    \Drupal::service('module_installer')->install(['chosen', 'chosen_lib', 'select2']);
+    drupal_flush_all_caches();
+
+    // Check that chosen and select2 using module's path and not CDN.
+    $this->drupalGet('webform/test_libraries_optional');
+    $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
+    $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
+    $this->assertRaw('/modules/contrib/chosen/css/chosen-drupal.css');
+    $this->assertRaw('/libraries/select2/dist/css/select2.min.css');
   }
 
 }

@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
@@ -83,7 +84,7 @@ class WebformTokenManager implements WebformTokenManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function replace($text, EntityInterface $entity = NULL, array $data = [], array $options = []) {
+  public function replace($text, EntityInterface $entity = NULL, array $data = [], array $options = [], BubbleableMetadata $bubbleable_metadata = NULL) {
     // Replace tokens within an array.
     if (is_array($text)) {
       foreach ($text as $key => $token_value) {
@@ -131,7 +132,7 @@ class WebformTokenManager implements WebformTokenManagerInterface {
     }
 
     // Replace the webform related tokens.
-    $text = $this->token->replace($text, $data, $options);
+    $text = $this->token->replace($text, $data, $options, $bubbleable_metadata);
 
     // Process token suffixes.
     if (preg_match_all('/{webform-token-suffixes:([^}]+)}(.*?){\/webform-token-suffixes}/ms', $text, $matches)) {
@@ -171,6 +172,15 @@ class WebformTokenManager implements WebformTokenManagerInterface {
     }
 
     return $text;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replaceNoRenderContext($text, EntityInterface $entity = NULL, array $data = [], array $options = []) {
+    // Create BubbleableMetadata object which will be ignored.
+    $bubbleable_metadata = new BubbleableMetadata();
+    return $this->replace($text, $entity, $data, $options, $bubbleable_metadata);
   }
 
   /**

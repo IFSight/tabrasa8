@@ -110,7 +110,7 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
     ];
     $form['general_settings']['archive'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Archived this webform'),
+      '#title' => $this->t('Archive this webform'),
       '#description' => $this->t('If checked, this webform will be closed and unavailable to webform blocks and fields.'),
       '#return_value' => TRUE,
       '#default_value' => $webform->isArchived(),
@@ -250,11 +250,6 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
       '#title' => $this->t('Ajax settings'),
       '#open' => TRUE,
       '#access' => empty($elements['#method']),
-      '#states' => [
-        'visible' => [
-          ':input[name="method"]' => ['value' => ''],
-        ],
-      ],
     ];
     $form['ajax_settings']['ajax'] = [
       '#type' => 'checkbox',

@@ -33,7 +33,7 @@ elements: |
   date:
     '#type': datetime
     '#title': Date
-    '#description': 'Time will be ignored.'
+    '#description': 'Time maybe be ignored depending on schedule type configuration (/admin/structure/webform/config/handlers).'
     '#default_value': Now
     '#states':
       visible:
@@ -56,6 +56,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -188,6 +189,10 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
 handlers:
   tomorrow:
     id: scheduled_email
@@ -225,10 +230,11 @@ handlers:
       return_path: ''
       sender_mail: ''
       sender_name: ''
-      send: '[webform_submission:completed:html_date]'
+      send: '[webform_submission:completed:html_datetime]'
       days: 1
       unschedule: false
       ignore_past: false
+      test_send: false
   yesterday:
     id: scheduled_email
     label: Yesterday
@@ -265,10 +271,11 @@ handlers:
       return_path: ''
       sender_mail: ''
       sender_name: ''
-      send: '[webform_submission:completed:html_date]'
+      send: '[webform_submission:completed:html_datetime]'
       days: -1
       unschedule: false
       ignore_past: false
+      test_send: false
   last_year:
     id: scheduled_email
     label: 'Last year'
@@ -309,6 +316,7 @@ handlers:
       days: 0
       unschedule: false
       ignore_past: true
+      test_send: false
   broken:
     id: scheduled_email
     label: Broken
@@ -349,6 +357,7 @@ handlers:
       days: 0
       unschedule: false
       ignore_past: false
+      test_send: false
   other:
     id: scheduled_email
     label: Other
@@ -387,10 +396,11 @@ handlers:
       return_path: ''
       sender_mail: ''
       sender_name: ''
-      send: '[webform_submission:values:date:html_date]'
+      send: '[webform_submission:values:date:html_datetime]'
       days: 14
       unschedule: false
       ignore_past: false
+      test_send: true
   draft_reminder:
     id: scheduled_email
     label: 'Draft reminder'
@@ -427,7 +437,8 @@ handlers:
       return_path: ''
       sender_mail: ''
       sender_name: ''
-      send: '[date:html_date]'
+      send: '[date:html_datetime]'
       days: 14
       unschedule: true
       ignore_past: false
+      test_send: false

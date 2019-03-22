@@ -26,13 +26,15 @@ trait WebformEntityTrait {
    *
    * @param array $element
    *   An element.
+   * @param array $settings
+   *   An array of settings used to limit and randomize options.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
    *   Thrown when the current user doesn't have access to the specified entity.
    *
    * @see \Drupal\system\Controller\EntityAutocompleteController
    */
-  public static function setOptions(array &$element) {
+  public static function setOptions(array &$element, $settings = []) {
     if (!empty($element['#options'])) {
       return;
     }
@@ -41,6 +43,9 @@ trait WebformEntityTrait {
       'target_type' => $element['#target_type'],
       'handler' => $element['#selection_handler'],
       'handler_settings' => (isset($element['#selection_settings'])) ? $element['#selection_settings'] : [],
+      // Set '_webform_settings' used to limit and randomize options.
+      // @see webform_query_entity_reference_alter()
+      '_webform_settings' => $settings,
     ];
 
     /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_manager */

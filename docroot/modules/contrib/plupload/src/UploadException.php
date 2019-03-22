@@ -1,15 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\plupload\UploadException.
- */
-
 namespace Drupal\plupload;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ *
+ */
 class UploadException extends \Exception {
 
   /**

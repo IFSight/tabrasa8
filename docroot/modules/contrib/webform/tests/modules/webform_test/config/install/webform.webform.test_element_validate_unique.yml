@@ -42,17 +42,14 @@ elements: |
     '#title': unique_error
     '#unique': true
     '#unique_error': 'unique_error error message.'
-  unique_ignored:
+  unique_multiple:
     '#type': checkboxes
-    '#title': unique_ignored
+    '#title': unique_multiple
     '#unique': true
-    '#unique_error': 'unique_ignored error message.'
+    '#unique_error': 'unique_multiple error message.'
     '#options':
       1: one
       2: two
-    '#default_value':
-      - 1
-      - 2
   
 css: ''
 javascript: ''
@@ -70,6 +67,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: true
@@ -199,6 +197,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

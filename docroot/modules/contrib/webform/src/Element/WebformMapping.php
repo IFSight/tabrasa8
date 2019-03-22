@@ -60,6 +60,7 @@ class WebformMapping extends FormElement {
     $destination_element_base = [
       '#title_display' => 'invisible',
       '#required' => ($element['#required'] === self::REQUIRED_ALL) ? TRUE : FALSE,
+      '#error_no_message'  => ($element['#required'] !== self::REQUIRED_ALL) ? TRUE : FALSE,
     ];
 
     // Get base #destination__* properties.

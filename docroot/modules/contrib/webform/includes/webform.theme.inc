@@ -289,13 +289,16 @@ function webform_preprocess_table(&$variables) {
     foreach ($variables['rows'] as &$row) {
       // Check first cell.
       if (!isset($row['cells'][0]['content'])
+        || !is_array($row['cells'][0]['content'])
         || !isset($row['cells'][0]['content']['#markup'])) {
         continue;
       }
 
       // Check last cell edit link.
       if (!isset($row['cells'][1]['content'])
+        || !is_array($row['cells'][1]['content'])
         || !isset($row['cells'][1]['content']['#links'])
+        || !is_array($row['cells'][1]['content']['#links'])
         || !isset($row['cells'][1]['content']['#links']['edit'])) {
         continue;
       }

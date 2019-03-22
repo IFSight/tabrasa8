@@ -28,6 +28,7 @@ class WebformCodeMirror extends WebformElementBase {
       // Codemirror settings.
       'placeholder' => '',
       'mode' => 'text',
+      'wrap' => TRUE,
     ] + parent::getDefaultProperties();
   }
 
@@ -129,6 +130,11 @@ class WebformCodeMirror extends WebformElementBase {
         'twig' => 'Twig',
       ],
       '#required' => TRUE,
+    ];
+    $form['codemirror']['wrap'] = [
+      '#title' => $this->t('Wrap for long lines'),
+      '#type' => 'checkbox',
+      '#return_value' => TRUE,
     ];
     return $form;
   }

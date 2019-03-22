@@ -97,6 +97,18 @@ duplicate:
         ],
       ],
 
+      // Check reserved names.
+      [
+        'getElementsRaw' => "name:
+  '#type': textfield
+duplicate:
+  add:
+    '#type': textfield",
+        'messages' => [
+          'The element key <em class="placeholder">add</em> on line 4 is a reserved key.',
+        ],
+      ],
+
       // Check ignored properties.
       [
         'getElementsRaw' => "'tree':

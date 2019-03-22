@@ -75,6 +75,8 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
   public function testCheckAccess($operation, array $options, array $expected, $assert_message = '') {
     // Set $options default value.
     $options += [
+      // What is the request path.
+      'request_path' => '',
       // What is the request format.
       'request_format' => 'html',
       // Array of permissions to assign to a mocked account.
@@ -237,7 +239,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'access_result_is_allowed' => FALSE,
         'access_result_cache_tags' => ['access_rules_cache_tag'],
-        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
       ],
       'View when nobody',
     ];
@@ -280,7 +282,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'access_result_is_allowed' => FALSE,
         'access_result_cache_tags' => ['access_rules_cache_tag'],
-        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
       ],
       'View when has "access any webform configuration" permission and request form is HTML',
     ];
@@ -294,7 +296,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'access_result_is_allowed' => TRUE,
         'access_result_cache_tags' => ['webform_cache_tag'],
-        'access_result_cache_contexts' => ['request_format', 'user', 'user.permissions', 'webform_cache_context'],
+        'access_result_cache_contexts' => ['request_format', 'url.path', 'user', 'user.permissions', 'webform_cache_context'],
       ],
       'View when has "access any webform configuration" permission and request form is NOT HTML',
     ];
@@ -308,7 +310,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'access_result_is_allowed' => FALSE,
         'access_result_cache_tags' => ['access_rules_cache_tag'],
-        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
       ],
       'View when has "access own webform configuration" permission and is not owner and request form is HTML',
     ];
@@ -323,7 +325,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'access_result_is_allowed' => FALSE,
         'access_result_cache_tags' => ['access_rules_cache_tag'],
-        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
       ],
       'View when has "access own webform configuration" permission and is not owner and request form is NOT HTML',
     ];
@@ -337,7 +339,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'access_result_is_allowed' => FALSE,
         'access_result_cache_tags' => ['access_rules_cache_tag'],
-        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format'],
+        'access_result_cache_contexts' => ['access_rules_cache_context', 'request_format', 'url.path'],
       ],
       'View when has "access own webform configuration" permission and is owner and request form is HTML',
     ];
@@ -352,7 +354,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       [
         'access_result_is_allowed' => TRUE,
         'access_result_cache_tags' => ['webform_cache_tag'],
-        'access_result_cache_contexts' => ['request_format', 'user', 'user.permissions', 'webform_cache_context'],
+        'access_result_cache_contexts' => ['request_format', 'url.path', 'user', 'user.permissions', 'webform_cache_context'],
       ],
       'View when has "access own webform configuration" permission and is owner and request form is NOT HTML',
     ];

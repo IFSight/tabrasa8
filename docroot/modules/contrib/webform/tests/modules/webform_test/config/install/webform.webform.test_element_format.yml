@@ -558,26 +558,26 @@ elements: |
       webform_computed_token_value:
         '#type': webform_computed_token
         '#title': 'Computed token (Value)'
-        '#value': 'This is a Computed token value.'
         '#format': value
+        '#template': 'This is a Computed token value.'
       webform_computed_token_raw:
         '#type': webform_computed_token
         '#title': 'Computed token (Raw value)'
-        '#value': 'This is a Computed token value.'
         '#format': raw
+        '#template': 'This is a Computed token value.'
     webform_computed_twig:
       '#type': details
       '#title': 'Computed Twig'
       webform_computed_twig_value:
         '#type': webform_computed_twig
         '#title': 'Computed Twig (Value)'
-        '#value': 'This is a Computed Twig value.'
         '#format': value
+        '#template': 'This is a Computed Twig value.'
       webform_computed_twig_raw:
         '#type': webform_computed_twig
         '#title': 'Computed Twig (Raw value)'
-        '#value': 'This is a Computed Twig value.'
         '#format': raw
+        '#template': 'This is a Computed Twig value.'
   date_time_elements:
     '#type': details
     '#title': 'Date/time elements'
@@ -1217,6 +1217,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -1346,6 +1347,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

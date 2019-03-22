@@ -29,7 +29,7 @@ use Drupal\webform_access\WebformAccessTypeInterface;
  *   },
  *   links = {
  *     "add-form" = "/admin/structure/webform/config/access/type/add",
- *     "edit-form" = "/admin/structure/webform/config/access/type/manage/{webform_access_type}/edit",
+ *     "edit-form" = "/admin/structure/webform/config/access/type/manage/{webform_access_type}",
  *     "delete-form" = "/admin/structure/webform/config/access/type/manage/{webform_access_type}/delete",
  *     "collection" = "/admin/structure/webform/config/access/type/manage",
  *   },

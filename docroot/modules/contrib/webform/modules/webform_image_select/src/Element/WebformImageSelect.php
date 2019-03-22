@@ -70,7 +70,7 @@ class WebformImageSelect extends Select {
     }
 
     // Convert #images to #options and make sure images are keyed by value.
-    if (empty($element['#options']) && !empty($element['#images'])) {
+    if (empty($element['#options'])) {
       $options = [];
       foreach ($element['#images'] as $value => &$image) {
         if (isset($image['text'])) {

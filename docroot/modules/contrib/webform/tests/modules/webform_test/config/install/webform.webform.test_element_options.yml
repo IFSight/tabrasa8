@@ -24,14 +24,14 @@ elements: |
       '#title': webform_options
     webform_options_default_value:
       '#type': webform_options
-      '#title': 'webform_options_default_value'
+      '#title': webform_options_default_value
       '#default_value':
         one: One
         two: Two
         three: Three
     webform_options_maxlength:
       '#type': webform_options
-      '#title': 'webform_options_maxlength'
+      '#title': webform_options_maxlength
       '#options_text_maxlength': 20
       '#options_value_maxlength': 20
       '#default_value':
@@ -40,7 +40,7 @@ elements: |
         three: Three
     webform_options_optgroup:
       '#type': webform_options
-      '#title': 'webform_options_optgroup'
+      '#title': webform_options_optgroup
       '#required': true
       '#default_value':
         'Group One':
@@ -55,12 +55,12 @@ elements: |
     '#open': true
     webform_element_options_entity:
       '#type': webform_element_options
-      '#title': 'webform_element_options_entity'
+      '#title': webform_element_options_entity
       '#required': true
       '#default_value': yes_no
     webform_element_options_custom:
       '#type': webform_element_options
-      '#title': 'webform_element_options_custom'
+      '#title': webform_element_options_custom
       '#required': true
       '#default_value':
         one: One
@@ -83,6 +83,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -212,6 +213,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

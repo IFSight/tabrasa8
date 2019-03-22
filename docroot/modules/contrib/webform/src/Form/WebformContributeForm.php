@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Form;
 
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\RedirectCommand;
@@ -11,7 +10,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
 use Drupal\webform\WebformContributeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,20 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Configure webform contribute settings for this site.
  */
 class WebformContributeForm extends ConfigFormBase {
-
-  /**
-   * The render cache bin.
-   *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
-   */
-  protected $renderCache;
-
-  /**
-   * The router builder.
-   *
-   * @var \Drupal\Core\Routing\RouteBuilderInterface
-   */
-  protected $routerBuilder;
 
   /**
    * The contribute manager.
@@ -57,21 +41,15 @@ class WebformContributeForm extends ConfigFormBase {
   }
 
   /**
-   * Constructs a ContributeSettingsForm object.
+   * Constructs a WebformContributeForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Cache\CacheBackendInterface $render_cache
-   *   The render cache service.
-   * @param \Drupal\Core\Routing\RouteBuilderInterface $router_builder
-   *   The router builder service.
    * @param \Drupal\webform\WebformContributeManagerInterface $contribute_manager
    *   The contribute manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $render_cache, RouteBuilderInterface $router_builder, WebformContributeManagerInterface $contribute_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, WebformContributeManagerInterface $contribute_manager) {
     parent::__construct($config_factory);
-    $this->renderCache = $render_cache;
-    $this->routerBuilder = $router_builder;
     $this->contributeManager = $contribute_manager;
   }
 
@@ -81,8 +59,6 @@ class WebformContributeForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('cache.render'),
-      $container->get('router.builder'),
       $container->get('webform.contribute_manager')
     );
   }

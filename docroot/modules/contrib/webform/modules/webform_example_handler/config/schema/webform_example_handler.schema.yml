@@ -1,9 +1,9 @@
 webform.handler.example:
   type: mapping
-  label: 'Example'
+  label: Example
   mapping:
     message:
-      label: 'Message'
+      label: Message
       type: string
     debug:
       type: boolean

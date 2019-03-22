@@ -70,14 +70,14 @@ elements: |
     '#title': likert_values
     '#na_answer': true
     '#questions':
-      0: 'Question 0'
-      1: 'Question 1'
-      2: 'Question 2'
+      - 'Question 0'
+      - 'Question 1'
+      - 'Question 2'
     '#answers':
-      0: 'Option 0'
-      1: 'Option 1'
-      2: 'Option 2'
-      3: 'Option 3'
+      - 'Option 0'
+      - 'Option 1'
+      - 'Option 2'
+      - 'Option 3'
   
 css: ''
 javascript: ''
@@ -95,6 +95,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -224,6 +225,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

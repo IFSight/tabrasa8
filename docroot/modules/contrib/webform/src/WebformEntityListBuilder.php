@@ -79,19 +79,6 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
   protected $roleStorage;
 
   /**
-   * {@inheritdoc}
-   */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static(
-      $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
-      $container->get('request_stack'),
-      $container->get('current_user'),
-      $container->get('entity_type.manager')
-    );
-  }
-
-  /**
    * Constructs a new WebformListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -116,6 +103,19 @@ class WebformEntityListBuilder extends ConfigEntityListBuilder {
     $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
     $this->userStorage = $entity_type_manager->getStorage('user');
     $this->roleStorage = $entity_type_manager->getStorage('user_role');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('entity.manager')->getStorage($entity_type->id()),
+      $container->get('request_stack'),
+      $container->get('current_user'),
+      $container->get('entity_type.manager')
+    );
   }
 
   /**

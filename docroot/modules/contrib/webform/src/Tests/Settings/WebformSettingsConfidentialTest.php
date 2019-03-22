@@ -36,7 +36,7 @@ class WebformSettingsConfidentialTest extends WebformTestBase {
 
     $this->drupalLogin($this->rootUser);
 
-    $webform_confidential = Webform::load('test_form_confidential');
+    $webform = Webform::load('test_form_confidential');
 
     // Check logout warning when accessing webform.
     $this->drupalGet('webform/test_form_confidential');
@@ -49,7 +49,7 @@ class WebformSettingsConfidentialTest extends WebformTestBase {
     $this->assertNoRaw('This form is confidential.');
 
     // Check that test submission does not record the IP address.
-    $sid = $this->postSubmissionTest($webform_confidential, ['name' => 'John']);
+    $sid = $this->postSubmissionTest($webform, ['name' => 'John']);
     $webform_submission = WebformSubmission::load($sid);
     $this->assertEqual($webform_submission->getRemoteAddr(), t('(unknown)'));
     $this->assertEqual($webform_submission->getOwnerId(), 0);
@@ -61,7 +61,7 @@ class WebformSettingsConfidentialTest extends WebformTestBase {
     $this->assertNoRaw('This form is confidential.');
 
     // Check that submission does not track the requests IP address.
-    $sid = $this->postSubmission($webform_confidential, ['name' => 'John']);
+    $sid = $this->postSubmission($webform, ['name' => 'John']);
     $webform_submission = WebformSubmission::load($sid);
     $this->assertEqual($webform_submission->getRemoteAddr(), t('(unknown)'));
     $this->assertEqual($webform_submission->getOwnerId(), 0);

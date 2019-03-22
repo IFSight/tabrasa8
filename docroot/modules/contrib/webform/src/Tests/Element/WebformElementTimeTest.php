@@ -24,11 +24,11 @@ class WebformElementTimeTest extends WebformElementTestBase {
 
     // Check time element.
     $this->assertRaw('<label for="edit-time-12-hour">time_12_hour</label>');
-    $this->assertRaw('<input data-drupal-selector="edit-time-12-hour" data-webform-time-format="g:i A" type="time" id="edit-time-12-hour" name="time_12_hour" value="14:00" size="10" class="form-time webform-time" />');
+    $this->assertRaw('<input data-drupal-selector="edit-time-12-hour" data-webform-time-format="g:i A" type="time" id="edit-time-12-hour" name="time_12_hour" value="14:00" size="10" maxlength="10" class="form-time webform-time" />');
 
     // Check timepicker elements.
-    $this->assertRaw('<input data-drupal-selector="edit-time-timepicker" data-webform-time-format="g:i A" type="text" id="edit-time-timepicker" name="time_timepicker" value="2:00 PM" size="10" class="form-time webform-time" />');
-    $this->assertRaw('<input data-drupal-selector="edit-time-timepicker-min-max" aria-describedby="edit-time-timepicker-min-max--description" data-webform-time-format="g:i A" type="text" id="edit-time-timepicker-min-max" name="time_timepicker_min_max" value="2:00 PM" size="10" min="14:00" max="18:00" class="form-time webform-time" />');
+    $this->assertRaw('<input data-drupal-selector="edit-time-timepicker" data-webform-time-format="g:i A" type="text" id="edit-time-timepicker" name="time_timepicker" value="2:00 PM" size="10" maxlength="10" class="form-time webform-time" />');
+    $this->assertRaw('<input data-drupal-selector="edit-time-timepicker-min-max" aria-describedby="edit-time-timepicker-min-max--description" data-webform-time-format="g:i A" type="text" id="edit-time-timepicker-min-max" name="time_timepicker_min_max" value="2:00 PM" size="10" maxlength="10" min="14:00" max="18:00" class="form-time webform-time" />');
 
     // Check time validation.
     $edit = ['time_24_hour' => 'not-valid'];

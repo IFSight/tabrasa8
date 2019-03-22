@@ -11,6 +11,10 @@ Steps for creating a new release
 1. Review code
 --------------
 
+    # Remove files that should never be reviewed.
+    cd modules/sandbox/webform
+    rm *.patch interdiff-*
+    
 [PHP](https://www.drupal.org/node/1587138)
 
     # Check Drupal PHP coding standards

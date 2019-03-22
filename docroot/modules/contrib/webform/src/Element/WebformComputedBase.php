@@ -6,6 +6,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Template\Attribute;
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\Utility\WebformHtmlHelper;
 use Drupal\webform\Utility\WebformXss;
@@ -55,7 +56,7 @@ abstract class WebformComputedBase extends FormElement {
         [$class, 'processWebformComputed'],
       ],
       '#input' => TRUE,
-      '#value' => '',
+      '#template' => '',
       '#mode' => NULL,
       '#hide_empty' => FALSE,
       // Note: Computed elements do not use the default #ajax wrapper, which is
@@ -114,7 +115,7 @@ abstract class WebformComputedBase extends FormElement {
       $wrapper_id = 'webform-computed-' . implode('-', $element['#parents']) . '-wrapper';
 
       // Get computed value element keys which are used to trigger Ajax updates.
-      preg_match_all('/(?:\[webform_submission:values:|data\.)([_a-z]+)/', $element['#value'], $matches);
+      preg_match_all('/(?:\[webform_submission:values:|data\.)([_a-z]+)/', $element['#template'], $matches);
       $element_keys = $matches[1] ?: [];
       $element_keys = array_unique($element_keys);
 
@@ -151,7 +152,7 @@ abstract class WebformComputedBase extends FormElement {
         '#name' => $button_name,
       ];
 
-      // Attached computed element library.
+      // Attached computed element Ajax library.
       $element['#attached']['library'][] = 'webform/webform.element.computed';
     }
 
@@ -170,7 +171,7 @@ abstract class WebformComputedBase extends FormElement {
    *   The string with tokens replaced.
    */
   public static function processValue(array $element, WebformSubmissionInterface $webform_submission) {
-    return $element['#value'];
+    return $element['#template'];
   }
 
   /**
@@ -204,11 +205,15 @@ abstract class WebformComputedBase extends FormElement {
   protected static function setWebformComputedElementValue(array &$element, $value) {
     // Hide empty computed element using display:none so that #states API
     // can still use the empty computed value.
-    if ($value === '' && $element['#hide_empty']) {
-      $element['#wrapper_attributes']['style'] = 'display:none';
-    }
-    else {
-      unset($element['#wrapper_attributes']);
+    if ($element['#hide_empty']) {
+      $element += ['#wrapper_attributes' => []];
+      $element['#wrapper_attributes'] += ['style' => ''];
+      if ($value === '') {
+        $element['#wrapper_attributes']['style'] .= ($element['#wrapper_attributes']['style'] ? ';' : '') . 'display:none';
+      }
+      else {
+        $element['#wrapper_attributes']['style'] = preg_replace('/;?display:none/', '', $element['#wrapper_attributes']['style']);
+      }
     }
 
     // Display markup.
@@ -279,7 +284,18 @@ abstract class WebformComputedBase extends FormElement {
     // Only return the wrapper id, this prevents the computed element from
     // being reinitialized via JS after each update.
     // @see js/webform.element.computed.js
-    $element['#prefix'] = '<div class="js-webform-computed-wrapper" id="' . $element['#wrapper_id'] . '">';
+    //
+    // The announce attribute allows FAPI Ajax callbacks to easily
+    // trigger announcements.
+    // @see js/webform.announce.js
+    $t_args = ['@title' => $element['#title'], '@value' => strip_tags($value)];
+    $attributes = [
+      'class' => ['js-webform-computed-wrapper'],
+      'id' => $element['#wrapper_id'],
+      'data-webform-announce' => t('@title is @value', $t_args),
+    ];
+    $element['#prefix'] = '<div' . new Attribute($attributes) . '>';
+
     $element['#suffix'] = '</div>';
 
     // Remove flexbox wrapper because it already been render outside this
@@ -311,7 +327,7 @@ abstract class WebformComputedBase extends FormElement {
    */
   public static function getMode(array $element) {
     if (empty($element['#mode']) || $element['#mode'] === static::MODE_AUTO) {
-      return (WebformHtmlHelper::containsHtml($element['#value'])) ? static::MODE_HTML : static::MODE_TEXT;
+      return (WebformHtmlHelper::containsHtml($element['#template'])) ? static::MODE_HTML : static::MODE_TEXT;
     }
     else {
       return $element['#mode'];

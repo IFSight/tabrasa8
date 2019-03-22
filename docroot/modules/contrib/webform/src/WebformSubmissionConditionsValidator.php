@@ -4,6 +4,7 @@ namespace Drupal\webform;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
 use Drupal\webform\Plugin\WebformElement\WebformElement;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Utility\WebformArrayHelper;
@@ -71,12 +72,12 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
     /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
     $webform_submission = $form_state->getFormObject()->getEntity();
 
-    // Get build and get visible form elements.
-    $elements = &$this->getBuildElements($form);
+    // Get build/visible form elements.
+    $visible_elements = &$this->getBuildElements($form);
 
     // Loop through visible elements with #states.
-    foreach ($elements as &$element) {
-      $states = WebformElementHelper::getStates($element);
+    foreach ($visible_elements as &$element) {
+      $states =& WebformElementHelper::getStates($element);
       foreach ($states as $original_state => $conditions) {
         if (!is_array($conditions)) {
           continue;
@@ -85,18 +86,31 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         // Process state/negate.
         list($state, $negate) = $this->processState($original_state);
 
-        // @todo Track an element's states.
         // If hide/show we need to make sure that validation is not triggered.
         if (strpos($state, 'visible') === 0) {
           $element['#after_build'][] = [get_class($this), 'elementAfterBuild'];
         }
 
-        // Skip if conditions targets are visible.
-        if ($this->isConditionsTargetsVisible($conditions, $elements)) {
+        $targets = $this->getConditionTargetsVisiblity($conditions, $visible_elements);
+
+        // Determine if targets are visible or cross page.
+        $all_targets_visible = (array_sum($targets) === count($targets));
+        $has_cross_page_targets = (!$all_targets_visible && array_sum($targets));
+
+        // Skip if evaluating conditions when all targets are visible.
+        if ($all_targets_visible) {
+          continue;
+        }
+
+        // Replace hidden cross page targets with hidden inputs.
+        if ($has_cross_page_targets) {
+          $cross_page_targets = array_filter($targets, function ($visible) {return $visible === FALSE;});
+          $states[$original_state] = $this->replaceCrossPageTargets($conditions, $webform_submission, $cross_page_targets, $form);
           continue;
         }
 
         $result = $this->validateConditions($conditions, $webform_submission);
+
         // Skip invalid conditions.
         if ($result === NULL) {
           continue;
@@ -138,6 +152,77 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         unset($element['#states']);
       }
     }
+  }
+
+  /**
+   * Replace hidden cross page targets with hidden inputs.
+   *
+   * @param array $conditions
+   *   An element's conditions.
+   * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
+   *   A webform submission.
+   * @param array $targets
+   *   An array of hidden target selectors.
+   * @param array $form
+   *   A form.
+   *
+   * @return array
+   *   The conditions with cross page targets replaced with hidden inputs.
+   */
+  public function replaceCrossPageTargets(array $conditions, WebformSubmissionInterface $webform_submission, array $targets, array &$form) {
+    $cross_page_conditions = [];
+    foreach ($conditions as $index => $value) {
+      if (is_int($index) && is_array($value) && WebformArrayHelper::isSequential($value)) {
+        $cross_page_conditions[$index] = $this->replaceCrossPageTargets($conditions, $webform_submission, $targets, $form);
+      }
+      else {
+        $cross_page_conditions[$index] = $value;
+
+        if (is_string($value) && in_array($value, ['and', 'or', 'xor'])) {
+          continue;
+        }
+        elseif (is_int($index)) {
+          $selector = key($value);
+          $condition = $value[$selector];
+        }
+        else {
+          $selector = $index;
+          $condition = $value;
+        }
+
+        if (!isset($targets[$selector])) {
+          continue;
+        }
+
+        $condition_result = $this->validateCondition($selector, $condition, $webform_submission);
+        if ($condition_result === NULL) {
+          continue;
+        }
+
+        $target_trigger = $condition_result ? 'value' : '!value';
+        // IMPORTANT: Using a random value to make sure users can't determine
+        // the a hidden (computed) element's value/result.
+        $target_value = rand();
+        $target_name = 'webform_states_' . md5($selector);
+        $target_selector = ':input[name="' . $target_name . '"]';
+
+        if (is_int($index)) {
+          unset($cross_page_conditions[$index][$selector]);
+          $cross_page_conditions[$index][$target_selector] = [$target_trigger => $target_value];
+        }
+        else {
+          unset($cross_page_conditions[$selector]);
+          $cross_page_conditions[$target_selector] = [$target_trigger => $target_value];
+        }
+
+        // Append cross page element's result as a hidden input.
+        $form[$target_name] = [
+          '#type' => 'hidden',
+          '#value' => $target_value,
+        ];
+      }
+    }
+    return $cross_page_conditions;
   }
 
   /****************************************************************************/
@@ -386,54 +471,48 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
    * {@inheritdoc}
    */
   public function validateConditions(array $conditions, WebformSubmissionInterface $webform_submission) {
-    $condition_logic = 'and';
+    // Determine condition logic.
+    // @see Drupal.states.Dependent.verifyConstraints
+    if (WebformArrayHelper::isSequential($conditions)) {
+      $condition_logic = (in_array('xor', $conditions)) ? 'xor' : 'or';
+    }
+    else {
+      $condition_logic = 'and';
+    }
+
     $condition_results = [];
 
     foreach ($conditions as $index => $value) {
+      // Skip and, or, and xor.
       if (is_string($value) && in_array($value, ['and', 'or', 'xor'])) {
-        $condition_logic = $value;
-        // If OR conditional logic operator, check current condition
-        // results.
-        if ($condition_logic === 'or' && array_sum($condition_results)) {
-          return TRUE;
-        }
         continue;
       }
-      elseif (is_int($index)) {
-        $selector = key($value);
-        $condition = $value[$selector];
-      }
-      else {
-        $selector = $index;
-        $condition = $value;
-      }
 
-      // Ignore invalid selector and return NULL.
-      $input_name = static::getSelectorInputName($selector);
-      if (!$input_name) {
-        return NULL;
-      }
-
-      $element_key = static::getInputNameAsArray($input_name, 0);
-
-      // Ignore missing dependee element and return NULL.
-      $element = $webform_submission->getWebform()->getElement($element_key);
-      if (!$element) {
-        return NULL;
-      }
-
-      // Issue #1149078: States API doesn't work with multiple select fields.
-      // @see https://www.drupal.org/project/drupal/issues/1149078
-      if (WebformArrayHelper::isSequential($condition)) {
-        $sub_condition_results = [];
-        foreach ($condition as $sub_condition) {
-          $sub_condition_results[] = $this->checkCondition($element, $selector, $sub_condition, $webform_submission);
+      if (is_int($index) && is_array($value)) {
+        // Validate nested conditions.
+        // NOTE: Nested conditions is not supported via the UI.
+        $nested_result = $this->validateConditions($value, $webform_submission);
+        if ($nested_result === NULL) {
+          return NULL;
         }
-        // Evaluate sub-conditions using the 'OR' operator.
-        $condition_results[$selector] = (boolean) array_sum($sub_condition_results);
+        $condition_results[] = $nested_result;
       }
       else {
-        $condition_results[$selector] = $this->checkCondition($element, $selector, $condition, $webform_submission);
+        if (is_int($index)) {
+          $selector = key($value);
+          $condition = $value[$selector];
+        }
+        else {
+          $selector = $index;
+          $condition = $value;
+        }
+
+        $condition_result = $this->validateCondition($selector, $condition, $webform_submission);
+        if ($condition_result === NULL) {
+          return NULL;
+        }
+
+        $condition_results[] = $this->validateCondition($selector, $condition, $webform_submission);
       }
     }
 
@@ -453,6 +532,59 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
       default:
         // Never called.
         return NULL;
+    }
+  }
+
+  /**
+   * Validate #state condition.
+   *
+   * @param string $selector
+   *   The #state condition selector.
+   * @param array $condition
+   *   A condition.
+   * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
+   *   A webform submission.
+   *
+   * @return bool|null
+   *   TRUE if the condition validates. NULL if condition can't be processed.
+   *   NULL is returned when there is invalid selector and missing element
+   *   in the conditions.
+   */
+  protected function validateCondition($selector, array $condition, WebformSubmissionInterface $webform_submission) {
+    // Ignore invalid selector and return NULL.
+    $input_name = static::getSelectorInputName($selector);
+    if (!$input_name) {
+      return NULL;
+    }
+
+    $element_key = static::getInputNameAsArray($input_name, 0);
+    $element = $webform_submission->getWebform()->getElement($element_key);
+
+    // If no element is found try checking file uploads which use
+    // :input[name="files[ELEMENT_KEY].
+    // @see \Drupal\webform\Plugin\WebformElement\WebformManagedFileBase::getElementSelectorOptions
+    if (!$element && strpos($selector, ':input[name="files[') === 0) {
+      $element_key = static::getInputNameAsArray($input_name, 1);
+      $element = $webform_submission->getWebform()->getElement($element_key);
+    }
+
+    // Ignore missing dependee element and return NULL.
+    if (!$element) {
+      return NULL;
+    }
+
+    // Issue #1149078: States API doesn't work with multiple select fields.
+    // @see https://www.drupal.org/project/drupal/issues/1149078
+    if (WebformArrayHelper::isSequential($condition)) {
+      $sub_condition_results = [];
+      foreach ($condition as $sub_condition) {
+        $sub_condition_results[] = $this->checkCondition($element, $selector, $sub_condition, $webform_submission);
+      }
+      // Evaluate sub-conditions using the 'OR' operator.
+      return (boolean) array_sum($sub_condition_results);
+    }
+    else {
+      return $this->checkCondition($element, $selector, $condition, $webform_submission);
     }
   }
 
@@ -521,7 +653,8 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         break;
 
       case 'pattern':
-        // PHP: Convert JavaScript-escaped Unicode characters to PCRE escape sequence format
+        // PHP: Convert JavaScript-escaped Unicode characters to PCRE
+        // escape sequence format.
         // @see \Drupal\webform\Plugin\WebformElement\TextBase::validatePattern
         $pcre_pattern = preg_replace('/\\\\u([a-fA-F0-9]{4})/', '\\x{\\1}', $trigger_value);
         $result = preg_match('{' . $pcre_pattern . '}u', $element_value);
@@ -670,23 +803,94 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
       $elements[$key] = &$element;
 
       $this->getBuildElementsRecusive($elements, $element, $subelement_states);
+
+      $element_plugin = $this->elementManager->getElementInstance($element);
+      if ($element_plugin instanceof WebformCompositeBase && !$element_plugin->hasMultipleValues($element)) {
+        // Handle composite with single item.
+        if ($subelement_states) {
+          $composite_elements = $element_plugin->getCompositeElements();
+          foreach ($composite_elements as $composite_key => $composite_element) {
+            // Skip if #access is set to FALSE.
+            if (isset($element['#' . $composite_key . '__access']) && $element['#' . $composite_key . '__access'] === FALSE) {
+              continue;
+            }
+            // Move #composite__required to #composite___required which triggers
+            // conditional #_required handling.
+            if (!empty($element['#' . $composite_key . '__required'])) {
+              unset($element['#' . $composite_key . '__required']);
+              $element['#' . $composite_key . '___required'] = TRUE;
+              $element['#' . $composite_key . '__states'] = $subelement_states;
+            }
+          }
+        }
+      }
+      elseif (isset($element['#element']) && isset($element['#webform_composite_elements'])) {
+        // Handle composite with multiple items and custom composite elements.
+        //
+        // For $element['#elements'] ...
+        // @see \Drupal\webform\Plugin\WebformElement\WebformCompositeBase::prepareMultipleWrapper
+        //
+        // For $element['#webform_composite_elements'] ...
+        // @see \Drupal\webform\Plugin\WebformElement\WebformCompositeBase::initializeCompositeElements
+        // @see \Drupal\webform_composite\Plugin\WebformElement\WebformComposite::initializeCompositeElements
+        //
+        // Recurse through a composite's sub elements.
+        $this->getBuildElementsRecusive($elements, $element['#element'], $subelement_states);
+      }
     }
   }
 
   /**
-   * Determine if #states conditions targets are visible.
+   * Get the visibility state for all of conditions targets.
    *
    * @param array $conditions
    *   An associative array containing conditions.
    * @param array $elements
    *   An associative array of visible elements.
    *
-   * @return bool
-   *   TRUE if ALL #states conditions targets are visible.
+   * @return array
+   *   An associative array keyed by target selectors with a boolean state.
    */
-  protected function isConditionsTargetsVisible(array $conditions, array $elements) {
+  protected function getConditionTargetsVisiblity(array $conditions, array $elements) {
+    $targets = [];
+    $this->getConditionTargetsVisiblityRecursive($conditions, $targets);
+    foreach ($targets as $selector) {
+      // Ignore invalid selector and return FALSE.
+      $input_name = static::getSelectorInputName($selector);
+      if (!$input_name) {
+        $targets[$selector] = FALSE;
+        continue;
+      }
+
+      // Check if the input's element is visible.
+      $element_key = static::getInputNameAsArray($input_name, 0);
+      if (!isset($elements[$element_key])) {
+        $targets[$selector] = FALSE;
+        continue;
+      }
+
+      $targets[$selector] = TRUE;
+    }
+    return $targets;
+  }
+
+  /**
+   * Recursively collect a conditions targets.
+   *
+   * @param array $conditions
+   *   An associative array containing conditions.
+   * @param array $targets
+   *   An associative array keyed by target selectors with a boolean state.
+   */
+  protected function getConditionTargetsVisiblityRecursive(array $conditions, array &$targets = []) {
     foreach ($conditions as $index => $value) {
-      if (is_string($value) && in_array($value, ['and', 'or', 'xor'])) {
+      if (is_int($index) && is_array($value) && WebformArrayHelper::isSequential($value)) {
+        // Recurse downward and get nested target element.
+        // NOTE: Nested conditions is not supported via the UI.
+        $this->getConditionTargetsVisiblityRecursive($value, $targets);
+      }
+      elseif (is_string($value) && in_array($value, ['and', 'or', 'xor'])) {
+        // Skip AND, OR, or XOR operators.
         continue;
       }
       elseif (is_int($index)) {
@@ -696,14 +900,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         $selector = $index;
       }
 
-      // Ignore invalid selector and return FALSE.
-      $input_name = static::getSelectorInputName($selector);
-      if (!$input_name) {
-        return FALSE;
-      }
-
-      $element_key = static::getInputNameAsArray($input_name, 0);
-      return isset($elements[$element_key]) ? TRUE : FALSE;
+      $targets[$selector] = $selector;
     }
   }
 

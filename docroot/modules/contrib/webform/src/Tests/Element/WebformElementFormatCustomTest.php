@@ -90,7 +90,7 @@ class WebformElementFormatCustomTest extends WebformElementTestBase {
     $this->assertRaw('element.country: {country}<br/>');
 
     // Check fieldset displayed as details.
-    $this->assertRaw('<details data-webform-element-id="test_element_format_custom--fieldset_custom" class="webform-container webform-container-type-details js-form-wrapper form-wrapper" id="test_element_format_custom--fieldset_custom" open="open">');
+    $this->assertRaw('<details class="webform-container webform-container-type-details js-form-wrapper form-wrapper" data-webform-element-id="test_element_format_custom--fieldset_custom" id="test_element_format_custom--fieldset_custom" open="open">');
     $this->assertRaw('<summary role="button" aria-controls="test_element_format_custom--fieldset_custom" aria-expanded="true" aria-pressed="true">fieldset_custom</summary>');
 
     // Check container custom HTML format.

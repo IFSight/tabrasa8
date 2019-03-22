@@ -47,6 +47,7 @@ use Drupal\webform\WebformSubmissionInterface;
  *   },
  *   bundle_entity_type = "webform",
  *   list_cache_contexts = { "user" },
+ *   list_cache_tags = { "config:webform_list", "webform_submission_list" },
  *   base_table = "webform_submission",
  *   admin_permission = "administer webform",
  *   entity_keys = {
@@ -707,7 +708,7 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
       'langcode' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
       'token' => Crypt::randomBytesBase64(),
       'uri' => preg_replace('#^' . base_path() . '#', '/', $current_request->getRequestUri()),
-      'remote_addr' => ($webform && $webform->isConfidential()) ? '' : $current_request->getClientIp(),
+      'remote_addr' => ($webform && $webform->hasRemoteAddr()) ? '' : $current_request->getClientIp(),
     ];
 
     $webform->invokeHandlers(__FUNCTION__, $values);
@@ -749,7 +750,7 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
    */
   public function save() {
     // Clear the remote_addr for confidential submissions.
-    if ($this->getWebform()->isConfidential()) {
+    if (!$this->getWebform()->hasRemoteAddr()) {
       $this->get('remote_addr')->value = '';
     }
 

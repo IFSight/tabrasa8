@@ -119,21 +119,9 @@ class WebformAccessRulesManager implements WebformAccessRulesManagerInterface {
   }
 
   /**
-   * Retrieve a list of access rules from a webform.
-   *
-   * @param \Drupal\webform\WebformInterface $webform
-   *   Webform whose access rules to retrieve.
-   *
-   * @return array
-   *   Associative array of access rules contained in the provided webform. Keys
-   *   are operation names whereas values are sub arrays with the following
-   *   structure:
-   *   - roles: (array) Array of roles that should have access to this operation
-   *   - users: (array) Array of UIDs that should have access to this operation
-   *   - permissions: (array) Array of permissions that should grant access to
-   *     this operation
+   * {@inheritdoc}
    */
-  protected function getAccessRules(WebformInterface $webform) {
+  public function getAccessRules(WebformInterface $webform) {
     return $webform->getAccessRules() + $this->getDefaultAccessRules();
   }
 
@@ -142,19 +130,9 @@ class WebformAccessRulesManager implements WebformAccessRulesManagerInterface {
   /****************************************************************************/
 
   /**
-   * Check access for a given operation and set of access rules.
-   *
-   * @param string $operation
-   *   Operation that is being requested.
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   Account that is requesting access to the operation.
-   * @param array $access_rules
-   *   A set of access rules to check against.
-   *
-   * @return bool
-   *   TRUE if access is allowed and FALSE is access is denied.
+   * {@inheritdoc}
    */
-  protected function checkAccessRules($operation, AccountInterface $account, array $access_rules) {
+  public function checkAccessRules($operation, AccountInterface $account, array $access_rules) {
     // Check administer access rule and grant full access to user.
     if ($this->checkAccessRule($access_rules['administer'], $account)) {
       return TRUE;
@@ -201,15 +179,9 @@ class WebformAccessRulesManager implements WebformAccessRulesManagerInterface {
   }
 
   /**
-   * Determine if access rules should be cached per user.
-   *
-   * @param array $access_rules
-   *   A set of access rules.
-   *
-   * @return bool
-   *   TRUE if access rules should be cached per user.
+   * {@inheritdoc}
    */
-  protected function cachePerUser(array $access_rules) {
+  public function cachePerUser(array $access_rules) {
     foreach ($access_rules as $access_rule) {
       if (!empty($access_rule['users'])) {
         return TRUE;

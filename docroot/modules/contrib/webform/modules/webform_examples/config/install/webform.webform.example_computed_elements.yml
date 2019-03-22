@@ -19,7 +19,7 @@ elements: |
     '#title': Calculation
     '#type': webform_wizard_page
     '#open': true
-    calculation:
+    calculation_section:
       '#type': webform_section
       '#title': 'Basic adding calculation using a ''computed twig'' element'
       container:
@@ -47,8 +47,8 @@ elements: |
           '#type': webform_computed_twig
           '#title': c
           '#title_display': invisible
-          '#value': '{% if data.a|length and data.b|length %}{{ data.a + data.b }}{% else %}c{% endif %}'
           '#ajax': true
+          '#template': '{% if data.a|length and data.b|length %}{{ data.a + data.b }}{% else %}c{% endif %}'
     message_warning:
       '#type': webform_message
       '#states':
@@ -87,9 +87,9 @@ elements: |
     '#open': true
     computed:
       '#type': webform_computed_twig
-      '#title': 'Computed'
+      '#title': Computed
       '#title_display': hidden
-      '#value': |
+      '#template': |
         {% set attributes = create_attribute() %}
         <h2{{ attributes.setAttribute('id', 'custom').setAttribute('style', 'color:' ~ data.color) }}>
           Hello {{ data.first_name }} {{ data.last_name }}!!!
@@ -112,6 +112,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -241,6 +242,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

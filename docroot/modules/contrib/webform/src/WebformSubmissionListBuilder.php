@@ -1089,7 +1089,10 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
         ];
       }
 
-      if ($entity->access('view_any') && $this->currentUser->hasPermission('access webform submission log')) {
+      if ($entity->access('view_any')
+        && $this->currentUser->hasPermission('access webform submission log')
+        && $webform->hasSubmissionLog()
+        && $this->moduleHandler->moduleExists('webform_submission_log')) {
         $operations['log'] = [
           'title' => $this->t('Log'),
           'weight' => 100,
@@ -1270,14 +1273,15 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
     $direction = tablesort_get_sort($header);
 
     // If query is order(ed) by 'element__*' we need to build a custom table
-    // sort using hook_query_alter().
-    // @see: webform_query_alter()
+    // sort using hook_query_TAG_alter().
+    // @see webform_query_webform_submission_list_builder_alter()
     if ($order && strpos($order['sql'], 'element__') === 0) {
       $name = $order['sql'];
       $column = $this->columns[$name];
-      $query->addMetaData('webform_submission_element_name', $column['key']);
-      $query->addMetaData('webform_submission_element_property_name', $column['property_name']);
-      $query->addMetaData('webform_submission_element_direction', $direction);
+      $query->addTag('webform_submission_list_builder')
+        ->addMetaData('webform_submission_element_name', $column['key'])
+        ->addMetaData('webform_submission_element_property_name', $column['property_name'])
+        ->addMetaData('webform_submission_element_direction', $direction);
       $result = $query->execute();
       // Must manually initialize the pager because the DISTINCT clause in the
       // query is breaking the row counting.

@@ -30,6 +30,11 @@ class WebformElementCodeMirrorTest extends WebformElementTestBase {
     $this->assertRaw('<label for="edit-text-basic">text_basic</label>');
     $this->assertRaw('<textarea data-drupal-selector="edit-text-basic" class="js-webform-codemirror webform-codemirror text form-textarea resize-vertical" data-webform-codemirror-mode="text/plain" id="edit-text-basic" name="text_basic" rows="5" cols="60">Hello</textarea>');
 
+    // Check Text with no wrap.
+    $this->drupalGet('webform/test_element_codemirror');
+    $this->assertRaw('<label for="edit-text-basic-no-wrap">text_basic_no_wrap</label>');
+    $this->assertRaw('<textarea data-drupal-selector="edit-text-basic-no-wrap" wrap="off" class="js-webform-codemirror webform-codemirror text form-textarea resize-vertical" data-webform-codemirror-mode="text/plain" id="edit-text-basic-no-wrap" name="text_basic_no_wrap" rows="5" cols="60">');
+
     /**************************************************************************/
     // code:yaml
     /**************************************************************************/

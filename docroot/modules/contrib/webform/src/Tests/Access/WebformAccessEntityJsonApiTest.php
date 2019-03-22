@@ -55,7 +55,7 @@ class WebformAccessEntityJsonApiTest extends WebformTestBase {
     // Check rest access allowed to webform.
     $this->drupalGet("jsonapi/webform/webform/$uuid");
     $this->assertNoRaw('"title":"Forbidden","status":403,"detail":"The current user is not allowed to GET the selected resource. Access to webform configuration is required."');
-    $this->assertRaw('"drupal_internal__id":"contact","title":"Contact"');
+    $this->assertRaw('"title":"Contact",');
 
     // Allow anonymous role to access webform configuration.
     $access_rules = $webform->getAccessRules();

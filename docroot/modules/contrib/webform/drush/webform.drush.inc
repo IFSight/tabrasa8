@@ -177,13 +177,13 @@ function webform_drush_command() {
       ),
     ),
     'webform-repair' => array(
-      'description' => 'Makes sure all Webform admin settings and webforms are up-to-date.',
+      'description' => 'Makes sure all Webform admin configuration and webform settings are up-to-date.',
       'core' => array(
         '8+',
       ),
       'bootstrap' => 1,
       'examples' => array(
-        'webform-repair' => 'Repairs admin settings and webforms are up-to-date.',
+        'webform-repair' => 'Repairs admin configuration and webform settings are up-to-date.',
       ),
       'aliases' => array(
         'wfr',

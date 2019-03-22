@@ -38,6 +38,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -170,6 +171,10 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
 handlers:
   test:
     id: test
@@ -180,3 +185,11 @@ handlers:
     weight: 1
     settings:
       message: 'One two one two this is just a test'
+  debug:
+    id: debug
+    label: Debug
+    handler_id: debug
+    status: false
+    conditions: {  }
+    weight: 2
+    settings: {  }

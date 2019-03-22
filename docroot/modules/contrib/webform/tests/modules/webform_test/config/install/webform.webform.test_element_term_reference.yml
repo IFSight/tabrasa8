@@ -32,7 +32,7 @@ elements: |
         '#title': webform_term_checkboxes_tree_advanced
         '#vocabulary': tags
         '#multiple': true
-        '#tree_delimiter': '..'
+        '#tree_delimiter': ..
         '#scroll': false
         '#format': breadcrumb
         '#format_items': ul
@@ -73,7 +73,7 @@ elements: |
         '#title': webform_term_select_tree_advanced
         '#vocabulary': tags
         '#multiple': true
-        '#tree_delimiter': '..'
+        '#tree_delimiter': ..
         '#format': breadcrumb
         '#format_items': ul
     webform_term_select_breadcrumb:
@@ -113,6 +113,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -242,6 +243,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

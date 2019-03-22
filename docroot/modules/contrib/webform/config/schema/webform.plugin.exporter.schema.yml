@@ -1,11 +1,10 @@
-webform.exporter.*:
+'webform.exporter.*':
   type: mapping
   label: 'Exporter settings'
-
 webform.exporter.delimited_text:
   type: mapping
-  label: 'Delimiter'
+  label: Delimiter
   mapping:
     delimiter:
       type: string
-      label: 'Delimiter'
+      label: Delimiter

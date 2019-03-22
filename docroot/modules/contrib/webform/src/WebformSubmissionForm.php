@@ -29,6 +29,7 @@ use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
  * Provides a webform to collect and edit submissions.
@@ -36,6 +37,13 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 class WebformSubmissionForm extends ContentEntityForm {
 
   use WebformDialogFormTrait;
+
+  /**
+   * The configuration object factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
 
   /**
    * The renderer service.
@@ -152,6 +160,8 @@ class WebformSubmissionForm extends ContentEntityForm {
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
@@ -175,8 +185,23 @@ class WebformSubmissionForm extends ContentEntityForm {
    * @param \Drupal\webform\WebformSubmissionGenerateInterface $submission_generate
    *   The webform submission generation service.
    */
-  public function __construct(EntityManagerInterface $entity_manager, RendererInterface $renderer, AliasManagerInterface $alias_manager, PathValidatorInterface $path_validator, WebformRequestInterface $request_handler, WebformElementManagerInterface $element_manager, WebformThirdPartySettingsManagerInterface $third_party_settings_manager, WebformMessageManagerInterface $message_manager, WebformTokenManagerInterface $token_manager, WebformSubmissionConditionsValidator $conditions_validator, WebformEntityReferenceManagerInterface $webform_entity_reference_manager, WebformSubmissionGenerateInterface $submission_generate) {
+  public function __construct(
+    EntityManagerInterface $entity_manager,
+    ConfigFactoryInterface $config_factory,
+    RendererInterface $renderer,
+    AliasManagerInterface $alias_manager,
+    PathValidatorInterface $path_validator,
+    WebformRequestInterface $request_handler,
+    WebformElementManagerInterface $element_manager,
+    WebformThirdPartySettingsManagerInterface $third_party_settings_manager,
+    WebformMessageManagerInterface $message_manager,
+    WebformTokenManagerInterface $token_manager,
+    WebformSubmissionConditionsValidator $conditions_validator,
+    WebformEntityReferenceManagerInterface $webform_entity_reference_manager,
+    WebformSubmissionGenerateInterface $submission_generate
+  ) {
     parent::__construct($entity_manager);
+    $this->configFactory = $config_factory;
     $this->renderer = $renderer;
     $this->requestHandler = $request_handler;
     $this->aliasManager = $alias_manager;
@@ -197,6 +222,7 @@ class WebformSubmissionForm extends ContentEntityForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager'),
+      $container->get('config.factory'),
       $container->get('renderer'),
       $container->get('path.alias_manager'),
       $container->get('path.validator'),
@@ -259,7 +285,7 @@ class WebformSubmissionForm extends ContentEntityForm {
 
     // Get the source entity and allow webform submission to be used as a source
     // entity.
-    $this->sourceEntity = $this->requestHandler->getCurrentSourceEntity(['webform']);
+    $this->sourceEntity = $entity->getSourceEntity() ?: $this->requestHandler->getCurrentSourceEntity(['webform']);
     if ($this->sourceEntity === $entity) {
       $this->sourceEntity = $this->requestHandler->getCurrentSourceEntity(['webform', 'webform_submission']);
     }
@@ -351,6 +377,9 @@ class WebformSubmissionForm extends ContentEntityForm {
       $webform->setSettingOverride('ajax', TRUE);
     }
 
+    // Set the webform's current operation.
+    $webform->setOperation($this->operation);
+
     return parent::setEntity($entity);
   }
 
@@ -433,6 +462,9 @@ class WebformSubmissionForm extends ContentEntityForm {
     // Server side #states API validation.
     $this->conditionsValidator->buildForm($form, $form_state);
 
+    // Add Ajax callbacks.
+    $form = $this->buildAjaxForm($form, $form_state);
+
     // Alter webform via webform handler.
     $this->getWebform()->invokeHandlers('alterForm', $form, $form_state, $webform_submission);
 
@@ -440,7 +472,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     $form_id = $this->getFormId();
     $this->thirdPartySettingsManager->alter('webform_submission_form', $form, $form_state, $form_id);
 
-    return $this->buildAjaxForm($form, $form_state);
+    return $form;
   }
 
   /**
@@ -1476,7 +1508,7 @@ class WebformSubmissionForm extends ContentEntityForm {
     // Validate file (upload) limit.
     // @see \Drupal\webform\Plugin\WebformElement\WebformManagedFileBase::validateManagedFileLimit
     $file_limit = $this->getWebform()->getSetting('form_file_limit')
-      ?: \Drupal::config('webform.settings')->get('settings.default_form_file_limit')
+      ?: $this->configFactory->get('webform.settings')->get('settings.default_form_file_limit')
       ?: '';
     $file_limit = Bytes::toInt($file_limit);
     if (!$file_limit) {
@@ -1590,12 +1622,9 @@ class WebformSubmissionForm extends ContentEntityForm {
         $uri = preg_replace('/\?$/', '', $uri);
       }
       $webform_submission->set('uri', $uri);
+      $webform_submission->set('remote_addr', ($this->getWebform()->hasRemoteAddr()) ? $this->getRequest()->getClientIp() : '');
       if ($this->isConfidential()) {
         $webform_submission->setOwnerId(0);
-        $webform_submission->set('remote_addr', '');
-      }
-      else {
-        $webform_submission->set('remote_addr', $this->getRequest()->getClientIp());
       }
     }
 

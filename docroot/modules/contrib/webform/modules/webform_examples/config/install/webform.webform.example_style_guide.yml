@@ -380,7 +380,7 @@ elements: |
           '#title': 'Employment status'
         age:
           '#type': number
-          '#title': 'Age'
+          '#title': Age
   form_elements:
     '#type': details
     '#title': 'Form elements'
@@ -390,12 +390,12 @@ elements: |
       '#title': 'Form element'
       '#description': '{description}'
       '#size': 5
-      '#field_prefix': '$'
+      '#field_prefix': $
       '#field_suffix': '.00'
     form_element_required:
       '#type': textfield
       '#title': 'Form element (Required)'
-      '#required': TRUE
+      '#required': true
       '#default_value': '{value}'
       '#attributes':
         class:
@@ -483,9 +483,9 @@ elements: |
       '#wrapper_attributes':
         class:
           - 'container-inline clearfix'
-  divider:
+  dividers:
     '#type': details
-    '#title': 'Divider'
+    '#title': Dividers
     '#open': true
     horizontal_rule_dotted_medium:
       '#type': webform_horizontal_rule
@@ -540,7 +540,7 @@ elements: |
       '#message_close': true
   flexbox:
     '#type': details
-    '#title': 'Flexbox'
+    '#title': Flexbox
     '#open': true
     webform_flexbox:
       '#type': webform_flexbox
@@ -582,6 +582,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -711,6 +712,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

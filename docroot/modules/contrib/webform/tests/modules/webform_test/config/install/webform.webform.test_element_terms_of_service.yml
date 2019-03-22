@@ -17,19 +17,19 @@ category: 'Test: Element'
 elements: |
   terms_of_service_default:
     '#type': webform_terms_of_service
-    '#title': I agree to the {terms of service}. (default)
+    '#title': 'I agree to the {terms of service}. (default)'
     '#terms_title': terms_of_service_default
     '#terms_content': 'These are the terms of service.'
     '#required': true
   terms_of_service_modal:
     '#type': webform_terms_of_service
-    '#title': I agree to the {terms of service}. (modal)
+    '#title': 'I agree to the {terms of service}. (modal)'
     '#terms_type': modal
     '#terms_title': terms_of_service_modal
     '#terms_content': 'These are the terms of service.'
   terms_of_service_slideout:
     '#type': webform_terms_of_service
-    '#title': I agree to the {terms of service}. (slideout)
+    '#title': 'I agree to the {terms of service}. (slideout)'
     '#terms_type': slideout
     '#terms_title': terms_of_service_slideout
     '#terms_content': 'These are the terms of service.'
@@ -50,6 +50,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -179,6 +180,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

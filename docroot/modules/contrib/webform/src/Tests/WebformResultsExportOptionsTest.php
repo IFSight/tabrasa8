@@ -30,7 +30,6 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
    */
   public function testExportOptions() {
     $admin_submission_user = $this->drupalCreateUser([
-      'access webform submission log',
       'administer webform submission',
     ]);
 

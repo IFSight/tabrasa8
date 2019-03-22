@@ -49,15 +49,24 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     $this->drupalPostForm('webform/test_form_preview', ['name' => 'test', 'email' => 'example@example.com', 'checkbox' => TRUE], t('Preview'));
 
     $this->assertRaw('<h1 class="page-title">Test: Webform: Preview: Preview</h1>');
+
     $this->assertRaw('<b>Preview</b></li>');
+
     $this->assertRaw('Please review your submission. Your submission is not complete until you press the "Submit" button!');
+
     $this->assertFieldByName('op', 'Submit');
     $this->assertFieldByName('op', '< Previous');
-    $this->assertRaw('<div id="test_form_preview--name" class="webform-element webform-element-type-textfield js-form-item form-item js-form-type-item form-type-item js-form-item-name form-item-name">');
+
+    $this->assertRaw('<div class="webform-preview js-form-wrapper form-wrapper" data-drupal-selector="edit-preview" id="edit-preview"><fieldset class="format-attributes-class webform-container webform-container-type-fieldset js-form-item form-item js-form-wrapper form-wrapper" id="test_form_preview--fieldset">');
+    $this->assertRaw('<div class="format-attributes-class webform-element webform-element-type-textfield js-form-item form-item js-form-type-item form-type-item js-form-item-name form-item-name" id="test_form_preview--name">');
     $this->assertRaw('<label>Name</label>' . PHP_EOL . '        test');
-    $this->assertRaw('<div id="test_form_preview--email" class="webform-element webform-element-type-email js-form-item form-item js-form-type-item form-type-item js-form-item-email form-item-email">');
+
+    $this->assertRaw('<section class="format-attributes-class js-form-item form-item js-form-wrapper form-wrapper webform-section" id="test_form_preview--container">');
+    $this->assertRaw('<div class="format-attributes-class webform-element webform-element-type-email js-form-item form-item js-form-type-item form-type-item js-form-item-email form-item-email" id="test_form_preview--email">');
     $this->assertRaw('<label>Email</label>' . PHP_EOL . '        <a href="mailto:example@example.com">example@example.com</a>');
-    $this->assertRaw('<div id="test_form_preview--checkbox" class="webform-element webform-element-type-checkbox js-form-item form-item js-form-type-item form-type-item js-form-item-checkbox form-item-checkbox">');
+
+    $this->assertRaw('<div class="format-attributes-class webform-element webform-element-type-checkbox js-form-item form-item js-form-type-item form-type-item js-form-item-checkbox form-item-checkbox" id="test_form_preview--checkbox">');
+    $this->assertRaw('<section class="format-attributes-class js-form-item form-item js-form-wrapper form-wrapper webform-section" id="test_form_preview--section">');
     $this->assertRaw('<label>Checkbox</label>' . PHP_EOL . '        Yes');
     $this->assertRaw('<div class="webform-preview js-form-wrapper form-wrapper" data-drupal-selector="edit-preview" id="edit-preview">');
 
@@ -100,7 +109,7 @@ class WebformSettingsPreviewTest extends WebformTestBase {
     // Check empty elements are included in preview.
     $this->drupalPostForm('webform/test_form_preview', ['name' => '', 'email' => '', 'checkbox' => FALSE], t('Preview'));
     $this->assertRaw('<label>Name</label>' . PHP_EOL . '        {Empty}');
-    $this->assertRaw('<div id="test_form_preview--email" class="webform-element webform-element-type-email js-form-item form-item js-form-type-item form-type-item js-form-item-email form-item-email">');
+    $this->assertRaw('<div class="format-attributes-class webform-element webform-element-type-email js-form-item form-item js-form-type-item form-type-item js-form-item-email form-item-email" id="test_form_preview--email">');
     $this->assertRaw('<label>Email</label>' . PHP_EOL . '        {Empty}');
     $this->assertRaw('<label>Checkbox</label>' . PHP_EOL . '        No');
 

@@ -43,7 +43,7 @@ git push
 git branch -D [issue-number]-[issue-description]
 git push origin :[issue-number]-[issue-description]
 
-# Delete remove branch
+# Delete remote branch
 git push origin --delete [issue-number]-[issue-description]
 ```
 
@@ -130,6 +130,7 @@ drush en -y webform\
   webform_test_handler\
   webform_test_handler_remote_post\
   webform_test_options\
+  webform_test_paragraphs\
   webform_test_rest\
   webform_test_submissions\
   webform_test_translation\

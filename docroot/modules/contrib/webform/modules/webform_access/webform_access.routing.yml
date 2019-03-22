@@ -17,7 +17,7 @@ entity.webform_access_group.add_form:
     _entity_create_access: 'webform_access_group'
 
 entity.webform_access_group.edit_form:
-  path: '/admin/structure/webform/access/group/manage/{webform_access_group}/edit'
+  path: '/admin/structure/webform/access/group/manage/{webform_access_group}'
   defaults:
     _entity_form: 'webform_access_group.edit'
     _title: 'Edit webform access group'
@@ -59,7 +59,7 @@ entity.webform_access_type.add_form:
     _entity_create_access: 'webform_access_type'
 
 entity.webform_access_type.edit_form:
-  path: '/admin/structure/webform/access/type/manage/{webform_access_type}/edit'
+  path: '/admin/structure/webform/access/type/manage/{webform_access_type}'
   defaults:
     _entity_form: 'webform_access_type.edit'
     _title: 'Edit webform access type'

@@ -83,7 +83,6 @@ class ExampleWebformHandler extends WebformHandlerBase {
       '#type' => 'textfield',
       '#title' => $this->t('Message to be displayed when form is completed'),
       '#default_value' => $this->configuration['message'],
-      '#parents' => ['settings', 'message'],
       '#required' => TRUE,
     ];
 
@@ -97,11 +96,10 @@ class ExampleWebformHandler extends WebformHandlerBase {
       '#title' => $this->t('Enable debugging'),
       '#description' => $this->t('If checked, every handler method invoked will be displayed onscreen to all users.'),
       '#return_value' => TRUE,
-      '#parents' => ['settings', 'debug'],
       '#default_value' => $this->configuration['debug'],
     ];
 
-    return $form;
+    return $this->setSettingsParents($form);
   }
 
   /**

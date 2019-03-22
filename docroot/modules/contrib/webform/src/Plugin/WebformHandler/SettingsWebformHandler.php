@@ -181,7 +181,6 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#title' => $this->t('Custom settings (YAML)'),
       '#description' => $this->t('Enter the setting name and value as YAML.'),
       '#default_value' => $custom_settings,
-      '#parents' => ['settings', 'custom'],
     ];
 
     // Custom settings definitions.
@@ -228,7 +227,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
 
     $this->tokenManager->elementValidate($form);
 
-    return $this->setSettingsParentsRecursively($form);
+    return $this->setSettingsParents($form);
   }
 
   /**
@@ -394,7 +393,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       // Replace token value and cast booleans and integers.
       $type = $settings_definitions[$name]['type'];
       if (in_array($type, ['boolean', 'integer'])) {
-        $value = $this->tokenManager->replace($value, $webform_submission);
+        $value = $this->tokenManager->replaceNoRenderContext($value, $webform_submission);
         settype($value, $type);
         $settings_override[$name] = $value;
       }

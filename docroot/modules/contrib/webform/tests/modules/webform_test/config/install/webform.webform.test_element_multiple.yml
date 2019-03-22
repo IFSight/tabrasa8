@@ -208,7 +208,7 @@ elements: |
         '#help': 'This is custom help text'
       option:
         '#type': container
-        '#title': 'text/description'
+        '#title': text/description
         '#title_display': invisible
         '#help': 'This is custom help text'
         text:
@@ -224,10 +224,10 @@ elements: |
     '#default_value':
       - value: one
         text: One
-        description: This is the number 1.
+        description: 'This is the number 1.'
       - value: two
         text: Two
-        description: This is the number 2.
+        description: 'This is the number 2.'
   webform_multiple_no_items:
     '#type': webform_multiple
     '#title': webform_multiple_no_items
@@ -250,6 +250,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -379,6 +380,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

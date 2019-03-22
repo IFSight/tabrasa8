@@ -31,7 +31,7 @@ use Drupal\webform_access\WebformAccessGroupInterface;
  *   },
  *   links = {
  *     "add-form" = "/admin/structure/webform/config/access/group/add",
- *     "edit-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/edit",
+ *     "edit-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}",
  *     "duplicate-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/duplicate",
  *     "delete-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/delete",
  *     "collection" = "/admin/structure/webform/config/access/group/manage",

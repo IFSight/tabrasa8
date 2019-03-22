@@ -18,18 +18,18 @@ elements: |
   email:
     '#type': email
     '#title': email
-    '#default_value': 'example@example.com'
+    '#default_value': example@example.com
   emails:
     '#type': email
     '#title': emails
     '#multiple': true
     '#default_value':
-      - 'one@example.com'
-      - 'two@example.com'
-      - 'three@example.com'
+      - one@example.com
+      - two@example.com
+      - three@example.com
   user:
     '#type': webform_entity_select
-    '#title': 'user'
+    '#title': user
     '#target_type': user
     '#selection_handler': 'default:user'
     '#selection_settings':
@@ -37,7 +37,7 @@ elements: |
     '#default_value': 1
   users:
     '#type': webform_entity_select
-    '#title': 'user'
+    '#title': user
     '#multiple': true
     '#target_type': user
     '#selection_handler': 'default:user'
@@ -78,8 +78,8 @@ elements: |
     '#type': webform_contact
     '#title': contact
     '#default_value':
-      name: John Smith
-      email: 'john@example.com'
+      name: 'John Smith'
+      email: john@example.com
       address: '10 Main Street'
       city: Springfield
       state_province: Alabama
@@ -91,14 +91,14 @@ elements: |
     '#multiple': true
     '#default_value':
       - name: 'John Smith'
-        email: 'john@example.com'
+        email: john@example.com
         address: '10 Main Street'
         city: Springfield
         state_province: Alabama
         postal_code: 12345
         country: 'United States'
       - name: 'Jane Doe'
-        email: 'jane@example.com'
+        email: jane@example.com
         address: '10 Main Street'
         city: Springfield
         state_province: Alabama
@@ -144,6 +144,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -377,6 +378,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

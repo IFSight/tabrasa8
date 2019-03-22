@@ -123,7 +123,15 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         ':settings_elements_href' => Url::fromRoute('webform.config.elements')->toString(),
       ];
 
-      if ($library_exists) {
+      if (!empty($library['module'])) {
+        // Installed by module.
+        $t_args['@module'] = $library['module'];
+        $t_args[':module_href'] = 'https://www.drupal.org/project/' . $library['module'];
+        $stats['@installed']++;
+        $title = $this->t('<strong>@title</strong> (Installed)', $t_args);
+        $description = $this->t('The <a href=":homepage_href">@title</a> library is installed by the <b><a href=":module_href">@module</a></b> module.', $t_args);
+      }
+      elseif ($library_exists) {
         // Installed.
         $stats['@installed']++;
         $title = $this->t('<strong>@title @version</strong> (Installed)', $t_args);
@@ -277,7 +285,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'version' => $ckeditor_version,
     ];
     $libraries['ckeditor.fakeobjects'] = [
-      'title' => $this->t('CKEditor: Fakeobjects'),
+      'title' => $this->t('CKEditor: Fake Objects'),
       'description' => $this->t('Utility required by CKEditor link plugin.'),
       'notes' => $this->t('Allows CKEditor to use basic image and link dialog.'),
       'homepage_url' => Url::fromUri('https://ckeditor.com/addon/fakeobjects'),
@@ -321,9 +329,9 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('Code Mirror is a versatile text editor implemented in JavaScript for the browser.'),
       'notes' => $this->t('Code Mirror is used to provide a text editor for YAML, HTML, CSS, and JavaScript configuration settings and messages.'),
       'homepage_url' => Url::fromUri('http://codemirror.net/'),
-      'download_url' => Url::fromUri('https://github.com/components/codemirror/archive/5.41.0.zip'),
+      'download_url' => Url::fromUri('https://github.com/components/codemirror/archive/5.42.0.zip'),
       'issues_url' => Url::fromUri('https://github.com/codemirror/codemirror/issues'),
-      'version' => '5.41.0',
+      'version' => '5.42.0',
     ];
     $libraries['algolia.places'] = [
       'title' => $this->t('Algolia Places'),
@@ -334,8 +342,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       // NOTE: Using NPM/JsDelivr because it contains the '/dist/cdn/' directory.
       // @see https://asset-packagist.org/package/detail?fullname=npm-asset/places.js
       // @see https://www.jsdelivr.com/package/npm/places.js
-      'download_url' => Url::fromUri('https://registry.npmjs.org/places.js/-/places.js-1.13.0.tgz'),
-      'version' => '1.13.0',
+      'download_url' => Url::fromUri('https://registry.npmjs.org/places.js/-/places.js-1.15.0.tgz'),
+      'version' => '1.15.0',
       'elements' => ['webform_location_places'],
     ];
     $libraries['jquery.geocomplete'] = [
@@ -362,16 +370,16 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t('Input masks ensures a predefined format is entered. This can be useful for dates, numerics, phone numbers, etc…'),
       'notes' => $this->t('Input masks are used to ensure predefined and custom formats for text fields.'),
       'homepage_url' => Url::fromUri('https://robinherbots.github.io/Inputmask/'),
-      'download_url' => Url::fromUri('https://github.com/RobinHerbots/jquery.inputmask/archive/4.0.2.zip'),
-      'version' => '4.0.2',
+      'download_url' => Url::fromUri('https://github.com/RobinHerbots/jquery.inputmask/archive/4.0.4.zip'),
+      'version' => '4.0.4',
     ];
     $libraries['jquery.intl-tel-input'] = [
       'title' => $this->t('jQuery: International Telephone Input'),
       'description' => $this->t("A jQuery plugin for entering and validating international telephone numbers. It adds a flag dropdown to any input, detects the user's country, displays a relevant placeholder and provides formatting/validation methods."),
       'notes' => $this->t('International Telephone Input is used by the Telephone element.'),
       'homepage_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input'),
-      'download_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input/archive/v14.0.4.zip'),
-      'version' => '14.0.4',
+      'download_url' => Url::fromUri('https://github.com/jackocnr/intl-tel-input/archive/v14.0.6.zip'),
+      'version' => '14.0.6',
     ];
     $libraries['jquery.rateit'] = [
       'title' => $this->t('jQuery: RateIt'),
@@ -389,6 +397,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'homepage_url' => Url::fromUri('https://select2.github.io/'),
       'download_url' => Url::fromUri('https://github.com/select2/select2/archive/4.0.5.zip'),
       'version' => '4.0.5',
+      'module' => $this->moduleHandler->moduleExists('select2') ? 'select2' : '',
     ];
     $libraries['jquery.chosen'] = [
       'title' => $this->t('jQuery: Chosen'),
@@ -397,6 +406,7 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'homepage_url' => Url::fromUri('https://harvesthq.github.io/chosen/'),
       'download_url' => Url::fromUri('https://github.com/harvesthq/chosen/releases/download/v1.8.7/chosen_v1.8.7.zip'),
       'version' => '1.8.7',
+      'module' => $this->moduleHandler->moduleExists('chosen') ? 'chosen' : '',
     ];
     $libraries['jquery.textcounter'] = [
       'title' => $this->t('jQuery: Text Counter'),

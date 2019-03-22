@@ -2,7 +2,7 @@
 
 namespace ReCaptcha\RequestMethod;
 
-use GuzzleHttp\Exception\RequestException;
+use ReCaptcha\ReCaptcha;
 use ReCaptcha\RequestMethod;
 use ReCaptcha\RequestParameters;
 
@@ -12,16 +12,9 @@ use ReCaptcha\RequestParameters;
 class Drupal8Post implements RequestMethod {
 
   /**
-   * URL to which requests are POSTed.
-   *
-   * @const string
-   */
-  const SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
-
-  /**
    * Submit the POST request with the specified parameters.
    *
-   * @param ReCaptcha\RequestParameters $params
+   * @param \ReCaptcha\ReCaptcha\RequestParameters $params
    *   Request parameters.
    *
    * @return string
@@ -29,22 +22,30 @@ class Drupal8Post implements RequestMethod {
    */
   public function submit(RequestParameters $params) {
 
-    try {
-      $options = [
-        'headers' => [
-          'Content-type' => 'application/x-www-form-urlencoded',
-        ],
-        'body' => $params->toQueryString(),
-      ];
+    $options = [
+      'headers' => [
+        'Content-type' => 'application/x-www-form-urlencoded',
+      ],
+      'body' => $params->toQueryString(),
+      // Stop firing exception on response status code >= 300.
+      // See http://docs.guzzlephp.org/en/stable/handlers-and-middleware.html
+      'http_errors' => FALSE,
+    ];
 
-      $response = \Drupal::httpClient()->post(self::SITE_VERIFY_URL, $options);
-    }
-    catch (RequestException $exception) {
-      \Drupal::logger('reCAPTCHA web service')->error($exception);
-      return '';
-    }
+    $response = \Drupal::httpClient()->post(ReCaptcha::SITE_VERIFY_URL, $options);
 
-    return (string) $response->getBody();
+    if ($response->getStatusCode() == 200) {
+      // The service request was successful.
+      return (string) $response->getBody();
+    }
+    elseif ($response->getStatusCode() < 0) {
+      // Negative status codes typically point to network or socket issues.
+      return '{"success": false, "error-codes": ["' . ReCaptcha::E_CONNECTION_FAILED . '"]}';
+    }
+    else {
+      // Positive none 200 status code typically means the request has failed.
+      return '{"success": false, "error-codes": ["' . ReCaptcha::E_BAD_RESPONSE . '"]}';
+    }
   }
 
 }

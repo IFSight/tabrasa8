@@ -27,7 +27,7 @@ elements: |
   checkbox_value_select_other:
     '#type': webform_checkbox_value
     '#title': checkbox_value_select_other
-    '#default_value': 'Four'
+    '#default_value': Four
     '#element':
       '#type': webform_select_other
       '#options':
@@ -51,6 +51,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -180,6 +181,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

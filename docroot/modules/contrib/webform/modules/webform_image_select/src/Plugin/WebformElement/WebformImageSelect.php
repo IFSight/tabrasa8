@@ -53,9 +53,7 @@ class WebformImageSelect extends Select {
    */
   public function initialize(array &$element) {
     // Set element images.
-    if (isset($element['#images'])) {
-      $element['#images'] = WebformImageSelectImages::getElementImages($element);
-    }
+    $element['#images'] = WebformImageSelectImages::getElementImages($element);
 
     WebformImageSelectElement::setOptions($element);
 

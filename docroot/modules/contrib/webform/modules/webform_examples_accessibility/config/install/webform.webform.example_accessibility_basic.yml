@@ -23,7 +23,7 @@ elements: |
       '#title': 'Text field'
       '#type': textfield
     textarea:
-      '#title': 'Textarea'
+      '#title': Textarea
       '#type': textarea
   option_elements:
     '#type': details
@@ -33,31 +33,31 @@ elements: |
       '#title': 'Select one'
       '#type': select
       '#options':
-        'option_1': 'Option 1'
-        'option_2': 'Option 2'
-        'option_3': 'Option 3'
+        option_1: 'Option 1'
+        option_2: 'Option 2'
+        option_3: 'Option 3'
     select_multiple:
       '#title': 'Select multiple'
       '#type': select
       '#multiple': true
       '#options':
-        'option_1': 'Option 1'
-        'option_2': 'Option 2'
-        'option_3': 'Option 3'
+        option_1: 'Option 1'
+        option_2: 'Option 2'
+        option_3: 'Option 3'
     radios:
-      '#title': 'Radios'
+      '#title': Radios
       '#type': radios
       '#options':
-        'option_1': 'Option 1'
-        'option_2': 'Option 2'
-        'option_3': 'Option 3'
+        option_1: 'Option 1'
+        option_2: 'Option 2'
+        option_3: 'Option 3'
     checkboxes:
-      '#title': 'Checkboxes'
+      '#title': Checkboxes
       '#type': checkboxes
       '#options':
-        'option_1': 'Option 1'
-        'option_2': 'Option 2'
-        'option_3': 'Option 3'
+        option_1: 'Option 1'
+        option_2: 'Option 2'
+        option_3: 'Option 3'
     checkbox:
       '#type': checkbox
       '#title': Checkbox
@@ -125,9 +125,6 @@ elements: |
       '#output': right
       '#output__field_prefix': $
       '#output__field_suffix': '.00'
-    color:
-      '#type': color
-      '#title': Color
   
 css: ''
 javascript: ''
@@ -145,6 +142,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -274,6 +272,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

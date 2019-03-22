@@ -21,11 +21,11 @@ elements: |
   textfield_prepopulate:
     '#type': textfield
     '#title': textfield_prepopulate
-    '#prepopulate':  true
+    '#prepopulate': true
   managed_file_prepopulate:
     '#type': managed_file
     '#title': managed_file_prepopulate
-    '#prepopulate':  true
+    '#prepopulate': true
   prepopulate_test:
     '#markup': '<a href="?textfield=value&textfield_prepopulate=value">?textfield=value&textfield_prepopulate=value</a>'
   
@@ -45,6 +45,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -174,6 +175,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

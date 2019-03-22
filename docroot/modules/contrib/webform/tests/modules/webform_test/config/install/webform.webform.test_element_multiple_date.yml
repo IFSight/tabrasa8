@@ -29,15 +29,15 @@ elements: |
     '#open': true
     date_basic:
       '#type': date
-      '#title': 'date_basic'
+      '#title': date_basic
       '#multiple': true
     datetime_basic:
       '#type': datetime
-      '#title': 'datetime_basic'
+      '#title': datetime_basic
       '#multiple': true
     datelist_basic:
       '#type': datelist
-      '#title': 'datelist_basic'
+      '#title': datelist_basic
       '#multiple': true
   
 css: ''
@@ -56,6 +56,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -185,6 +186,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

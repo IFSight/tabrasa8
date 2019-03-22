@@ -52,6 +52,7 @@ class WebformMapping extends WebformElementBase {
       'format' => $this->getItemDefaultFormat(),
       'format_html' => '',
       'format_text' => '',
+      'format_attributes' => [],
       // Mapping settings.
       'arrow' => '→',
       'source' => [],

@@ -15,17 +15,49 @@ title: 'Test: Webform: Preview'
 description: 'Test submission preview.'
 category: 'Test: Webform'
 elements: |
-  name:
-    '#type': textfield
-    '#title': Name
-  email:
-    '#type': email
-    '#title': Email
-  checkbox:
+  fieldset:
+    '#type': fieldset
+    '#title': fieldset
+    '#format_attributes':
+      class:
+        - format-attributes-class
+    name:
+      '#type': textfield
+      '#title': Name
+      '#format_attributes':
+        class:
+        - format-attributes-class
+  container:
+    '#type': container
+    '#title': container
+    '#format_attributes':
+      class:
+        - format-attributes-class
+    email:
+      '#type': email
+      '#title': Email
+      '#format_attributes':
+        class:
+          - format-attributes-class
+  section:
+    '#type': webform_section
+    '#title': section
+    '#format_attributes':
+      class:
+        - format-attributes-class
+    checkbox:
       '#type': checkbox
       '#title': Checkbox
+      '#format_attributes':
+        class:
+          - format-attributes-class
   
-css: ''
+css: |
+  .format-attributes-class {
+    border: 1px dashed #ccc;
+    padding: 10px;
+  }
+  
 javascript: ''
 settings:
   ajax: false
@@ -41,6 +73,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: true
   form_prepopulate_source_entity: false
@@ -170,6 +203,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

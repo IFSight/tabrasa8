@@ -146,9 +146,8 @@ class WebformImageSelectImages extends ConfigEntityBase implements WebformImageS
    * {@inheritdoc}
    */
   public static function getElementImages(array &$element) {
-
     // If element already has #images return them.
-    if (is_array($element['#images'])) {
+    if (isset($element['#images']) && is_array($element['#images'])) {
       return $element['#images'];
     }
 

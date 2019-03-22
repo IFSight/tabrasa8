@@ -38,7 +38,7 @@ elements: |
     '#type': textfield
     '#title': more_title_description_hidden
     '#description': '{This is an example of a hidden description}'
-    '#description_display': 'invisible'
+    '#description_display': invisible
     '#more_title': '{Custom more title}'
     '#more': '{This is an example of more}'
   more_datetime:
@@ -78,6 +78,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -207,6 +208,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

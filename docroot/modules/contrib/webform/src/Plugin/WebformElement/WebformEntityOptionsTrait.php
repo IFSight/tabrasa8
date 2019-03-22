@@ -39,4 +39,12 @@ trait WebformEntityOptionsTrait {
     return parent::getElementSelectorInputsOptions($element);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorSourceValues(array $element) {
+    $this->setOptions($element);
+    return parent::getElementSelectorSourceValues($element);
+  }
+
 }

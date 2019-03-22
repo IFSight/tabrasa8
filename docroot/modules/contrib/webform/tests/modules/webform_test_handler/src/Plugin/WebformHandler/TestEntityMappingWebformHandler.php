@@ -115,7 +115,6 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
     $form['container']['bundle'] = [
       '#type' => 'select',
       '#title' => $this->t('Bundles'),
-      '#parents' => ['settings', 'bundle'],
       '#default_value' => $this->configuration['bundle'],
       '#options' => $bundle_options,
       '#ajax' => $ajax,
@@ -147,12 +146,11 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
       '#description_display' => 'before',
       '#default_value' => $this->configuration['fields'],
       '#required' => TRUE,
-      '#parents' => ['settings', 'fields'],
       '#source' => $element_options,
       '#destination' => $field_options,
     ];
 
-    return $form;
+    return $this->setSettingsParents($form);
   }
 
   /**

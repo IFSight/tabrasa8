@@ -2,7 +2,6 @@
 
 namespace Drupal\linkit\Controller;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\linkit\SuggestionManager;
@@ -77,7 +76,7 @@ class AutocompleteController implements ContainerInjectionInterface {
     $this->linkitProfile = $this->linkitProfileStorage->load($linkit_profile_id);
     $string = $request->query->get('q');
 
-    $suggestionCollection = $this->suggestionManager->getSuggestions($this->linkitProfile, Unicode::strtolower($string));
+    $suggestionCollection = $this->suggestionManager->getSuggestions($this->linkitProfile, mb_strtolower($string));
 
     /*
      * If there are no suggestions from the matcher plugins, we have to add a

@@ -349,11 +349,11 @@ elements: |
     webform_computed_token:
       '#type': webform_computed_token
       '#title': 'Computed token | <script>alert(''This markup is not escaped properly!!!'') </script>'
-      '#value': 'This is a Computed token value.'
+      '#template': 'This is a Computed token value.'
     webform_computed_twig:
       '#type': webform_computed_twig
       '#title': 'Computed Twig | <script>alert(''This markup is not escaped properly!!!'') </script>'
-      '#value': 'This is a Computed Twig value.'
+      '#template': 'This is a Computed Twig value.'
   containers:
     '#type': details
     '#title': 'Containers | <script>alert(''This markup is not escaped properly!!!'') </script>'
@@ -535,6 +535,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -664,6 +665,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

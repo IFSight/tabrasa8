@@ -90,6 +90,13 @@ abstract class TextBase extends WebformElementBase {
       else {
         $element['#attributes']['data-inputmask-mask'] = $input_mask;
       }
+      // Set input mask #pattern.
+      $input_masks = $this->getInputMasks();
+      if (isset($input_masks[$input_mask])
+        && isset($input_masks[$input_mask]['pattern']) &&
+        empty($element['#pattern'])) {
+        $element['#pattern'] = $input_masks[$input_mask]['pattern'];
+      }
 
       $element['#attributes']['class'][] = 'js-webform-input-mask';
       $element['#attached']['library'][] = 'webform/webform.element.inputmask';
@@ -132,26 +139,7 @@ abstract class TextBase extends WebformElementBase {
       '#other__placeholder' => $this->t('Enter input mask…'),
       '#other__description' => $this->t('(9 = numeric; a = alphabetical; * = alphanumeric)'),
       '#empty_option' => $this->t('- None -'),
-      '#options' => [
-        'Basic' => [
-          "'alias': 'currency'" => $this->t('Currency - @format', ['@format' => '$ 9.99']),
-          "'alias': 'datetime'" => $this->t('Date - @format', ['@format' => "2007-06-09'T'17:46:21"]),
-          "'alias': 'decimal'" => $this->t('Decimal - @format', ['@format' => '1.234']),
-          "'alias': 'email'" => $this->t('Email - @format', ['@format' => 'example@example.com']),
-          "'alias': 'percentage'" => $this->t('Percentage - @format', ['@format' => '99%']),
-          '(999) 999-9999' => $this->t('Phone - @format', ['@format' => '(999) 999-9999']),
-          '99999[-9999]' => $this->t('ZIP Code - @format', ['@format' => '99999[-9999]']),
-        ],
-        'Advanced' => [
-          "'alias': 'ip'" => $this->t('IP address - @format', ['@format' => '255.255.255.255']),
-          '[9-]AAA-999' => $this->t('License plate - @format', ['@format' => '[9-]AAA-999']),
-          "'alias': 'mac'" => $this->t('MAC addresses - @format', ['@format' => '99-99-99-99-99-99']),
-          '999-99-9999' => $this->t('SSN - @format', ['@format' => '999-99-9999']),
-          "'alias': 'vin'" => $this->t('VIN (Vehicle identification number)'),
-          "'casing': 'upper'" => $this->t('Uppercase - UPPERCASE'),
-          "'casing': 'lower'" => $this->t('Lowercase - lowercase'),
-        ],
-      ],
+      '#options' => $this->getInputMaskOptions(),
     ];
     if ($this->librariesManager->isExcluded('jquery.inputmask')) {
       $form['form']['input_mask']['#access'] = FALSE;
@@ -290,9 +278,105 @@ abstract class TextBase extends WebformElementBase {
     }
 
     // Validate #counter_maximum.
-    if (!empty($properties['#counter_type']) && empty($properties['#counter_maximum'])) {
-      $form_state->setErrorByName('counter_maximum', t('Counter maximum is required.'));
+    if (!empty($properties['#counter_type']) && empty($properties['#counter_maximum']) && empty($properties['#counter_minimum'])) {
+      $form_state->setErrorByName('counter_minimum', t('Counter minimum or maximum is required.'));
+      $form_state->setErrorByName('counter_maximum', t('Counter minimum or maximum is required.'));
     }
+  }
+
+  /****************************************************************************/
+  // Input masks.
+  /****************************************************************************/
+
+  /**
+   * Get input masks.
+   *
+   * @return array
+   *   An associative array keyed my input mask contain input mask title,
+   *   example, and patterh.
+   */
+  protected function getInputMasks() {
+    return [
+      "'alias': 'currency'" => [
+        'title' => $this->t('Currency'),
+        'example' => '$ 9.99',
+        'pattern' => '^\$ \d+.\d\d$',
+      ],
+      "'alias': 'datetime'" => [
+        'title' => $this->t('Date'),
+        'example' => '2007-06-09\'T\'17:46:21',
+      ],
+      "'alias': 'decimal'" => [
+        'title' => $this->t('Decimal'),
+        'example' => '1.234',
+        'pattern' => '^\d+(\.\d+)?$',
+      ],
+      "'alias': 'email'" => [
+        'title' => $this->t('Email'),
+        'example' => 'example@example.com',
+      ],
+      "'alias': 'ip'" => [
+        'title' => $this->t('IP address'),
+        'example' => '255.255.255.255',
+        'pattern' => '^\d\d\d\.\d\d\d\.\d\d\d\.\d\d\d$',
+      ],
+      '[9-]AAA-999' => [
+        'title' => $this->t('License plate'),
+        'example' => '[9-]AAA-999',
+      ],
+      "'alias': 'mac'" => [
+        'title' => $this->t('MAC address'),
+        'example' => '99-99-99-99-99-99',
+        'pattern' => '^\d\d-\d\d-\d\d-\d\d-\d\d-\d\d$',
+      ],
+      "'alias': 'percentage'" => [
+        'title' => $this->t('Percentage'),
+        'example' => '99 %',
+        'pattern' => '^\d+ %$',
+      ],
+      '(999) 999-9999' => [
+        'title' => $this->t('Phone'),
+        'example' => '(999) 999-9999',
+        'pattern' => '^\(\d\d\d\) \d\d\d-\d\d\d\d$',
+      ],
+      '999-99-9999' => [
+        'title' => $this->t('Social Security Number (SSN)'),
+        'example' => '999-99-9999',
+        'pattern' => '^\d\d\d-\d\d-\d\d\d\d$',
+      ],
+      "'alias': 'vin'" => [
+        'title' => $this->t('Vehicle identification number (VIN)'),
+        'example' => 'JA3AY11A82U020534',
+      ],
+      '99999[-9999]' => [
+        'title' => $this->t('ZIP Code'),
+        'example' => '99999[-9999]',
+        'pattern' => '^\d\d\d\d\d(-\d\d\d\d)?$',
+      ],
+      "'casing': 'upper'" => [
+        'title' => $this->t('Uppercase'),
+        'example' => 'UPPERCASE',
+      ],
+      "'casing': 'lower'" => [
+        'title' => $this->t('Lowercase '),
+        'example' => 'lowercase',
+      ],
+    ];
+  }
+
+  /**
+   * Get input masks as select menu options.
+   *
+   * @return array
+   *   An associative array of options.
+   */
+  protected function getInputMaskOptions() {
+    $input_masks = $this->getInputMasks();
+    $options = [];
+    foreach ($input_masks as $input_mask => $settings) {
+      $options[$input_mask] = $settings['title'] . (!empty($settings['example']) ? ' - ' . $settings['example'] : '');
+    }
+    return $options;
   }
 
 }

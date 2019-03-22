@@ -44,12 +44,12 @@ elements: |
     '#open': true
     webform_image_select_element_images_entity:
       '#type': webform_image_select_element_images
-      '#title': 'webform_image_select_element_images_entity'
+      '#title': webform_image_select_element_images_entity
       '#required': true
       '#default_value': kittens
     webform_image_select_element_images_custom:
       '#type': webform_image_select_element_images
-      '#title': 'webform_image_select_element_images_custom'
+      '#title': webform_image_select_element_images_custom
       '#required': true
       '#default_value':
         kitten_1:
@@ -81,6 +81,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -210,6 +211,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

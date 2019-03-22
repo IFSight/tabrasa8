@@ -123,10 +123,10 @@
       // @see Issue #2977569: Hidden fieldsets that become visible with conditional logic cannot be made required.
       if ($target.is('.js-webform-type-radios, .js-webform-type-checkboxes, fieldset')) {
         if (e.value) {
-          $target.find('legend span:not(.visually-hidden)').addClass('js-form-required form-required');
+          $target.find('legend span.fieldset-legend:not(.visually-hidden)').addClass('js-form-required form-required');
         }
         else {
-          $target.find('legend span:not(.visually-hidden)').removeClass('js-form-required form-required');
+          $target.find('legend span.fieldset-legend:not(.visually-hidden)').removeClass('js-form-required form-required');
         }
       }
 

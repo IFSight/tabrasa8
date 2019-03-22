@@ -131,7 +131,8 @@ class Webform extends ConditionPluginBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $this->configuration['webforms'] = array_filter($form_state->getValue('webforms'));
+    $values = $form_state->getValue('webforms') ?: [];
+    $this->configuration['webforms'] = array_filter($values);
     parent::submitConfigurationForm($form, $form_state);
   }
 

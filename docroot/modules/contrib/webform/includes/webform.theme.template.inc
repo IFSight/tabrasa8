@@ -283,6 +283,11 @@ function template_preprocess_webform_submission_navigation(array &$variables) {
  */
 function template_preprocess_webform_submission(array &$variables) {
   $variables['view_mode'] = $variables['elements']['#view_mode'];
+
+  $variables['navigation'] = $variables['elements']['navigation'];
+  $variables['information'] = $variables['elements']['information'];
+  $variables['submission'] = $variables['elements']['submission'];
+
   $variables['webform_submission'] = $variables['elements']['#webform_submission'];
   if ($variables['webform_submission'] instanceof WebformSubmissionInterface) {
     $variables['webform'] = $variables['webform_submission']->getWebform();
@@ -413,19 +418,21 @@ function template_preprocess_webform_element_base_html(array &$variables) {
   if (empty($variables['options']['email'])) {
     $type = $element['#type'];
 
+    $attributes = (isset($element['#format_attributes'])) ? $element['#format_attributes'] : [];
+    $attributes += ['class' => []];
+    // Use wrapper attributes for the id instead of #id,
+    // this stops the <label> from having a 'for' attribute.
+    $attributes += [
+      'id' => $element['#webform_id'],
+    ];
+    $attributes['class'][] = 'webform-element';
+    $attributes['class'][] = 'webform-element-type-' . str_replace('_', '-', $type);
+
     $variables['item'] = [
       '#type' => 'item',
       '#title' => $variables['title'],
       '#name' => $element['#webform_key'],
-      // Use wrapper attributes for the id instead of #id,
-      // this stops the <label> from having a 'for' attribute.
-      '#wrapper_attributes' => [
-        'id' => $element['#webform_id'],
-        'class' => [
-          'webform-element',
-          'webform-element-type-' . str_replace('_', '-', $type),
-        ],
-      ],
+      '#wrapper_attributes' => $attributes,
     ];
     if (is_array($variables['value'])) {
       $variables['item']['value'] = $variables['value'];
@@ -942,8 +949,11 @@ function template_preprocess_webform_element_image_file(array &$variables) {
     $uri = $file->getFileUri();
     $url = Url::fromUri(file_create_url($uri));
 
+    $extension = pathinfo($uri, PATHINFO_EXTENSION);
+    $is_image = in_array($extension, ['gif', 'png', 'jpg', 'jpeg']);
+
     // Build image.
-    if (\Drupal::moduleHandler()->moduleExists('image') && $style_name && ImageStyle::load($style_name)) {
+    if ($is_image && \Drupal::moduleHandler()->moduleExists('image') && $style_name && ImageStyle::load($style_name)) {
       $variables['image'] = [
         '#theme' => 'image_style',
         '#style_name' => $variables['style_name'],

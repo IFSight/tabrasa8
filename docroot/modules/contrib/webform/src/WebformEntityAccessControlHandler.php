@@ -127,7 +127,13 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
     // webform's configuration via REST or JSON API.
     // @see https://www.drupal.org/project/webform/issues/2956771
     if ($operation === 'view') {
-      if ($this->requestStack->getCurrentRequest()->getRequestFormat() === 'html') {
+      // Check is current request if for HTML.
+      $is_html = ($this->requestStack->getCurrentRequest()->getRequestFormat() === 'html');
+      // Make sure JSON API 1.x requests format which is 'html' is
+      // detected properly.
+      // @see https://www.drupal.org/project/jsonapi/issues/2877584
+      $is_jsonapi = (strpos($this->requestStack->getCurrentRequest()->getPathInfo(), '/jsonapi/') === 0) ? TRUE : FALSE;
+      if ($is_html && !$is_jsonapi) {
         $access_result = $this->accessRulesManager->checkWebformAccess('create', $account, $entity);
       }
       else {
@@ -141,7 +147,7 @@ class WebformEntityAccessControlHandler extends EntityAccessControlHandler imple
       if ($access_result instanceof AccessResultReasonInterface) {
         $access_result->setReason('Access to webform configuration is required.');
       }
-      return $access_result->addCacheContexts(['request_format']);
+      return $access_result->addCacheContexts(['url.path', 'request_format']);
     }
 
     // Check if 'update', or 'delete' of 'own' or 'any' webform is allowed.

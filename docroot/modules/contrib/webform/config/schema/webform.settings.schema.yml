@@ -122,11 +122,11 @@ webform.settings:
           label: 'Default submission views'
           sequence:
             type: mapping
-            label:  'Submission view'
+            label: 'Submission view'
             mapping:
               title:
                 type: text
-                label: 'Title'
+                label: Title
               view:
                 type: string
                 label: 'View name / Display ID'
@@ -135,19 +135,19 @@ webform.settings:
                 label: 'Apply to global'
                 sequence:
                   type: string
-                  label: 'Route'
+                  label: Route
               webform_routes:
                 type: sequence
                 label: 'Apply to webform'
                 sequence:
                   type: string
-                  label: 'Route'
+                  label: Route
               node_routes:
                 type: sequence
                 label: 'Apply to node'
                 sequence:
                   type: string
-                  label: 'Route'
+                  label: Route
         default_submission_views_replace:
           type: mapping
           label: 'Default submission view replace'
@@ -157,19 +157,19 @@ webform.settings:
               label: 'Replace to global'
               sequence:
                 type: string
-                label: 'Route'
+                label: Route
             webform_routes:
               type: sequence
               label: 'Replace to webform'
               sequence:
                 type: string
-                label: 'Route'
+                label: Route
             node_routes:
               type: sequence
               label: 'Replace to node'
               sequence:
                 type: string
-                label: 'Route'
+                label: Route
         default_submission_access_denied_message:
           type: text
           label: 'Default submission access denied message'
@@ -234,7 +234,7 @@ webform.settings:
           label: 'CSS (Cascading Style Sheets)'
         javascript:
           type: string
-          label: 'JavaScript'
+          label: JavaScript
     element:
       type: mapping
       label: 'Element default settings'
@@ -382,10 +382,10 @@ webform.settings:
           label: 'Default email body (HTML)'
         roles:
           type: sequence
-          label: 'Roles'
+          label: Roles
           sequence:
             type: string
-            label: 'Role'
+            label: Role
     export:
       type: mapping
       label: 'Export default settings'
@@ -527,7 +527,7 @@ webform.settings:
           label: 'Use CDN'
     requirements:
       type: mapping
-      label: 'Requirements'
+      label: Requirements
       mapping:
         cdn:
           type: boolean
@@ -540,7 +540,7 @@ webform.settings:
           label: 'Check if SPAM protection module is installed'
     contribute:
       type: mapping
-      label: 'Contribute'
+      label: Contribute
       mapping:
         account_type:
           type: string
@@ -552,4 +552,4 @@ webform.settings:
       type: sequence
       label: 'Third party settings'
       sequence:
-        type: webform.admin_settings.third_party.[%key]
+        type: 'webform.admin_settings.third_party.[%key]'

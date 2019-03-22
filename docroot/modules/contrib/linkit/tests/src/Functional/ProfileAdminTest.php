@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\linkit\Functional;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\linkit\Tests\ProfileCreationTrait;
 
 /**
@@ -62,8 +61,8 @@ class ProfileAdminTest extends LinkitBrowserTestBase {
 
     // Create a profile.
     $edit = [];
-    $edit['label'] = Unicode::strtolower($this->randomMachineName());
-    $edit['id'] = Unicode::strtolower($this->randomMachineName());
+    $edit['label'] = mb_strtolower($this->randomMachineName());
+    $edit['id'] = mb_strtolower($this->randomMachineName());
     $edit['description'] = $this->randomMachineName(16);
     $this->submitForm($edit, t('Save and manage matchers'));
 

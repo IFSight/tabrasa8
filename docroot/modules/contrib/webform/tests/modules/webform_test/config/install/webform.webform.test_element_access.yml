@@ -35,14 +35,14 @@ elements: |
       '#type': textfield
       '#title': 'access_create_users (USER:1)'
       '#default_value': '{value}'
-      '#access_create_roles': { }
+      '#access_create_roles': {  }
       '#access_create_users':
         - 1
     access_create_permissions:
       '#type': textfield
       '#title': 'access_create_permissions (access user profiles)'
       '#default_value': '{value}'
-      '#access_create_roles': { }
+      '#access_create_roles': {  }
       '#access_create_permissions':
         - 'access user profiles'
   access_update:
@@ -65,14 +65,14 @@ elements: |
       '#type': textfield
       '#title': 'access_update_users (USER:1)'
       '#default_value': '{value}'
-      '#access_update_roles': { }
+      '#access_update_roles': {  }
       '#access_update_users':
         - 1
     access_update_permissions:
       '#type': textfield
       '#title': 'access_update_permissions (access user profiles)'
       '#default_value': '{value}'
-      '#access_update_roles': { }
+      '#access_update_roles': {  }
       '#access_update_permissions':
         - 'access user profiles'
   access_view:
@@ -95,14 +95,14 @@ elements: |
       '#type': textfield
       '#title': 'access_view_users (USER:1)'
       '#default_value': '{value}'
-      '#access_view_roles': { }
+      '#access_view_roles': {  }
       '#access_view_users':
         - 1
     access_view_permissions:
       '#type': textfield
       '#title': 'access_view_permissions (access user profiles)'
       '#default_value': '{value}'
-      '#access_view_roles': { }
+      '#access_view_roles': {  }
       '#access_view_permissions':
         - 'access user profiles'
   
@@ -122,6 +122,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -255,6 +256,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

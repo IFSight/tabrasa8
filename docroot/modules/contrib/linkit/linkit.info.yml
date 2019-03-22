@@ -7,8 +7,8 @@ configure: entity.linkit_profile.collection
 test_dependencies:
   - imce
 
-# Information added by Drupal.org packaging script on 2018-03-08
-version: '8.x-5.0-beta7'
+# Information added by Drupal.org packaging script on 2018-12-28
+version: '8.x-5.0-beta8'
 core: '8.x'
 project: 'linkit'
-datestamp: 1520552594
+datestamp: 1545966788

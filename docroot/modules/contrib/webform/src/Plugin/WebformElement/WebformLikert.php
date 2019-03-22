@@ -50,6 +50,7 @@ class WebformLikert extends WebformElementBase {
       'format' => $this->getItemDefaultFormat(),
       'format_html' => '',
       'format_text' => '',
+      'format_attributes' => [],
       // Likert settings.
       'sticky' => TRUE,
       'questions' => [],
@@ -383,6 +384,20 @@ class WebformLikert extends WebformElementBase {
       $text .= ' [' . $this->t('Radios') . ']';
     }
     return $selectors;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorSourceValues(array $element) {
+    $selector_options = $this->getElementSelectorOptions($element);
+    $selectors = reset($selector_options);
+
+    $source_values = [];
+    foreach (array_keys($selectors) as $selector) {
+      $source_values[$selector] = $element['#answers'];
+    }
+    return $source_values;
   }
 
   /**

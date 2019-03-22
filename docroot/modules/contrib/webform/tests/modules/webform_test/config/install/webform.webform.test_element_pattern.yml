@@ -18,18 +18,18 @@ elements: |
   pattern:
     '#type': textfield
     '#title': pattern
-    '#pattern': 'Hello'
+    '#pattern': Hello
     '#description': 'Enter ''Hello'''
   pattern_error:
     '#type': textfield
     '#title': pattern_error
-    '#pattern': 'Hello'
+    '#pattern': Hello
     '#pattern_error': 'You did not enter ''Hello'''
     '#description': 'Enter ''Hello'''
   pattern_unicode:
     '#type': textfield
     '#title': pattern_unicode
-    '#pattern': '\u2E8F'
+    '#pattern': \u2E8F
     '#description': 'Enter unicode CJK characters ''⺏'''
   
 css: ''
@@ -48,6 +48,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -177,6 +178,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

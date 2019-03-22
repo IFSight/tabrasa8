@@ -77,7 +77,6 @@ elements: |
       Two: Two
       Three: Three
     '#description': 'This is a description'
-  radios_wrapper_fieldset_element_descriptions:
   radios_wrapper_form_element:
     '#type': radios
     '#title': radios_wrapper_form_element
@@ -113,6 +112,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -242,6 +242,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

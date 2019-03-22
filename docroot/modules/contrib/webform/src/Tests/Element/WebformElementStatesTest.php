@@ -101,8 +101,22 @@ states_custom_condition:
     $this->assertRaw('<textarea data-drupal-selector="edit-states-unsupported-nesting-states" aria-describedby="edit-states-unsupported-nesting-states--description" class="js-webform-codemirror webform-codemirror yaml form-textarea resize-vertical" data-webform-codemirror-mode="text/x-yaml" id="edit-states-unsupported-nesting-states" name="states_unsupported_nesting[states]" rows="5" cols="60">');
 
     // Check 'States single' (#multiple: FALSE)
-    $this->assertFieldById('edit-states-empty-add');
-    $this->assertNoFieldById('edit-states-single-add');
+    $this->assertFieldById('edit-states-empty-actions-add');
+    $this->assertNoFieldById('edit-states-single-actions-add');
+
+    /**************************************************************************/
+    // Validation.
+    /**************************************************************************/
+
+    // Check duplicate states validation.
+    $edit = ['states_basic[states][0][state]' => 'required'];
+    $this->drupalPostForm('webform/test_element_states', $edit, t('Submit'));
+    $this->assertRaw('The <em class="placeholder">Required</em> state is declared more than once. There can only be one declaration per state.');
+
+    // Check duplicate selectors validation.
+    $edit = ['states_basic[states][3][selector]' => 'selector_02'];
+    $this->drupalPostForm('webform/test_element_states', $edit, t('Submit'));
+    $this->assertRaw('The <em class="placeholder">Selector 02 (selector_02)</em> element is used more than once within the <em class="placeholder">Required</em> state. To use multiple values within a trigger try using the pattern trigger.');
 
     /**************************************************************************/
     // Processing.
@@ -156,6 +170,25 @@ states_custom_condition:
     $this->assertNoFieldByName('states_empty[states][2][selector]', 'selector_02');
     $this->assertNoFieldByName('states_empty[states][2][trigger]', 'value');
     $this->assertNoFieldByName('states_empty[states][2][value]', '{value_02}');
+
+    /**************************************************************************/
+    // Edit source.
+    /**************************************************************************/
+
+    // Check that  'Edit source' button is not available.
+    $this->drupalGet('webform/test_element_states');
+    $this->assertNoRaw('<input class="button button--danger js-form-submit form-submit" data-drupal-selector="edit-states-basic-actions-source" formnovalidate="formnovalidate" type="submit" id="edit-states-basic-actions-source" name="states_basic_table_source" value="Edit source" />');
+
+    // Check that  'Edit source' button is available.
+    $this->drupalLogin($this->rootUser);
+    $this->drupalGet('webform/test_element_states');
+    $this->assertRaw('<input class="button button--danger js-form-submit form-submit" data-drupal-selector="edit-states-basic-actions-source" formnovalidate="formnovalidate" type="submit" id="edit-states-basic-actions-source" name="states_basic_table_source" value="Edit source" />');
+    $this->assertNoFieldByName('states_basic[states]');
+
+    // Check that 'source' is editable.
+    $this->drupalPostAjaxForm(NULL, [], 'states_basic_table_source');
+    $this->assertRaw('Creating custom conditional logic (Form API #states) with nested conditions or custom selectors will disable the conditional logic builder. This will require that Form API #states be manually entered.');
+    $this->assertFieldByName('states_basic[states]');
   }
 
 }

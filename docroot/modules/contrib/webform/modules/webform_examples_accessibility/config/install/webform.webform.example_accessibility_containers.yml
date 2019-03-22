@@ -23,21 +23,21 @@ elements: |
     '#help': 'This is help text.'
     '#more': 'This is more text'
     '#required': true
-    '#field_prefix': 'prefix'
-    '#field_suffix': 'suffix'
+    '#field_prefix': prefix
+    '#field_suffix': suffix
   fieldset:
     '#type': fieldset
-    '#title': 'Fieldset'
+    '#title': Fieldset
     '#placeholder': 'This is a placeholder'
     '#description': 'This is a description.'
     '#help': 'This is help text.'
     '#more': 'This is more text'
     '#required': true
-    '#field_prefix': 'prefix'
-    '#field_suffix': 'suffix'
+    '#field_prefix': prefix
+    '#field_suffix': suffix
   details:
     '#type': details
-    '#title': 'details'
+    '#title': details
     '#placeholder': 'This is a placeholder'
     '#description': 'This is a description.'
     '#help': 'This is help text.'
@@ -67,6 +67,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -196,6 +197,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

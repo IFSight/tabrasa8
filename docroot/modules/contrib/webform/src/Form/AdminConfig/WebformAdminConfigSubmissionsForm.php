@@ -3,6 +3,7 @@
 namespace Drupal\webform\Form\AdminConfig;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\WebformTokenManagerInterface;
@@ -12,6 +13,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Configure webform admin settings for submissions.
  */
 class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
 
   /**
    * The webform token manager.
@@ -32,11 +40,14 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, WebformTokenManagerInterface $token_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, WebformTokenManagerInterface $token_manager) {
     parent::__construct($config_factory);
+    $this->moduleHandler = $module_handler;
     $this->tokenManager = $token_manager;
   }
 
@@ -46,6 +57,7 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('module_handler'),
       $container->get('webform.token_manager')
     );
   }
@@ -118,7 +130,8 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
     $behavior_elements = [
       'default_submission_log' => [
         'title' => $this->t('Log all submission events for all webforms'),
-        'description' => $this->t('If checked, all submission events will be logged to dedicated submission log available to all webforms and submissions.'),
+        'description' => $this->t('If checked, all submission events will be logged to dedicated submission log available to all webforms and submissions.') . '<br/><br/>' .
+          '<em>' . t('The webform submission log will track more detailed user information including email addresses and subjects.') . '</em>',
       ],
     ];
     foreach ($behavior_elements as $behavior_key => $behavior_element) {
@@ -128,6 +141,20 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
         '#description' => $behavior_element['description'],
         '#return_value' => TRUE,
         '#default_value' => $settings[$behavior_key],
+      ];
+    }
+    if (!$this->moduleHandler->moduleExists('webform_submission_log')) {
+      $form['submission_behaviors']['webform_submission_log_message'] = [
+        '#type' => 'webform_message',
+        '#message_type' => 'info',
+        '#message_message' => $this->t("Enable the 'Webform Submission Log' module to better track and permanently store submission logs."),
+        '#message_close' => TRUE,
+        '#message_storage' => WebformMessage::STORAGE_SESSION,
+        '#states' => [
+          'visible' => [
+            ':input[name="submission_behaviors[default_submission_log]"]' => ['checked' => TRUE],
+          ],
+        ],
       ];
     }
 

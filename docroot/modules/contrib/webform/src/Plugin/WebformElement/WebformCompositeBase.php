@@ -3,6 +3,7 @@
 namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Render\Element as RenderElement;
 use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -267,25 +268,34 @@ abstract class WebformCompositeBase extends WebformElementBase {
       $has_access = (!isset($composite_elements['#access']) || $composite_elements['#access']);
       if ($has_access && isset($composite_element['#type'])) {
         $element_plugin = $this->elementManager->getElementInstance($composite_element);
-        $composite_title = (isset($composite_element['#title'])) ? $composite_element['#title'] : $composite_key;
-
-        switch ($composite_element['#type']) {
-          case 'label':
-          case 'webform_message':
-            break;
-
-          case 'webform_select_other':
-            $selectors[":input[name=\"{$name}[{$composite_key}][select]\"]"] = $composite_title . ' [' . $this->t('Select') . ']';
-            $selectors[":input[name=\"{$name}[{$composite_key}][other]\"]"] = $composite_title . ' [' . $this->t('Textfield') . ']';
-            break;
-
-          default:
-            $selectors[":input[name=\"{$name}[{$composite_key}]\"]"] = $composite_title . ' [' . $element_plugin->getPluginLabel() . ']';
-            break;
-        }
+        $composite_element['#webform_key'] = "{$name}[{$composite_key}]";
+        $selectors += OptGroup::flattenOptions($element_plugin->getElementSelectorOptions($composite_element));
       }
     }
     return [$title => $selectors];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorSourceValues(array $element) {
+    if ($this->hasMultipleValues($element)) {
+      return [];
+    }
+
+    $name = $element['#webform_key'];
+
+    $source_values = [];
+    $composite_elements = $this->getInitializedCompositeElement($element);
+    foreach ($composite_elements as $composite_key => $composite_element) {
+      $has_access = (!isset($composite_elements['#access']) || $composite_elements['#access']);
+      if ($has_access && isset($composite_element['#type'])) {
+        $element_plugin = $this->elementManager->getElementInstance($composite_element);
+        $composite_element['#webform_key'] = "{$name}[{$composite_key}]";
+        $source_values += $element_plugin->getElementSelectorSourceValues($composite_element);
+      }
+    }
+    return $source_values;
   }
 
   /****************************************************************************/
