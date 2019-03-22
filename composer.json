@@ -26,12 +26,13 @@
         ],
         "merge-plugin": {
             "include": [
-                "docroot/composer.json",
-                "docroot/core/composer.json"
+                "docroot/composer.json"
             ],
-            "recurse": false,
+            "recurse": true,
             "replace": false,
-            "merge-extra": false
+            "ignore-duplicates": true,
+            "merge-extra": true,
+            "merge-scripts": true
         },
         "scripts": {
             "pre-autoload-dump": "Drupal\\Core\\Composer\\Composer::preAutoloadDump",
