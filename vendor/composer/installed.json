@@ -369,7 +369,10 @@
         "time": "2018-05-11T18:00:16+00:00",
         "type": "composer-plugin",
         "extra": {
-            "class": "cweagans\\Composer\\Patches"
+            "class": "cweagans\\Composer\\Patches",
+            "patches_applied": {
+                "Fix patching Drupal core by using Dry Run": "https://patch-diff.githubusercontent.com/raw/cweagans/composer-patches/pull/179.patch"
+            }
         },
         "installation-source": "dist",
         "autoload": {
