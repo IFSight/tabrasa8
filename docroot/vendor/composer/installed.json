@@ -2872,40 +2872,37 @@
     },
     {
         "name": "drupal/devel",
-        "version": "1.2.0",
-        "version_normalized": "1.2.0.0",
+        "version": "dev-2.x",
+        "version_normalized": "dev-2.x",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/devel.git",
-            "reference": "8.x-1.2"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/devel-8.x-1.2.zip",
-            "reference": "8.x-1.2",
-            "shasum": "01f3349ef75f6e21fceef24be9d3d6506ca29647"
+            "reference": "ad091a190cb0e153fe530aa995e402b5934ba68c"
         },
         "require": {
-            "drupal/core": "~8.0"
-        },
-        "suggest": {
-            "symfony/var-dumper": "Pretty print complex values better with var-dumper available"
+            "drupal/core": "~8.0",
+            "symfony/var-dumper": "~2.7|^3|^4"
         },
         "type": "drupal-module",
         "extra": {
             "branch-alias": {
-                "dev-1.x": "1.x-dev"
+                "dev-2.x": "2.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.2",
-                "datestamp": "1507197844",
+                "version": "8.x-2.0+11-dev",
+                "datestamp": "1554296287",
                 "security-coverage": {
-                    "status": "covered",
-                    "message": "Covered by Drupal's security advisory policy"
+                    "status": "not-covered",
+                    "message": "Dev releases are not covered by Drupal security advisories."
+                }
+            },
+            "drush": {
+                "services": {
+                    "drush.services.yml": "^9"
                 }
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "notification-url": "https://packages.drupal.org/8/downloads",
         "license": [
             "GPL-2.0+"

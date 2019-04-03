@@ -86,6 +86,13 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
   protected $dateFormatter;
 
   /**
+   * The Drush batch flag.
+   *
+   * @var bool
+   */
+  protected $drushBatch;
+
+  /**
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
@@ -331,8 +338,12 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
    * the number of elements is greater than 50.
    */
   private function generateBatchContent($values) {
-    // Setup the batch operations and save the variables.
-    $operations[] = array('devel_generate_operation', array($this, 'batchContentPreNode', $values));
+    // If it is drushBatch then this operation is already run in the
+    // self::validateDrushParams().
+    if (!$this->drushBatch) {
+      // Setup the batch operations and save the variables.
+      $operations[] = array('devel_generate_operation', array($this, 'batchContentPreNode', $values));
+    }
 
     // Add the kill operation.
     if ($values['kill']) {
@@ -351,7 +362,11 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
       'finished' => 'devel_generate_batch_finished',
       'file' => drupal_get_path('module', 'devel_generate') . '/devel_generate.batch.inc',
     );
+
     batch_set($batch);
+    if ($this->drushBatch) {
+      drush_backend_batch_process();
+    }
   }
 
   public function batchContentPreNode($vars, &$context) {
@@ -361,12 +376,22 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
   }
 
   public function batchContentAddNode($vars, &$context) {
-    $this->develGenerateContentAddNode($context['results']);
-    $context['results']['num']++;
+    if ($this->drushBatch) {
+      $this->develGenerateContentAddNode($vars);
+    }
+    else {
+      $this->develGenerateContentAddNode($context['results']);
+      $context['results']['num']++;
+    }
   }
 
   public function batchContentKill($vars, &$context) {
-    $this->contentKill($context['results']);
+    if ($this->drushBatch) {
+      $this->contentKill($vars);
+    }
+    else {
+      $this->contentKill($context['results']);
+    }
   }
 
   /**
@@ -408,6 +433,10 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
     // Checks for any missing content types before generating nodes.
     if (array_diff($node_types, $all_types)) {
       throw new \Exception(dt('One or more content types have been entered that don\'t exist on this site'));
+    }
+    if ($values['num'] > 50) {
+      $this->drushBatch = TRUE;
+      $this->develGenerateContentPreNode($values);
     }
 
     return $values;

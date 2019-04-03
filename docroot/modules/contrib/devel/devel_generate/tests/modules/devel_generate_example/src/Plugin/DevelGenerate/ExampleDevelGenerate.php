@@ -70,7 +70,7 @@ class ExampleDevelGenerate extends DevelGenerateBase {
     }
 
     // Populate all fields with sample values.
-    $this->populateFields($node);
+    $this->populateFields($account);
 
     $account->save();
 

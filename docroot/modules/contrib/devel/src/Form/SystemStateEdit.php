@@ -56,7 +56,7 @@ class SystemStateEdit extends FormBase {
     $old_value = $this->state->get($state_name);
 
     if (!isset($old_value)) {
-      drupal_set_message(t('State @name does not exist in the system.', array('@name' => $state_name)), 'warning');
+      $this->messenger()->addWarning($this->t('State @name does not exist in the system.', array('@name' => $state_name)));
       return;
     }
 
@@ -64,7 +64,8 @@ class SystemStateEdit extends FormBase {
     $disabled = !$this->checkObject($old_value);
 
     if ($disabled) {
-      drupal_set_message(t('Only simple structures are allowed to be edited. State @name contains objects.', array('@name' => $state_name)), 'warning');
+      $this->messenger()->addWarning($this->t('Only simple structures are allowed to be edited. State @name contains objects.', array('@name' => $state_name)));
+
     }
 
     // First we will show the user the content of the variable about to be edited.
@@ -82,7 +83,7 @@ class SystemStateEdit extends FormBase {
         $transport = 'yaml';
       }
       catch (InvalidDataTypeException $e) {
-        drupal_set_message(t('Invalid data detected for @name : %error', array('@name' => $state_name, '%error' => $e->getMessage())), 'error');
+        $this->messenger()->addError($this->t('Invalid data detected for @name : %error', array('@name' => $state_name, '%error' => $e->getMessage())));
         return;
       }
     }
@@ -108,17 +109,17 @@ class SystemStateEdit extends FormBase {
       '#rows' => 15,
     );
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save'),
       '#disabled' => $disabled,
-    );
-    $form['actions']['cancel'] = array(
+    ];
+    $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
       '#url' => Url::fromRoute('devel.state_system_page')
-    );
+    ];
 
     return $form;
   }
@@ -154,8 +155,8 @@ class SystemStateEdit extends FormBase {
     $this->state->set($values['state_name'], $values['parsed_value']);
 
     $form_state->setRedirectUrl(Url::fromRoute('devel.state_system_page'));
-
-    drupal_set_message($this->t('Variable %variable was successfully edited.', array('%variable' => $values['state_name'])));
+    
+    $this->messenger()->addMessage($this->t('Variable %variable was successfully edited.', array('%variable' => $values['state_name'])));
     $this->logger('devel')->info('Variable %variable was successfully edited.', array('%variable' => $values['state_name']));
   }
 

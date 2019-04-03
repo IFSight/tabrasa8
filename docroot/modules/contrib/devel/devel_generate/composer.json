@@ -1,6 +1,6 @@
 {
-  "name": "drupal/devel",
-  "description": "Various blocks, pages, and functions for developers.",
+  "name": "drupal/devel_generate",
+  "description": "Generate dummy users, nodes, menus, taxonomy terms...",
   "type": "drupal-module",
   "homepage": "http://drupal.org/project/devel",
   "authors": [
@@ -38,10 +38,10 @@
   },
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
-  "require": {
-    "symfony/var-dumper": "~2.7|^3|^4"
+  "require": {},
+  "suggest": {
+    "drupal/realistic_dummy_content": "Generate realistic demo content with Devel's devel_generate module."
   },
-  "suggest": {},
   "extra": {
     "drush": {
       "services": {

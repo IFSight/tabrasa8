@@ -43,7 +43,7 @@ class DevelController extends ControllerBase {
    */
   public function cacheClear() {
     drupal_flush_all_caches();
-    drupal_set_message('Cache cleared.');
+    $this->messenger()->addMessage($this->t('Cache cleared.'));
     return $this->redirect('<front>');
   }
 

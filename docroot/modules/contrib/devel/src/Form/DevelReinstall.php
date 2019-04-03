@@ -116,11 +116,11 @@ class DevelReinstall extends FormBase {
 
     $form['#attached']['library'][] = 'system/drupal.system.modules';
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Reinstall'),
-    );
+    ];
 
     return $form;
   }
@@ -144,10 +144,10 @@ class DevelReinstall extends FormBase {
       $reinstall = array_keys(array_filter($modules));
       $this->moduleInstaller->uninstall($reinstall, FALSE);
       $this->moduleInstaller->install($reinstall, FALSE);
-      drupal_set_message($this->t('Uninstalled and installed: %names.', array('%names' => implode(', ', $reinstall))));
+      $this->messenger()->addMessage($this->t('Uninstalled and installed: %names.', array('%names' => implode(', ', $reinstall))));
     }
     catch (\Exception $e) {
-      drupal_set_message($this->t('Unable to reinstall modules. Error: %error.', array('%error' => $e->getMessage())), 'error');
+      $this->messenger()->addError($this->t('Unable to reinstall modules. Error: %error.', array('%error' => $e->getMessage())));
     }
   }
 

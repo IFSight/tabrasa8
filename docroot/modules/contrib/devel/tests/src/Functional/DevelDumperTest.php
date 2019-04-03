@@ -50,7 +50,7 @@ class DevelDumperTest extends BrowserTestBase {
       'chromephp',
       'var_dumper',
     ];
-    $available_dumpers = ['default', 'drupal_variable'];
+    $available_dumpers = ['default', 'drupal_variable', 'var_dumper'];
 
     foreach ($dumpers as $dumper) {
       $this->assertFieldByXPath('//input[@type="radio" and @name="dumper"]', $dumper);

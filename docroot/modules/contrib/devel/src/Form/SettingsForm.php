@@ -66,7 +66,7 @@ class SettingsForm extends ConfigFormBase {
     $form['page_alter'] = array('#type' => 'checkbox',
       '#title' => t('Display $page array'),
       '#default_value' => $devel_config->get('page_alter'),
-      '#description' => t('Display $page array from <a href="http://api.drupal.org/api/function/hook_page_alter/7">hook_page_alter()</a> in the messages area of each page.'),
+      '#description' => t('Display $page array from <a href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21theme.api.php/function/hook_page_attachments_alter/8">hook_page_attachments_alter()</a> in the messages area of each page.'),
     );
     $form['raw_names'] = array('#type' => 'checkbox',
       '#title' => t('Display machine names of permissions and modules'),
