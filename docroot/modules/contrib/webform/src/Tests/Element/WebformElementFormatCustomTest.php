@@ -59,6 +59,16 @@ class WebformElementFormatCustomTest extends WebformElementTestBase {
     $this->assertRaw('<label>textfield_custom</label>');
     $this->assertRaw('<em>{textfield_custom}</em>');
 
+    // Check basic custom token HTML format.
+    $this->assertRaw('<label>textfield_custom_token</label>');
+    $this->assertRaw('<em>{textfield_custom_token}</em>');
+
+    // Check caught exception is displayed to users with update access.
+    // @see \Drupal\webform\Twig\TwigExtension::renderTwigTemplate
+    $this->assertRaw('(&quot;The &quot;[webform_submission:values:textfield_custom_token_exception]&quot; token is being called recursively.&quot;)');
+    $this->assertRaw('<label>textfield_custom_token_exception</label>');
+    $this->assertRaw('<em>EXCEPTION</em>');
+
     // Check multiple custom HTML format.
     $this->assertRaw('<label>textfield_custom</label>');
     $this->assertRaw('<table>');
@@ -89,8 +99,19 @@ class WebformElementFormatCustomTest extends WebformElementTestBase {
     $this->assertRaw('element.postal_code: {postal_code}<br/>');
     $this->assertRaw('element.country: {country}<br/>');
 
+    // Check composite multiple custom HTML format.
+    $this->assertRaw('<label>address_multiple_custom</label>');
+    $this->assertRaw('<div>*****</div>
+element.address: {02-address}<br/>
+element.address_2: {02-address_2}<br/>
+element.city: {02-city}<br/>
+element.state_province: {02-state_province}<br/>
+element.postal_code: {02-postal_code}<br/>
+element.country: {02-country}<br/>
+<div>*****</div>');
+
     // Check fieldset displayed as details.
-    $this->assertRaw('<details data-webform-element-id="test_element_format_custom--fieldset_custom" class="webform-container webform-container-type-details js-form-wrapper form-wrapper" id="test_element_format_custom--fieldset_custom" open="open">');
+    $this->assertRaw('<details class="webform-container webform-container-type-details js-form-wrapper form-wrapper" data-webform-element-id="test_element_format_custom--fieldset_custom" id="test_element_format_custom--fieldset_custom" open="open">');
     $this->assertRaw('<summary role="button" aria-controls="test_element_format_custom--fieldset_custom" aria-expanded="true" aria-pressed="true">fieldset_custom</summary>');
 
     // Check container custom HTML format.
@@ -102,6 +123,8 @@ class WebformElementFormatCustomTest extends WebformElementTestBase {
 
     $this->drupalGet("admin/structure/webform/manage/test_element_format_custom/submission/$sid/text");
     $this->assertRaw("textfield_custom: /{textfield_custom}/
+textfield_custom_token: /{textfield_custom_token}/
+textfield_custom_token_exception: /EXCEPTION/
 textfield_custom:
 ⦿ One
 ⦿ Two
@@ -126,13 +149,34 @@ element.state_province: {state_province}
 element.postal_code: {postal_code}
 element.country: {country}
 
+address_multiple_custom:
+*****
+element.address: {01-address}
+element.address_2: {01-address_2}
+element.city: {01-city}
+element.state_province: {01-state_province}
+element.postal_code: {01-postal_code}
+element.country: {01-country}
+*****
+*****
+element.address: {02-address}
+element.address_2: {02-address_2}
+element.city: {02-city}
+element.state_province: {02-state_province}
+element.postal_code: {02-postal_code}
+element.country: {02-country}
+*****
+
+
 fieldset_custom
 ---------------
 fieldset_custom_textfield: {fieldset_custom_textfield}
 
 fieldset_custom_children
 ------------------------
-fieldset_custom_children_textfield: {fieldset_custom_children_textfield}");
+fieldset_custom_children_textfield: {fieldset_custom_children_textfield}
+
+");
   }
 
 }

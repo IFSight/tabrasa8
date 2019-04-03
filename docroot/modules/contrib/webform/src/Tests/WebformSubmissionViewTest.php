@@ -44,7 +44,7 @@ class WebformSubmissionViewTest extends WebformTestBase {
   public function testView() {
     $admin_submission_user = $this->drupalCreateUser([
       'administer webform submission',
-    ]); 
+    ]);
 
     /**************************************************************************/
 
@@ -56,7 +56,7 @@ class WebformSubmissionViewTest extends WebformTestBase {
 
     $this->drupalLogin($admin_submission_user);
 
-    $this->drupalGet('admin/structure/webform/manage/test_element/submission/' . $submission->id());
+    $this->drupalGet('/admin/structure/webform/manage/test_element/submission/' . $submission->id());
 
     // Check displayed values.
     $elements = [

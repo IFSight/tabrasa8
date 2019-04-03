@@ -27,7 +27,7 @@ class WebformExampleCompositeTest extends WebformTestBase {
     $webform = Webform::load('webform_example_composite');
 
     // Check form element rendering.
-    $this->drupalGet('webform/webform_example_composite');
+    $this->drupalGet('/webform/webform_example_composite');
     // NOTE:
     // This is a very lazy but easy way to check that the element is rendering
     // as expected.

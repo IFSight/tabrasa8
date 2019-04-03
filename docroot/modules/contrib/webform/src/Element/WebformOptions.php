@@ -101,26 +101,31 @@ class WebformOptions extends FormElement {
       $element['options'] = array_intersect_key($element, array_combine($properties, $properties)) + [
         '#type' => 'webform_multiple',
         '#header' => TRUE,
+        '#key' => 'value',
         '#default_value' => (isset($element['#default_value'])) ? static::convertOptionsToValues($element['#default_value'], $element['#options_description']) : [],
-        '#error_no_message' => TRUE,
         '#add_more_input_label' => t('more options'),
       ];
 
       if ($element['#options_description']) {
         $element['options']['#element'] = [
-          'value' => [
-            '#type' => 'textfield',
-            '#title' => t('@label value', $t_args),
-            '#title_display' => 'invisible',
-            '#placeholder' => t('Enter value…'),
-            '#attributes' => ['class' => ['js-webform-options-sync']],
-            '#maxlength' => $element['#options_value_maxlength'],
-            '#error_no_message' => TRUE,
-          ],
-          'option' => [
+          'option_value' => [
             '#type' => 'container',
-            '#title' => t('@label text/description', $t_args),
-            '#title_display' => 'invisible',
+            '#title' => t('@label value', $t_args),
+            '#help' => t('A unique value stored in the database.'),
+            'value' => [
+              '#type' => 'textfield',
+              '#title' => t('@label value', $t_args),
+              '#title_display' => 'invisible',
+              '#placeholder' => t('Enter value…'),
+              '#attributes' => ['class' => ['js-webform-options-sync']],
+              '#maxlength' => $element['#options_value_maxlength'],
+              '#error_no_message' => TRUE,
+            ],
+          ],
+          'option_text' => [
+            '#type' => 'container',
+            '#title' => t('@label text / description', $t_args),
+            '#help' => t('Enter text and description to be displayed on the form.'),
             'text' => [
               '#type' => 'textfield',
               '#title' => t('@label text', $t_args),
@@ -143,22 +148,32 @@ class WebformOptions extends FormElement {
       }
       else {
         $element['options']['#element'] = [
-          'value' => [
-            '#type' => 'textfield',
+          'option_value' => [
+            '#type' => 'container',
             '#title' => t('@label value', $t_args),
-            '#title_display' => 'invisible',
-            '#placeholder' => t('Enter value…'),
-            '#attributes' => ['class' => ['js-webform-options-sync']],
-            '#maxlength' => $element['#options_value_maxlength'],
-            '#error_no_message' => TRUE,
+            '#help' => t('A unique value stored in the database.'),
+            'value' => [
+              '#type' => 'textfield',
+              '#title' => t('@label value', $t_args),
+              '#title_display' => 'invisible',
+              '#placeholder' => t('Enter value…'),
+              '#attributes' => ['class' => ['js-webform-options-sync']],
+              '#maxlength' => $element['#options_value_maxlength'],
+              '#error_no_message' => TRUE,
+            ],
           ],
-          'text' => [
-            '#type' => 'textfield',
+          'option_text' => [
+            '#type' => 'container',
             '#title' => t('@label text', $t_args),
-            '#title_display' => 'invisible',
-            '#placeholder' => t('Enter text…'),
-            '#maxlength' => $element['#options_text_maxlength'],
-            '#error_no_message' => TRUE,
+            '#help' => t('Text to be displayed on the form.'),
+            'text' => [
+              '#type' => 'textfield',
+              '#title' => t('@label text', $t_args),
+              '#title_display' => 'invisible',
+              '#placeholder' => t('Enter text…'),
+              '#maxlength' => $element['#options_text_maxlength'],
+              '#error_no_message' => TRUE,
+            ],
           ],
         ];
       }
@@ -172,6 +187,10 @@ class WebformOptions extends FormElement {
    * Validates webform options element.
    */
   public static function validateWebformOptions(&$element, FormStateInterface $form_state, &$complete_form) {
+    if ($form_state->hasAnyErrors()) {
+      return;
+    }
+
     $options_value = NestedArray::getValue($form_state->getValues(), $element['options']['#parents']);
 
     if (is_string($options_value)) {
@@ -209,11 +228,10 @@ class WebformOptions extends FormElement {
   public static function convertValuesToOptions(array $values = NULL, $options_description = FALSE) {
     $options = [];
     if ($values && is_array($values)) {
-      foreach ($values as $value) {
-        $option_value = $value['value'];
-        $option_text = $value['text'];
-        if ($options_description && !empty($value['description'])) {
-          $option_text .= WebformOptionsHelper::DESCRIPTION_DELIMITER . $value['description'];
+      foreach ($values as $option_value => $option) {
+        $option_text = $option['text'];
+        if ($options_description && !empty($option['description'])) {
+          $option_text .= WebformOptionsHelper::DESCRIPTION_DELIMITER . $option['description'];
         }
 
         // Populate empty option value or option text.
@@ -231,7 +249,7 @@ class WebformOptions extends FormElement {
   }
 
   /**
-   * Convert options to values for yamform_multiple element.
+   * Convert options to values for webform_multiple element.
    *
    * @param array $options
    *   An array of options.
@@ -246,10 +264,10 @@ class WebformOptions extends FormElement {
     foreach ($options as $value => $text) {
       if ($options_description && strpos($text, WebformOptionsHelper::DESCRIPTION_DELIMITER) !== FALSE) {
         list($text, $description) = explode(WebformOptionsHelper::DESCRIPTION_DELIMITER, $text);
-        $values[] = ['value' => $value, 'text' => $text, 'description' => $description];
+        $values[$value] = ['text' => $text, 'description' => $description];
       }
       else {
-        $values[] = ['value' => $value, 'text' => $text];
+        $values[$value] = ['text' => $text];
       }
     }
     return $values;

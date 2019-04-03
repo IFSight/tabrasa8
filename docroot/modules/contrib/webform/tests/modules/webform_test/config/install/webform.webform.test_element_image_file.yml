@@ -21,8 +21,7 @@ elements: |
   webform_image_file_advanced:
     '#type': webform_image_file
     '#title': 'webform_image_file_advanced (max: 20x20)'
-    '#max_resolution': '20x20'
-  
+    '#max_resolution': 20x20
 css: ''
 javascript: ''
 settings:
@@ -39,6 +38,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -168,6 +168,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

@@ -30,6 +30,7 @@ abstract class ContainerBase extends WebformElementBase {
       'format' => $this->getItemDefaultFormat(),
       'format_html' => '',
       'format_text' => '',
+      'format_attributes' => [],
     ] + $this->getDefaultBaseProperties();
   }
 
@@ -128,35 +129,34 @@ abstract class ContainerBase extends WebformElementBase {
       $format = 'header';
     }
 
+    // Build format attributes.
+    $attributes = (isset($element['#format_attributes'])) ? $element['#format_attributes'] : [];
+    $attributes += ['class' => []];
+
     switch ($format) {
       case 'details':
       case 'details-closed':
+        $attributes['data-webform-element-id'] = $element['#webform_id'];
+        $attributes['class'][] = 'webform-container';
+        $attributes['class'][] = 'webform-container-type-details';
         return [
           '#type' => 'details',
           '#title' => $element['#title'],
           '#id' => $element['#webform_id'],
           '#open' => ($format === 'details-closed') ? FALSE : TRUE,
-          '#attributes' => [
-            'data-webform-element-id' => $element['#webform_id'],
-            'class' => [
-              'webform-container',
-              'webform-container-type-details',
-            ],
-          ],
+          '#attributes' => $attributes,
           '#children' => $children,
         ];
 
       case 'fieldset':
+        $attributes['class'][] = 'webform-container';
+        $attributes['class'][] = 'webform-container-type-fieldset';
+
         return [
           '#type' => 'fieldset',
           '#title' => $element['#title'],
           '#id' => $element['#webform_id'],
-          '#attributes' => [
-            'class' => [
-              'webform-container',
-              'webform-container-type-fieldset',
-            ],
-          ],
+          '#attributes' => $attributes,
           '#children' => $children,
         ];
 
@@ -167,6 +167,7 @@ abstract class ContainerBase extends WebformElementBase {
           '#id' => $element['#webform_id'],
           '#title' => $element['#title'],
           '#title_tag' => \Drupal::config('webform.settings')->get('element.default_section_title_tag'),
+          '#attributes' => $attributes,
         ] + $children;
     }
   }
@@ -200,7 +201,7 @@ abstract class ContainerBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  protected function formatCustomItem($type, array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  protected function formatCustomItem($type, array &$element, WebformSubmissionInterface $webform_submission, array $options = [], array $context = []) {
     $name = strtolower($type);
 
     // Parse children from template and children to context.
@@ -208,12 +209,10 @@ abstract class ContainerBase extends WebformElementBase {
     if (strpos($template, 'children') != FALSE) {
       /** @var \Drupal\webform\WebformSubmissionViewBuilderInterface $view_builder */
       $view_builder = \Drupal::entityTypeManager()->getViewBuilder('webform_submission');
-      $options['context'] = [
-        'children' => $view_builder->buildElements($element, $webform_submission, $options, $name),
-      ];
+      $context['children'] = $view_builder->buildElements($element, $webform_submission, $options, $name);
     }
 
-    return parent::formatCustomItem($type, $element, $webform_submission, $options);
+    return parent::formatCustomItem($type, $element, $webform_submission, $options, $context);
   }
 
   /**
@@ -260,10 +259,6 @@ abstract class ContainerBase extends WebformElementBase {
       'invisible' => $this->t('Invisible'),
     ];
 
-    // Remove value from item custom display replacement patterns.
-    $item_patterns = &$form['display']['item']['patterns']['#value']['items']['#items'];
-    unset($item_patterns['value']);
-    $item_patterns = ['children' => '{{ children }}'] + $item_patterns;
     return $form;
   }
 

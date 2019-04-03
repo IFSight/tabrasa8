@@ -1,3 +1,4 @@
+# @see field.storage_settings.entity_reference
 field.storage_settings.webform:
   type: mapping
   label: 'Webform field storage settings'
@@ -6,22 +7,25 @@ field.storage_settings.webform:
       type: string
       label: 'Type of item to reference'
 
-base_webform_field_field_settings:
+# @see field.field_settings.entity_reference
+field.field_settings.webform:
   type: mapping
+  label: 'Entity reference field settings'
   mapping:
     handler:
       type: string
       label: 'Reference method'
     handler_settings:
       type: entity_reference_selection.[%parent.handler]
-      label: 'Entity reference selection settings'
+      label: 'Entity reference selection plugin settings'
 
-field.field_settings.webform:
-  type: base_webform_field_field_settings
-  label: 'Webform settings'
+# @see field.value.entity_reference
+field.value.webform:
+  type: field.value.entity_reference
+  label: 'Default value'
   mapping:
     default_data:
-      type: string
+      type: text
       label: 'Default webform submission data'
     status:
       type: string
@@ -45,7 +49,7 @@ field.widget.settings.webform_entity_reference_autocomplete:
       label: 'Size of textfield'
     placeholder:
       type: label
-      label: 'Placeholder'
+      label: Placeholder
     default_data:
       type: boolean
       label: 'Default submission data'
@@ -57,7 +61,6 @@ field.widget.settings.webform_entity_reference_select:
     default_data:
       type: boolean
       label: 'Default submission data'
-
 field.formatter.settings.webform_entity_reference_entity_view:
   type: mapping
   label: 'Display the referenced webform with default submission data.'

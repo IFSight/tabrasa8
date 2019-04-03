@@ -157,8 +157,6 @@ class WebformResultsCustomForm extends FormBase {
         '100' => '100',
         '200' => '200',
         '500' => '500',
-        '1000' => '1000',
-        '0' => $this->t('All'),
       ],
       '#default_value' => ($limit !== NULL) ? $limit : 20,
     ];

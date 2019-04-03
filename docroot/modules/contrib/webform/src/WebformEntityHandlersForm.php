@@ -129,6 +129,7 @@ class WebformEntityHandlersForm extends EntityForm {
       ];
 
       $operations = [];
+      // Edit.
       $operations['edit'] = [
         'title' => $this->t('Edit'),
         'url' => Url::fromRoute('entity.webform.handler.edit_form', [
@@ -137,6 +138,7 @@ class WebformEntityHandlersForm extends EntityForm {
         ]),
         'attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(),
       ];
+      // Duplicate.
       if ($handler->cardinality() === WebformHandlerInterface::CARDINALITY_UNLIMITED) {
         $operations['duplicate'] = [
           'title' => $this->t('Duplicate'),
@@ -147,7 +149,17 @@ class WebformEntityHandlersForm extends EntityForm {
           'attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(),
         ];
       }
-
+      // Test individual handler.
+      if ($this->entity->access('test')) {
+        $operations['test'] = [
+          'title' => $this->t('Test'),
+          'url' => Url::fromRoute(
+            'entity.webform.test_form',
+            ['webform' => $this->entity->id()],
+            ['query' => ['_webform_handler' => $handler_id]]
+          ),
+        ];
+      }
       // Add AJAX functionality to enable/disable operations.
       $operations['status'] = [
         'title' => $handler->isEnabled() ? $this->t('Disable') : $this->t('Enable'),
@@ -157,7 +169,7 @@ class WebformEntityHandlersForm extends EntityForm {
         ]),
         'attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NARROW, ['use-ajax']),
       ];
-
+      // Delete.
       $operations['delete'] = [
         'title' => $this->t('Delete'),
         'url' => Url::fromRoute('entity.webform.handler.delete_form', [
@@ -166,6 +178,7 @@ class WebformEntityHandlersForm extends EntityForm {
         ]),
         'attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NARROW),
       ];
+
       $row['operations'] = [
         '#type' => 'operations',
         '#links' => $operations,

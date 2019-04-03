@@ -20,14 +20,6 @@ class WebformCheckboxesOther extends Checkboxes implements WebformOtherInterface
   /**
    * {@inheritdoc}
    */
-  public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
-    $element['#element_validate'][] = [get_class($this), 'validateMultipleOptions'];
-    parent::prepare($element, $webform_submission);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getElementSelectorOptions(array $element) {
     $title = $this->getAdminLabel($element);
     $name = $element['#webform_key'];

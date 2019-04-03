@@ -22,9 +22,9 @@
       // The AJAX callback will give us a flag when we need to re-open the
       // browser, most likely due to a "Replace" button being clicked.
       if (typeof drupalSettings.entity_browser_reopen_browser !== 'undefined' &&  drupalSettings.entity_browser_reopen_browser) {
-        var data_drupal_selector = '[data-drupal-selector^="edit-' + drupalSettings.entity_browser_reopen_browser.replace(/_/g, '-') + '-entity-browser-entity-browser-' + '"]';
+        var data_drupal_selector = '[data-drupal-selector^="edit-' + drupalSettings.entity_browser_reopen_browser.replace(/_/g, '-') + '-entity-browser-entity-browser-' + '"][data-uuid]';
         var $launch_browser_element = $(context).find(data_drupal_selector);
-        if (!drupalSettings.entity_browser.iframe[$launch_browser_element.attr('data-uuid')].auto_open) {
+        if ($launch_browser_element.attr('data-uuid') in drupalSettings.entity_browser && !drupalSettings.entity_browser[$launch_browser_element.attr('data-uuid')].auto_open) {
           $launch_browser_element.click();
         }
         // In case this is inside a fieldset closed by default, open it so the

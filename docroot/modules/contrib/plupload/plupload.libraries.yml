@@ -1,7 +1,7 @@
 plupload:
   title: 'Plupload'
   website: http://www.plupload.com
-  version: 2.1.1
+  version: 2.1.9
   js:
     /libraries/plupload/js/plupload.full.min.js: {}
     /libraries/plupload/js/jquery.plupload.queue/jquery.plupload.queue.min.js: {}

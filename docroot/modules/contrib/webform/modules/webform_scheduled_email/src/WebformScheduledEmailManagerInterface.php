@@ -144,6 +144,38 @@ interface WebformScheduledEmailManagerInterface {
   /****************************************************************************/
 
   /**
+   * Get scheduled email date type (date or datetime).
+   *
+   * @return string
+   *   Scheduled email date type (date or datetime).
+   */
+  public function getDateType();
+
+  /**
+   * Get scheduled email date label (date or date/time).
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+   *   Scheduled email date label (date or date/time).
+   */
+  public function getDateTypeLabel();
+
+  /**
+   * Get scheduled email date format (Y-m-d or Y-m-d H:i:s).
+   *
+   * @return string
+   *   Scheduled email date format (Y-m-d or Y-m-d H:i:s).
+   */
+  public function getDateFormat();
+
+  /**
+   * Get scheduled email date format label (YYYY-DD-MM or YYYY-DD-MM HH:MM:SS).
+   *
+   * @return string
+   *   Scheduled email date format label (YYYY-DD-MM or YYYY-DD-MM HH:MM:SS).
+   */
+  public function getDateFormatLabel();
+
+  /**
    * Determine if submission has scheduled email for specified handler.
    *
    * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
@@ -178,8 +210,8 @@ interface WebformScheduledEmailManagerInterface {
    *   A webform handler id.
    *
    * @return string|bool
-   *   A send date using ISO date format (YYYY-MM-DD) or FALSE if the send date
-   *   is invalid.
+   *   A send date using ISO date (YYYY-MM-DD) or datetime
+   *   format (YYYY-MM-DD HH:MM:SS) or FALSE if the send date is invalid.
    */
   public function getSendDate(WebformSubmissionInterface $webform_submission, $handler_id);
 

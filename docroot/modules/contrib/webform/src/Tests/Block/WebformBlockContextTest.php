@@ -61,7 +61,7 @@ class WebformBlockContextTest extends WebformTestBase {
     $webform = Webform::load('contact');
 
     // Check webform context.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('{all contexts}');
     $this->assertRaw('{webform context}');
 
@@ -76,7 +76,7 @@ class WebformBlockContextTest extends WebformTestBase {
     $node->webform->target_id = 'contact';
     $node->webform->status = 1;
     $node->save();
-    $this->drupalGet('node/' . $node->id());
+    $this->drupalGet('/node/' . $node->id());
     $this->assertRaw('{all contexts}');
     $this->assertRaw('{node context}');
   }

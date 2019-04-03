@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\plupload\UploadController.
- */
-
 namespace Drupal\plupload;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -148,7 +143,7 @@ class UploadController implements ContainerInjectionInterface {
       $multipart_file = $this->request->files->get('file', array());
       // TODO: Not sure if this is the best check now.
       // Originally it was:
-      // if (empty($multipart_file['tmp_name']) || !is_uploaded_file($multipart_file['tmp_name'])) {
+      // if (empty($multipart_file['tmp_name']) || !is_uploaded_file($multipart_file['tmp_name'])) {.
       if (!$multipart_file->getPathname() || !is_uploaded_file($multipart_file->getPathname())) {
         throw new UploadException(UploadException::MOVE_ERROR);
       }

@@ -4,6 +4,7 @@ namespace Drupal\webform\EntitySettings;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\Element\WebformMessage;
 
 /**
  * Webform CSS and JS assets.
@@ -21,6 +22,8 @@ class WebformEntitySettingsAssetsForm extends WebformEntitySettingsBaseForm {
       '#type' => 'webform_message',
       '#message_message' => $this->t('The below CSS and JavasScript will be loaded on all pages that references and loads this webform.'),
       '#message_type' => 'info',
+      '#message_close' => TRUE,
+      '#message_storage' => WebformMessage::STORAGE_SESSION,
     ];
     $form['css'] = [
       '#type' => 'fieldset',

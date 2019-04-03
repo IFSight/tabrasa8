@@ -30,7 +30,6 @@ elements: |
   q:
     '#type': search
     '#title': 'Search Google'
-  
 css: ''
 javascript: ''
 settings:
@@ -47,6 +46,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: true
   form_prepopulate_source_entity: false
@@ -176,6 +176,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

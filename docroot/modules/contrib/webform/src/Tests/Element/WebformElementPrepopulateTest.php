@@ -35,17 +35,17 @@ class WebformElementPrepopulateTest extends WebformElementTestBase {
     $files = $this->drupalGetTestFiles('text');
 
     // Check prepopulation of an element.
-    $this->drupalGet('webform/test_element_prepopulate');
+    $this->drupalGet('/webform/test_element_prepopulate');
     $this->assertFieldByName('textfield', '');
     $this->assertFieldByName('textfield_prepopulate', '');
     $this->assertFieldByName('files[managed_file_prepopulate]', '');
 
     // Check 'textfield' can not be prepopulated.
-    $this->drupalGet('webform/test_element_prepopulate', ['query' => ['textfield' => 'value']]);
+    $this->drupalGet('/webform/test_element_prepopulate', ['query' => ['textfield' => 'value']]);
     $this->assertNoFieldByName('textfield', 'value');
 
     // Check 'textfield_prepopulate' can be prepopulated.
-    $this->drupalGet('webform/test_element_prepopulate', ['query' => ['textfield_prepopulate' => 'value']]);
+    $this->drupalGet('/webform/test_element_prepopulate', ['query' => ['textfield_prepopulate' => 'value']]);
     $this->assertFieldByName('textfield_prepopulate', 'value');
 
     // Check 'managed_file_prepopulate' can not be prepopulated.
@@ -57,7 +57,7 @@ class WebformElementPrepopulateTest extends WebformElementTestBase {
     $sid = $this->postSubmission($webform, $edit);
     $webform_submission = WebformSubmission::load($sid);
     $fid = $webform_submission->getElementData('managed_file_prepopulate');
-    $this->drupalGet('webform/test_element_prepopulate', ['query' => ['managed_file_prepopulate' => $fid]]);
+    $this->drupalGet('/webform/test_element_prepopulate', ['query' => ['managed_file_prepopulate' => $fid]]);
     $this->assertFieldByName('files[managed_file_prepopulate]', '');
   }
 

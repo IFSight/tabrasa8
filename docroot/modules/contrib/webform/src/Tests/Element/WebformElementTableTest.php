@@ -30,7 +30,7 @@ class WebformElementTableTest extends WebformElementTestBase {
     /**************************************************************************/
 
     // Check display elements within a table.
-    $this->drupalGet('webform/test_element_table');
+    $this->drupalGet('/webform/test_element_table');
     $this->assertRaw('<table class="js-form-wrapper responsive-enabled" data-drupal-selector="edit-table" id="edit-table" data-striping="1">');
     $this->assertRaw('<th>First Name</th>');
     $this->assertRaw('<th>Last Name</th>');

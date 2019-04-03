@@ -135,10 +135,10 @@ trait WebformEntityReferenceTrait {
    * {@inheritdoc}
    */
   public function getTestValues(array $element, WebformInterface $webform, array $options = []) {
-    $this->setOptions($element);
-    $target_type = $this->getTargetType($element);
+    $this->setOptions($element, ['limit' => 10, 'random' => TRUE]);
     // Exclude 'anonymous' user.
-    if ($target_type == 'user') {
+    $target_type = $this->getTargetType($element);
+    if ($target_type === 'user') {
       unset($element['#options'][0]);
     }
     return array_keys($element['#options']);
@@ -345,9 +345,11 @@ trait WebformEntityReferenceTrait {
    *
    * @param array $element
    *   An element.
+   * @param array $settings
+   *   An array of settings used to limit and randomize options.
    */
-  protected function setOptions(array &$element) {
-    WebformEntityTrait::setOptions($element);
+  protected function setOptions(array &$element, array $settings = []) {
+    WebformEntityTrait::setOptions($element, $settings);
   }
 
   /**
@@ -562,12 +564,12 @@ trait WebformEntityReferenceTrait {
         'wrapper' => 'webform-entity-reference-selection-wrapper',
         'progress' => ['type' => 'fullscreen'],
       ],
-      // Hide button, add submit button trigger class, and disable validation.
+      // Disable validation, hide button, add submit button trigger class.
       '#attributes' => [
+        'formnovalidate' => 'formnovalidate',
         'class' => [
           'js-hide',
           'js-webform-entity-reference-submit',
-          'js-webform-novalidate',
         ],
       ],
     ];

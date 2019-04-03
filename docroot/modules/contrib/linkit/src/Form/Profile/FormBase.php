@@ -67,7 +67,7 @@ abstract class FormBase extends EntityForm {
     $edit_link = $this->entity->toLink($this->t('Edit'), 'edit-form')->toString();
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created new profile %label.', ['%label' => $linkit_profile->label()]));
+        $this->messenger()->addMessage($this->t('Created new profile %label.', ['%label' => $linkit_profile->label()]));
         $this->logger('linkit')->notice('Created new profile %label.', ['%label' => $linkit_profile->label(), 'link' => $edit_link]);
         $form_state->setRedirect('linkit.matchers', [
           'linkit_profile' => $linkit_profile->id(),
@@ -75,7 +75,7 @@ abstract class FormBase extends EntityForm {
         break;
 
       case SAVED_UPDATED:
-        drupal_set_message($this->t('Updated profile %label.', ['%label' => $linkit_profile->label()]));
+        $this->messenger()->addMessage($this->t('Updated profile %label.', ['%label' => $linkit_profile->label()]));
         $this->logger('linkit')->notice('Updated profile %label.', ['%label' => $linkit_profile->label(), 'link' => $edit_link]);
         $form_state->setRedirectUrl($linkit_profile->toUrl('edit-form'));
         break;

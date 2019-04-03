@@ -46,6 +46,8 @@ function webform_devel_drush_help($section) {
 
 /**
  * Implements drush_hook_COMMAND().
+ *
+ * @see \Drupal\webform_devel\Commands\WebformDevelCommands::drush_webform_devel_reset()
  */
 function drush_webform_devel_reset() {
   if (!drush_confirm(dt("Are you sure you want reset the Webform module's user data and saved state?"))) {

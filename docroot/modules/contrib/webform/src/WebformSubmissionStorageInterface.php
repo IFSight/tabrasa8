@@ -556,10 +556,22 @@ interface WebformSubmissionStorageInterface extends ContentEntityStorageInterfac
    *
    * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
    *   A webform submission.
-   * @param array $values
-   *   The value to be logged includes 'handler_id', 'operation', 'message', and 'data'.
+   * @param array $context
+   *   The values/context to be logged includes 'handler_id', 'operation', 'message', and 'data'.
+   *
+   * @deprecated Instead call the 'webform_submission' logger channel directly.
+   *
+   *  $message = 'Some message with an %argument.'
+   *  $context = [
+   *    '%argument' => 'Some value'
+   *    'link' => $webform_submission->toLink($this->t('Edit'), 'edit-form')->toString(),
+   *    'webform_submission' => $webform_submission,
+   *    'handler_id' => NULL,
+   *    'data' => [],
+   *  ];
+   *  \Drupal::logger('webform_submission')->notice($message, $context);
    */
-  public function log(WebformSubmissionInterface $webform_submission, array $values = []);
+  public function log(WebformSubmissionInterface $webform_submission, array $context = []);
 
   /****************************************************************************/
   // Draft methods.

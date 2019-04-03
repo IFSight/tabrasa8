@@ -18,7 +18,7 @@ class NodeMatcherTest extends LinkitKernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['field', 'node'];
+  public static $modules = ['field', 'node', 'content_moderation', 'workflows'];
 
   /**
    * The matcher manager.
@@ -34,6 +34,7 @@ class NodeMatcherTest extends LinkitKernelTestBase {
     parent::setUp();
 
     $this->installEntitySchema('node');
+    $this->installSchema('node', ['node_access']);
     $this->installConfig(['field', 'node']);
 
     $this->manager = $this->container->get('plugin.manager.linkit.matcher');
@@ -74,10 +75,17 @@ class NodeMatcherTest extends LinkitKernelTestBase {
     ]);
     $node->save();
 
-    // Unpublished node.
+    // Unpublished nodes.
     $node = Node::create([
       'title' => 'Lorem unpublishd',
       'type' => $type1->id(),
+      'status' => FALSE,
+    ]);
+    $node->save();
+
+    $node = Node::create([
+      'title' => 'Lorem unpublishd 2',
+      'type' => $type2->id(),
       'status' => FALSE,
     ]);
     $node->save();
@@ -133,7 +141,22 @@ class NodeMatcherTest extends LinkitKernelTestBase {
 
     // Test with permissions to see unpublished nodes.
     $suggestions = $plugin->execute('Lorem');
+    $this->assertEquals(5, count($suggestions->getSuggestions()), 'Correct number of suggestions');
+
+    // Test with permissions to see own unpublished nodes.
+    \Drupal::currentUser()->setAccount($this->createUser([], ['access content', 'view own unpublished content']));
+    $nodes = $this->container->get('entity_type.manager')->getStorage('node')->loadByProperties(['title' => 'Lorem unpublishd']);
+    $node4 = reset($nodes);
+    /** @var \Drupal\node\NodeInterface $node4 */
+    $node4->setOwnerId(\Drupal::currentUser()->id());
+    $node4->save();
+    $suggestions = $plugin->execute('Lorem');
     $this->assertEquals(4, count($suggestions->getSuggestions()), 'Correct number of suggestions');
+
+    // Test with permissions to see any unpublished nodes.
+    \Drupal::currentUser()->setAccount($this->createUser([], ['access content', 'view any unpublished content']));
+    $suggestions = $plugin->execute('Lorem');
+    $this->assertEquals(5, count($suggestions->getSuggestions()), 'Correct number of suggestions');
   }
 
   /**

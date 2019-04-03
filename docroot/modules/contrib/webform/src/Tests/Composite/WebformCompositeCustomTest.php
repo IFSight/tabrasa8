@@ -25,10 +25,10 @@ class WebformCompositeCustomTest extends WebformTestBase {
 
     /* Display */
 
-    $this->drupalGet('webform/test_composite_custom');
+    $this->drupalGet('/webform/test_composite_custom');
 
     // Check basic custom composite.
-    $this->assertRaw('<label for="edit-webform-custom-composite-basic">webform_custom_composite_basic</label>');
+    $this->assertRaw('<label>webform_custom_composite_basic</label>');
     $this->assertRaw('<div id="webform_custom_composite_basic_table">');
     $this->assertRaw('<div class="webform-multiple-table webform-multiple-table-responsive">');
     $this->assertRaw('<th class="webform_custom_composite_basic-table--handle webform-multiple-table--handle"><span class="visually-hidden">Re-order</span></th>');

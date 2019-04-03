@@ -20,7 +20,7 @@ class WebformElementHelpTest extends WebformElementTestBase {
    * Test element help.
    */
   public function testHelp() {
-    $this->drupalGet('webform/test_element_help');
+    $this->drupalGet('/webform/test_element_help');
 
     // Check basic help.
     $this->assertRaw('<label for="edit-help">help<span class="webform-element-help" role="tooltip" tabindex="0" data-webform-help="&lt;div class=&quot;webform-element-help--title&quot;&gt;help&lt;/div&gt;&lt;div class=&quot;webform-element-help--content&quot;&gt;{This is an example of help}&lt;/div&gt;"><span aria-hidden="true">?</span></span>');

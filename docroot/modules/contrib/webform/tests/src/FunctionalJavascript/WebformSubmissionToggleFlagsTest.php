@@ -53,7 +53,7 @@ class WebformSubmissionToggleFlagsTest extends JavascriptTestBase {
       'edit any webform submission',
       'delete any webform submission',
     ]));
-    $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/' . $webform->id() . '/results/submissions');
     $assert->statusCodeEquals(200);
     $assert->elementExists('css', "#webform-submission-$sid-sticky")->click();
     $assert->assertWaitOnAjaxRequest();

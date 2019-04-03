@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Provides a generic base class for a webform entity deletion form.
  *
- * Copied from: \Drupal\Core\Entity\EntityConfirmFormBase
+ * Copied from: \Drupal\Core\Entity\EntityConfirmFormBase.
  */
 abstract class WebformConfigEntityDeleteFormBase extends EntityForm implements WebformDeleteFormInterface {
 

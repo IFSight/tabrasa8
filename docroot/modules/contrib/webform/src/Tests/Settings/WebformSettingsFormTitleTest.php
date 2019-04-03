@@ -46,43 +46,43 @@ class WebformSettingsFormTitleTest extends WebformTestBase {
     /**************************************************************************/
 
     // Check webform title.
-    $this->drupalGet('webform/test_webform');
+    $this->drupalGet('/webform/test_webform');
     $this->assertRaw('<title>test_webform | Drupal</title>');
 
     // Check (default) both title.
-    $this->drupalGet('webform/test_webform', $options);
+    $this->drupalGet('/webform/test_webform', $options);
     $this->assertRaw('<title>test_node: test_webform | Drupal</title>');
 
     // Check webform and source entity title.
     $webform
       ->setSetting('form_title', WebformInterface::TITLE_WEBFORM_SOURCE_ENTITY)
       ->save();
-    $this->drupalGet('webform/test_webform', $options);
+    $this->drupalGet('/webform/test_webform', $options);
     $this->assertRaw('<title>test_webform: test_node | Drupal</title>');
 
     // Check source entity title.
     $webform
       ->setSetting('form_title', WebformInterface::TITLE_SOURCE_ENTITY)
       ->save();
-    $this->drupalGet('webform/test_webform', $options);
+    $this->drupalGet('/webform/test_webform', $options);
     $this->assertRaw('<title>test_node | Drupal</title>');
 
     // Check webform title.
     $webform
       ->setSetting('form_title', WebformInterface::TITLE_WEBFORM)
       ->save();
-    $this->drupalGet('webform/test_webform', $options);
+    $this->drupalGet('/webform/test_webform', $options);
     $this->assertRaw('<title>test_webform | Drupal</title>');
 
     // Check duplicate titles.
     $webform
       ->setSetting('form_title', WebformInterface::TITLE_SOURCE_ENTITY_WEBFORM)
       ->save();
-    $this->drupalGet('webform/test_webform', $options);
+    $this->drupalGet('/webform/test_webform', $options);
     $this->assertRaw('<title>test_node: test_webform | Drupal</title>');
     $webform->set('title', 'test_node')
       ->save();
-    $this->drupalGet('webform/test_webform', $options);
+    $this->drupalGet('/webform/test_webform', $options);
     $this->assertRaw('<title>test_node | Drupal</title>');
   }
 

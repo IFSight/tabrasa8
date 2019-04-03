@@ -97,19 +97,18 @@ class WebformSubmissionNotesForm extends ContentEntityForm {
       '#return_value' => TRUE,
       '#access' => $this->isDialog() ? FALSE : TRUE,
     ];
-    if ($this->currentUser()->hasPermission('administer users')) {
-      $form['uid'] = [
-        '#type' => 'entity_autocomplete',
-        '#title' => $this->t('Submitted by'),
-        '#description' => $this->t('The username of the user that submitted the webform.'),
-        '#target_type' => 'user',
-        '#selection_setttings' => [
-          'include_anonymous' => FALSE,
-        ],
-        '#required' => TRUE,
-        '#default_value' => $webform_submission->getOwner(),
-      ];
-    }
+    $form['uid'] = [
+      '#type' => 'entity_autocomplete',
+      '#title' => $this->t('Submitted by'),
+      '#description' => $this->t('The username of the user that submitted the webform.'),
+      '#target_type' => 'user',
+      '#selection_setttings' => [
+        'include_anonymous' => FALSE,
+      ],
+      '#required' => TRUE,
+      '#default_value' => $webform_submission->getOwner(),
+      '#access' => $this->currentUser()->hasPermission('administer users'),
+    ];
 
     $form['#attached']['library'][] = 'webform/webform.admin';
 

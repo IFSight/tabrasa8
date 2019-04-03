@@ -20,7 +20,7 @@ class WebformElementReadonlyTest extends WebformElementTestBase {
    * Tests element readonly.
    */
   public function testReadonly() {
-    $this->drupalGet('webform/test_element_readonly');
+    $this->drupalGet('/webform/test_element_readonly');
 
     $this->assertRaw('<div class="webform-readonly js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-textfield form-item-textfield">');
     $this->assertRaw('<input readonly="readonly" data-drupal-selector="edit-textfield" type="text" id="edit-textfield" name="textfield" value="" size="60" maxlength="255" class="form-text" />');

@@ -119,7 +119,7 @@ class WebformCustomComposite extends WebformCompositeBase {
     return [
       '#type' => 'webform_element_composite',
       '#title' => $this->t('Elements'),
-      '#title_display' => $this->t('Invisible'),
+      '#title_display' => 'invisible',
     ];
   }
 

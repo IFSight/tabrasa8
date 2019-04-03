@@ -100,7 +100,7 @@ class WebformAdminConfigElementsForm extends WebformAdminConfigBaseForm {
     // Element: Settings.
     $form['element'] = [
       '#type' => 'details',
-      '#title' => $this->t('Element settings'),
+      '#title' => $this->t('Element general settings'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];

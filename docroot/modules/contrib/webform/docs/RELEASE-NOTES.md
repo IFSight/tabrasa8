@@ -2,15 +2,20 @@ Steps for creating a new release
 --------------------------------
 
   1. Review code
-  2. Review accessibility
-  3. Run tests
-  4. Generate release notes
-  5. Tag and create a new release
+  2. Deprecated code
+  3. Review accessibility
+  4. Run tests
+  5. Generate release notes
+  6. Tag and create a new release
 
 
 1. Review code
 --------------
 
+    # Remove files that should never be reviewed.
+    cd modules/sandbox/webform
+    rm *.patch interdiff-*
+    
 [PHP](https://www.drupal.org/node/1587138)
 
     # Check Drupal PHP coding standards
@@ -43,8 +48,39 @@ Steps for creating a new release
     # Directories should be 755 or drwxr-xr-x
     find . -type f -print0 | xargs -0 chmod 0644
 
+2. Deprecated code
+------------------
+
+[phpstan-drupal](https://github.com/mglaman/phpstan-drupal) 
+[phpstan-drupal-deprecations](https://github.com/mglaman/phpstan-drupal-deprecations)
+
+    cd /var/www/sites/d8_webform/
+    composer require mglaman/phpstan-drupal
+    composer require phpstan/phpstan-deprecation-rules
+
+Create `/var/www/sites/d8_webform/phpstan.neon` 
+
+    parameters:
+      customRulesetUsed: true
+      reportUnmatchedIgnoredErrors: false
+      # Ignore phpstan-drupal extension's rules.
+      ignoreErrors:
+        - '#\Drupal calls should be avoided in classes, use dependency injection instead#'
+        - '#Plugin definitions cannot be altered.#'
+        - '#Missing cache backend declaration for performance.#'
+        - '#Plugin manager has cache backend specified but does not declare cache tags.#'
+    includes:
+      - vendor/mglaman/phpstan-drupal/extension.neon
+      - vendor/phpstan/phpstan-deprecation-rules/rules.neon
     
-2. Review accessibility
+Run PHPStan with memory limit increased
+
+    cd /var/www/sites/d8_webform/
+    ./vendor/bin/phpstan --memory-limit=1024M analyse web/modules/sandbox/webform > ~/webform-deprecated.txt
+    cat ~/webform-deprecated.txt
+
+    
+3. Review accessibility
 -----------------------
 
 [Pa11y](http://pa11y.org/)
@@ -55,14 +91,42 @@ Notes
 - Requires node 8.x+
 
 
-    drush en -y webform_example_accessibility
-    pa11y http://localhost/wf/webform/example_accessibility_basic
-    pa11y http://localhost/wf/webform/example_accessibility_advanced
-    pa11y http://localhost/wf/webform/example_accessibility_containers
-    pa11y http://localhost/wf/webform/example_accessibility_wizard
+    # Enable accessibility examples.
+    drush en -y webform_examples_accessibility
+    
+    # Text.
+    mkdir -p /var/www/sites/d8_webform/web/modules/sandbox/webform/reports/accessiblity/text  
+    cd /var/www/sites/d8_webform/web/modules/sandbox/webform/reports/accessiblity/text
+    pa11y http://localhost/wf/webform/example_accessibility_basic > example_accessibility_basic.txt 
+    pa11y http://localhost/wf/webform/example_accessibility_advanced > example_accessibility_advanced.txt
+    pa11y http://localhost/wf/webform/example_accessibility_containers > example_accessibility_containers.txt
+    pa11y http://localhost/wf/webform/example_accessibility_wizard > example_accessibility_wizard.txt
+    pa11y http://localhost/wf/webform/example_accessibility_labels > example_accessibility_labels.txt
 
+    # HTML.
+    mkdir -p /var/www/sites/d8_webform/web/modules/sandbox/webform/reports/accessiblity/html
+    cd /var/www/sites/d8_webform/web/modules/sandbox/webform/reports/accessiblity/html
+    pa11y --reporter html http://localhost/wf/webform/example_accessibility_basic > example_accessibility_basic.html 
+    pa11y --reporter html http://localhost/wf/webform/example_accessibility_advanced > example_accessibility_advanced.html
+    pa11y --reporter html http://localhost/wf/webform/example_accessibility_containers > example_accessibility_containers.html
+    pa11y --reporter html http://localhost/wf/webform/example_accessibility_wizard > example_accessibility_wizard.html
+    pa11y --reporter html http://localhost/wf/webform/example_accessibility_labels > example_accessibility_labels.html
+ 
+    # Remove localhost from reports.
+    cd /var/www/sites/d8_webform/web/modules/sandbox/webform/reports/accessiblity
+    find . -name '*.html' -exec sed -i '' -e  's|http://localhost/wf/webform/|http://localhost/webform/|g' {} \;
+ 
+    # PDF.
+    mkdir -p /var/www/sites/d8_webform/web/modules/sandbox/webform/reports/accessiblity/pdf
+    cd /var/www/sites/d8_webform/web/modules/sandbox/webform/reports/accessiblity/pdf
+    wkhtmltopdf --dpi 384 ../html/example_accessibility_basic.html example_accessibility_basic.pdf 
+    wkhtmltopdf --dpi 384 ../html/example_accessibility_advanced.html example_accessibility_advanced.pdf
+    wkhtmltopdf --dpi 384 ../html/example_accessibility_containers.html example_accessibility_containers.pdf
+    wkhtmltopdf --dpi 384 ../html/example_accessibility_wizard.html example_accessibility_wizard.pdf
+    wkhtmltopdf --dpi 384 ../html/example_accessibility_labels.html example_accessibility_labels.pdf
 
-3. Run tests
+    
+4. Run tests
 ------------
 
 [SimpleTest](https://www.drupal.org/node/645286)
@@ -107,15 +171,15 @@ References
     php ../../vendor/phpunit/phpunit/phpunit --printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" ../modules/sandbox/webform/tests/src/Unit/Access/WebformAccessCheckTest
 
 
-4. Generate release notes
+5. Generate release notes
 -------------------------
 
 [Git Release Notes for Drush](https://www.drupal.org/project/grn)
 
-    drush release-notes --nouser 8.x-5.0-VERSION 8.x-5.x
+    drush release-notes --nouser 8.x-5.0-rc1 8.x-5.x
 
 
-5. Tag and create a new release
+6. Tag and create a new release
 -------------------------------
 
 [Tag a release](https://www.drupal.org/node/1066342)

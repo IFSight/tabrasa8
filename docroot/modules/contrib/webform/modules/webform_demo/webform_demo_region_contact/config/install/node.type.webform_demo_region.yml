@@ -11,7 +11,7 @@ third_party_settings:
     available_menus:
       - main
     parent: 'main:'
-name: 'Demo: Event'
+name: 'Demo: Region'
 type: webform_demo_region
 description: ''
 help: ''

@@ -45,7 +45,7 @@ class WebformElementCustomPropertiesTest extends WebformElementTestBase {
     $this->assertEqual($webform->getElementDecoded('name'), $name_element);
 
     // Check that name input does not contain custom data.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('<input data-drupal-selector="edit-name" type="text" id="edit-name" name="name" value="' . htmlentities($admin_user->label()) . '" size="60" maxlength="255" class="form-text required" required="required" aria-required="true" />');
 
     // Submit empty custom property and data.
@@ -79,7 +79,7 @@ class WebformElementCustomPropertiesTest extends WebformElementTestBase {
     $this->assertEqual($webform->getElementDecoded('name'), $name_element);
 
     // Check that name input does contain custom data.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('<input data-custom="custom-data" data-drupal-selector="edit-name" type="text" id="edit-name" name="name" value="' . htmlentities($admin_user->label()) . '" size="60" maxlength="255" class="form-text required" required="required" aria-required="true" />');
   }
 

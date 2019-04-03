@@ -28,7 +28,7 @@ class WebformElementSubmissionViewsTest extends WebformElementTestBase {
    */
   public function testSubmissionViews() {
     // Check global and webform rendering.
-    $this->drupalGet('webform/test_element_submission_views');
+    $this->drupalGet('/webform/test_element_submission_views');
     $this->assertRaw('<th class="webform_submission_views_global-table--name_title_view webform-multiple-table--name_title_view">');
     $this->assertRaw('<th class="webform_submission_views_global-table--global_routes webform-multiple-table--global_routes">');
     $this->assertRaw('<th class="webform_submission_views_global-table--webform_routes webform-multiple-table--webform_routes">');
@@ -101,7 +101,7 @@ webform_submission_views:
     $this->container->get('module_installer')->uninstall(['webform_node']);
 
     // Check global and webform rendering without node settings.
-    $this->drupalGet('webform/test_element_submission_views');
+    $this->drupalGet('/webform/test_element_submission_views');
     $this->assertNoRaw('<th class="webform_submission_views_global-table--node_routes webform-multiple-table--node_routes">');
     $this->assertNoRaw('<th class="webform_submission_views-table--node_routes webform-multiple-table--node_routes">');
 
@@ -126,7 +126,7 @@ webform_submission_views:
     $this->container->get('module_installer')->uninstall(['views']);
 
     // Check that element is completely hidden.
-    $this->drupalGet('webform/test_element_submission_views');
+    $this->drupalGet('/webform/test_element_submission_views');
     $this->assertNoRaw('<th class="webform_submission_views_global-table--name_title_view webform-multiple-table--name_title_view">');
     $this->assertNoRaw('<th class="webform_submission_views-table--name_title_view webform-multiple-table--name_title_view">');
 

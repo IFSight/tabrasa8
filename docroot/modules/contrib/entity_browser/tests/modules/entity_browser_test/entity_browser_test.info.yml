@@ -10,8 +10,8 @@ dependencies:
   - node
   - views
 
-# Information added by Drupal.org packaging script on 2018-09-07
-version: '8.x-2.0'
+# Information added by Drupal.org packaging script on 2019-02-15
+version: '8.x-2.1'
 core: '8.x'
 project: 'entity_browser'
-datestamp: 1536328696
+datestamp: 1550236988

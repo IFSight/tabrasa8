@@ -45,7 +45,7 @@ class WebformElementTermReferenceTest extends WebformElementTestBase {
     // Term checkboxes
     /**************************************************************************/
 
-    $this->drupalGet('webform/test_element_term_reference');
+    $this->drupalGet('/webform/test_element_term_reference');
 
     // Check term checkboxes tree default.
     $this->assertRaw('<fieldset data-drupal-selector="edit-webform-term-checkboxes-tree-default" class="js-webform-term-checkboxes webform-term-checkboxes webform-term-checkboxes-scroll webform-term-checkboxes--wrapper fieldgroup form-composite webform-composite-visible-title js-webform-type-webform-term-checkboxes webform-type-webform-term-checkboxes js-form-item form-item js-form-wrapper form-wrapper" id="edit-webform-term-checkboxes-tree-default--wrapper">');
@@ -75,7 +75,7 @@ class WebformElementTermReferenceTest extends WebformElementTestBase {
     // Term select.
     /**************************************************************************/
 
-    $this->drupalGet('webform/test_element_term_reference');
+    $this->drupalGet('/webform/test_element_term_reference');
 
     // Check term select tree default.
     $this->assertRaw('<option value="1">Parent 1</option>');

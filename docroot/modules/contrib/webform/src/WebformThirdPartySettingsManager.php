@@ -67,7 +67,7 @@ class WebformThirdPartySettingsManager implements WebformThirdPartySettingsManag
     $this->pathValidator = $path_validator;
     $this->addonsManager = $addons_manager;
 
-    $this->config = $this->configFactory->getEditable('webform.settings');
+    $this->config = $this->configFactory->get('webform.settings');
     $this->loadIncludes();
   }
 

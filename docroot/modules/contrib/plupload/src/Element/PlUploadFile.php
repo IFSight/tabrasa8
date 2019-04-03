@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\plupload\Element\PlUploadFile.
- */
-
 namespace Drupal\plupload\Element;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -27,7 +22,6 @@ class PlUploadFile extends FormElement {
    */
   public function getInfo() {
     $class = get_class($this);
-    $module_path = drupal_get_path('module', 'plupload');
     return [
       '#input' => TRUE,
       '#attributes' => ['class' => ['plupload-element']],
@@ -57,8 +51,8 @@ class PlUploadFile extends FormElement {
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
 
     $id = $element['#id'];
-    // If a unique identifier added with '--', we need to exclude it
-    if (preg_match('/(.*)(--[0-9]+)$/', $id, $reg)) {
+    // If a unique identifier added with '--', we need to exclude it.
+    if (preg_match('/(.*)(--[0-9A-Za-z]+)$/', $id, $reg)) {
       $id = $reg[1];
     }
 
@@ -68,9 +62,9 @@ class PlUploadFile extends FormElement {
 
     $files = array();
     foreach ($input as $key => $value) {
-      if (preg_match('/' . $id . '_([0-9]+)_(.*)/', $key, $reg)) {
-        $i = $reg[1];
-        $key = $reg[2];
+      if (preg_match('/' . $id . '(--([0-9A-Za-z_-]+))?_([0-9]+)_(tmpname|name|status)/', $key, $reg)) {
+        $i = $reg[3];
+        $key = $reg[4];
 
         // Only add the keys we expect.
         if (!in_array($key, array('tmpname', 'name', 'status'))) {
@@ -114,7 +108,6 @@ class PlUploadFile extends FormElement {
           // don't want an attacker to be able to get them back into the top
           // level of public:// in that case).
           $value = rtrim(drupal_basename($value), '.');
-
 
           // Based on the same feture from file_save_upload().
           if (!\Drupal::config('system.file')->get('allow_insecure_uploads') && preg_match('/\.(php|pl|py|cgi|asp|js)(\.|$)/i', $value) && (substr($value, -4) != '.txt')) {
@@ -200,7 +193,7 @@ class PlUploadFile extends FormElement {
     // Set upload URL.
     if (empty($settings['url'])) {
       $settings['url'] = Url::fromRoute('plupload.upload', array(), array(
-          'query' => array('token' => \Drupal::csrfToken()->get('plupload-handle-uploads'))
+        'query' => array('token' => \Drupal::csrfToken()->get('plupload-handle-uploads')),
       ))->toString();
     }
 
@@ -246,13 +239,13 @@ class PlUploadFile extends FormElement {
       '#upload_validators' => $element['#upload_validators'],
     );
 
-    // Global settings
+    // Global settings.
     $library_discovery = \Drupal::service('library.discovery');
     $library = $library_discovery->getLibraryByName('plupload', 'plupload');
-    
+
     $element['#attached']['drupalSettings']['plupload'] = array(
       '_default' => $library['settings']['plupload']['_default'],
-      $element['#id'] => $settings
+      $element['#id'] => $settings,
     );
 
     return $element;

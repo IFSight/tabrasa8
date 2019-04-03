@@ -52,10 +52,23 @@ class TwigExtension extends \Twig_Extension {
    * @see \Drupal\Core\Utility\Token::replace
    */
   public function webformToken($token, EntityInterface $entity = NULL, array $data = [], array $options = []) {
+    static $processing = [];
+
     // Allow the webform_token function to be tested during validation without
     // a valid entity.
     if (!$entity) {
       return $token;
+    }
+
+    // Prevent token replacement recursion.
+    $original_token = $token;
+    $processing += [$original_token => 0];
+    $processing[$original_token]++;
+    if ($processing[$original_token] > 100) {
+      // Cancel token processing by settings the processing token to FALSE.
+      $processing[$original_token] = FALSE;
+      // Throw exception which is caught by ::renderTwigTemplate.
+      throw new \LogicException(sprintf('The "%s" token is being called recursively.', $token));
     }
 
     // Parse options included in the token.
@@ -72,8 +85,16 @@ class TwigExtension extends \Twig_Extension {
     // ISSUE. This TwigExtension is loaded on every page load, even when a
     // website is in maintenance mode.
     // @see https://www.drupal.org/node/2907960
-    /** @var \Drupal\webform\WebformTokenManagerInterface $value */
-    $value = \Drupal::service('webform.token_manager')->replace($token, $entity, $data, $options);
+    /** @var \Drupal\webform\WebformTokenManagerInterface $token_manager */
+    $token_manager = \Drupal::service('webform.token_manager');
+    $value = $token_manager->replace($token, $entity, $data, $options);
+
+    // If token replacement caused a recursion exception return an empty value.
+    if ($processing[$original_token] === FALSE) {
+      return '';
+    }
+
+    $processing[$original_token]--;
 
     return (WebformHtmlHelper::containsHtml($value)) ? ['#markup' => $value] : $value;
   }
@@ -88,27 +109,34 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Build reusable Twig help.
    *
+   * @param array $variables
+   *   An array of available variable names.
+   *
    * @return array
    *   A renderable array container Twig help.
    */
-  public static function buildTwigHelp() {
+  public static function buildTwigHelp(array $variables = []) {
     /** @var \Drupal\webform\WebformSubmissionStorageInterface $submission_storage */
     $submission_storage = \Drupal::entityTypeManager()->getStorage('webform_submission');
     $field_definitions = $submission_storage->getFieldDefinitions();
-    $items = [
+
+    // Bold all the passed variable names.
+    foreach ($variables as $index => $item) {
+      $variables[$index] = ['#markup' => $item, '#prefix' => '<strong>', '#suffix' => '</strong>'];
+    }
+
+    $variables = array_merge($variables, [
       '{{ webform }}',
       '{{ webform_submission }}',
       '{{ elements }}',
       '{{ elements_flattened }}',
-      // @todo Dynamically generate examples for all elements.
-      // This could be overkill.
       '{{ data.element_key }}',
       '{{ data.element_key.delta }}',
       '{{ data.composite_element_key.subelement_key }}',
       '{{ data.composite_element_key.delta.subelement_key }}',
-    ];
+    ]);
     foreach (array_keys($field_definitions) as $field_name) {
-      $items[] = "{{ $field_name }}";
+      $variables[] = "{{ $field_name }}";
     }
 
     $t_args = [
@@ -124,7 +152,7 @@ class TwigExtension extends \Twig_Extension {
     ];
     $output[] = [
       '#theme' => 'item_list',
-      '#items' => $items,
+      '#items' => $variables,
     ];
     $output[] = [
       '#markup' => '<p>' . t("You can also output tokens using the <code>webform_token()</code> function.") . '</p>',
@@ -161,6 +189,8 @@ class TwigExtension extends \Twig_Extension {
    *   A inline Twig template.
    * @param array $options
    *   (optional) Template and token options.
+   * @param array $context
+   *   (optional) Context to be passed to inline Twig template.
    *
    * @return string
    *   The fully rendered Twig template.
@@ -168,15 +198,16 @@ class TwigExtension extends \Twig_Extension {
    * @see \Drupal\webform\Element\WebformComputedTwig::processValue
    * @see \Drupal\webform\Plugin\WebformHandler\EmailWebformHandler::getMessage
    */
-  public static function renderTwigTemplate(WebformSubmissionInterface $webform_submission, $template, array $options = []) {
+  public static function renderTwigTemplate(WebformSubmissionInterface $webform_submission, $template, array $options = [], array $context = []) {
     try {
-      $build = self::buildTwigTemplate($webform_submission, $template, $options);
+      $build = self::buildTwigTemplate($webform_submission, $template, $options, $context);
       return \Drupal::service('renderer')->renderPlain($build);
     }
     catch (\Exception $exception) {
       if ($webform_submission->getWebform()->access('update')) {
-        \Drupal::messenger()->addError(t('Failed to render computed Twig value due to error "%error"', ['%error' => $exception->getMessage()]));
+        \Drupal::messenger()->addError($exception->getMessage());
       }
+      \Drupal::logger('webform')->error($exception->getMessage());
       return '';
     }
   }
@@ -189,12 +220,14 @@ class TwigExtension extends \Twig_Extension {
    * @param string $template
    *   A inline Twig template.
    * @param array $options
-   *   (optional) Template and token options.
+   *   (optional) Template, token options, and context.
+   * @param array $context
+   *   (optional) Context to be passed to inline Twig template.
    *
    * @return array
    *   A renderable containing an inline twig template.
    */
-  public static function buildTwigTemplate(WebformSubmissionInterface $webform_submission, $template, array $options = []) {
+  public static function buildTwigTemplate(WebformSubmissionInterface $webform_submission, $template, array $options = [], array $context = []) {
     $options += [
       'html' => FALSE,
       'email' => FALSE,
@@ -208,7 +241,15 @@ class TwigExtension extends \Twig_Extension {
       }
     }
 
-    $context = [
+    // If the template does NOT use the webform_token() function, but contains
+    // simple tokens, convert the simple tokens to use
+    // the webform_token() function.
+    if (strpos($template, 'webform_token(') === FALSE
+      && strpos($template, '[webform') !== FALSE) {
+      $template = preg_replace('#([^"\']|^)(\[[^]]+\])([^"\']|$)#', '\1{{ webform_token(\'\2\', webform_submission) }}\3', $template);
+    }
+
+    $context += [
       'webform_submission' => $webform_submission,
       'webform' => $webform_submission->getWebform(),
       'elements' => $webform_submission->getWebform()->getElementsDecoded(),

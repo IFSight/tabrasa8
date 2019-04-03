@@ -49,18 +49,28 @@ code {
 }
 
 /* Add yellow background to tooltips and tabs */
+/* @see core/assets/vendor/jquery.ui/themes/base/tabs.css */
 .ui-tooltip.ui-widget {
   background: #fe6;;
   border: 1px solid #ed5;
 }
 
+.webform-tabs .ui-tabs-nav .ui-tabs-anchor {
+  text-decoration: inherit;
+}
+
 .webform-tabs .ui-tabs-active.ui-state-active {
   background: #fe6;
   border: 1px solid #ed5;
+  text-decoration: none;
 }
 
-.webform-tabs .ui-tabs-active.ui-state-active.ui-state-focus a {
-  text-decoration: underline;
+.webform-tabs .ui-state-hover {
+  text-decoration: underline !important;
+}
+
+.webform-tabs .ui-state-active.ui-state-hover {
+  text-decoration: none !important;
 }
 
 /** Compress tabs for mobile */
@@ -137,6 +147,27 @@ pre.webform-codemirror-runmode {
   margin: 1em 0;
 }
 
+/* jQuery UI autocomplete states */
+.ui-autocomplete a /* For filter autocomplete. */,
+.ui-autocomplete .ui-menu-item-wrapper /* For #states value autocomplete. */ {
+  display: block;
+  border: 1px solid transparent;
+  color: #0074bd;
+}
+
+.ui-autocomplete a.ui-state-hover,
+.ui-autocomplete a.ui-state-active,
+.ui-autocomplete a.ui-state-focus,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-hover,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-active,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-focus {
+  text-decoration: underline;
+  color: #0074bd;
+  background: #fe6;
+  border: solid 1px #ed5;
+  margin: 0;
+}
+
 /* jQuery UI button states */
 .webform-buttons .ui-button.ui-state-default {
   background: #f5f5f2;
@@ -178,7 +209,6 @@ pre.webform-codemirror-runmode {
 .webform-details-toggle-statelink:focus {
   text-decoration: underline;
 }
-
 
 /* Token tree */
 .token-tree ul {

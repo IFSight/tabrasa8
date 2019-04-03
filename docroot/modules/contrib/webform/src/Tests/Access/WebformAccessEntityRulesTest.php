@@ -42,7 +42,7 @@ class WebformAccessEntityRulesTest extends WebformTestBase {
     /** @var \Drupal\webform\WebformSubmissionInterface[] $submissions */
     $submissions = array_values(\Drupal::entityTypeManager()->getStorage('webform_submission')->loadByProperties(['webform_id' => 'test_submissions']));
 
-    $account = $this->drupalCreateUser(['access content']);
+    $account = $this->drupalCreateUser(['access content', 'edit webform source']);
 
     $webform_id = $webform->id();
     $sid = $submissions[0]->id();
@@ -107,7 +107,7 @@ class WebformAccessEntityRulesTest extends WebformTestBase {
 
     // Check create authenticated/anonymous access.
     $webform->setAccessRules($default_access_rules)->save();
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertResponse(200, 'Webform create submission access allowed for anonymous/authenticated user.');
 
     // Revoke create from anonymous and authenticated roles.
@@ -121,7 +121,7 @@ class WebformAccessEntityRulesTest extends WebformTestBase {
     $webform->setAccessRules($access_rules)->save();
 
     // Check create access denied.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertResponse(403, 'Webform returns access denied');
 
     /**************************************************************************/
@@ -192,12 +192,12 @@ class WebformAccessEntityRulesTest extends WebformTestBase {
 
       // Check access rule via 'access content'.
       $access_rules = [
-          $permission => [
-            'roles' => [],
-            'users' => [],
-            'permissions' => ['access content'],
-          ],
-        ] + $default_access_rules;
+        $permission => [
+          'roles' => [],
+          'users' => [],
+          'permissions' => ['access content'],
+        ],
+      ] + $default_access_rules;
       $webform->setAccessRules($access_rules)->save();
       $this->drupalGet($path);
       $this->assertResponse(200, "Webform allows access via permission access rules");
@@ -237,21 +237,21 @@ class WebformAccessEntityRulesTest extends WebformTestBase {
     $this->drupalLogin($account);
 
     // Check no view previous submission message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertNoRaw('You have already submitted this webform.');
     $this->assertNoRaw('View your previous submission');
 
     $sid = $this->postSubmission($webform);
 
     // Check view previous submission message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertRaw('You have already submitted this webform.');
     $this->assertRaw("<a href=\"{$base_path}webform/{$webform_id}/submissions/{$sid}\">View your previous submission</a>.");
 
     $sid = $this->postSubmission($webform);
 
     // Check view previous submissions message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertRaw('You have already submitted this webform.');
     $this->assertRaw("<a href=\"{$base_path}webform/{$webform_id}/submissions\">View your previous submissions</a>");
 
@@ -289,7 +289,7 @@ class WebformAccessEntityRulesTest extends WebformTestBase {
     // Check disabled previous submissions messages.
     $webform->setSetting('form_previous_submissions', FALSE);
     $webform->save();
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertNoRaw('You have already submitted this webform.');
   }
 

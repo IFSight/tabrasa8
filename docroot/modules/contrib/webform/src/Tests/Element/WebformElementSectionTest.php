@@ -20,7 +20,7 @@ class WebformElementSectionTest extends WebformElementTestBase {
    * Test element section.
    */
   public function testSection() {
-    $this->drupalGet('webform/test_element_section');
+    $this->drupalGet('/webform/test_element_section');
 
     // Check section element.
     $this->assertRaw('<section data-drupal-selector="edit-webform-section" aria-describedby="edit-webform-section--description" id="edit-webform-section" class="required js-form-item form-item js-form-wrapper form-wrapper webform-section" required="required" aria-required="true">');
@@ -40,7 +40,7 @@ class WebformElementSectionTest extends WebformElementTestBase {
       ->set('element.default_section_title_tag', 'address')
       ->save();
 
-    $this->drupalGet('webform/test_element_section');
+    $this->drupalGet('/webform/test_element_section');
     $this->assertNoRaw('<h2 class="webform-section-title js-form-required form-required">');
     $this->assertRaw('<address class="webform-section-title js-form-required form-required">');
   }

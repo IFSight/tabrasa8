@@ -6,6 +6,13 @@ entity.webform_image_select_images.collection:
   requirements:
     _permission: 'administer webform'
 
+entity.webform_image_select_images.autocomplete:
+  path: '/admin/structure/webform/config/images/autocomplete'
+  defaults:
+    _controller: '\Drupal\webform_image_select\Controller\WebformImageSelectImagesController::autocomplete'
+  requirements:
+    _permission: 'administer webform'
+
 entity.webform_image_select_images.add_form:
   path: '/admin/structure/webform/config/images/manage/add'
   defaults:

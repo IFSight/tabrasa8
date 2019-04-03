@@ -28,7 +28,7 @@ class WebformElementTermsOfServiceTest extends WebformElementTestBase {
    */
   public function testTermsOfService() {
     // Check rendering.
-    $this->drupalGet('webform/test_element_terms_of_service');
+    $this->drupalGet('/webform/test_element_terms_of_service');
 
     // Check modal.
     $this->assertRaw('<div data-webform-terms-of-service-type="modal" class="form-type-webform-terms-of-service js-form-type-webform-terms-of-service js-form-item form-item js-form-type-checkbox form-type-checkbox js-form-item-terms-of-service-default form-item-terms-of-service-default">');

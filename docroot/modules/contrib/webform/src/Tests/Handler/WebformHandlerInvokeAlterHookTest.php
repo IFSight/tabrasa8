@@ -23,7 +23,7 @@ class WebformHandlerInvokeAlterHookTest extends WebformTestBase {
    */
   public function testWebformHandlerInvokeAlterHook() {
     // Check invoke alter hooks.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('Invoking hook_webform_handler_invoke_alter() for "contact:email_confirmation::pre_create"');
     $this->assertRaw('Invoking hook_webform_handler_invoke_pre_create_alter() for "contact:email_confirmation"');
     $this->assertRaw('Invoking hook_webform_handler_invoke_alter() for "contact:email_notification::pre_create"');

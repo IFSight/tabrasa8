@@ -33,12 +33,22 @@ class PasswordConfirm extends Password {
    */
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
     parent::prepare($element, $webform_submission);
-    $element['#element_validate'][] = [get_class($this), 'validatePasswordConfirm'];
-
-    // Replace 'form_element' theme wrapper with composite form element.
-    // @see \Drupal\Core\Render\Element\PasswordConfirm
-    $element['#pre_render'] = [[get_called_class(), 'preRenderWebformCompositeFormElement']];
     $element['#theme_wrappers'] = [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
+    $element['#element_validate'][] = [get_class($this), 'validatePasswordConfirm'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function prepareElementPreRenderCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    $element['#pre_render'] = [[get_called_class(), 'preRenderWebformCompositeFormElement']];
   }
 
   /**
@@ -74,9 +84,8 @@ class PasswordConfirm extends Password {
    * Form API callback. Convert password confirm array to single value.
    */
   public static function validatePasswordConfirm(array &$element, FormStateInterface $form_state, array &$completed_form) {
-    $name = $element['#name'];
-    $value = $form_state->getValue($name);
-    $form_state->setValue($name, $value['pass1']);
+    $value = $element['#value'];
+    $form_state->setValueForElement($element, $value['pass1']);
   }
 
   /**

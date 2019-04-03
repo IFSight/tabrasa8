@@ -55,7 +55,7 @@ class WebformElementStatesSelectorsTest extends WebformElementTestBase {
       $webform = Webform::load($webform_id);
       $webform->setStatus(WebformInterface::STATUS_OPEN)->save();
 
-      $this->drupalGet('webform/' . $webform_id);
+      $this->drupalGet('/webform/' . $webform_id);
 
       $selectors = OptGroup::flattenOptions($webform->getElementsSelectorOptions());
       // Ignore text format and captcha selectors which are not available during

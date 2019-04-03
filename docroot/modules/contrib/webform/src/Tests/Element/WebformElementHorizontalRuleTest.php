@@ -20,7 +20,7 @@ class WebformElementHorizontalRuleTest extends WebformElementTestBase {
    * Test horizontal rule element.
    */
   public function testHorizontalRule() {
-    $this->drupalGet('webform/test_element_horizontal_rule');
+    $this->drupalGet('/webform/test_element_horizontal_rule');
 
     // Check rendering.
     $this->assertRaw('<hr data-drupal-selector="edit-horizontal-rule" id="edit-horizontal-rule" class="webform-horizontal-rule" />');

@@ -58,18 +58,17 @@ The primary use case for this module is to:
 7. (optional) Install add-on contrib modules](/admin/structure/webform/addons).
 
 
-### Releases
+### Upgrading from pre-release versions
 
-Even though the Webform module is still under active development with
-regular [beta releases](https://www.drupal.org/documentation/version-info/alpha-beta-rc),
-all existing configuration and submission data will be maintained and updated 
-between releases.  **APIs can and will be changing** while this module moves 
-from beta releases to a final release candidate. 
+All existing configuration and submission data was maintained and updated 
+through the beta and rc release cycles. 
+**APIs have changed** during these release cycles. 
 
-Simply put, if you install and use the Webform module out of the box AS-IS, 
-you _should_ be okay. Once you start extending webforms with plugins, altering 
-hooks, and overriding templates, you will need to read each release's 
-notes and assume that _things will be changing_.
+Simply put, if you installed and used the Webform module out of the box AS-IS, 
+and now you want to upgrade to a full release, then 
+you _should_ be okay. If you extended webforms with plugins, altered 
+hooks, and overrode templates, you will need to read each release's 
+notes and assume that _things have changed_.
 
 
 ### Project Status

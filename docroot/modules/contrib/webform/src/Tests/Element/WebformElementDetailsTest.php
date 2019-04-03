@@ -20,7 +20,7 @@ class WebformElementDetailsTest extends WebformElementTestBase {
    * Test details element.
    */
   public function testDetails() {
-    $this->drupalGet('webform/test_element_details');
+    $this->drupalGet('/webform/test_element_details');
 
     // Check details with help, field prefix, field suffix, description,
     // and more. Also, check that invalid 'required' and 'aria-required'

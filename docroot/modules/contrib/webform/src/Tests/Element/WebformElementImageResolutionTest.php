@@ -21,7 +21,7 @@ class WebformElementImageResolutionTest extends WebformElementTestBase {
    */
   public function testImageResolution() {
 
-    $this->drupalGet('webform/test_element_image_resolution');
+    $this->drupalGet('/webform/test_element_image_resolution');
 
     // Check rendering.
     $this->assertRaw('<label for="edit-webform-image-resolution-advanced">webform_image_resolution_advanced</label>');

@@ -25,6 +25,11 @@ services:
     factory: logger.factory:get
     arguments: ['webform']
 
+  logger.channel.webform_submission:
+    class: Drupal\Core\Logger\LoggerChannel
+    factory: logger.factory:get
+    arguments: ['webform_submission']
+
   # Services.
 
   webform.addons_manager:
@@ -75,7 +80,7 @@ services:
 
   webform_submission.exporter:
     class: Drupal\webform\WebformSubmissionExporter
-    arguments: ['@config.factory', '@file_system', '@entity_type.manager', '@stream_wrapper_manager', '@plugin.manager.webform.element', '@plugin.manager.webform.exporter']
+    arguments: ['@config.factory', '@file_system', '@entity_type.manager', '@stream_wrapper_manager', '@plugin.manager.archiver', '@plugin.manager.webform.element', '@plugin.manager.webform.exporter']
 
   webform.third_party_settings_manager:
     class: Drupal\webform\WebformThirdPartySettingsManager

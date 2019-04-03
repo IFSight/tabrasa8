@@ -36,7 +36,7 @@ class WebformHandlerSettingsTest extends WebformTestBase {
     $this->assertRaw($message_indentation . '{Custom draft saved message}');
 
     // Check custom save load message.
-    $this->drupalGet('webform/test_handler_settings');
+    $this->drupalGet('/webform/test_handler_settings');
     // NOTE: Adding indentation to make sure the message is matched and not input value.
     $this->assertRaw($message_indentation . '{Custom draft loaded message}');
 
@@ -60,7 +60,7 @@ class WebformHandlerSettingsTest extends WebformTestBase {
     $this->assertNoRaw($message_indentation . '{Custom draft saved message}');
 
     // Check no custom save load message.
-    $this->drupalGet('webform/test_handler_settings');
+    $this->drupalGet('/webform/test_handler_settings');
     $this->assertNoRaw($message_indentation . '{Custom draft loaded message}');
 
     // Check no custom preview title and message.

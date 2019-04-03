@@ -48,11 +48,11 @@ function plupload_requirements($phase) {
       $requirements['plupload_examples'] = array(
         'title' => \Drupal::translation()->translate('Plupload example folder'),
         'value' => \Drupal::translation()->translate('Example folder found'),
-        'description' => \Drupal::translation()->translate('Plupload library contains example files, these could constitute a security risk to your site as per <a href="!url">PSA-2011-02</a>. Please remove the !path folder immediately.', array(
-          '!url' => 'http://drupal.org/node/1189632',
-          '!path' => 'libraries/plupload/examples'
+        'description' => \Drupal::translation()->translate('Plupload library contains example files, these could constitute a security risk to your site as per <a href="@url">PSA-2011-02</a>. Please remove the @path folder immediately.', array(
+          '@url' => 'http://drupal.org/node/1189632',
+          '@path' => 'libraries/plupload/examples',
         )),
-        'severity' => REQUIREMENT_ERROR
+        'severity' => REQUIREMENT_ERROR,
       );
     }
   }
@@ -63,7 +63,7 @@ function plupload_requirements($phase) {
 /**
  * Checks wether Plupload library exists or not.
  *
- * @return boolean
+ * @return bool
  *   TRUE if plupload library installed, FALSE otherwise.
  */
 function _plupload_requirements_installed() {

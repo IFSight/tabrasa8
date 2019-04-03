@@ -48,6 +48,11 @@
           .on('click', function (event) {
             // Prevent click from toggling <label>s wrapped around help.
             event.preventDefault();
+          }).on('keydown', function(event) {
+            // Prevent ESC from from closing dialogs.
+            if (event.keyCode === $.ui.keyCode.ESCAPE) {
+              event.stopPropagation();
+            }
           });
 
         // Help tooltips are generally placed with <label> tags.

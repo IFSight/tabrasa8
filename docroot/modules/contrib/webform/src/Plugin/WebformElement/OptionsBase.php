@@ -236,6 +236,16 @@ abstract class OptionsBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    if ($this->hasMultipleValues($element)) {
+      $element['#element_validate'][] = [get_class($this), 'validateMultipleOptions'];
+    }
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasMultipleWrapper() {
     return FALSE;
   }
@@ -498,14 +508,13 @@ abstract class OptionsBase extends WebformElementBase {
    * Form API callback. Remove unchecked options from value array.
    */
   public static function validateMultipleOptions(array &$element, FormStateInterface $form_state, array &$completed_form) {
-    $name = $element['#name'];
-    $values = $form_state->getValue($name) ?: [];
+    $values = $element['#value'] ?: [];
     // Filter unchecked/unselected options whose value is 0.
     $values = array_filter($values, function ($value) {
       return $value !== 0;
     });
     $values = array_values($values);
-    $form_state->setValue($name, $values);
+    $form_state->setValueForElement($element, $values);
   }
 
   /**
@@ -552,6 +561,28 @@ abstract class OptionsBase extends WebformElementBase {
     else {
       $multiple = ($this->hasMultipleValues($element) && strpos($plugin_id, 'select') !== FALSE) ? '[]' : '';
       return [":input[name=\"$name$multiple\"]" => $title];
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorSourceValues(array $element) {
+    if ($this->hasMultipleValues($element) && $this->hasMultipleWrapper()) {
+      return [];
+    }
+
+    $plugin_id = $this->getPluginId();
+    $name = $element['#webform_key'];
+    $options = OptGroup::flattenOptions($element['#options']);
+    if ($this->getElementSelectorInputsOptions($element)) {
+      $other_type = $this->getOptionsOtherType();
+      $multiple = ($this->hasMultipleValues($element) && $other_type === 'select') ? '[]' : '';
+      return [":input[name=\"{$name}[$other_type]$multiple\"]" => $options];
+    }
+    else {
+      $multiple = ($this->hasMultipleValues($element) && strpos($plugin_id, 'select') !== FALSE) ? '[]' : '';
+      return [":input[name=\"$name$multiple\"]" => $options];
     }
   }
 
@@ -664,9 +695,9 @@ abstract class OptionsBase extends WebformElementBase {
     $default_empty_option = $this->configFactory->get('webform.settings')->get('element.default_empty_option');
     if ($default_empty_option) {
       $default_empty_option_required = $this->configFactory->get('webform.settings')->get('element.default_empty_option_required') ?: $this->t('- Select -');
-      $form['options']['empty_option']['#description'] .= '<br />' . $this->t('Required elements default to: %required', ['%required' => $default_empty_option_required]);
+      $form['options']['empty_option']['#description'] .= '<br />' . $this->t('Required elements defaults to: %required', ['%required' => $default_empty_option_required]);
       $default_empty_option_optional = $this->configFactory->get('webform.settings')->get('element.default_empty_option_optional') ?: $this->t('- None -');
-      $form['options']['empty_option']['#description'] .= '<br />' . $this->t('Optional elements default to: %optional', ['%optional' => $default_empty_option_optional]);
+      $form['options']['empty_option']['#description'] .= '<br />' . $this->t('Optional elements defaults to: %optional', ['%optional' => $default_empty_option_optional]);
     }
     $form['options']['empty_value'] = [
       '#type' => 'textfield',
@@ -786,7 +817,7 @@ abstract class OptionsBase extends WebformElementBase {
     $form['options_other']['other__number_container'] = $this->getFormInlineContainer();
     $form['options_other']['other__number_container']['other__min'] = [
       '#type' => 'number',
-      '#title' => $this->t('Other min'),
+      '#title' => $this->t('Other minimum'),
       '#description' => $this->t('Specifies the minimum value.'),
       '#step' => 'any',
       '#size' => 4,
@@ -794,7 +825,7 @@ abstract class OptionsBase extends WebformElementBase {
     ];
     $form['options_other']['other__number_container']['other__max'] = [
       '#type' => 'number',
-      '#title' => $this->t('Other max'),
+      '#title' => $this->t('Other maximum'),
       '#description' => $this->t('Specifies the maximum value.'),
       '#step' => 'any',
       '#size' => 4,

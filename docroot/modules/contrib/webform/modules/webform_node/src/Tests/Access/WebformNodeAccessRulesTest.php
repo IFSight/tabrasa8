@@ -54,7 +54,7 @@ class WebformNodeAccessRulesTest extends WebformNodeTestBase {
 
     // Check create authenticated/anonymous access.
     $webform->setAccessRules($default_access_rules)->save();
-    $this->drupalGet('node/' . $node->id());
+    $this->drupalGet('/node/' . $node->id());
     $this->assertFieldByName('name', $account->getAccountName());
     $this->assertFieldByName('email', $account->getEmail());
 
@@ -67,7 +67,7 @@ class WebformNodeAccessRulesTest extends WebformNodeTestBase {
     $webform->setAccessRules($access_rules)->save();
 
     // Check no access.
-    $this->drupalGet('node/' . $node->id());
+    $this->drupalGet('/node/' . $node->id());
     $this->assertNoFieldByName('name', $account->getAccountName());
     $this->assertNoFieldByName('email', $account->getEmail());
 

@@ -149,6 +149,13 @@ abstract class WebformExporterBase extends PluginBase implements WebformExporter
   /**
    * {@inheritdoc}
    */
+  public function hasFiles() {
+    return $this->pluginDefinition['files'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasOptions() {
     return $this->pluginDefinition['options'];
   }

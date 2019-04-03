@@ -106,12 +106,12 @@ class WebformTestElementProperties extends WebformElementBase {
         'wrapper' => $ajax_wrapper_id,
         'progress' => ['type' => 'fullscreen'],
       ],
-      // Hide button, add submit button trigger class, and disable validation.
+      // Disable validation, hide button, add submit button trigger class.
       '#attributes' => [
+        'formnovalidate' => 'formnovalidate',
         'class' => [
           'js-hide',
           'js-webform-test-properties-submit',
-          'js-webform-novalidate',
         ],
       ],
     ];

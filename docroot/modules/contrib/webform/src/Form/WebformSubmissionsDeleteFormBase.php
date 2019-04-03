@@ -36,6 +36,13 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
   protected $sourceEntity;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * The webform submission storage.
    *
    * @var \Drupal\webform\WebformSubmissionStorageInterface
@@ -58,6 +65,7 @@ abstract class WebformSubmissionsDeleteFormBase extends WebformDeleteFormBase {
    *   The webform request handler.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, WebformRequestInterface $request_handler) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
     $this->requestHandler = $request_handler;
 

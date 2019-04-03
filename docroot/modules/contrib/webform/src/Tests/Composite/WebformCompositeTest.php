@@ -25,7 +25,7 @@ class WebformCompositeTest extends WebformTestBase {
 
     /* Display */
 
-    $this->drupalGet('webform/test_composite');
+    $this->drupalGet('/webform/test_composite');
 
     // Check webform contact basic.
     $this->assertRaw('<fieldset data-drupal-selector="edit-contact-basic" id="edit-contact-basic--wrapper" class="webform-contact--wrapper fieldgroup form-composite webform-composite-hidden-title required js-webform-type-webform-contact webform-type-webform-contact js-form-item form-item js-form-wrapper form-wrapper">');
@@ -46,7 +46,7 @@ class WebformCompositeTest extends WebformTestBase {
     $this->assertNoRaw('edit-contact-advanced-country');
 
     // Check link multiple in table.
-    $this->assertRaw('<label for="edit-link-multiple">Link multiple</label>');
+    $this->assertRaw('<label>Link multiple</label>');
     $this->assertRaw('<th class="link_multiple-table--title webform-multiple-table--title">Link Title<span class="webform-element-help" role="tooltip" tabindex="0" data-webform-help="&lt;div class=&quot;webform-element-help--title&quot;&gt;Link Title&lt;/div&gt;&lt;div class=&quot;webform-element-help--content&quot;&gt;This is link title help&lt;/div&gt;"><span aria-hidden="true">?</span></span>');
     $this->assertRaw('<th class="link_multiple-table--url webform-multiple-table--url">Link URL<span class="webform-element-help" role="tooltip" tabindex="0" data-webform-help="&lt;div class=&quot;webform-element-help--title&quot;&gt;Link URL&lt;/div&gt;&lt;div class=&quot;webform-element-help--content&quot;&gt;This is link url help&lt;/div&gt;"><span aria-hidden="true">?</span></span>');
 

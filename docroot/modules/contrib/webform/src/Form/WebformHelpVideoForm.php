@@ -86,14 +86,16 @@ class WebformHelpVideoForm extends FormBase {
     }
 
     // Related resources.
-    $form['resources'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Additional resources'),
-      'links' => [
-        '#theme' => 'links',
-        '#links' => $this->helpManager->getVideoLinks($this->videoId),
-      ],
-    ];
+    if ($video_links = $this->helpManager->getVideoLinks($this->videoId)) {
+      $form['resources'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Additional resources'),
+        'links' => [
+          '#theme' => 'links',
+          '#links' => $video_links,
+        ],
+      ];
+    }
 
     // Actions.
     if (isset($video['submit_label'])) {

@@ -25,7 +25,7 @@ class WebformWizardAccessTest extends WebformWizardTestBase {
     $webform = Webform::load('test_form_wizard_access');
 
     // Check anonymous user can access 'All' and 'Anonymous' form pages.
-    $this->drupalGet('webform/test_form_wizard_access');
+    $this->drupalGet('/webform/test_form_wizard_access');
     $this->assertRaw('<b>All</b>');
     $this->assertRaw('<b>Anonymous</b>');
     $this->assertNoRaw('<b>Authenticated</b>');
@@ -54,7 +54,7 @@ class WebformWizardAccessTest extends WebformWizardTestBase {
     $this->drupalLogin($this->rootUser);
 
     // Check authenticated user can access 'All', 'Authenticated', and 'Private' form pages.
-    $this->drupalGet('webform/test_form_wizard_access');
+    $this->drupalGet('/webform/test_form_wizard_access');
     $this->assertRaw('<b>All</b>');
     $this->assertNoRaw('<b>Anonymous</b>');
     $this->assertRaw('<b>Authenticated</b>');

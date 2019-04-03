@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\linkit\Kernel\Matchers;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\taxonomy\VocabularyInterface;
 use Drupal\Tests\linkit\Kernel\LinkitKernelTestBase;
@@ -118,7 +117,7 @@ class TermMatcherTest extends LinkitKernelTestBase {
     $vocabulary = $vocabularyStorage->create([
       'name' => $name,
       'description' => $name,
-      'vid' => Unicode::strtolower($name),
+      'vid' => mb_strtolower($name),
       'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
     ]);
     $vocabulary->save();

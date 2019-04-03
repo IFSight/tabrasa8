@@ -15,6 +15,13 @@ use Drupal\webform_image_select\WebformImageSelectImagesInterface;
  * @ConfigEntityType(
  *   id = "webform_image_select_images",
  *   label = @Translation("Webform images"),
+ *   label_collection = @Translation("Images"),
+ *   label_singular = @Translation("images"),
+ *   label_plural = @Translation("images"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count images",
+ *     plural = "@count images",
+ *   ),
  *   handlers = {
  *     "storage" = "\Drupal\webform_image_select\WebformImageSelectImagesStorage",
  *     "access" = "Drupal\webform_image_select\WebformImageSelectImagesAccessControlHandler",
@@ -146,9 +153,8 @@ class WebformImageSelectImages extends ConfigEntityBase implements WebformImageS
    * {@inheritdoc}
    */
   public static function getElementImages(array &$element) {
-
     // If element already has #images return them.
-    if (is_array($element['#images'])) {
+    if (isset($element['#images']) && is_array($element['#images'])) {
       return $element['#images'];
     }
 

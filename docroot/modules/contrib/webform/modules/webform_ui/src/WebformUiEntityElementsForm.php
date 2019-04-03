@@ -26,6 +26,18 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
   use WebformEntityAjaxFormTrait;
 
   /**
+   * Array of required states.
+   *
+   * @var array
+   */
+  protected $requiredStates = [
+    'required' => 'required',
+    '!required' => '!required',
+    'optional' => 'optional',
+    '!optional' => '!optional',
+  ];
+
+  /**
    * The renderer.
    *
    * @var \Drupal\Core\Render\RendererInterface
@@ -199,7 +211,12 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
       }
 
       // Set #required or remove the property.
-      if (isset($webform_ui_elements[$key]['required'])) {
+      $is_conditionally_required = isset($elements_flattened[$key]['#states']) && array_intersect_key($this->requiredStates, $elements_flattened[$key]['#states']);
+      if ($is_conditionally_required) {
+        // Always unset conditionally required elements.
+        unset($elements_flattened[$key]['#required']);
+      }
+      elseif (isset($webform_ui_elements[$key]['required'])) {
         if (empty($webform_ui_elements[$key]['required'])) {
           unset($elements_flattened[$key]['#required']);
         }
@@ -242,7 +259,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
       'hierarchy' => TRUE,
       'rendering' => TRUE,
     ];
-    if ($messages = $this->elementsValidator->validate($webform, $validate_options)) {
+    if ($this->elementsValidator->validate($webform, $validate_options)) {
       $form_state->setErrorByName(NULL, $this->t('There has been error validating the elements.'));
     }
   }
@@ -532,10 +549,12 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
       ];
     }
 
+    $is_conditionally_required = FALSE;
     if ($webform->hasConditions()) {
       $states = [];
       if (!empty($element['#states'])) {
         $states = array_intersect_key($element_state_options, $element['#states']);
+        $is_conditionally_required = array_intersect_key($this->requiredStates, $element['#states']);
       }
       $row['conditional'] = [
         '#type' => 'link',
@@ -561,6 +580,10 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
         '#title_display' => 'invisible',
         '#default_value' => (empty($element['#required'])) ? FALSE : TRUE,
       ];
+      if ($is_conditionally_required) {
+        $row['required']['#default_value'] = TRUE;
+        $row['required']['#disabled'] = TRUE;
+      }
     }
     else {
       $row['required'] = ['#markup' => ''];

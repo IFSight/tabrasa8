@@ -16,6 +16,13 @@ use Drupal\webform\WebformOptionsInterface;
  * @ConfigEntityType(
  *   id = "webform_options",
  *   label = @Translation("Webform options"),
+ *   label_collection = @Translation("Webform options"),
+ *   label_singular = @Translation("webform options"),
+ *   label_plural = @Translation("webform options"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count webform options",
+ *     plural = "@count webform options",
+ *   ),
  *   handlers = {
  *     "storage" = "\Drupal\webform\WebformOptionsStorage",
  *     "access" = "Drupal\webform\WebformOptionsAccessControlHandler",
@@ -135,6 +142,7 @@ class WebformOptions extends ConfigEntityBase implements WebformOptionsInterface
   public function setOptions(array $options) {
     $this->options = Yaml::encode($options);
     $this->optionsDecoded = NULL;
+    return $this;
   }
 
   /**

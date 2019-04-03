@@ -35,13 +35,13 @@ class WebformBlockTest extends WebformTestBase {
     ]);
 
     // Check contact webform.
-    $this->drupalGet('<front>');
+    $this->drupalGet('/<front>');
     $this->assertRaw('webform-submission-contact-add-form');
 
     // Check contact webform with default data.
     $block->getPlugin()->setConfigurationValue('default_data', "name: 'John Smith'");
     $block->save();
-    $this->drupalGet('<front>');
+    $this->drupalGet('/<front>');
     $this->assertRaw('webform-submission-contact-add-form');
     $this->assertFieldByName('name', 'John Smith');
 

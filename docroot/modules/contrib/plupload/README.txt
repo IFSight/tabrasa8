@@ -1,7 +1,7 @@
 This module integrates the Plupload library (available from http://plupload.com)
 with Drupal forms. To install the Plupload library:
 
-1. Download it (version 2.1.1 or later) from
+1. Download it (version 2.1.9 or later) from
    https://github.com/moxiecode/plupload/releases.
 2. Unzip it into libraries folder, so that there's a
    libraries/plupload/js/plupload.full.min.js file, in addition to the other

@@ -27,7 +27,7 @@ class WebformExampleElementTest extends WebformTestBase {
     $webform = Webform::load('webform_example_element');
 
     // Check form element rendering.
-    $this->drupalGet('webform/webform_example_element');
+    $this->drupalGet('/webform/webform_example_element');
     // NOTE:
     // This is a very lazy but easy way to check that the element is rendering
     // as expected.

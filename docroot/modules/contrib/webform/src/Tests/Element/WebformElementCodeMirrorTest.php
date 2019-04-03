@@ -26,16 +26,21 @@ class WebformElementCodeMirrorTest extends WebformElementTestBase {
     /**************************************************************************/
 
     // Check Text.
-    $this->drupalGet('webform/test_element_codemirror');
+    $this->drupalGet('/webform/test_element_codemirror');
     $this->assertRaw('<label for="edit-text-basic">text_basic</label>');
     $this->assertRaw('<textarea data-drupal-selector="edit-text-basic" class="js-webform-codemirror webform-codemirror text form-textarea resize-vertical" data-webform-codemirror-mode="text/plain" id="edit-text-basic" name="text_basic" rows="5" cols="60">Hello</textarea>');
+
+    // Check Text with no wrap.
+    $this->drupalGet('/webform/test_element_codemirror');
+    $this->assertRaw('<label for="edit-text-basic-no-wrap">text_basic_no_wrap</label>');
+    $this->assertRaw('<textarea data-drupal-selector="edit-text-basic-no-wrap" wrap="off" class="js-webform-codemirror webform-codemirror text form-textarea resize-vertical" data-webform-codemirror-mode="text/plain" id="edit-text-basic-no-wrap" name="text_basic_no_wrap" rows="5" cols="60">');
 
     /**************************************************************************/
     // code:yaml
     /**************************************************************************/
 
     // Check YAML.
-    $this->drupalGet('webform/test_element_codemirror');
+    $this->drupalGet('/webform/test_element_codemirror');
     $this->assertRaw('<label for="edit-yaml-basic">yaml_basic</label>');
     $this->assertRaw('<textarea data-drupal-selector="edit-yaml-basic" class="js-webform-codemirror webform-codemirror yaml form-textarea resize-vertical" data-webform-codemirror-mode="text/x-yaml" id="edit-yaml-basic" name="yaml_basic" rows="5" cols="60">test: hello</textarea>');
 
@@ -65,7 +70,7 @@ class WebformElementCodeMirrorTest extends WebformElementTestBase {
     /**************************************************************************/
 
     // Check HTML.
-    $this->drupalGet('webform/test_element_codemirror');
+    $this->drupalGet('/webform/test_element_codemirror');
     $this->assertRaw('<label for="edit-html-basic">html_basic</label>');
     $this->assertRaw('<textarea data-drupal-selector="edit-html-basic" class="js-webform-codemirror webform-codemirror html form-textarea resize-vertical" data-webform-codemirror-mode="text/html" id="edit-html-basic" name="html_basic" rows="5" cols="60">&lt;b&gt;Hello&lt;/b&gt;</textarea>');
 
@@ -90,7 +95,7 @@ class WebformElementCodeMirrorTest extends WebformElementTestBase {
     /**************************************************************************/
 
     // Check disabled Twig editor.
-    $this->drupalGet('webform/test_element_codemirror');
+    $this->drupalGet('/webform/test_element_codemirror');
     $this->assertRaw('<label for="edit-twig-basic">twig_basic</label>');
     $this->assertRaw('<textarea data-drupal-selector="edit-twig-basic" disabled="disabled" class="js-webform-codemirror webform-codemirror twig form-textarea resize-vertical" data-webform-codemirror-mode="twig" id="edit-twig-basic" name="twig_basic" rows="5" cols="60">
 {% set value = &quot;Hello&quot; %}
@@ -101,7 +106,7 @@ class WebformElementCodeMirrorTest extends WebformElementTestBase {
     $this->drupalLogin($this->rootUser);
 
     // Check enabled Twig editor.
-    $this->drupalGet('webform/test_element_codemirror');
+    $this->drupalGet('/webform/test_element_codemirror');
     $this->assertRaw('<textarea data-drupal-selector="edit-twig-basic" class="js-webform-codemirror webform-codemirror twig form-textarea resize-vertical" data-webform-codemirror-mode="twig" id="edit-twig-basic" name="twig_basic" rows="5" cols="60">
 {% set value = &quot;Hello&quot; %}
 {{ value }}

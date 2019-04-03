@@ -40,7 +40,7 @@ class WebformAccessTokensTest extends WebformAccessTestBase {
 
     // Check [webform_access:type:employee] token.
     $result = $token_manager->replace('[webform_access:type:employee]', $webform_submission, $token_data);
-    $this->assertEqual('employee_user@example.com,manager_user@example.com', $result);
+    $this->assertEqual('customer_user@example.com,employee_user@example.com,manager_user@example.com', $result);
 
     // Check [webform_access:type:manager] token.
     $result = $token_manager->replace('[webform_access:type:manager]', $webform_submission, $token_data);
@@ -48,7 +48,7 @@ class WebformAccessTokensTest extends WebformAccessTestBase {
 
     // Check [webform_access:type:all] token.
     $result = $token_manager->replace('[webform_access:type]', $webform_submission, $token_data);
-    $this->assertEqual('employee_user@example.com,manager_user@example.com,other_user@example.com', $result);
+    $this->assertEqual('customer_user@example.com,employee_user@example.com,manager_user@example.com,other_user@example.com', $result);
   }
 
 }

@@ -24,7 +24,7 @@ class WebformElementLocationPlacesTest extends WebformElementTestBase {
   public function testLocationPlaces() {
     $webform = Webform::load('test_element_loc_places');
 
-    $this->drupalGet('webform/test_element_loc_places');
+    $this->drupalGet('/webform/test_element_loc_places');
 
     // Check hidden attributes.
     $this->assertRaw('<input class="webform-location-places form-text" data-drupal-selector="edit-location-default-value" type="text" id="edit-location-default-value" name="location_default[value]" value="" size="60" maxlength="255" placeholder="Enter a location" />');
@@ -69,7 +69,7 @@ class WebformElementLocationPlacesTest extends WebformElementTestBase {
       ->save();
 
     // Check application id and API key is set.
-    $this->drupalGet('webform/test_element_loc_places');
+    $this->drupalGet('/webform/test_element_loc_places');
     $this->assertRaw('"app_id"');
     $this->assertRaw('"api_key"');
     $this->assertRaw('"webform":{"location":{"places":{"app_id":"{default_algolia_places_app_id}","api_key":"{default_algolia_places_api_key}"}}}');

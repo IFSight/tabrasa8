@@ -35,7 +35,7 @@ class WebformHandlerConditionsTest extends WebformTestBase {
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('test_handler_conditions');
 
-    $this->drupalGet('webform/test_handler_conditions');
+    $this->drupalGet('/webform/test_handler_conditions');
 
     // Check no triggers.
     $this->assertRaw('Invoked test_a: Drupal\webform_test_handler\Plugin\WebformHandler\TestWebformHandler:preCreate');

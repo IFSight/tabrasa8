@@ -38,14 +38,15 @@ class WebformAccessTest extends WebformAccessTestBase {
     $this->drupalLogin($this->rootUser);
     foreach ($this->groups as $name => $group) {
       $this->drupalPostForm(
-        "/admin/structure/webform/access/group/manage/$name/edit",
+        "/admin/structure/webform/access/group/manage/$name",
         ['users[]' => $this->users[$name]->id()],
         t('Save')
       );
     }
 
-    // Check that employee and manager users can access webform results.
-    foreach ($this->users as $account) {
+    // Check that manager and employee users can access webform results.
+    foreach (['manager', 'employee'] as $name) {
+      $account = $this->users[$name];
       $this->drupalLogin($account);
       $this->drupalGet("/node/$nid/webform/results/submissions");
       $this->assertResponse(200);
@@ -64,7 +65,7 @@ class WebformAccessTest extends WebformAccessTestBase {
     // Unassign employee user from employee group via the UI.
     $this->drupalLogin($this->rootUser);
     $this->drupalPostForm(
-      '/admin/structure/webform/access/group/manage/employee/edit',
+      '/admin/structure/webform/access/group/manage/employee',
       ['users[]' => 1],
       t('Save')
     );
@@ -86,7 +87,7 @@ class WebformAccessTest extends WebformAccessTestBase {
     $this->drupalLogin($this->rootUser);
     foreach ($this->groups as $name => $group) {
       $this->drupalPostForm(
-        "/admin/structure/webform/access/group/manage/$name/edit",
+        "/admin/structure/webform/access/group/manage/$name",
         ['entities[]' => 'node:' . $this->nodes['contact_02']->id() . ':webform:contact'],
         t('Save')
       );

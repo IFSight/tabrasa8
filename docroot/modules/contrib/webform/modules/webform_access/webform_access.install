@@ -51,8 +51,8 @@ function webform_access_schema() {
       ],
       'entity_id' => [
         'description' => 'The source entity id.',
-        'type' => 'int',
-        'unsigned' => TRUE,
+        'type' => 'varchar',
+        'length' => 32,
         'not null' => TRUE,
       ],
       'field_name' => [
@@ -75,4 +75,20 @@ function webform_access_schema() {
   ];
 
   return $schema;
+}
+
+/**
+ * Issue #3034127: Error webform access with postgres.
+ */
+function webform_access_update_8001() {
+  // Converts storage for 'webform_access_group_entity.entity_id'
+  // from integer to string.
+  \Drupal::database()
+    ->schema()
+    ->changeField('webform_access_group_entity', 'entity_id', 'entity_id', [
+      'description' => 'The source entity id.',
+      'type' => 'varchar',
+      'length' => 32,
+      'not null' => TRUE,
+    ]);
 }

@@ -209,7 +209,7 @@ class ActionWebformHandler extends WebformHandlerBase {
         '#rows' => $elements_rows,
       ],
     ];
-    $form['actions']['token_tree_link'] = $this->tokenManager->buildTreeElement();
+    $form['actions']['token_tree_link'] = $this->buildTokenTreeElement();
 
     // Development.
     $form['development'] = [
@@ -224,9 +224,9 @@ class ActionWebformHandler extends WebformHandlerBase {
       '#default_value' => $this->configuration['debug'],
     ];
 
-    $this->tokenManager->elementValidate($form);
+    $this->elementTokenValidate($form);
 
-    return $this->setSettingsParentsRecursively($form);
+    return $this->setSettingsParents($form);
   }
 
   /**
@@ -301,14 +301,14 @@ class ActionWebformHandler extends WebformHandlerBase {
     // Append notes.
     if ($this->configuration['notes']) {
       $notes = rtrim($webform_submission->getNotes());
-      $notes .= ($notes ? PHP_EOL . PHP_EOL : '') . $this->tokenManager->replace($this->configuration['notes'], $webform_submission);
+      $notes .= ($notes ? PHP_EOL . PHP_EOL : '') . $this->replaceTokens($this->configuration['notes'], $webform_submission);
       $webform_submission->setNotes($notes);
     }
 
     // Set data.
     if ($this->configuration['data']) {
       $data = Yaml::decode($this->configuration['data']);
-      $data = $this->tokenManager->replace($data, $webform_submission);
+      $data = $this->replaceTokens($data, $webform_submission);
       foreach ($data as $key => $value) {
         $webform_submission->setElementData($key, $value);
       }
@@ -317,7 +317,7 @@ class ActionWebformHandler extends WebformHandlerBase {
     // Display message.
     if ($this->configuration['message']) {
       $message = WebformHtmlEditor::checkMarkup(
-        $this->tokenManager->replace($this->configuration['message'], $webform_submission)
+        $this->replaceTokens($this->configuration['message'], $webform_submission)
       );
       $message_type = $this->configuration['message_type'];
       $this->messenger()->addMessage(\Drupal::service('renderer')->renderPlain($message), $message_type);

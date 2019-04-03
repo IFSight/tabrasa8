@@ -3,3 +3,9 @@ global-styling:
   css:
     base:
       css/adminimal.css: {}
+
+custom-styling:
+  version: VERSION
+  css:
+    theme:
+      public://adminimal-custom.css: {}

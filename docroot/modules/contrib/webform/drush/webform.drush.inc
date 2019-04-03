@@ -24,6 +24,7 @@ function webform_drush_command() {
         'webform' => 'The webform ID you want to export (required unless --entity-type and --entity-id are specified)',
       ),
       'options' => array(
+        'exporter' => 'The type of export. (delimited, table, yaml, or json)',
         'delimiter' => 'Delimiter between columns (defaults to site-wide setting). This option may need to be wrapped in quotes. i.e. --delimiter="\t".',
         'multiple-delimiter' => 'Delimiter between an element with multiple values (defaults to site-wide setting).',
         'file-name' => 'File name used to export submission and uploaded filed. You may use tokens.',
@@ -33,6 +34,7 @@ function webform_drush_command() {
         'options-multiple-format' => 'Set to "separate" (default) or "compact" to determine how multiple select list values are exported.',
         'entity-reference-items' => 'Comma-separated list of entity reference items (id, title, and/or url) to be exported.',
         'excluded-columns' => 'Comma-separated list of component IDs or webform keys to exclude.',
+        'uuid' => ' Use UUIDs for all entity references. (Only applies to CSV download)',
         'entity-type' => 'The entity type to which this submission was submitted from.',
         'entity-id' => 'The ID of the entity of which this webform submission was submitted from.',
         'range-type' => 'Range of submissions to export: "all", "latest", "serial", "sid", or "date".',
@@ -43,10 +45,30 @@ function webform_drush_command() {
         'state' => 'Submission state to be included: "completed", "draft" or "all" (default).',
         'sticky' => 'Flagged/starred submission status.',
         'files' => 'Download files: "1" or "0" (default). If set to 1, the exported CSV file and any submission file uploads will be download in a gzipped tar file.',
-        'destination' => 'The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the commandline.',
+        'destination' => 'The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the command line.',
       ),
       'aliases' => array(
         'wfx',
+      ),
+    ),
+    'webform-import' => array(
+      'description' => 'Imports webform submissions from a CSV file.',
+      'core' => array(
+        '8+',
+      ),
+      'bootstrap' => 2,
+      'arguments' => array(
+        'webform' => 'The webform ID you want to import (required unless --entity-type and --entity-id are specified)',
+        'import_uri' => 'The path or URI for the CSV file to be imported.',
+      ),
+      'options' => array(
+        'skip_validation' => 'Skip form validation.',
+        'treat_warnings_as_errors' => 'Treat all warnings as errors.',
+        'entity-type' => 'The entity type to which this submission was submitted from.',
+        'entity-id' => 'The ID of the entity of which this webform submission was submitted from.',
+      ),
+      'aliases' => array(
+        'wfi',
       ),
     ),
     'webform-purge' => array(
@@ -177,13 +199,13 @@ function webform_drush_command() {
       ),
     ),
     'webform-repair' => array(
-      'description' => 'Makes sure all Webform admin settings and webforms are up-to-date.',
+      'description' => 'Makes sure all Webform admin configuration and webform settings are up-to-date.',
       'core' => array(
         '8+',
       ),
       'bootstrap' => 1,
       'examples' => array(
-        'webform-repair' => 'Repairs admin settings and webforms are up-to-date.',
+        'webform-repair' => 'Repairs admin configuration and webform settings are up-to-date.',
       ),
       'aliases' => array(
         'wfr',
@@ -250,6 +272,24 @@ function drush_webform_export_validate() {
  */
 function drush_webform_export() {
   return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_export'], func_get_args());
+}
+
+/******************************************************************************/
+// drush webform-import. DO NOT EDIT.
+/******************************************************************************/
+
+/**
+ * Implements drush_hook_COMMAND_validate().
+ */
+function drush_webform_import_validate() {
+  return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_import_validate'], func_get_args());
+}
+
+/**
+ * Implements drush_hook_COMMAND().
+ */
+function drush_webform_import() {
+  return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_import'], func_get_args());
 }
 
 /******************************************************************************/

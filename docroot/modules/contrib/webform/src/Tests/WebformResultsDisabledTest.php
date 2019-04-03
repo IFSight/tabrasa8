@@ -31,14 +31,14 @@ class WebformResultsDisabledTest extends WebformTestBase {
     $this->assertFalse($webform_submission, 'Submission not saved to the database.');
 
     // Check that error message is displayed and form is available for admins.
-    $this->drupalGet('webform/test_form_results_disabled');
+    $this->drupalGet('/webform/test_form_results_disabled');
     $this->assertRaw(t('This webform is currently not saving any submitted data.'));
     $this->assertFieldByName('op', 'Submit');
     $this->assertNoRaw(t('Unable to display this webform. Please contact the site administrator.'));
 
     // Check that error message not displayed and form is disabled for everyone.
     $this->drupalLogout();
-    $this->drupalGet('webform/test_form_results_disabled');
+    $this->drupalGet('/webform/test_form_results_disabled');
     $this->assertNoRaw(t('This webform is currently not saving any submitted data.'));
     $this->assertNoFieldByName('op', 'Submit');
     $this->assertRaw(t('Unable to display this webform. Please contact the site administrator.'));
@@ -49,18 +49,18 @@ class WebformResultsDisabledTest extends WebformTestBase {
     $this->drupalLogin($this->rootUser);
 
     // Check that no error message is displayed and form is available for admins.
-    $this->drupalGet('webform/test_form_results_disabled');
+    $this->drupalGet('/webform/test_form_results_disabled');
     $this->assertNoRaw(t('This webform is currently not saving any submitted data.'));
     $this->assertNoRaw(t('Unable to display this webform. Please contact the site administrator.'));
     $this->assertFieldByName('op', 'Submit');
 
     // Check that results tab is not accessible.
-    $this->drupalGet('admin/structure/webform/manage/test_form_results_disabled/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_form_results_disabled/results/submissions');
     $this->assertResponse(403);
 
     // Check that error message not displayed and form is enabled for everyone.
     $this->drupalLogout();
-    $this->drupalGet('webform/test_form_results_disabled');
+    $this->drupalGet('/webform/test_form_results_disabled');
     $this->assertNoRaw(t('This webform is currently not saving any submitted data.'));
     $this->assertNoRaw(t('Unable to display this webform. Please contact the site administrator.'));
     $this->assertFieldByName('op', 'Submit');
@@ -73,7 +73,7 @@ class WebformResultsDisabledTest extends WebformTestBase {
     $this->drupalLogin($this->rootUser);
 
     // Check that results tab is accessible.
-    $this->drupalGet('admin/structure/webform/manage/test_form_results_disabled/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_form_results_disabled/results/submissions');
     $this->assertResponse(200);
 
     // Post a submission.
@@ -81,7 +81,7 @@ class WebformResultsDisabledTest extends WebformTestBase {
     $webform_submission = WebformSubmission::load($sid);
 
     // Check that submission is available.
-    $this->drupalGet('admin/structure/webform/manage/test_form_results_disabled/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_form_results_disabled/results/submissions');
     $this->assertNoRaw('This webform is currently not saving any submitted data');
     $this->assertRaw('>' . $webform_submission->serial() . '<');
 
@@ -90,7 +90,7 @@ class WebformResultsDisabledTest extends WebformTestBase {
     $webform_results_disabled->save();
 
     // Check that submission is still available with warning.
-    $this->drupalGet('admin/structure/webform/manage/test_form_results_disabled/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_form_results_disabled/results/submissions');
     $this->assertRaw('This webform is currently not saving any submitted data');
     $this->assertRaw('>' . $webform_submission->serial() . '<');
 
@@ -98,7 +98,7 @@ class WebformResultsDisabledTest extends WebformTestBase {
     $webform_submission->delete();
 
     // Check that results tab is not accessible.
-    $this->drupalGet('admin/structure/webform/manage/test_form_results_disabled/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_form_results_disabled/results/submissions');
     $this->assertResponse(403);
   }
 

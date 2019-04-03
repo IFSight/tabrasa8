@@ -37,7 +37,7 @@ class WebformSubmissionGenerateTest extends WebformTestBase {
     $this->assertEqual($data['subject'], $test_data['subject']);
 
     // Check test form classes and values.
-    $this->drupalGet('webform/contact/test');
+    $this->drupalGet('/webform/contact/test');
     $this->assertCssSelect('.webform-submission-form.webform-submission-test-form.webform-submission-contact-form.webform-submission-contact-test-form');
     foreach ($test_data as $name => $value) {
       $this->assertFieldByName($name, $value);
@@ -48,14 +48,14 @@ class WebformSubmissionGenerateTest extends WebformTestBase {
     /**************************************************************************/
 
     // Check add form classes and empty values.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertCssSelect('.webform-submission-form.webform-submission-add-form.webform-submission-contact-form.webform-submission-contact-add-form');
     foreach ($test_data as $name => $value) {
       $this->assertNoFieldByName($name, $value);
     }
 
     // Check add form classes and values with querystring parameter.
-    $this->drupalGet('webform/contact', ['query' => ['_webform_test' => 'contact']]);
+    $this->drupalGet('/webform/contact', ['query' => ['_webform_test' => 'contact']]);
     $this->assertCssSelect('.webform-submission-form.webform-submission-test-form.webform-submission-contact-form.webform-submission-contact-test-form');
     foreach ($test_data as $name => $value) {
       $this->assertFieldByName($name, $value);

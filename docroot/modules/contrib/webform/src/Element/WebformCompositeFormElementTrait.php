@@ -57,27 +57,35 @@ trait WebformCompositeFormElementTrait {
     $wrapper_type = (isset($element['#wrapper_type'])) ? $element['#wrapper_type'] : 'fieldset';
     $element['#theme_wrappers'][] = $wrapper_type;
 
-    // Apply fieldset specific enhancements.
-    if ($wrapper_type === 'fieldset') {
-      // Set the element's title attribute to show #title as a tooltip, if needed.
-      if (isset($element['#title']) && $element['#title_display'] == 'attribute') {
-        $element['#attributes']['title'] = $element['#title'];
-        if (!empty($element['#required'])) {
-          // Append an indication that this fieldset is required.
-          $element['#attributes']['title'] .= ' (' . t('Required') . ')';
+    // Apply wrapper specific enhancements.
+    switch ($wrapper_type) {
+      case 'fieldset':
+        // Set the element's title attribute to show #title as a tooltip, if needed.
+        if (isset($element['#title']) && $element['#title_display'] == 'attribute') {
+          $element['#attributes']['title'] = $element['#title'];
+          if (!empty($element['#required'])) {
+            // Append an indication that this fieldset is required.
+            $element['#attributes']['title'] .= ' (' . t('Required') . ')';
+          }
         }
-      }
 
-      // Add hidden and visible title class to fix composite fieldset
-      // top/bottom margins.
-      if (isset($element['#title'])) {
-        if (!empty($element['#title_display']) && in_array($element['#title_display'], ['invisible', 'attribute'])) {
-          $element['#attributes']['class'][] = 'webform-composite-hidden-title';
+        // Add hidden and visible title class to fix composite fieldset
+        // top/bottom margins.
+        if (isset($element['#title'])) {
+          if (!empty($element['#title_display']) && in_array($element['#title_display'], ['invisible', 'attribute'])) {
+            $element['#attributes']['class'][] = 'webform-composite-hidden-title';
+          }
+          else {
+            $element['#attributes']['class'][] = 'webform-composite-visible-title';
+          }
         }
-        else {
-          $element['#attributes']['class'][] = 'webform-composite-visible-title';
-        }
-      }
+        break;
+
+      case 'form_element':
+        // Process #states for #wrapper_attributes.
+        // @see template_preprocess_form_element().
+        webform_process_states($element, '#wrapper_attributes');
+        break;
     }
 
     // Issue #3007132: [accessibility] Radios and checkboxes the WAI-ARIA

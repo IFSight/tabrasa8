@@ -62,7 +62,7 @@ class WebformAccessGroupListBuilder extends ConfigEntityListBuilder {
         'class' => ['webform-form-filter-text'],
         'data-element' => '.webform-access-group-table',
         'data-summary' => '.webform-access-group-summary',
-        'data-item-single' => $this->t('access group'),
+        'data-item-singlular' => $this->t('access group'),
         'data-item-plural' => $this->t('access groups'),
         'title' => $this->t('Enter a keyword to filter by.'),
         'autofocus' => 'autofocus',
@@ -82,7 +82,7 @@ class WebformAccessGroupListBuilder extends ConfigEntityListBuilder {
       return [];
     }
 
-    $build['info'] = [
+    return [
       '#markup' => $this->formatPlural($total, '@total access group', '@total access groups', ['@total' => $total]),
       '#prefix' => '<div class="webform-access-group-summary">',
       '#suffix' => '</div>',
@@ -144,7 +144,7 @@ class WebformAccessGroupListBuilder extends ConfigEntityListBuilder {
     // Entities.
     $source_entities = $entity->getEntityIds();
     $items = [];
-    foreach ($source_entities as $index => $source_entity_record) {
+    foreach ($source_entities as $source_entity_record) {
       list($source_entity_type, $source_entity_id, $field_name, $webform_id) = explode(':', $source_entity_record);
       $source_entity = \Drupal::entityManager()->getStorage($source_entity_type)->load($source_entity_id);
       $webform = Webform::load($webform_id);

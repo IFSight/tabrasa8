@@ -64,7 +64,7 @@ class WebformImageFile extends WebformManagedFileBase {
     // Add support :image, :link, and :modal.
     $label = (string) $this->t('Original Image');
     $t_args = ['@label' => $label];
-    $formats[$label][":image"] = $this->t('@label: Image', $t_args);;
+    $formats[$label][":image"] = $this->t('@label: Image', $t_args);
     $formats[$label][":link"] = $this->t('@label: Link', $t_args);
     $formats[$label][":modal"] = $this->t('@label: Modal', $t_args);
     if (\Drupal::moduleHandler()->moduleExists('image')) {
@@ -72,7 +72,7 @@ class WebformImageFile extends WebformManagedFileBase {
       foreach ($image_styles as $id => $image_style) {
         $label = (string) $image_style->label();
         $t_args = ['@label' => $label];
-        $formats[$label]["$id:image"] = $this->t('@label: Image', $t_args);;
+        $formats[$label]["$id:image"] = $this->t('@label: Image', $t_args);
         $formats[$label]["$id:link"] = $this->t('@label: Link', $t_args);
         $formats[$label]["$id:modal"] = $this->t('@label: Modal', $t_args);
       }

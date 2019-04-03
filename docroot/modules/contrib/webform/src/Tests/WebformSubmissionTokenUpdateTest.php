@@ -60,7 +60,7 @@ class WebformSubmissionTokenUpdateTest extends WebformTestBase {
     $webform->save();
 
     // Check that access is denied for anonymous user.
-    $this->drupalGet('webform/test_token_update');
+    $this->drupalGet('/webform/test_token_update');
     $this->assertResponse(403);
 
     // Check token update access allowed for anonymous user.

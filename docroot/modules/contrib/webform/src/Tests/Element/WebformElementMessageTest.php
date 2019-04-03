@@ -31,7 +31,7 @@ class WebformElementMessageTest extends WebformElementTestBase {
   public function testMessage() {
     $webform = Webform::load('test_element_message');
 
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
 
     // Check basic message.
     $this->assertRaw('<div data-drupal-selector="edit-message-info" class="webform-message js-webform-message js-form-wrapper form-wrapper" id="edit-message-info">');
@@ -54,7 +54,7 @@ class WebformElementMessageTest extends WebformElementTestBase {
 
     // Check that close links are not enabled for 'user' or 'state' storage
     // for anonymous users.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->assertRaw('href="#close"');
     $this->assertNoRaw('data-message-storage="user"');
     $this->assertNoRaw('data-message-storage="state"');
@@ -63,7 +63,7 @@ class WebformElementMessageTest extends WebformElementTestBase {
     $this->drupalLogin($this->drupalCreateUser());
 
     // Check that close links are enabled.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->assertNoRaw('href="#close"');
     $this->assertRaw('data-drupal-selector="edit-message-close-storage-user"');
     $this->assertRaw('data-message-storage="user"');
@@ -73,11 +73,11 @@ class WebformElementMessageTest extends WebformElementTestBase {
     $this->assertRaw('data-message-storage="custom"');
 
     // Close message using 'user' storage.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->clickLink('×', 0);
 
     // Check that 'user' storage message is removed.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->assertNoRaw('data-drupal-selector="edit-message-close-storage-user"');
     $this->assertNoRaw('data-message-storage="user"');
     $this->assertRaw('data-drupal-selector="edit-message-close-storage-state"');
@@ -86,11 +86,11 @@ class WebformElementMessageTest extends WebformElementTestBase {
     $this->assertRaw('data-message-storage="custom"');
 
     // Close message using 'state' storage.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->clickLink('×', 0);
 
     // Check that 'state' and 'user' storage message is removed.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->assertNoRaw('data-drupal-selector="edit-message-close-storage-user"');
     $this->assertNoRaw('data-message-storage="user"');
     $this->assertNoRaw('data-drupal-selector="edit-message-close-storage-state"');
@@ -99,11 +99,11 @@ class WebformElementMessageTest extends WebformElementTestBase {
     $this->assertRaw('data-message-storage="custom"');
 
     // Close message using 'custom' storage.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->clickLink('×', 0);
 
     // Check that 'state' and 'user' storage message is removed.
-    $this->drupalGet('webform/test_element_message');
+    $this->drupalGet('/webform/test_element_message');
     $this->assertNoRaw('data-drupal-selector="edit-message-close-storage-user"');
     $this->assertNoRaw('data-message-storage="user"');
     $this->assertNoRaw('data-drupal-selector="edit-message-close-storage-state"');

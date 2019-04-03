@@ -6,13 +6,13 @@
  */
 
 // Webform install helper functions.
-include_once 'includes/webform.install.inc';
+include_once __DIR__ . '/includes/webform.install.inc';
 
 // Webform requirements.
-include_once 'includes/webform.install.requirements.inc';
+include_once __DIR__ . '/includes/webform.install.requirements.inc';
 
 // Webform update hooks.
-include_once 'includes/webform.install.update.inc';
+include_once __DIR__ . '/includes/webform.install.update.inc';
 
 /**
  * Implements hook_uninstall().

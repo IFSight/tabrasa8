@@ -10,10 +10,22 @@ webform.admin:
   dependencies:
     - core/jquery
     - core/drupal
+    - webform/webform.form
+    - webform/webform.filter
+    - webform/webform.admin.dropbutton
+
+webform.filter:
+  version: VERSION
+  css:
+    theme:
+      css/webform.filter.css: {}
+  js:
+    js/webform.filter.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
     - core/drupal.announce
     - core/drupal.debounce
-    - webform/webform.form
-    - webform/webform.admin.dropbutton
 
 webform.admin.composite:
   version: VERSION
@@ -105,7 +117,19 @@ webform.ajax:
     - core/jquery.once
     - core/jquery.form
 
-# Block
+# Announce.
+
+webform.announce:
+  version: VERSION
+  js:
+    js/webform.announce.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupal.announce
+
+# Block.
 
 webform.block:
   version: VERSION
@@ -228,8 +252,8 @@ webform.off_canvas:
   js:
     js/webform.off-canvas.js: {}
   dependencies:
-  - core/drupal.debounce
-  - core/drupal.dialog.off_canvas
+    - core/drupal.debounce
+    - core/drupal.dialog.off_canvas
 
 # Promotions.
 
@@ -247,6 +271,16 @@ webform.states:
     js/webform.states.js: {}
   dependencies:
     - core/drupal.states
+
+# Token.
+
+webform.token:
+  version: VERSION
+  css:
+    component:
+      css/webform.token.css: {}
+  dependencies:
+    - webform/webform.element.more
 
 # Tooltip.
 
@@ -292,13 +326,13 @@ webform.form.disable_back:
   version: VERSION
   header: true
   js:
-    js/webform.form.disable_back.js: {preprocess: false}
+    js/webform.form.disable_back.js: { preprocess: false }
 
 webform.form.submit_back:
   version: VERSION
   header: true
   js:
-    js/webform.form.submit_back.js: {preprocess: false}
+    js/webform.form.submit_back.js: { preprocess: false }
   dependencies:
     - core/jquery
 
@@ -308,6 +342,7 @@ webform.form.submit_once:
     js/webform.form.submit_once.js: {}
   dependencies:
     - core/drupal
+    - core/drupal.ajax
     - core/jquery.once
     - system/base
 
@@ -387,7 +422,7 @@ webform.element.codemirror.text:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.text
 
@@ -397,7 +432,7 @@ webform.element.codemirror.yaml:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.yaml
 
@@ -407,7 +442,7 @@ webform.element.codemirror.html:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.html
 
@@ -417,7 +452,7 @@ webform.element.codemirror.htmlmixed:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.htmlmixed
 
@@ -427,7 +462,7 @@ webform.element.codemirror.css:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.css
 
@@ -437,7 +472,7 @@ webform.element.codemirror.javascript:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.javascript
 
@@ -447,7 +482,7 @@ webform.element.codemirror.php:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.php
 
@@ -457,7 +492,7 @@ webform.element.codemirror.twig:
     component:
       css/webform.element.codemirror.css: {}
   js:
-    js/webform.element.codemirror.js: {weight: -1}
+    js/webform.element.codemirror.js: { weight: -1 }
   dependencies:
     - webform/libraries.codemirror.twig
 
@@ -493,6 +528,7 @@ webform.element.computed:
   dependencies:
     - core/drupal.debounce
     - core/jquery.once
+    - webform/webform.announce
 
 webform.element.counter:
   version: VERSION
@@ -508,11 +544,20 @@ webform.element.counter:
 
 webform.element.date:
   version: VERSION
+  css:
+    component:
+      css/webform.element.date.css: {}
   js:
     js/webform.element.date.js: {}
   dependencies:
     - core/drupal.date
     - core/drupalSettings
+
+webform.element.datelist:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.datelist.css: {}
 
 webform.element.details.save:
   version: VERSION
@@ -649,18 +694,27 @@ webform.element.location.places:
   js:
     js/webform.element.location.places.js: {}
   dependencies:
-  - core/drupal
-  - core/jquery.once
-  - webform/libraries.algolia.places
+    - core/drupal
+    - core/jquery.once
+    - webform/libraries.algolia.places
 
 webform.element.managed_file:
   version: VERSION
+  css:
+    component:
+      css/webform.element.managed_file.css: {}
   js:
     js/webform.element.managed_file.js: {}
   dependencies:
     - core/drupal
     - core/jquery.once
     - file/drupal.file
+
+webform.element.mapping:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.mapping.css: {}
 
 webform.element.message:
   version: VERSION
@@ -773,6 +827,12 @@ webform.element.states:
   css:
     component:
       css/webform.element.states.css: {}
+  js:
+    js/webform.element.states.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery.once
+    - core/jquery.ui.autocomplete
 
 webform.element.telephone:
   version: VERSION
@@ -889,19 +949,19 @@ imce.input:
 
 libraries.codemirror.text:
   remote: https://github.com/codemirror/codemirror
-  version: &webform_codemirror_version '5.41.0'
+  version: &webform_codemirror_version '5.44.0'
   license: &webform_codemirror_license
     name: MIT
     url: http://codemirror.net/LICENSE
     gpl-compatible: true
   cdn: &webform_codemirror_cdn
-    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/
-    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/
+    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/
+    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.44.0/
   css:
     component:
       /libraries/codemirror/lib/codemirror.css: {}
   js:
-    /libraries/codemirror/lib/codemirror.js: {weight: -1}
+    /libraries/codemirror/lib/codemirror.js: { weight: -1 }
     /libraries/codemirror/addon/runmode/runmode.js: {}
     /libraries/codemirror/addon/display/placeholder.js: {}
 
@@ -934,7 +994,7 @@ libraries.codemirror.htmlmixed:
   dependencies:
     - webform/libraries.codemirror.text
     - webform/libraries.codemirror.css
-    - webform/libraries.codemirror.js
+    - webform/libraries.codemirror.javascript
 
 libraries.codemirror.css:
   version: *webform_codemirror_version
@@ -975,13 +1035,13 @@ libraries.codemirror.twig:
 
 libraries.algolia.places:
   remote: https://github.com/algolia/places
-  version: '1.13.0'
+  version: '1.16.1'
   license:
     name: MIT
     url: https://github.com/algolia/places/blob/master/LICENSE
     gpl-compatible: true
   cdn:
-    /libraries/algolia.places/dist/cdn/: https://cdn.jsdelivr.net/npm/places.js@1.0.0/dist/cdn/
+    /libraries/algolia.places/dist/cdn/: https://cdn.jsdelivr.net/npm/places.js@1.16.1/dist/cdn/
   js:
     /libraries/algolia.places/dist/cdn/places.js: {}
 
@@ -996,7 +1056,7 @@ libraries.jquery.geocomplete:
     /libraries/geocomplete/: https://cdnjs.cloudflare.com/ajax/libs/geocomplete/1.7.0/
   js:
     https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places: {}
-    /libraries/geocomplete/jquery.geocomplete.min.js: {}
+    /libraries/geocomplete/jquery.geocomplete.min.js: { minified: true }
   dependencies:
     - core/jquery
 
@@ -1056,34 +1116,33 @@ libraries.jquery.icheck.square:
 
 libraries.jquery.inputmask:
   remote: https://github.com/RobinHerbots/jquery.inputmask
-  version: '4.0.2'
+  version: '4.0.6'
   license:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
   cdn:
-    /libraries/jquery.inputmask/: https://cdn.rawgit.com/RobinHerbots/Inputmask/4.0.2/
+    /libraries/jquery.inputmask/: https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@4.0.6/
   js:
-    /libraries/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js: {}
+    /libraries/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js: { minified: true }
   dependencies:
     - core/jquery
 
 libraries.jquery.intl-tel-input:
   remote: https://github.com/jackocnr/intl-tel-input
-  version: 'v14.0.4'
+  version: 'v15.0.1'
   license:
     name: MIT
     url: https://github.com/jackocnr/intl-tel-input/blob/master/LICENSE
     gpl-compatible: true
   cdn:
-    /libraries/jquery.intl-tel-input/build/: https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/14.0.4/
+    /libraries/jquery.intl-tel-input/: https://cdn.jsdelivr.net/gh/jackocnr/intl-tel-input@v15.0.1/
   css:
     component:
-      /libraries/jquery.intl-tel-input/build/css/intlTelInput.css: {}
+      /libraries/jquery.intl-tel-input/build/css/intlTelInput.min.css: { minified: true }
   js:
-    /libraries/jquery.intl-tel-input/build/js/utils.js : {}
-    /libraries/jquery.intl-tel-input/build/js/intlTelInput.min.js : {}
-    /libraries/jquery.intl-tel-input/build/js/intlTelInput-jquery.min.js : {}
+    /libraries/jquery.intl-tel-input/build/js/intlTelInput.min.js: { minified: true }
+    /libraries/jquery.intl-tel-input/build/js/intlTelInput-jquery.min.js: { minified: true }
 
   dependencies:
     - core/jquery
@@ -1096,12 +1155,12 @@ libraries.jquery.rateit:
     url: https://github.com/gjunge/rateit.js/blob/master/LICENSE.md
     gpl-compatible: true
   cdn:
-    /libraries/jquery.rateit/: https://cdn.rawgit.com/gjunge/rateit.js/1.1.1/
+    /libraries/jquery.rateit/: https://cdn.jsdelivr.net/gh/gjunge/rateit.js@1.1.1/
   css:
     component:
       /libraries/jquery.rateit/scripts/rateit.css: {}
   js:
-    /libraries/jquery.rateit/scripts/jquery.rateit.min.js: {}
+    /libraries/jquery.rateit/scripts/jquery.rateit.min.js: { minified: true }
   dependencies:
     - core/jquery
 
@@ -1116,9 +1175,9 @@ libraries.jquery.select2:
     /libraries/jquery.select2/dist/: https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/
   css:
     component:
-      /libraries/jquery.select2/dist/css/select2.min.css: {}
+      /libraries/jquery.select2/dist/css/select2.min.css: { minified: true }
   js:
-    /libraries/jquery.select2/dist/js/select2.min.js: {}
+    /libraries/jquery.select2/dist/js/select2.min.js: { minified: true }
   dependencies:
     - core/jquery
 
@@ -1133,9 +1192,9 @@ libraries.jquery.chosen:
     /libraries/jquery.chosen/: https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/
   css:
     component:
-      /libraries/jquery.chosen/chosen.css: {}
+      /libraries/jquery.chosen/chosen.min.css: { minified: true }
   js:
-    /libraries/jquery.chosen/chosen.jquery.js: {}
+    /libraries/jquery.chosen/chosen.jquery.min.js: { minified: true }
   dependencies:
     - core/jquery
 
@@ -1147,9 +1206,9 @@ libraries.jquery.textcounter:
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
   cdn:
-    /libraries/jquery.textcounter/: https://cdn.rawgit.com/ractoon/jQuery-Text-Counter/0.8.0/
+    /libraries/jquery.textcounter/: https://cdn.jsdelivr.net/gh/ractoon/jQuery-Text-Counter@0.8.0/
   js:
-    /libraries/jquery.textcounter/textcounter.min.js: {}
+    /libraries/jquery.textcounter/textcounter.min.js: { minified: true }
   dependencies:
     - core/jquery
 
@@ -1161,12 +1220,12 @@ libraries.jquery.timepicker:
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
   cdn:
-    /libraries/jquery.timepicker/: https://cdn.rawgit.com/jonthornton/jquery-timepicker/1.11.14/
+    /libraries/jquery.timepicker/: https://cdn.jsdelivr.net/gh/jonthornton/jquery-timepicker@1.11.14/
   css:
     component:
-      /libraries/jquery.timepicker/jquery.timepicker.css: {}
+      /libraries/jquery.timepicker/jquery.timepicker.min.css: { minified: true }
   js:
-    /libraries/jquery.timepicker/jquery.timepicker.min.js: {}
+    /libraries/jquery.timepicker/jquery.timepicker.min.js: { minified: true }
   dependencies:
     - core/jquery
 
@@ -1178,12 +1237,12 @@ libraries.jquery.toggles:
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
   cdn:
-    /libraries/jquery.toggles/: https://cdn.rawgit.com/simontabor/jquery-toggles/v4.0.0/
+    /libraries/jquery.toggles/: https://cdn.jsdelivr.net/gh/simontabor/jquery-toggles@v4.0.0/
   css:
     component:
       /libraries/jquery.toggles/css/toggles-full.css: {}
   js:
-    /libraries/jquery.toggles/toggles.min.js: {}
+    /libraries/jquery.toggles/toggles.min.js: { minified: true }
   dependencies:
     - core/jquery
 
@@ -1195,7 +1254,7 @@ libraries.progress-tracker:
     url: https://github.com/NigelOToole/progress-tracker/blob/master/LICENSE
     gpl-compatible: true
   cdn:
-    /libraries/progress-tracker/: https://cdn.rawgit.com/NigelOToole/progress-tracker/v1.4.0/
+    /libraries/progress-tracker/: https://cdn.jsdelivr.net/gh/NigelOToole/progress-tracker@v1.4.0/
   css:
     component:
       /libraries/progress-tracker/app/styles/progress-tracker.css: {}
@@ -1208,6 +1267,6 @@ libraries.signature_pad:
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
   cdn:
-    /libraries/signature_pad/: https://cdn.rawgit.com/szimek/signature_pad/v2.3.0/
+    /libraries/signature_pad/: https://cdn.jsdelivr.net/gh/szimek/signature_pad@v2.3.0/
   js:
     /libraries/signature_pad/example/js/signature_pad.js: {}
