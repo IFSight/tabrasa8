@@ -17,7 +17,6 @@ category: 'Test: Handler'
 elements: |
   message:
     '#markup': 'Click ''Save Draft'' and ''Submit'' to send emails triggered by submissions  state.'
-  
 css: ''
 javascript: ''
 settings:
@@ -34,6 +33,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: true
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -166,6 +166,10 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
 handlers:
   email_draft:
     id: email
@@ -289,6 +293,40 @@ handlers:
       from_options: {  }
       from_name: _default
       subject: 'Submission updated'
+      body: _default
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      html: true
+      attachments: false
+      twig: false
+      theme_name: ''
+      debug: true
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+  email_locked:
+    id: email
+    label: 'Submission locked'
+    handler_id: email_locked
+    status: true
+    conditions: {  }
+    weight: 3
+    settings:
+      states:
+        - locked
+      to_mail: locked@example.com
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: _default
+      subject: 'Submission locked'
       body: _default
       excluded_elements: {  }
       ignore_access: false

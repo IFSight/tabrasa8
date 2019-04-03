@@ -3,6 +3,7 @@
 namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Render\Element as RenderElement;
 use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -267,25 +268,34 @@ abstract class WebformCompositeBase extends WebformElementBase {
       $has_access = (!isset($composite_elements['#access']) || $composite_elements['#access']);
       if ($has_access && isset($composite_element['#type'])) {
         $element_plugin = $this->elementManager->getElementInstance($composite_element);
-        $composite_title = (isset($composite_element['#title'])) ? $composite_element['#title'] : $composite_key;
-
-        switch ($composite_element['#type']) {
-          case 'label':
-          case 'webform_message':
-            break;
-
-          case 'webform_select_other':
-            $selectors[":input[name=\"{$name}[{$composite_key}][select]\"]"] = $composite_title . ' [' . $this->t('Select') . ']';
-            $selectors[":input[name=\"{$name}[{$composite_key}][other]\"]"] = $composite_title . ' [' . $this->t('Textfield') . ']';
-            break;
-
-          default:
-            $selectors[":input[name=\"{$name}[{$composite_key}]\"]"] = $composite_title . ' [' . $element_plugin->getPluginLabel() . ']';
-            break;
-        }
+        $composite_element['#webform_key'] = "{$name}[{$composite_key}]";
+        $selectors += OptGroup::flattenOptions($element_plugin->getElementSelectorOptions($composite_element));
       }
     }
     return [$title => $selectors];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorSourceValues(array $element) {
+    if ($this->hasMultipleValues($element)) {
+      return [];
+    }
+
+    $name = $element['#webform_key'];
+
+    $source_values = [];
+    $composite_elements = $this->getInitializedCompositeElement($element);
+    foreach ($composite_elements as $composite_key => $composite_element) {
+      $has_access = (!isset($composite_elements['#access']) || $composite_elements['#access']);
+      if ($has_access && isset($composite_element['#type'])) {
+        $element_plugin = $this->elementManager->getElementInstance($composite_element);
+        $composite_element['#webform_key'] = "{$name}[{$composite_key}]";
+        $source_values += $element_plugin->getElementSelectorSourceValues($composite_element);
+      }
+    }
+    return $source_values;
   }
 
   /****************************************************************************/
@@ -319,7 +329,7 @@ abstract class WebformCompositeBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  protected function formatCustomItem($type, array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  protected function formatCustomItem($type, array &$element, WebformSubmissionInterface $webform_submission, array $options = [], array $context = []) {
     $name = strtolower($type);
 
     // Parse element.composite_key from template and add composite element
@@ -330,17 +340,15 @@ abstract class WebformCompositeBase extends WebformElementBase {
       $composite_keys = array_unique($matches[1]);
 
       $item_function = 'format' . $type;
-      $options['context'] = [
-        'element' => [],
-      ];
+      $context['element'] = [];
       foreach ($composite_keys as $composite_key) {
         if (isset($composite_elements[$composite_key])) {
-          $options['context']['element'][$composite_key] = $this->$item_function(['#format' => NULL] + $element, $webform_submission, ['composite_key' => $composite_key] + $options);
+          $context['element'][$composite_key] = $this->$item_function(['#format' => NULL] + $element, $webform_submission, ['composite_key' => $composite_key] + $options);
         }
       }
     }
 
-    return parent::formatCustomItem($type, $element, $webform_submission, $options);
+    return parent::formatCustomItem($type, $element, $webform_submission, $options, $context);
   }
 
   /**
@@ -352,6 +360,12 @@ abstract class WebformCompositeBase extends WebformElementBase {
     }
 
     $format = $this->getItemFormat($element);
+
+    // Handle custom composite html items.
+    if ($format === 'custom' && !empty($element['#format_html'])) {
+      return $this->formatCustomItem('html', $element, $webform_submission, $options);
+    }
+
     switch ($format) {
       case 'list':
       case 'raw':
@@ -363,6 +377,9 @@ abstract class WebformCompositeBase extends WebformElementBase {
 
       default:
         $lines = $this->formatHtmlItemValue($element, $webform_submission, $options);
+        if (empty($lines)) {
+          return '';
+        }
         foreach ($lines as $key => $line) {
           if (is_string($line)) {
             $lines[$key] = ['#markup' => $line];
@@ -435,7 +452,7 @@ abstract class WebformCompositeBase extends WebformElementBase {
   protected function formatTextItems(array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
     $format = $this->getItemsFormat($element);
     if ($format === 'table') {
-       $element['#format_items'] = 'hr';
+      $element['#format_items'] = 'hr';
     }
     return parent::formatTextItems($element, $webform_submission, $options);
   }
@@ -449,6 +466,12 @@ abstract class WebformCompositeBase extends WebformElementBase {
     }
 
     $format = $this->getItemFormat($element);
+
+    // Handle custom composite text items.
+    if ($format === 'custom' && !empty($element['#format_text'])) {
+      return $this->formatCustomItem('text', $element, $webform_submission, $options);
+    }
+
     switch ($format) {
       case 'list':
       case 'raw':
@@ -825,12 +848,6 @@ abstract class WebformCompositeBase extends WebformElementBase {
         1 => $this->t('Yes'),
       ],
     ];
-
-    $item_pattern = &$form['display']['item']['patterns']['#value']['items']['#items'];
-    $composite_elements = $this->getCompositeElements();
-    foreach ($composite_elements as $composite_key => $composite_element) {
-      $item_pattern[] = "{{ element.$composite_key }}";
-    }
 
     // Hide single item display when multiple item display is set to 'table'.
     $form['display']['item']['#states']['invisible'] = [

@@ -115,10 +115,10 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
     $webform_entity_reference_manager = $this->getMockBuilder(WebformEntityReferenceManagerInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
-    $webform_entity_reference_manager->method('getFieldName')
+    $webform_entity_reference_manager->method('getFieldNames')
       ->willReturnMap([
-        [$source_entity, 'webform_field_name'],
-        [$source_entity_translation, 'webform_field_name'],
+        [$source_entity, ['webform_field_name']],
+        [$source_entity_translation, ['webform_field_name']],
       ]);
 
     // Mock language manager.

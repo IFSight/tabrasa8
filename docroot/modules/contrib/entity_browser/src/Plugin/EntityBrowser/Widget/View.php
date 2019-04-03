@@ -90,8 +90,8 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
-    // TODO - do we need better error handling for view and view_display (in case
-    // either of those is nonexistent or display not of correct type)?
+    // TODO - do we need better error handling for view and view_display (in
+    // case either of those is nonexistent or display not of correct type)?
     $form['#attached']['library'] = ['entity_browser/view'];
 
     /** @var \Drupal\views\ViewExecutable $view */
@@ -293,7 +293,6 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       ->getStorage('view')
       ->load($this->configuration['view'])
       ->getExecutable();
-
 
     // Check if the current user has access to this view.
     return AccessResult::allowedIf($view->access($this->configuration['view_display']));

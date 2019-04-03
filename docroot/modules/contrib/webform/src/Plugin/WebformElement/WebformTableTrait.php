@@ -3,6 +3,7 @@
 namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\OptGroup;
 use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\WebformSubmissionInterface;
 
@@ -15,10 +16,6 @@ trait WebformTableTrait {
    * {@inheritdoc}
    */
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
-    if ($this->hasMultipleValues($element)) {
-      $element['#element_validate'][] = [get_class($this), 'validateMultipleOptions'];
-    }
-
     parent::prepare($element, $webform_submission);
 
     // Add missing element class.
@@ -82,16 +79,32 @@ trait WebformTableTrait {
   protected function getTableSelectElementSelectorOptions(array $element, $input_selector = '') {
     $title = $this->getAdminLabel($element) . ' [' . $this->getPluginLabel() . ']';
     $name = $element['#webform_key'];
-    $type = ($this->hasMultipleValues($element) ? $this->t('Checkbox') : $this->t('Radio'));
-
-    $selectors = [];
-    foreach ($element['#options'] as $value => $text) {
-      if (is_array($text)) {
-        $text = $value;
+    if ($this->hasMultipleValues($element)) {
+      $selectors = [];
+      foreach ($element['#options'] as $value => $text) {
+        if (is_array($text)) {
+          $text = $value;
+        }
+        $selectors[":input[name=\"{$name}[{$value}]$input_selector\"]"] = $text . ' [' . $this->t('Checkbox') . ']';
       }
-      $selectors[":input[name=\"{$name}[{$value}]$input_selector\"]"] = $text . ' [' . $type . ']';
+      return [$title => $selectors];
     }
-    return [$title => $selectors];
+    else {
+      return [":input[name=\"{$name}\"]" => $title];
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorSourceValues(array $element) {
+    if ($this->hasMultipleValues($element)) {
+      return [];
+    }
+
+    $name = $element['#webform_key'];
+    $options = OptGroup::flattenOptions($element['#options']);
+    return [":input[name=\"{$name}\"]" => $options];
   }
 
   /**

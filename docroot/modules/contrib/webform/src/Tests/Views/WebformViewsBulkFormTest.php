@@ -33,7 +33,7 @@ class WebformViewsBulkFormTest extends WebformTestBase {
     $this->drupalLogin($admin_submission_user);
 
     // Check no submissions.
-    $this->drupalGet('admin/structure/webform/test/views_bulk_form');
+    $this->drupalGet('/admin/structure/webform/test/views_bulk_form');
     $this->assertRaw('No submissions available.');
 
     // Create a test submission.
@@ -93,7 +93,7 @@ class WebformViewsBulkFormTest extends WebformTestBase {
     $this->assertNull($webform_submission, '1: Webform submission has been deleted');
 
     // Check no submissions.
-    $this->drupalGet('admin/structure/webform/test/views_bulk_form');
+    $this->drupalGet('/admin/structure/webform/test/views_bulk_form');
     $this->assertRaw('No submissions available.');
   }
 

@@ -126,7 +126,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     // Form settings.
     $form['form_settings'] = [
       '#type' => 'details',
-      '#title' => $this->t('Form settings'),
+      '#title' => $this->t('Form general settings'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
@@ -285,7 +285,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     // Wizard settings.
     $form['wizard_settings'] = [
       '#type' => 'details',
-      '#title' => $this->t('Wizard settings'),
+      '#title' => $this->t('Form wizard settings'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
@@ -321,7 +321,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     // Preview settings.
     $form['preview_settings'] = [
       '#type' => 'details',
-      '#title' => $this->t('Preview settings'),
+      '#title' => $this->t('Form preview settings'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
@@ -365,36 +365,10 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     ];
     $form['preview_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
-    // Draft settings.
-    $form['draft_settings'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Draft settings'),
-      '#open' => TRUE,
-      '#tree' => TRUE,
-    ];
-    $form['draft_settings']['default_draft_button_label'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Default draft button label'),
-      '#required' => TRUE,
-      '#size' => 20,
-      '#default_value' => $settings['default_draft_button_label'],
-    ];
-    $form['draft_settings']['default_draft_saved_message'] = [
-      '#type' => 'webform_html_editor',
-      '#title' => $this->t('Default draft save message'),
-      '#default_value' => $settings['default_draft_saved_message'],
-    ];
-    $form['draft_settings']['default_draft_loaded_message'] = [
-      '#type' => 'webform_html_editor',
-      '#title' => $this->t('Default draft load message'),
-      '#default_value' => $settings['default_draft_loaded_message'],
-    ];
-    $form['draft_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
-
     // Confirmation settings.
     $form['confirmation_settings'] = [
       '#type' => 'details',
-      '#title' => $this->t('Confirmation settings'),
+      '#title' => $this->t('Form confirmation settings'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
@@ -426,7 +400,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     // Dialog settings.
     $form['dialog_settings'] = [
       '#type' => 'details',
-      '#title' => $this->t('Dialog settings'),
+      '#title' => $this->t('Form dialog settings'),
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
@@ -588,7 +562,6 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       + $form_state->getValue('form_behaviors')
       + $form_state->getValue('wizard_settings')
       + $form_state->getValue('preview_settings')
-      + $form_state->getValue('draft_settings')
       + $form_state->getValue('confirmation_settings')
       + $form_state->getValue('dialog_settings');
 

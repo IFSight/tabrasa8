@@ -25,11 +25,11 @@ class WebformFormPropertiesTest extends WebformTestBase {
     global $base_path;
 
     // Check invalid elements .
-    $this->drupalGet('webform/test_element_invalid');
+    $this->drupalGet('/webform/test_element_invalid');
     $this->assertRaw('Unable to display this webform. Please contact the site administrator.');
 
     // Check element's root properties moved to the webform's properties.
-    $this->drupalGet('webform/test_form_properties');
+    $this->drupalGet('/webform/test_form_properties');
     $this->assertPattern('/Form prefix<form /');
     $this->assertPattern('/<\/form>\s+Form suffix/');
     $this->assertRaw('<form class="webform-submission-form webform-submission-add-form webform-submission-test-form-properties-form webform-submission-test-form-properties-add-form test-form-properties js-webform-details-toggle webform-details-toggle" invalid="invalid" style="border: 10px solid red; padding: 1em;" data-drupal-selector="webform-submission-test-form-properties-add-form" action="https://www.google.com/search" method="get" id="webform-submission-test-form-properties-add-form" accept-charset="UTF-8">');
@@ -48,7 +48,7 @@ class WebformFormPropertiesTest extends WebformTestBase {
 'prefix': 'Form prefix TEST'",
     ];
     $this->drupalPostForm('/admin/structure/webform/manage/test_form_properties/settings/form', $edit, t('Save'));
-    $this->drupalGet('webform/test_form_properties');
+    $this->drupalGet('/webform/test_form_properties');
     $this->assertPattern('/Form prefix TEST<form /');
     $this->assertPattern('/<\/form>\s+Form suffix TEST/');
     $this->assertRaw('<form class="webform-submission-form webform-submission-add-form webform-submission-test-form-properties-form webform-submission-test-form-properties-add-form form--inline clearfix test-form-properties js-webform-details-toggle webform-details-toggle" style="border: 10px solid green; padding: 1em;" data-drupal-selector="webform-submission-test-form-properties-add-form" action="' . $base_path . 'webform/test_form_properties" method="post" id="webform-submission-test-form-properties-add-form" accept-charset="UTF-8">');

@@ -41,9 +41,9 @@ class WebformHandlerEmailBasicTest extends WebformTestBase {
     $sent_email = $this->getLastEmail();
     $this->assertEqual($sent_email['key'], 'test_handler_email_email');
     $this->assertEqual($sent_email['reply-to'], "John Smith <from@example.com>");
-    $this->assertContains($sent_email['body'], 'Submitted by: Anonymous');
-    $this->assertContains($sent_email['body'], 'First name: John');
-    $this->assertContains($sent_email['body'], 'Last name: Smith');
+    $this->assertContains('Submitted by: Anonymous', $sent_email['body']);
+    $this->assertContains('First name: John', $sent_email['body']);
+    $this->assertContains('Last name: Smith', $sent_email['body']);
     $this->assertEqual($sent_email['headers']['From'], 'John Smith <from@example.com>');
     $this->assertEqual($sent_email['headers']['Cc'], 'cc@example.com');
     $this->assertEqual($sent_email['headers']['Bcc'], 'bcc@example.com');
@@ -56,8 +56,8 @@ class WebformHandlerEmailBasicTest extends WebformTestBase {
     $webform->setSetting('results_disabled', TRUE)->save();
     $this->postSubmission($webform, ['first_name' => 'Jane', 'last_name' => 'Doe']);
     $sent_email = $this->getLastEmail();
-    $this->assertContains($sent_email['body'], 'First name: Jane');
-    $this->assertContains($sent_email['body'], 'Last name: Doe');
+    $this->assertContains('First name: Jane', $sent_email['body']);
+    $this->assertContains('Last name: Doe', $sent_email['body']);
     $webform->setSetting('results_disabled', FALSE)->save();
 
     // Check sending a custom email using tokens.
@@ -81,17 +81,20 @@ class WebformHandlerEmailBasicTest extends WebformTestBase {
     $webform_submission = WebformSubmission::load($sid);
 
     $sent_email = $this->getLastEmail();
-    $this->assertContains($sent_email['body'], 'full name: John Smith');
-    $this->assertContains($sent_email['body'], 'uuid: ' . $webform_submission->uuid->value);
-    $this->assertContains($sent_email['body'], 'sid: ' . $sid);
-    $this->assertContains($sent_email['body'], 'date: ' . \Drupal::service('date.formatter')->format($webform_submission->created->value, 'medium'));
-    $this->assertContains($sent_email['body'], 'ip-address: ' . $webform_submission->remote_addr->value);
-    $this->assertContains($sent_email['body'], 'user: ' . $admin_user->label());
-    $this->assertContains($sent_email['body'], "url:");
-    $this->assertContains($sent_email['body'], $webform_submission->toUrl('canonical', ['absolute' => TRUE])->toString());
-    $this->assertContains($sent_email['body'], "edit-url:");
-    $this->assertContains($sent_email['body'], $webform_submission->toUrl('edit-form', ['absolute' => TRUE])->toString());
-    $this->assertContains($sent_email['body'], 'Test that "double quotes" are not encoded.');
+    $this->assertContains('full name: John Smith', $sent_email['body']);
+    $this->assertContains('uuid: ' . $webform_submission->uuid->value, $sent_email['body']);
+    $this->assertContains('sid: ' . $sid, $sent_email['body']);
+    $date_value = \Drupal::service('date.formatter')->format($webform_submission->created->value, 'medium');
+    $this->assertContains('date: ' . $date_value, $sent_email['body']);
+    $this->assertContains('ip-address: ' . $webform_submission->remote_addr->value, $sent_email['body']);
+    $this->assertContains('user: ' . $admin_user->label(), $sent_email['body']);
+    $this->assertContains("url:", $sent_email['body']);
+    $this->assertContains($webform_submission->toUrl('canonical', ['absolute' => TRUE])
+      ->toString(), $sent_email['body']);
+    $this->assertContains("edit-url:", $sent_email['body']);
+    $this->assertContains($webform_submission->toUrl('edit-form', ['absolute' => TRUE])
+      ->toString(), $sent_email['body']);
+    $this->assertContains('Test that "double quotes" are not encoded.', $sent_email['body']);
 
     // Create a submission using HTML is subject and message.
     $edit = [
@@ -113,7 +116,7 @@ class WebformHandlerEmailBasicTest extends WebformTestBase {
     ];
     $this->postSubmission($webform, $edit);
     $sent_email = $this->getLastEmail();
-    $this->assertEqual($sent_email['reply-to'], '"first_name" "last_name" <from@example.com>');
+    $this->assertEqual($sent_email['reply-to'], '"first_name\\" \\"last_name" <from@example.com>');
     $this->assertEqual($sent_email['subject'], 'This has  & "special" \'characters\'');
     // NOTE:
     // Drupal's PhpMail::format function calls

@@ -7,6 +7,8 @@
 
 use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\Utility\WebformArrayHelper;
+use Drupal\webform\Utility\WebformElementHelper;
 
 /**
  * Implements hook_page_attachments().
@@ -151,6 +153,27 @@ function webform_bootstrap_preprocess_input(&$variables) {
       $element['#title'] = t('Remove');
       $element['#icon'] = \Drupal\bootstrap\Bootstrap::glyphicon('minus-sign');
     }
+  }
+}
+
+/**
+ * Prepares variables for form element templates.
+ */
+function webform_bootstrap_preprocess_form_element(&$variables) {
+  if (!_webform_bootstrap_is_active_theme()) {
+    return;
+  }
+
+  if (!WebformElementHelper::isWebformElement($variables['element'])) {
+    return;
+  }
+
+  // Do not display phone number using inline form.
+  // @see https://www.drupal.org/project/webform/issues/2910776s
+  // @see https://www.drupal.org/project/bootstrap/issues/2829634
+  if (WebformElementHelper::isType($variables['element'], 'tel')
+    && isset($variables['attributes']['class'])) {
+    WebformArrayHelper::removeValue($variables['attributes']['class'], 'form-inline');
   }
 }
 

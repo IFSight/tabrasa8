@@ -26,7 +26,7 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
     $webform = Webform::load('test_form_wizard_advanced');
 
     // Get initial wizard start page (Your Information).
-    $this->drupalGet('webform/test_form_wizard_advanced');
+    $this->drupalGet('/webform/test_form_wizard_advanced');
     // Check progress bar is set to 'Your Information'.
     $this->assertPattern('#<li data-webform-page="information" class="webform-progress-bar__page webform-progress-bar__page--current">\s+<b>Your Information</b><span></span></li>#');
     // Check progress pages.
@@ -120,7 +120,7 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, t('Save Draft'));
     // Complete reload the webform.
-    $this->drupalGet('webform/test_form_wizard_advanced');
+    $this->drupalGet('/webform/test_form_wizard_advanced');
     // Check progress bar is still set to 'Contact Information'.
     $this->assertCurrentPage('Contact Information', 'contact');
 
@@ -158,7 +158,7 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
     $this->assertRaw('<a href="mailto:janesmith@example.com">janesmith@example.com</a>');
     $this->assertRaw('<label>Phone</label>');
     $this->assertRaw('<a href="tel:111-111-1111">111-111-1111</a>');
-    $this->assertRaw('<div id="test_form_wizard_advanced--comments" class="webform-element webform-element-type-textarea js-form-item form-item js-form-type-item form-type-item js-form-item-comments form-item-comments form-no-label">');
+    $this->assertRaw('<div class="webform-element webform-element-type-textarea js-form-item form-item js-form-type-item form-type-item js-form-item-comments form-item-comments form-no-label" id="test_form_wizard_advanced--comments">');
     $this->assertRaw('This is working fine.');
 
     // Submit the webform.
@@ -225,7 +225,7 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
       'wizard_progress_percentage' => TRUE,
     ] + $webform->getSettings());
     $webform->save();
-    $this->drupalGet('webform/test_form_wizard_advanced');
+    $this->drupalGet('/webform/test_form_wizard_advanced');
 
     // Check no progress bar.
     $this->assertNoRaw('class="webform-progress-bar"');
@@ -242,7 +242,7 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
     \Drupal::configFactory()->getEditable('webform.settings')
       ->set('settings.default_wizard_confirmation_label', '{global complete}')
       ->save();
-    $this->drupalGet('webform/test_form_wizard_advanced');
+    $this->drupalGet('/webform/test_form_wizard_advanced');
     $this->assertRaw('{global complete}');
 
     // Check webform complete label.
@@ -251,7 +251,7 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
       'wizard_confirmation_label' => '{webform complete}',
     ] + $webform->getSettings());
     $webform->save();
-    $this->drupalGet('webform/test_form_wizard_advanced');
+    $this->drupalGet('/webform/test_form_wizard_advanced');
     $this->assertRaw('{webform complete}');
 
     // Check webform exclude complete.
@@ -259,13 +259,13 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
       'wizard_confirmation' => FALSE,
     ] + $webform->getSettings());
     $webform->save();
-    $this->drupalGet('webform/test_form_wizard_advanced');
+    $this->drupalGet('/webform/test_form_wizard_advanced');
 
     // Check complete label.
     $this->assertRaw('class="webform-progress-bar"');
     // Check complete is missing from confirmation page.
     $this->assertNoRaw('{webform complete}');
-    $this->drupalGet('webform/test_form_wizard_advanced/confirmation');
+    $this->drupalGet('/webform/test_form_wizard_advanced/confirmation');
     $this->assertNoRaw('class="webform-progress-bar"');
   }
 

@@ -20,7 +20,7 @@ class WebformElementFieldsetTest extends WebformElementTestBase {
    * Test fieldset element.
    */
   public function testFieldset() {
-    $this->drupalGet('webform/test_element_fieldset');
+    $this->drupalGet('/webform/test_element_fieldset');
 
     // Check fieldset with help, field prefix, field suffix, description,
     // and more. Also, check that invalid 'required' and 'aria-required'

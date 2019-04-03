@@ -22,7 +22,7 @@ class WebformElementOtherTest extends WebformElementTestBase {
    * Tests options with other elements.
    */
   public function testBuildingOtherElements() {
-    $this->drupalGet('webform/test_element_other');
+    $this->drupalGet('/webform/test_element_other');
 
     /**************************************************************************/
     // select_other
@@ -40,7 +40,7 @@ class WebformElementOtherTest extends WebformElementTestBase {
     $this->assertRaw('<select data-drupal-selector="edit-select-other-advanced-select" id="edit-select-other-advanced-select" name="select_other_advanced[select]" class="form-select required" required="required" aria-required="true">');
     $this->assertRaw('<option value="_other_" selected="selected">Is there another option you wish to enter?</option>');
     $this->assertRaw('<label for="edit-select-other-advanced-other">Other</label>');
-    $this->assertRaw('<input data-drupal-selector="edit-select-other-advanced-other" aria-describedby="edit-select-other-advanced-other--description" type="text" id="edit-select-other-advanced-other" name="select_other_advanced[other]" value="Four" size="20" maxlength="20" placeholder="What is this other option" class="form-text" />');
+    $this->assertRaw('<input data-counter-type="character" data-counter-minimum="4" data-counter-maximum="10" class="js-webform-counter webform-counter form-text" data-drupal-selector="edit-select-other-advanced-other" aria-describedby="edit-select-other-advanced-other--description" type="text" id="edit-select-other-advanced-other" name="select_other_advanced[other]" value="Four" size="20" maxlength="10" placeholder="What is this other option" />');
     $this->assertRaw('<div id="edit-select-other-advanced-other--description" class="webform-element-description">Other select description</div>');
 
     // Check multiple select_other.
@@ -63,6 +63,7 @@ class WebformElementOtherTest extends WebformElementTestBase {
     $this->assertRaw('<span class="fieldset-legend js-form-required form-required">Checkboxes other advanced</span>');
     $this->assertRaw('<input data-drupal-selector="edit-checkboxes-other-advanced-other" aria-describedby="edit-checkboxes-other-advanced-other--description" type="text" id="edit-checkboxes-other-advanced-other" name="checkboxes_other_advanced[other]" value="Four" size="60" maxlength="255" placeholder="What is this other option" class="form-text" />');
     $this->assertRaw('<div id="edit-checkboxes-other-advanced-other--description" class="webform-element-description">Other checkbox description</div>');
+    $this->assertRaw('<label for="edit-checkboxes-other-advanced-checkboxes-one" class="option">One<span class="webform-element-help"');
 
     /**************************************************************************/
     // radios_other
@@ -79,6 +80,7 @@ class WebformElementOtherTest extends WebformElementTestBase {
     $this->assertRaw('<input data-drupal-selector="edit-radios-other-advanced-radios-other-" type="radio" id="edit-radios-other-advanced-radios-other-" name="radios_other_advanced[radios]" value="_other_" checked="checked" class="form-radio" />');
     $this->assertRaw('<input data-drupal-selector="edit-radios-other-advanced-other" aria-describedby="edit-radios-other-advanced-other--description" type="text" id="edit-radios-other-advanced-other" name="radios_other_advanced[other]" value="Four" size="60" maxlength="255" placeholder="What is this other option" class="form-text" />');
     $this->assertRaw('<div id="edit-radios-other-advanced-other--description" class="webform-element-description">Other radio description</div>');
+    $this->assertRaw('<label for="edit-radios-other-advanced-radios-one" class="option">One<span class="webform-element-help"');
 
     /**************************************************************************/
     // buttons_other
@@ -95,6 +97,16 @@ class WebformElementOtherTest extends WebformElementTestBase {
     $this->assertRaw('<input data-drupal-selector="edit-buttons-other-advanced-buttons-one" type="radio" id="edit-buttons-other-advanced-buttons-one" name="buttons_other_advanced[buttons]" value="One" class="form-radio" />');
     $this->assertRaw('<input data-drupal-selector="edit-buttons-other-advanced-other" aria-describedby="edit-buttons-other-advanced-other--description" type="text" id="edit-buttons-other-advanced-other" name="buttons_other_advanced[other]" value="Four" size="60" maxlength="255" placeholder="What is this other option" class="form-text" />');
     $this->assertRaw('<div id="edit-buttons-other-advanced-other--description" class="webform-element-description">Other button description</div>');
+
+    /**************************************************************************/
+    // wrapper_type
+    /**************************************************************************/
+
+    // Check form_item wrapper type.
+    $this->assertRaw('<div class="js-webform-select-other webform-select-other js-form-item form-item js-form-type-webform-select-other form-type-webform-select-other js-form-item-wrapper-other-form-element form-item-wrapper-other-form-element" id="edit-wrapper-other-form-element">');
+
+    // Check container wrapper type.
+    $this->assertRaw('<div data-drupal-selector="edit-wrapper-other-container" class="js-webform-select-other webform-select-other webform-select-other--wrapper fieldgroup form-composite js-form-wrapper form-wrapper" id="edit-wrapper-other-container">');
   }
 
   /**
@@ -130,6 +142,14 @@ class WebformElementOtherTest extends WebformElementTestBase {
     ];
     $this->drupalPostForm('webform/test_element_other', $edit, t('Submit'));
     $this->assertRaw('Select other advanced field is required.');
+
+    // Check select other processing w/ other min/max character validation.
+    $edit = [
+      'select_other_advanced[select]' => '_other_',
+      'select_other_advanced[other]' => 'X',
+    ];
+    $this->drupalPostForm('webform/test_element_other', $edit, t('Submit'));
+    $this->assertRaw('Other must be longer than <em class="placeholder">4</em> characters but is currently <em class="placeholder">1</em> characters long.');
 
     // Check select other processing w/ other.
     $edit = [

@@ -2,10 +2,8 @@
 
 namespace Drupal\webform\Plugin\WebformElement;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Mail\MailFormatHelper;
-use Drupal\Core\Render\Element;
 use Drupal\webform\Element\WebformComputedTwig as WebformComputedTwigElement;
 use Drupal\webform\Element\WebformComputedBase as WebformComputedBaseElement;
 use Drupal\webform\Plugin\WebformElementBase;
@@ -39,7 +37,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
       'title_display' => '',
       'description_display' => '',
       // Computed values.
-      'value' => '',
+      'template' => '',
       'mode' => WebformComputedBaseElement::MODE_AUTO,
       'hide_empty' => FALSE,
       'store' => FALSE,
@@ -75,19 +73,14 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
     if (!$this->isDisplayOn($element, static::DISPLAY_ON_FORM)) {
       $element['#access'] = FALSE;
     }
-
-    $element['#element_validate'][] = [get_class($this), 'validateWebformComputed'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function replaceTokens(array &$element, EntityInterface $entity = NULL) {
-    foreach ($element as $key => $value) {
-      if (!Element::child($key) && !in_array($key, ['#value'])) {
-        $element[$key] = $this->tokenManager->replace($value, $entity);
-      }
-    }
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
+    $element['#element_validate'][] = [get_class($this), 'validateWebformComputed'];
   }
 
   /**
@@ -152,7 +145,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
     return [
       '#type' => $this->getTypeName(),
       '#title' => $this->getPluginLabel(),
-      '#value' => $this->t('This is a @label value.', ['@label' => $this->getPluginLabel()]),
+      '#template' => $this->t('This is a @label value.', ['@label' => $this->getPluginLabel()]),
     ];
   }
 
@@ -161,9 +154,6 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
-
-    // Remove value element so that it appears under computed fieldset.
-    unset($form['element']['value']);
 
     $form['computed'] = [
       '#type' => 'fieldset',
@@ -192,7 +182,7 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
         WebformComputedBaseElement::MODE_TEXT => t('Plain text'),
       ],
     ];
-    $form['computed']['value'] = [
+    $form['computed']['template'] = [
       '#type' => 'webform_codemirror',
       '#mode' => 'text',
       '#title' => $this->t('Computed value/markup'),
@@ -327,6 +317,13 @@ abstract class WebformComputedBase extends WebformElementBase implements Webform
   public function getTestValues(array $element, WebformInterface $webform, array $options = []) {
     // Computed elements should never get a test value.
     return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getElementSelectorInputValue($selector, $trigger, array $element, WebformSubmissionInterface $webform_submission) {
+    return (string) $this->processValue($element, $webform_submission);
   }
 
 }

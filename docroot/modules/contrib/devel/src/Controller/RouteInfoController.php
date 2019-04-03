@@ -177,7 +177,8 @@ class RouteInfoController extends ControllerBase {
         $route = $this->router->match($path);
       }
       catch (\Exception $e) {
-        drupal_set_message($this->t("Unable to load route for url '%url'", ['%url' => $path]), 'warning');
+        $this->messenger()->addWarning($this->t("Unable to load route for url '%url'", ['%url' => $path]));
+
       }
     }
 
@@ -188,7 +189,7 @@ class RouteInfoController extends ControllerBase {
         $route = $this->routeProvider->getRouteByName($route_name);
       }
       catch (\Exception $e) {
-        drupal_set_message($this->t("Unable to load route '%name'", ['%name' => $route_name]), 'warning');
+        $this->messenger()->addWarning($this->t("Unable to load route '%name'", ['%name' => $route_name]));
       }
     }
 

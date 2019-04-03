@@ -132,7 +132,7 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
       '#attributes' => [
         'class' => ['webform-form-filter-text'],
         'data-element' => '.webform-ui-element-type-table',
-        'data-item-single' => $this->t('element'),
+        'data-item-singlular' => $this->t('element'),
         'data-item-plural' => $this->t('elements'),
         'data-no-results' => '.webform-element-no-results',
         'title' => $this->t('Enter a part of the element name to filter by.'),
@@ -183,8 +183,10 @@ abstract class WebformUiElementTypeFormBase extends FormBase {
    *   to a URL
    */
   public function submitAjaxForm(array &$form, FormStateInterface $form_state) {
-    // Remove wrapper.
-    unset($form['#prefix'], $form['#suffix']);
+    // Remove #id from wrapper so that the form is still wrapped in a <div>
+    // and triggerable.
+    // @see js/webform.element.details.toggle.js
+    $form['#prefix'] = '<div>';
 
     $response = new AjaxResponse();
     $response->addCommand(new HtmlCommand('#webform-ui-element-type-ajax-wrapper', $form));

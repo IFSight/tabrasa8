@@ -94,6 +94,7 @@ class ViewsReferenceFieldFormatter extends FormatterBase {
       $view->setDisplay($display_id);
 
       if ($argument) {
+        $view->element['#cache']['keys'][] = $argument;
         $arguments = [$argument];
         if (preg_match('/\//', $argument)) {
           $arguments = explode('/', $argument);

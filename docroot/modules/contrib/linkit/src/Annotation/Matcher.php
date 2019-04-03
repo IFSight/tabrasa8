@@ -28,8 +28,6 @@ class Matcher extends Plugin {
   /**
    * The human-readable name of the matcher.
    *
-   * The string should be wrapped in a @Translation().
-   *
    * @var \Drupal\Core\Annotation\Translation
    */
   public $label;

@@ -32,7 +32,12 @@
   },
   "require-dev": {
     "drupal/address": "~1.4",
+    "drupal/captcha": "~1.0",
+    "drupal/chosen": "~2.6",
     "drupal/jsonapi": "~2.0",
+    "drupal/mailsystem": "~4.0",
+    "drupal/select2": "~1.1",
+    "drupal/telephone_validation": "^2.2",
     "drupal/token": "~1.3"
   }
 }

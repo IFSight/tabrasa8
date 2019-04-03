@@ -34,6 +34,7 @@ class Container extends ContainerBase {
       'format' => $this->getItemDefaultFormat(),
       'format_html' => '',
       'format_text' => '',
+      'format_attributes' => [],
     ];
   }
 

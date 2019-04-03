@@ -5,6 +5,8 @@
  * Verifies if user is a human without necessity to solve a CAPTCHA.
  */
 
+use ReCaptcha\RequestMethod\Drupal8Post;
+use ReCaptcha\ReCaptcha;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
@@ -71,6 +73,7 @@ function recaptcha_captcha($op, $captcha_type = '') {
         $renderer = \Drupal::service('renderer');
         $recaptcha_site_key = $config->get('site_key');
         $recaptcha_secret_key = $config->get('secret_key');
+        $recaptcha_use_globally = $config->get('use_globally');
 
         if (!empty($recaptcha_site_key) && !empty($recaptcha_secret_key)) {
           // Build the reCAPTCHA captcha form if site_key and secret_key are
@@ -82,12 +85,25 @@ function recaptcha_captcha($op, $captcha_type = '') {
             '#value' => 'Google no captcha',
           ];
 
+          // As the validate callback does not depend on sid or solution, this
+          // captcha type can be displayed on cached pages.
+          $captcha['cacheable'] = TRUE;
+
+          // Check if reCAPTCHA use globally is enabled.
+          $recaptcha_src = 'https://www.google.com/recaptcha/api.js';
+          $recaptcha_src_fallback = 'https://www.google.com/recaptcha/api/fallback';
+          if ($recaptcha_use_globally) {
+            $recaptcha_src = 'https://www.recaptcha.net/recaptcha/api.js';
+            $recaptcha_src_fallback = 'https://www.recaptcha.net/recaptcha/api/fallback';
+          }
+
           $noscript = '';
           if ($config->get('widget.noscript')) {
             $recaptcha_widget_noscript = [
               '#theme' => 'recaptcha_widget_noscript',
               '#widget' => [
                 'sitekey' => $recaptcha_site_key,
+                'recaptcha_src_fallback' => $recaptcha_src_fallback,
                 'language' => \Drupal::service('language_manager')->getCurrentLanguage()->getId(),
               ],
             ];
@@ -114,7 +130,7 @@ function recaptcha_captcha($op, $captcha_type = '') {
                   [
                     '#tag' => 'script',
                     '#attributes' => [
-                      'src' => Url::fromUri('https://www.google.com/recaptcha/api.js', ['query' => ['hl' => \Drupal::service('language_manager')->getCurrentLanguage()->getId()], 'absolute' => TRUE])->toString(),
+                      'src' => Url::fromUri($recaptcha_src, ['query' => ['hl' => \Drupal::service('language_manager')->getCurrentLanguage()->getId()], 'absolute' => TRUE])->toString(),
                       'async' => TRUE,
                       'defer' => TRUE,
                     ],
@@ -141,13 +157,21 @@ function recaptcha_captcha($op, $captcha_type = '') {
  * CAPTCHA Callback; Validates the reCAPTCHA code.
  */
 function recaptcha_captcha_validation($solution, $response, $element, $form_state) {
-  $recaptcha_secret_key = \Drupal::config('recaptcha.settings')->get('secret_key');
+  $config = \Drupal::config('recaptcha.settings');
+
+  $recaptcha_secret_key = $config->get('secret_key');
   if (empty($_POST['g-recaptcha-response']) || empty($recaptcha_secret_key)) {
     return FALSE;
   }
 
   // Use Drupal::httpClient() to circumvent all issues with the Google library.
-  $recaptcha = new \ReCaptcha\ReCaptcha($recaptcha_secret_key, new \ReCaptcha\RequestMethod\Drupal8Post());
+  $recaptcha = new ReCaptcha($recaptcha_secret_key, new Drupal8Post());
+
+  // Ensures the hostname matches. Required if "Domain Name Validation" is
+  // disabled for credentials.
+  if ($config->get('verify_hostname')) {
+    $recaptcha->setExpectedHostname($_SERVER['SERVER_NAME']);
+  }
 
   $resp = $recaptcha->verify(
     $_POST['g-recaptcha-response'],
@@ -161,16 +185,25 @@ function recaptcha_captcha_validation($solution, $response, $element, $form_stat
   else {
     // Error code reference, https://developers.google.com/recaptcha/docs/verify
     $error_codes = [
-      'missing-input-secret' => t('The secret parameter is missing.'),
-      'invalid-input-secret' => t('The secret parameter is invalid or malformed.'),
-      'missing-input-response' => t('The response parameter is missing.'),
+      'action-mismatch' => t('Expected action did not match.'),
+      'apk_package_name-mismatch' => t('Expected APK package name did not match.'),
+      'bad-response' => t('Did not receive a 200 from the service.'),
+      'bad-request' => t('The request is invalid or malformed.'),
+      'challenge-timeout' => t('Challenge timeout.'),
+      'connection-failed' => t('Could not connect to service.'),
       'invalid-input-response' => t('The response parameter is invalid or malformed.'),
+      'invalid-input-secret' => t('The secret parameter is invalid or malformed.'),
       'invalid-json' => t('The json response is invalid or malformed.'),
-      'unknown' => t('Unknown error.'),
+      'missing-input-response' => t('The response parameter is missing.'),
+      'missing-input-secret' => t('The secret parameter is missing.'),
+      'hostname-mismatch' => t('Expected hostname did not match.'),
+      'score-threshold-not-met' => t('Score threshold not met.'),
+      'timeout-or-duplicate' => t('The challenge response timed out or was already verified.'),
+      'unknown-error' => t('Not a success, but no error codes received!'),
     ];
     foreach ($resp->getErrorCodes() as $code) {
       if (!isset($error_codes[$code])) {
-        $code = 'unknown';
+        $code = 'unknown-error';
       }
       \Drupal::logger('reCAPTCHA web service')->error('@error', ['@error' => $error_codes[$code]]);
     }
@@ -184,7 +217,7 @@ function recaptcha_captcha_validation($solution, $response, $element, $form_stat
  * @see recaptcha-widget-noscript.tpl.php
  */
 function template_preprocess_recaptcha_widget_noscript(&$variables) {
-  $variables['sitekey']  = $variables['widget']['sitekey'];
+  $variables['sitekey'] = $variables['widget']['sitekey'];
   $variables['language'] = $variables['widget']['language'];
-  $variables['url']      = Url::fromUri('https://www.google.com/recaptcha/api/fallback', ['query' => ['k' => $variables['widget']['sitekey'], 'hl' => $variables['widget']['language']], 'absolute' => TRUE])->toString();
+  $variables['url'] = Url::fromUri($variables['widget']['recaptcha_src_fallback'], ['query' => ['k' => $variables['widget']['sitekey'], 'hl' => $variables['widget']['language']], 'absolute' => TRUE])->toString();
 }

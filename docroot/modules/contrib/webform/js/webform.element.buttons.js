@@ -51,6 +51,15 @@
         $input.on('webform:disabled', function () {
           $input.checkboxradio('option', 'disabled', $input.is(':disabled'));
         });
+
+        // Refresh checkboxradio when input is changed via webform.states.js.
+        // @see webform.states.js ::triggerEventHandlers().
+        $input.on('change', function (event, param1) {
+          if (param1 === 'webform.states') {
+            $input.checkboxradio('refresh');
+          }
+        });
+
       });
     }
   };

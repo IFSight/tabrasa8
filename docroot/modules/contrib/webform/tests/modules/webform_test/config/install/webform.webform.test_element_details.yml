@@ -17,7 +17,7 @@ category: 'Test: Element'
 elements: |
   details:
     '#type': details
-    '#title': 'details'
+    '#title': details
     '#description': 'This is a description.'
     '#help': 'This is help text.'
     '#more': 'This is more text'
@@ -30,7 +30,22 @@ elements: |
     '#title': 'Details title invisible'
     '#description': 'This is a description.'
     '#title_display': invisible
-  
+    details_title_invisible_markup:
+      '#markup': '<p>This is some markup</p>'
+  details_more:
+    '#type': details
+    '#title': 'details more'
+    '#more': 'This is more text'
+    '#open': true
+    details_more_markup:
+      '#markup': '<p>This is some markup</p>'
+  details_help:
+    '#type': details
+    '#title': 'details help'
+    '#help': 'This is help text.'
+    '#open': true
+    details_help_markup:
+      '#markup': '<p>This is some markup</p>'
 css: ''
 javascript: ''
 settings:
@@ -47,6 +62,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -176,6 +192,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

@@ -60,6 +60,7 @@ class WebformMapping extends FormElement {
     $destination_element_base = [
       '#title_display' => 'invisible',
       '#required' => ($element['#required'] === self::REQUIRED_ALL) ? TRUE : FALSE,
+      '#error_no_message'  => ($element['#required'] !== self::REQUIRED_ALL) ? TRUE : FALSE,
     ];
 
     // Get base #destination__* properties.
@@ -71,8 +72,8 @@ class WebformMapping extends FormElement {
 
     // Build header.
     $header = [
-      ['data' => ['#markup' => $element['#source__title'] . ' ' . $arrow], 'width' => '50%'],
-      ['data' => ['#markup' => $element['#destination__title']], 'width' => '50%'],
+      ['data' => ['#markup' => $element['#source__title'] . ' ' . $arrow]],
+      ['data' => ['#markup' => $element['#destination__title']]],
     ];
 
     // Build rows.
@@ -130,6 +131,8 @@ class WebformMapping extends FormElement {
     if (!empty($element['#states'])) {
       webform_process_states($element, '#wrapper_attributes');
     }
+
+    $element['#attached']['library'][] = 'webform/webform.element.mapping';
 
     return $element;
   }

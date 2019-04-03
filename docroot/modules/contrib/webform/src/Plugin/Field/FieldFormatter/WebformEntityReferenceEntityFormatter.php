@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\webform\Plugin\WebformSourceEntityManager;
 use Drupal\webform\WebformMessageManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -154,20 +153,21 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    // Get source entity.
+    // Get source entity, which is the entity that the webform
+    // is directly attached to. For Paragraphs this would be the field's
+    // paragraph entity.
     $source_entity = $items->getEntity();
-    $source_entity = WebformSourceEntityManager::getMainSourceEntity($source_entity);
 
-    // Determine if webform is previewed within a Paragraph on .edit_form
-    // or .content_translation_add.
+    // Determine if webform is previewed within a Paragraph on
+    // node edit forms (via *.edit_form or .content_translation_add routes).
     $route = $this->routeMatch->getRouteName();
-    $is_paragraph_edit_preview = ($source_entity->getEntityTypeId() === 'paragraph' &&
-      preg_match('/\.edit_form$/', $route)
-      || preg_match('/\.content_translation_add$/', $route)
-    ) ? TRUE : FALSE;
+    $is_node_edit = (preg_match('/\.edit_form$/', $route) || preg_match('/\.content_translation_add$/', $route));
+    $is_paragraph = ($source_entity && $source_entity->getEntityTypeId() === 'paragraph');
+    $is_paragraph_node_edit = ($is_paragraph && $is_node_edit);
+
     $elements = [];
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $entity) {
-      if ($is_paragraph_edit_preview) {
+      if ($is_paragraph_node_edit) {
         // Webform can not be nested within node edit form because the nested
         // <form> tags will cause unexpected validation issues.
         $elements[$delta] = [

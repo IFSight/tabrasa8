@@ -20,7 +20,7 @@ class WebformElementMoreTest extends WebformElementTestBase {
    * Test element more.
    */
   public function testMore() {
-    $this->drupalGet('webform/test_element_more');
+    $this->drupalGet('/webform/test_element_more');
 
     // Check default more.
     $this->assertRaw('<div id="edit-more--more" class="js-webform-element-more webform-element-more">');

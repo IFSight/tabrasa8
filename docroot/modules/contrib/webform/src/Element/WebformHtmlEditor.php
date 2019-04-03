@@ -218,16 +218,21 @@ class WebformHtmlEditor extends FormElement {
    *
    * @param string $text
    *   The text to be filtered.
+   * @param array $options
+   *   HTML markup options.
    *
    * @return array
    *   Render array containing 'processed_text'.
    *
    * @see \Drupal\webform\Plugin\WebformHandler\EmailWebformHandler::getMessage
    */
-  public static function checkMarkup($text) {
+  public static function checkMarkup($text, array $options = []) {
+    $options += [
+      'tidy' => \Drupal::config('webform.settings')->get('html_editor.tidy'),
+    ];
     // Remove <p> tags around a single line of text, which creates minor
     // margin issues.
-    if (\Drupal::config('webform.settings')->get('html_editor.tidy')) {
+    if ($options['tidy']) {
       if (substr_count($text, '<p>') === 1 && preg_match('#^\s*<p>.*</p>\s*$#m', $text)) {
         $text = preg_replace('#^\s*<p>#', '', $text);
         $text = preg_replace('#</p>\s*$#', '', $text);
@@ -243,6 +248,7 @@ class WebformHtmlEditor extends FormElement {
     }
     else {
       return [
+        '#theme' => 'webform_html_editor_markup',
         '#markup' => $text,
         '#allowed_tags' => static::getAllowedTags(),
       ];

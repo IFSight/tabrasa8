@@ -5,6 +5,8 @@
  * Implementation of plupload.module.
  */
 
+use Drupal\Component\Utility\Bytes;
+
 /**
  * Implements hook_library_info_alter().
  *
@@ -13,7 +15,7 @@
 function plupload_library_info_alter(&$library_definition, $extension) {
   if ($extension == 'plupload') {
     $library_definition['plupload']['settings']['plupload']['_default']['max_file_size'] = file_upload_max_size() . 'b';
-    $library_definition['plupload']['settings']['plupload']['_default']['chunk_size'] = Drupal\Component\Utility\Bytes::toInt(ini_get('post_max_size')) . 'b';
+    $library_definition['plupload']['settings']['plupload']['_default']['chunk_size'] = Bytes::toInt(ini_get('post_max_size')) . 'b';
     if (\Drupal::service('module_handler')->moduleExists('locale')) {
       $library_definition['plupload']['js']['js/i18n.js'] = array('scope' => 'footer');
     }

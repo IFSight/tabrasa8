@@ -34,7 +34,7 @@ class WebformComputedTwig extends WebformComputedBase {
     $form = parent::form($form, $form_state);
 
     $form['computed']['help'] = TwigExtension::buildTwigHelp();
-    $form['computed']['value']['#mode'] = 'twig';
+    $form['computed']['template']['#mode'] = 'twig';
 
     // Set #access so that help is always visible.
     WebformElementHelper::setPropertyRecursive($form['computed']['help'], '#access', TRUE);

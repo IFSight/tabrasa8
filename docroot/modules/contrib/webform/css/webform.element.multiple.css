@@ -20,7 +20,8 @@
   vertical-align: top;
 }
 
-.webform-multiple-table td .description {
+.webform-multiple-table td .description,
+.webform-multiple-table td .form-item--error-message {
   white-space: normal;
 }
 
@@ -76,6 +77,9 @@
   width: auto;
 }
 
+.webform-multiple-table td .form-type-datetime .form-type-textfield input {
+  width: 12em;
+}
 .webform-multiple-table .webform-multiple-sort-weight {
   width: 4em;
 }

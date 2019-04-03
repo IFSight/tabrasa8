@@ -26,6 +26,7 @@ class Linkit extends FormElement {
       '#process' => [
         [$class, 'processLinkitAutocomplete'],
         [$class, 'processGroup'],
+        [$class, 'processAjaxForm'],
       ],
       '#pre_render' => [
         [$class, 'preRenderLinkitElement'],

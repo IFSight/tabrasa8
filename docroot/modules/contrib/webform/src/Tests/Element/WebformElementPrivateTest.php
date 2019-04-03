@@ -34,13 +34,13 @@ class WebformElementPrivateTest extends WebformElementTestBase {
     $this->postSubmission($webform);
 
     // Check element with #private property hidden for normal user.
-    $this->drupalGet('webform/test_element_private');
+    $this->drupalGet('/webform/test_element_private');
     $this->assertNoFieldByName('private', '');
 
     $this->drupalLogin($this->rootUser);
 
     // Check element with #private property visible for admin user.
-    $this->drupalGet('webform/test_element_private');
+    $this->drupalGet('/webform/test_element_private');
     $this->assertFieldByName('private', '');
   }
 

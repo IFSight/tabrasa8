@@ -42,7 +42,15 @@
 
         // Use setTimeout to prevent dialog.position.js
         // Uncaught TypeError: Cannot read property 'settings' of undefined
-        setTimeout(function () {dialog.showModal();}, 1);
+        setTimeout(function () {
+          dialog.showModal();
+
+          // Close any open webform submission modals.
+          var $modal = $('#drupal-modal');
+          if ($modal.find('.webform-submission-form').length) {
+            Drupal.dialog($modal .get(0)).close();
+          }
+        }, 1);
       });
     }
   };

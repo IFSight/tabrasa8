@@ -23,7 +23,7 @@ class WebformWizardConditionalTest extends WebformWizardTestBase {
    */
   public function testConditionalWizard() {
     $webform = Webform::load('test_form_wizard_conditional');
-    $this->drupalGet('webform/test_form_wizard_conditional');
+    $this->drupalGet('/webform/test_form_wizard_conditional');
 
     // Check hiding page 1, 3, and 5.
     $edit = [

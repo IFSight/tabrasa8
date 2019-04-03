@@ -26,7 +26,7 @@ class WebformElementEmailTest extends WebformElementTestBase {
     /**************************************************************************/
 
     // Check basic email multiple.
-    $this->drupalGet('webform/test_element_email');
+    $this->drupalGet('/webform/test_element_email');
     $this->assertRaw('<label for="edit-email-multiple-basic">Multiple email addresses (basic)</label>');
     $this->assertRaw('<input data-drupal-selector="edit-email-multiple-basic" aria-describedby="edit-email-multiple-basic--description" type="text" id="edit-email-multiple-basic" name="email_multiple_basic" value="" size="60" class="form-text webform-email-multiple" />');
     $this->assertRaw('Multiple email addresses may be separated by commas.');
@@ -63,7 +63,7 @@ class WebformElementEmailTest extends WebformElementTestBase {
     // email_confirm
     /**************************************************************************/
 
-    $this->drupalGet('webform/test_element_email');
+    $this->drupalGet('/webform/test_element_email');
 
     // Check basic email confirm.
     $this->assertRaw('<fieldset id="edit-email-confirm-basic--wrapper" class="webform-email-confirm--wrapper fieldgroup form-composite webform-composite-hidden-title js-webform-type-webform-email-confirm webform-type-webform-email-confirm js-form-item form-item js-form-wrapper form-wrapper">');

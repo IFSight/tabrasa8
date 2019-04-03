@@ -153,7 +153,11 @@ class WebformSubmissionDevelGenerate extends DevelGenerateBase implements Contai
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $this->messenger->addWarning($this->t('Please note that no emails will be sent while generating webform submissions.'));
+    $form['message'] = [
+      '#type' => 'webform_message',
+      '#message_message' => $this->t('Please note that no emails will be sent while generating webform submissions.'),
+      '#message_type' => 'warning',
+    ];
 
     $options = [];
     foreach ($this->webformStorage->loadMultiple() as $webform) {
@@ -210,7 +214,7 @@ class WebformSubmissionDevelGenerate extends DevelGenerateBase implements Contai
       $form['submitted']['entity-type'] = [
         '#type' => 'select',
         '#title' => $this->t('Entity type'),
-        '#title_display' => 'Invisible',
+        '#title_display' => 'invisible',
         '#empty_option' => $this->t('- None -'),
         '#options' => $entity_types,
         '#default_value' => $this->getSetting('entity-type'),
@@ -218,7 +222,7 @@ class WebformSubmissionDevelGenerate extends DevelGenerateBase implements Contai
       $form['submitted']['entity-id'] = [
         '#type' => 'number',
         '#title' => $this->t('Entity id'),
-        '#title_display' => 'Invisible',
+        '#title_display' => 'invisible',
         '#default_value' => $this->getSetting('entity-id'),
         '#min' => 1,
         '#size' => 10,

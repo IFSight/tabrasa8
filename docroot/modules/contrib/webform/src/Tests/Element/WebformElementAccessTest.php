@@ -68,20 +68,20 @@ class WebformElementAccessTest extends WebformElementTestBase {
 
     // Check admins have 'administer webform element access' permission.
     $this->drupalLogin($this->rootUser);
-    $this->drupalGet('admin/structure/webform/manage/test_element_access/element/access_create_roles_anonymous/edit');
+    $this->drupalGet('/admin/structure/webform/manage/test_element_access/element/access_create_roles_anonymous/edit');
     $this->assertFieldById('edit-properties-access-create-roles-anonymous');
 
     // Check webform builder don't have 'administer webform element access'
     // permission.
     $this->drupalLogin($own_submission_user);
-    $this->drupalGet('admin/structure/webform/manage/test_element_access/element/access_create_roles_anonymous/edit');
+    $this->drupalGet('/admin/structure/webform/manage/test_element_access/element/access_create_roles_anonymous/edit');
     $this->assertNoFieldById('edit-properties-access-create-roles-anonymous');
 
     /* Create access */
 
     // Check anonymous role access.
     $this->drupalLogout();
-    $this->drupalGet('webform/test_element_access');
+    $this->drupalGet('/webform/test_element_access');
     $this->assertFieldByName('access_create_roles_anonymous');
     $this->assertNoFieldByName('access_create_roles_authenticated');
     $this->assertNoFieldByName('access_create_users');
@@ -89,7 +89,7 @@ class WebformElementAccessTest extends WebformElementTestBase {
 
     // Check authenticated access.
     $this->drupalLogin($normal_user);
-    $this->drupalGet('webform/test_element_access');
+    $this->drupalGet('/webform/test_element_access');
     $this->assertNoFieldByName('access_create_roles_anonymous');
     $this->assertFieldByName('access_create_roles_authenticated');
     $this->assertNoFieldByName('access_create_users');
@@ -97,7 +97,7 @@ class WebformElementAccessTest extends WebformElementTestBase {
 
     // Check admin user access.
     $this->drupalLogin($admin_submission_user);
-    $this->drupalGet('webform/test_element_access');
+    $this->drupalGet('/webform/test_element_access');
     $this->assertNoFieldByName('access_create_roles_anonymous');
     $this->assertFieldByName('access_create_roles_authenticated');
     $this->assertFieldByName('access_create_users');

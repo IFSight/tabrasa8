@@ -33,7 +33,7 @@ class WebformElementMediaFileTest extends WebformElementManagedFileTestBase {
     /* Element render */
 
     // Get test webform.
-    $this->drupalGet('webform/test_element_media_file');
+    $this->drupalGet('/webform/test_element_media_file');
 
     // Check document file.
     $this->assertRaw('<input data-drupal-selector="edit-document-file-upload" type="file" id="edit-document-file-upload" name="files[document_file]" size="22" class="js-form-file form-file" />');

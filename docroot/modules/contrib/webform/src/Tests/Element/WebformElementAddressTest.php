@@ -38,7 +38,7 @@ class WebformElementAddressTest extends WebformElementTestBase {
     // Rendering.
     /**************************************************************************/
 
-    $this->drupalGet('webform/test_element_address');
+    $this->drupalGet('/webform/test_element_address');
 
     // Check basic fieldset wrapper.
     $this->assertRaw('<fieldset data-drupal-selector="edit-address" id="edit-address--wrapper" class="address--wrapper fieldgroup form-composite webform-composite-hidden-title js-webform-type-address webform-type-address js-form-item form-item js-form-wrapper form-wrapper">');
@@ -138,7 +138,7 @@ address_multiple:
 
     // Get webform address element plugin.
     $element = [];
-    $element_plugin->initializeCompositeElements($element);;
+    $element_plugin->initializeCompositeElements($element);
 
     // Check composite elements against address schema.
     $composite_elements = $element['#webform_composite_elements'];

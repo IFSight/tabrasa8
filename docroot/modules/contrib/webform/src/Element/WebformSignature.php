@@ -2,6 +2,7 @@
 
 namespace Drupal\webform\Element;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Render\Element;
 
@@ -20,6 +21,7 @@ class WebformSignature extends FormElement {
     return [
       '#input' => TRUE,
       '#process' => [
+        [$class, 'processWebformSignature'],
         [$class, 'processAjaxForm'],
         [$class, 'processGroup'],
       ],
@@ -32,6 +34,15 @@ class WebformSignature extends FormElement {
       // @see template_preprocess_form_element()
       '#markup' => '',
     ];
+  }
+
+  /**
+   * Processes a signature webform element.
+   */
+  public static function processWebformSignature(&$element, FormStateInterface $form_state, &$complete_form) {
+    // Remove 'for' from the element's label.
+    $element['#label_attributes']['webform-remove-for-attribute'] = TRUE;
+    return $element;
   }
 
   /**

@@ -20,7 +20,7 @@ class WebformElementRatingTest extends WebformElementTestBase {
    * Test rating element.
    */
   public function testRating() {
-    $this->drupalGet('webform/test_element_rating');
+    $this->drupalGet('/webform/test_element_rating');
 
     // Check basic rating display.
     $this->assertRaw('<label for="edit-rating-basic">rating_basic</label>');

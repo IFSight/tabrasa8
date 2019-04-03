@@ -123,7 +123,7 @@ class WebformElementComposite extends FormElement {
     $element['elements'] = [
       '#type' => 'webform_multiple',
       '#title' => t('Elements'),
-      '#title_display' => t('Invisible'),
+      '#title_display' => 'invisible',
       '#label' => t('element'),
       '#labels' => t('elements'),
       '#empty_items' => 0,

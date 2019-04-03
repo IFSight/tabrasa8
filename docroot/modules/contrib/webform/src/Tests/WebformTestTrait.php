@@ -161,6 +161,7 @@ trait WebformTestTrait {
       $entity_ids = \Drupal::entityQuery('webform_submission')
         ->sort('sid', 'DESC')
         ->condition('webform_id', $webform->id())
+        ->accessCheck(FALSE)
         ->execute();
       return reset($entity_ids);
     }

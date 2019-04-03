@@ -41,7 +41,7 @@ entity.webform_ui.element.add_form:
     _form: '\Drupal\webform_ui\Form\WebformUiElementAddForm'
     _title: 'Add element'
   requirements:
-    _custom_access: '\Drupal\webform_ui\Access\WebformUiAccess::checkWebformEditAccess'
+    _custom_access: '\Drupal\webform_ui\Access\WebformUiAccess::checkWebformElementAccess'
 
 entity.webform_ui.element.add_page:
   path: '/admin/structure/webform/manage/{webform}/element/add/page'

@@ -22,7 +22,16 @@ elements: |
     '#type': tel
     '#title': 'tel international'
     '#international': true
-  
+  tel_validation_e164:
+    '#type': tel
+    '#title': tel_validation_e164
+    '#telephone_validation_format': '0'
+  tel_validation_national:
+    '#type': tel
+    '#title': tel_validation_national
+    '#description': 'United States - +1'
+    '#telephone_validation_format': '2'
+    '#telephone_validation_country': US
 css: ''
 javascript: ''
 settings:
@@ -39,6 +48,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -168,6 +178,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

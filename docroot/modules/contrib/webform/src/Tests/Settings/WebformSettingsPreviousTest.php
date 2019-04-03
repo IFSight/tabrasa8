@@ -30,21 +30,21 @@ class WebformSettingsPreviousTest extends WebformTestBase {
     $sid_1 = $this->postSubmissionTest($webform);
 
     // Check default global previous submission message.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw("You have already submitted this webform. <a href=\"{$base_path}webform/contact/submissions/{$sid_1}\">View your previous submission</a>.");
 
     // Check custom global previous submission message.
     $this->config('webform.settings')
       ->set('settings.default_previous_submission_message', '{default_previous_submission}')
       ->save();
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('{default_previous_submission}');
 
     // Check custom webform previous submission message.
     $webform
       ->setSetting('previous_submission_message', '{custom_previous_submission}')
       ->save();
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('{custom_previous_submission}');
 
     /**************************************************************************/
@@ -55,21 +55,21 @@ class WebformSettingsPreviousTest extends WebformTestBase {
     $sid_2 = $this->postSubmissionTest($webform);
 
     // Check default global previous submissions message.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw("You have already submitted this webform. <a href=\"{$base_path}webform/contact/submissions\">View your previous submissions</a>.");
 
     // Check custom global previous submissions message.
     $this->config('webform.settings')
       ->set('settings.default_previous_submissions_message', '{default_previous_submissions}')
       ->save();
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('{default_previous_submissions}');
 
     // Check custom webform previous submissions message.
     $webform
       ->setSetting('previous_submissions_message', '{custom_previous_submissions}')
       ->save();
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('{custom_previous_submissions}');
   }
 

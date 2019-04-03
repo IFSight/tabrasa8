@@ -66,7 +66,7 @@ class WebformEmailProvider implements WebformEmailProviderInterface {
   public function check() {
     // Don't override the system.mail.interface.webform if the default interface
     // is the 'test_mail_collector'.
-    if ($this->configFactory->get('system.mail')->get('interface.default') == 'test_mail_collector') {
+    if ($this->configFactory->get('system.mail')->get('interface.default') === 'test_mail_collector') {
       return $this->uninstall();
     }
 
@@ -81,7 +81,7 @@ class WebformEmailProvider implements WebformEmailProviderInterface {
     // Finally, check if the default mail interface and see if it still uses the
     // php_mail. This check allow unknown contrib modules to handle sending
     // HTML emails.
-    if ($this->configFactory->get('system.mail')->get('interface.default') == 'php_mail') {
+    if ($this->configFactory->get('system.mail')->get('interface.default') === 'php_mail') {
       return $this->install();
     }
     else {
@@ -93,7 +93,7 @@ class WebformEmailProvider implements WebformEmailProviderInterface {
    * {@inheritdoc}
    */
   public function installed() {
-    return ($this->configFactory->get('system.mail')->get('interface.webform') == 'webform_php_mail');
+    return ($this->configFactory->get('system.mail')->get('interface.webform') === 'webform_php_mail');
   }
 
   /**
@@ -102,8 +102,10 @@ class WebformEmailProvider implements WebformEmailProviderInterface {
   public function install() {
     $config = $this->configFactory->getEditable('system.mail');
     $mail_plugins = $config->get('interface');
-    $mail_plugins['webform'] = 'webform_php_mail';
-    $config->set('interface', $mail_plugins)->save();
+    if (!isset($mail_plugins['webform']) || $mail_plugins['webform'] !== 'webform_php_mail') {
+      $mail_plugins['webform'] = 'webform_php_mail';
+      $config->set('interface', $mail_plugins)->save();
+    }
   }
 
   /**
@@ -112,8 +114,10 @@ class WebformEmailProvider implements WebformEmailProviderInterface {
   public function uninstall() {
     $config = $this->configFactory->getEditable('system.mail');
     $mail_plugins = $config->get('interface');
-    unset($mail_plugins['webform']);
-    $config->set('interface', $mail_plugins)->save();
+    if (isset($mail_plugins['webform'])) {
+      unset($mail_plugins['webform']);
+      $config->set('interface', $mail_plugins)->save();
+    }
   }
 
   /**

@@ -45,37 +45,37 @@ class WebformAccessEntityPermissionsTest extends WebformTestBase {
     $this->drupalPostForm('admin/structure/webform/add', ['id' => 'test_own', 'title' => 'test_own'], t('Save'));
 
     // Check webform submission overview contains own webform.
-    $this->drupalGet('admin/structure/webform');
+    $this->drupalGet('/admin/structure/webform');
     $this->assertRaw('test_own');
 
     // Add test element to own webform.
     $this->drupalPostForm('/admin/structure/webform/manage/test_own', ['elements' => "test:\n  '#markup': 'test'"], t('Save'));
 
     // Check duplicate own webform.
-    $this->drupalGet('admin/structure/webform/manage/test_own/duplicate');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/duplicate');
     $this->assertResponse(200);
 
     // Check delete own webform.
-    $this->drupalGet('admin/structure/webform/manage/test_own/delete');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/delete');
     $this->assertResponse(200);
 
     // Check access own webform submissions.
-    $this->drupalGet('admin/structure/webform/manage/test_own/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/results/submissions');
     $this->assertResponse(200);
 
     // Login as user who can access any webform.
     $this->drupalLogin($any_account);
 
     // Check duplicate any webform.
-    $this->drupalGet('admin/structure/webform/manage/test_own/duplicate');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/duplicate');
     $this->assertResponse(200);
 
     // Check delete any webform.
-    $this->drupalGet('admin/structure/webform/manage/test_own/delete');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/delete');
     $this->assertResponse(200);
 
     // Check access any webform submissions.
-    $this->drupalGet('admin/structure/webform/manage/test_own/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/results/submissions');
     $this->assertResponse(200);
 
     // Change the owner of the webform to 'any' user.
@@ -86,19 +86,19 @@ class WebformAccessEntityPermissionsTest extends WebformTestBase {
     $this->drupalLogin($own_account);
 
     // Check webform submission overview does not contains any webform.
-    $this->drupalGet('admin/structure/webform');
+    $this->drupalGet('/admin/structure/webform');
     $this->assertNoRaw('test_own');
 
     // Check duplicate denied any webform.
-    $this->drupalGet('admin/structure/webform/manage/test_own/duplicate');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/duplicate');
     $this->assertResponse(403);
 
     // Check delete denied any webform.
-    $this->drupalGet('admin/structure/webform/manage/test_own/delete');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/delete');
     $this->assertResponse(403);
 
     // Check access denied any webform submissions.
-    $this->drupalGet('admin/structure/webform/manage/test_own/results/submissions');
+    $this->drupalGet('/admin/structure/webform/manage/test_own/results/submissions');
     $this->assertResponse(403);
   }
 

@@ -17,7 +17,7 @@ class WebformSettingsAdminTest extends WebformTestBase {
    *
    * @var array
    */
-  public static $modules = ['block', 'node', 'views', 'webform', 'webform_ui', 'webform_node'];
+  public static $modules = ['block', 'captcha', 'node', 'views', 'webform', 'webform_ui', 'webform_node'];
 
   /**
    * Webforms to load.
@@ -77,28 +77,28 @@ class WebformSettingsAdminTest extends WebformTestBase {
     /* Elements */
 
     // Check that description is 'after' the element.
-    $this->drupalGet('webform/test_element');
+    $this->drupalGet('/webform/test_element');
     $this->assertPattern('#\{item title\}.+\{item markup\}.+\{item description\}#ms');
 
     // Set the default description display to 'before'.
     $this->drupalPostForm('admin/structure/webform/config/elements', ['element[default_description_display]' => 'before'], t('Save configuration'));
 
     // Check that description is 'before' the element.
-    $this->drupalGet('webform/test_element');
+    $this->drupalGet('/webform/test_element');
     $this->assertNoPattern('#\{item title\}.+\{item markup\}.+\{item description\}#ms');
     $this->assertPattern('#\{item title\}.+\{item description\}.+\{item markup\}#ms');
 
     /* UI disable dialog */
 
     // Check that dialogs are enabled.
-    $this->drupalGet('admin/structure/webform');
+    $this->drupalGet('/admin/structure/webform');
     $this->assertRaw('<a href="' . $base_path . 'admin/structure/webform/add" class="webform-ajax-link button button-action" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:700,&quot;dialogClass&quot;:&quot;webform-ui-dialog&quot;}" data-drupal-link-system-path="admin/structure/webform/add">Add webform</a>');
 
     // Disable dialogs.
     $this->drupalPostForm('admin/structure/webform/config/advanced', ['ui[dialog_disabled]' => TRUE], t('Save configuration'));
 
     // Check that dialogs are disabled. (i.e. use-ajax is not included)
-    $this->drupalGet('admin/structure/webform');
+    $this->drupalGet('/admin/structure/webform');
     $this->assertNoRaw('<a href="' . $base_path . 'admin/structure/webform/add" class="webform-ajax-link button button-action" data-dialog-type="modal" data-dialog-options="{&quot;width&quot;:700,&quot;dialogClass&quot;:&quot;webform-ui-dialog&quot;}" data-drupal-link-system-path="admin/structure/webform/add">Add webform</a>');
     $this->assertRaw('<a href="' . $base_path . 'admin/structure/webform/add" class="button button-action" data-drupal-link-system-path="admin/structure/webform/add">Add webform</a>');
 

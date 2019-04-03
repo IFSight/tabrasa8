@@ -28,7 +28,7 @@ class WebformWizardCustomTest extends WebformWizardTestBase {
    */
   public function testCustomWizard() {
     // Check current page is #1.
-    $this->drupalGet('webform/test_form_wizard_custom');
+    $this->drupalGet('/webform/test_form_wizard_custom');
     $this->assertCurrentPage('Wizard page #1', 'wizard_1');
 
     // Check next page is #2.

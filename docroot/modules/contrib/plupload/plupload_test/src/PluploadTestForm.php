@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\plupload_test\PluploadTestForm
- */
-
 namespace Drupal\plupload_test;
 
 use Drupal\Core\Form\FormInterface;
@@ -57,7 +52,7 @@ class PluploadTestForm implements FormInterface {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    // Create target directory if necessary
+    // Create target directory if necessary.
     $destination = \Drupal::config('system.file')
         ->get('default_scheme') . '://plupload-test';
     file_prepare_directory($destination, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
@@ -73,7 +68,6 @@ class PluploadTestForm implements FormInterface {
 
       // @todo: When https://www.drupal.org/node/2245927 is resolved,
       // use a helper to save file to file_managed table
-
       $saved_files[] = $file_uri;
     }
     if (!empty($saved_files)) {

@@ -14,6 +14,10 @@ html.js .js-webform-image-select {
   opacity: 0;
 }
 
+.webform-image-select-filter .field-suffix {
+  margin-left: 10px;
+}
+
 .thumbnails.image_picker_selector p {
   margin: 0;
 }

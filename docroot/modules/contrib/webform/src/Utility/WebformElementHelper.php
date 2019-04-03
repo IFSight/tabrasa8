@@ -76,7 +76,7 @@ class WebformElementHelper {
    *
    * @param array|mixed $element
    *   An element.
-   * @param string
+   * @param string $key
    *   The element key.
    *
    * @return bool
@@ -84,6 +84,26 @@ class WebformElementHelper {
    */
   public static function isElement($element, $key) {
     return (Element::child($key) && is_array($element));
+  }
+
+  /**
+   * Determine if an element has children.
+   *
+   * @param array|mixed $element
+   *   An element.
+   *
+   * @return bool
+   *   TRUE if an element has children.
+   *
+   * @see \Drupal\Core\Render\Element::children
+   */
+  public static function hasChildren($element) {
+    foreach ($element as $key => $value) {
+      if ($key === '' || $key[0] !== '#') {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**
@@ -383,6 +403,11 @@ class WebformElementHelper {
    *   An associative array of translated element properties.
    */
   public static function applyTranslation(array &$element, array $translation) {
+    // Apply all translated properties to the element.
+    // This allows default properties to be translated, which includes
+    // composite element titles.
+    $element += $translation;
+
     foreach ($element as $key => &$value) {
       // Make sure to only merge properties.
       if (!Element::property($key) || empty($translation[$key])) {
@@ -586,9 +611,12 @@ class WebformElementHelper {
    * @return array
    *   An associative array containing an element's states.
    */
-  public static function getStates(array $element) {
-    // Composite and multiple elements use use a custom states wrapper
-    // which will changes '#states' to '#_webform_states'.
+  public static function &getStates(array &$element) {
+    // Processed elements store the original #states in '#_webform_states'.
+    // @see \Drupal\webform\WebformSubmissionConditionsValidator::buildForm
+    //
+    // Composite and multiple elements use a custom states wrapper
+    // which will change '#states' to '#_webform_states'.
     // @see \Drupal\webform\Utility\WebformElementHelper::fixStatesWrapper
     if (!empty($element['#_webform_states'])) {
       return $element['#_webform_states'];
@@ -597,7 +625,10 @@ class WebformElementHelper {
       return $element['#states'];
     }
     else {
-      return [];
+      // Return empty states variable to prevent the below notice.
+      // 'Only variable references should be returned by reference'.
+      $empty_states = [];
+      return $empty_states;
     }
   }
 
@@ -630,7 +661,7 @@ class WebformElementHelper {
    * Randomoize an associative array of element values and disable page caching.
    *
    * @param array $values
-   *   An associative array of element values,
+   *   An associative array of element values.
    *
    * @return array
    *   Randomized associative array of element values.

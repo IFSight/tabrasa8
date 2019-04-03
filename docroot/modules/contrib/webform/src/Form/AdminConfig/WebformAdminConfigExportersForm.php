@@ -82,7 +82,7 @@ class WebformAdminConfigExportersForm extends WebformAdminConfigBaseForm {
 
     $form['export_settings'] = [
       '#type' => 'details',
-      '#title' => $this->t('Export settings'),
+      '#title' => $this->t('Export general settings'),
       '#open' => TRUE,
     ];
     $form['export_settings']['temp_directory'] = [
@@ -96,7 +96,7 @@ class WebformAdminConfigExportersForm extends WebformAdminConfigBaseForm {
     // Export.
     $form['export_default_settings'] = [
       '#type' => 'details',
-      '#title' => $this->t('Default export settings'),
+      '#title' => $this->t('Export default settings'),
       '#description' => $this->t('Enter default export settings to be used by all webforms.'),
       '#open' => TRUE,
     ];

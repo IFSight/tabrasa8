@@ -28,6 +28,8 @@ class DateList extends DateBase {
    */
   public function getDefaultProperties() {
     return [
+      'date_min' => '',
+      'date_max' => '',
       // Date settings.
       'date_part_order' => [
         'year',
@@ -36,12 +38,11 @@ class DateList extends DateBase {
         'hour',
         'minute',
       ],
-      'date_text_parts' => [
-        'year',
-      ],
+      'date_text_parts' => [],
       'date_year_range' => '1900:2050',
       'date_year_range_reverse' => FALSE,
       'date_increment' => 1,
+      'date_abbreviate' => TRUE,
     ] + parent::getDefaultProperties();
   }
 
@@ -51,7 +52,16 @@ class DateList extends DateBase {
   public function prepare(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
     parent::prepare($element, $webform_submission);
 
-    $element['#after_build'][] = [get_class($this), 'afterBuild'];
+    // Remove month abbreviation.
+    // @see \Drupal\Core\Datetime\Element\Datelist::processDatelist
+    if (isset($element['#date_abbreviate']) && $element['#date_abbreviate'] === FALSE) {
+      $element['#date_date_callbacks'][] = '_webform_datelist_date_date_callback';
+    }
+
+    // Remove 'for' from the element's label.
+    $element['#label_attributes']['webform-remove-for-attribute'] = TRUE;
+
+    $element['#attached']['library'][] = 'webform/webform.element.datelist';
   }
 
   /**
@@ -186,6 +196,13 @@ class DateList extends DateBase {
       '#size' => 4,
       '#weight' => 10,
     ];
+    $form['date']['date_abbreviate'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Abbreviate month'),
+      '#description' => $this->t('If checked, month will be abbreviated to three letters.'),
+      '#return_value' => TRUE,
+    ];
+
     return $form;
   }
 
@@ -214,6 +231,8 @@ class DateList extends DateBase {
    * After build handler for Datelist element.
    */
   public static function afterBuild(array $element, FormStateInterface $form_state) {
+    $element = parent::afterBuild($element, $form_state);
+
     // Reverse years from min:max to max:min.
     // @see \Drupal\Core\Datetime\Element\DateElementBase::datetimeRangeYears
     if (!empty($element['#date_year_range_reverse']) && isset($element['year']) && isset($element['year']['#options'])) {

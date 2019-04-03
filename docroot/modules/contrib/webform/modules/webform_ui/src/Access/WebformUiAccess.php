@@ -73,16 +73,13 @@ class WebformUiAccess {
    *   The access result.
    */
   public static function checkWebformElementAccess(WebformInterface $webform, $type, AccountInterface $account) {
-    /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element */
+    /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
     $element_manager = \Drupal::service('plugin.manager.webform.element');
-    $element_definitions = $element_manager->getDefinitions();
-    $element_definitions = $element_manager->removeExcludeDefinitions($element_definitions);
-    $access = $webform->access('update', $account, TRUE);
 
-    $access->andIf(AccessResult::allowedIf(isset($element_definitions[$type])));
+    $access = $webform->access('update', $account, TRUE);
+    $access = $access->andIf(!$element_manager->isExcluded($type) ? AccessResult::allowed() : AccessResult::forbidden());
     $access->addCacheableDependency($webform);
     $access->addCacheableDependency(\Drupal::config('webform.settings'));
-
     return $access;
   }
 

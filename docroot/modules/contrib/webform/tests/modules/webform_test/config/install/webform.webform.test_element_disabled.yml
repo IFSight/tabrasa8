@@ -378,7 +378,6 @@ elements: |
     '#type': webform_video_file
     '#title': 'Video file'
     '#disabled': true
-  
 css: ''
 javascript: ''
 settings:
@@ -395,6 +394,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -524,6 +524,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

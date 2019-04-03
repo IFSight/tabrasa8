@@ -2,10 +2,12 @@
 
 namespace Drupal\webform\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\WebformInterface;
+use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsWidgetBase;
 
 /**
  * Plugin implementation of the 'webform_entity_reference_select' widget.
@@ -19,85 +21,50 @@ use Drupal\webform\WebformInterface;
  *   }
  * )
  *
- * @see \Drupal\webform\Plugin\Field\FieldWidget\WebformEntityReferenceAutocompleteWidget
- * @see \Drupal\Core\Field\Plugin\Field\FieldWidget\EntityReferenceAutocompleteWidget
- * @see \Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget
+ * @see \Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsWidgetBase
  */
-class WebformEntityReferenceSelectWidget extends WebformEntityReferenceAutocompleteWidget {
+class WebformEntityReferenceSelectWidget extends OptionsWidgetBase {
+
+  use WebformEntityReferenceWidgetTrait;
 
   /**
    * {@inheritdoc}
    */
-  public static function defaultSettings() {
-    return [
-      'default_data' => TRUE,
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element = [];
-    $element['default_data'] = [
-      '#type' => 'checkbox',
-      '#title' => t('Enable default submission data (YAML)'),
-      '#description' => t('If checked, site builders will be able to define default submission data (YAML)'),
-      '#default_value' => $this->getSetting('default_data'),
-    ];
-    return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsSummary() {
-    $summary = [];
-    $summary[] = t('Default submission data: @default_data', ['@default_data' => $this->getSetting('default_data') ? $this->t('Yes') : $this->t('No')]);
-    return $summary;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $element = parent::formElement($items, $delta, $element, $form, $form_state);
-
-    // Convert 'entity_autocomplete' to 'webform_entity_select' element.
-    $element['target_id']['#type'] = 'webform_entity_select';
-
-    /** @var \Drupal\webform\WebformEntityStorageInterface $webform_storage */
-    $webform_storage = \Drupal::service('entity_type.manager')->getStorage('webform');
-    $element['target_id']['#options'] = $webform_storage->getOptions(FALSE);
-
-    // Set empty option.
-    if (empty($element['#required'])) {
-      $element['target_id']['#empty_option'] = $this->t('- Select -');
-      $element['target_id']['#empty_value'] = '';
-    }
-
+  public function getTargetIdElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    // Get default value (webform ID).
+    $referenced_entities = $items->referencedEntities();
+    $default_value = isset($referenced_entities[$delta]) ? $referenced_entities[$delta] : NULL;
     // Convert default_value's Webform to a simple entity_id.
-    if (!empty($element['target_id']['#default_value']) && $element['target_id']['#default_value'] instanceof WebformInterface) {
-      $element['target_id']['#default_value'] = $element['target_id']['#default_value']->id();
+    if ($default_value instanceof WebformInterface) {
+      $default_value = $default_value->id();
     }
 
+    // Get options grouped by category.
+    $options = $this->getOptions($items->getEntity());
     // Make sure if an archived webform is the #default_value always include
     // it as an option.
-    if (!empty($element['target_id']['#default_value'])) {
-      $webform = ($element['target_id']['#default_value'] instanceof WebformInterface) ? $element['target_id']['#default_value'] : Webform::load($element['target_id']['#default_value']);
-      if ($webform && $webform->isArchived()) {
-        $element['target_id']['#options'][(string) t('Archived')][$webform->id()] = $webform->label();
+    if ($default_value && $webform = Webform::load($default_value)) {
+      if ($webform->isArchived()) {
+        $options[(string) t('Archived')][$webform->id()] = $webform->label();
       }
     }
 
-    // Remove properties that are not applicable.
-    unset($element['target_id']['#size']);
-    unset($element['target_id']['#maxlength']);
-    unset($element['target_id']['#placeholder']);
+    $target_element = [
+      '#type' => 'webform_entity_select',
+      '#options' => $options,
+      '#default_value' => $default_value,
+    ];
 
-    $element['#element_validate'] = [[get_class($this), 'validateWebformEntityReferenceSelectWidget']];
+    // Set empty option.
+    if (empty($element['#required'])) {
+      $target_element['#empty_option'] = $this->t('- Select -');
+      $target_element['#empty_value'] = '';
+    }
 
-    return $element;
+    // Set validation callback.
+    $target_element['#element_validate'] = [[get_class($this), 'validateWebformEntityReferenceSelectWidget']];
+
+    return $target_element;
   }
 
   /**
@@ -107,8 +74,41 @@ class WebformEntityReferenceSelectWidget extends WebformEntityReferenceAutocompl
     // Below prevents the below error.
     // Fatal error: Call to a member function uuid() on a non-object in
     // core/lib/Drupal/Core/Field/EntityReferenceFieldItemList.php.
-    $value = (!empty($element['target_id']['#value'])) ? $element['target_id']['#value'] : NULL;
-    $form_state->setValueForElement($element['target_id'], $value);
+    $value = (!empty($element['#value'])) ? $element['#value'] : NULL;
+    $form_state->setValueForElement($element, $value);
+  }
+
+  /**
+   * Returns the array of options for the widget.
+   *
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   *   The entity for which to return options.
+   *
+   * @return array
+   *   The array of options for the widget.
+   */
+  protected function getOptions(FieldableEntityInterface $entity) {
+    if (!isset($this->options)) {
+      // Limit the settable options for the current user account.
+      // Note: All active webforms are returned and grouped by category.
+      // @see \Drupal\webform\Plugin\Field\FieldType\WebformEntityReferenceItem::getSettableOptions
+      // @see \Drupal\webform\WebformEntityStorageInterface::getOptions
+      $options = $this->fieldDefinition
+        ->getFieldStorageDefinition()
+        ->getOptionsProvider($this->column, $entity)
+        ->getSettableOptions(\Drupal::currentUser());
+
+      $module_handler = \Drupal::moduleHandler();
+      $context = [
+        'fieldDefinition' => $this->fieldDefinition,
+        'entity' => $entity,
+      ];
+      $module_handler->alter('options_list', $options, $context);
+
+      array_walk_recursive($options, [$this, 'sanitizeLabel']);
+      $this->options = $options;
+    }
+    return $this->options;
   }
 
 }

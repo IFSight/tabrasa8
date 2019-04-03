@@ -146,7 +146,23 @@ elements: |
     '#type': webform_image_select
     '#title': image_select_animals
     '#images': animals
-  
+  image_select_filter:
+    '#type': webform_image_select
+    '#title': image_select_filter
+    '#images': animals
+    '#show_label': true
+    '#filter': true
+  image_select_filter_custom:
+    '#type': webform_image_select
+    '#title': image_select_filter_custom
+    '#multiple': true
+    '#images': animals
+    '#show_label': true
+    '#filter': true
+    '#filter__placeholder': 'Find an animal'
+    '#filter__singular': 'animal'
+    '#filter__plural': 'animals'
+    '#filter__no_results': 'No animals found.'
 css: ''
 javascript: ''
 settings:
@@ -163,6 +179,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -292,6 +309,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

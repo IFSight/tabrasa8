@@ -30,7 +30,7 @@ class WebformElementToggleTest extends WebformElementTestBase {
    * Test toggle element.
    */
   public function testToggleElement() {
-    $this->drupalGet('webform/test_element_toggle');
+    $this->drupalGet('/webform/test_element_toggle');
 
     // Check basic toggle.
     $this->assertRaw('<div class="js-form-item form-item js-form-type-webform-toggle form-type-webform-toggle js-form-item-toggle-basic form-item-toggle-basic">');

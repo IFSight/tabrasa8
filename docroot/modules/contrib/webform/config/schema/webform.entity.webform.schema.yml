@@ -1,13 +1,13 @@
-webform.webform.*:
+'webform.webform.*':
   type: config_entity
-  label: 'Webforms'
+  label: Webforms
   mapping:
     status:
       type: string
-      label: 'Status'
+      label: Status
     weight:
       type: integer
-      label: 'Weight'
+      label: Weight
     open:
       type: string
       label: 'Open date/time'
@@ -16,25 +16,25 @@ webform.webform.*:
       label: 'Close date/time'
     uid:
       type: integer
-      label: 'Author'
+      label: Author
     template:
       type: boolean
-      label: 'Template'
+      label: Template
     archive:
       type: boolean
-      label: 'Archive'
+      label: Archive
     id:
       type: string
       label: 'Machine name'
     title:
       type: label
-      label: 'Title'
+      label: Title
     description:
       type: label
       label: 'Administrative description'
     category:
       type: label
-      label: 'Category'
+      label: Category
     elements:
       type: text
       label: 'Elements (YAML)'
@@ -43,12 +43,10 @@ webform.webform.*:
       label: 'CSS (Cascading Style Sheets)'
     javascript:
       type: string
-      label: 'JavaScript'
+      label: JavaScript
     settings:
       type: mapping
-      label: 'Settings'
-      # Below mapping is copied to: webform.handler.settings
-      #@see webform.plugin.handler.schema.yml
+      label: Settings
       mapping:
         ajax:
           type: boolean
@@ -89,6 +87,9 @@ webform.webform.*:
         form_confidential_message:
           type: text
           label: 'Form confidential message'
+        form_remote_addr:
+          type: boolean
+          label: 'Track user IP address'
         form_convert_anonymous:
           type: boolean
           label: 'Convert anonymous drafts and submissions to authenticated'
@@ -127,7 +128,7 @@ webform.webform.*:
           label: 'Display required indicator'
         form_autofocus:
           type: boolean
-          label: 'Autofocus'
+          label: Autofocus
         form_details_toggle:
           type: boolean
           label: 'Display collapse/expand all details link'
@@ -178,11 +179,11 @@ webform.webform.*:
           label: 'Submission views'
           sequence:
             type: mapping
-            label:  'Submission view'
+            label: 'Submission view'
             mapping:
               title:
                 type: text
-                label: 'Title'
+                label: Title
               view:
                 type: string
                 label: 'View name / Display ID'
@@ -191,13 +192,13 @@ webform.webform.*:
                 label: 'Apply to webform'
                 sequence:
                   type: string
-                  label: 'Route'
+                  label: Route
               node_routes:
                 type: sequence
                 label: 'Apply to node'
                 sequence:
                   type: string
-                  label: 'Route'
+                  label: Route
         submission_views_replace:
           type: mapping
           label: 'Submission view replace'
@@ -207,19 +208,19 @@ webform.webform.*:
               label: 'Replace to global'
               sequence:
                 type: string
-                label: 'Route'
+                label: Route
             webform_routes:
               type: sequence
               label: 'Replace to webform'
               sequence:
                 type: string
-                label: 'Route'
+                label: Route
             node_routes:
               type: sequence
               label: 'Replace to node'
               sequence:
                 type: string
-                label: 'Route'
+                label: Route
         submission_user_columns:
           type: sequence
           label: 'Submission user columns'
@@ -417,26 +418,26 @@ webform.webform.*:
       label: 'Access Rules'
       sequence:
         type: mapping
-        label:  'Access Rule'
+        label: 'Access Rule'
         mapping:
           roles:
             type: sequence
-            label: 'Roles'
+            label: Roles
             sequence:
               type: string
-              label: 'Role'
+              label: Role
           users:
             type: sequence
-            label: 'Users'
+            label: Users
             sequence:
               type: integer
               label: 'User IDs'
           permissions:
             type: sequence
-            label: 'Permissions'
+            label: Permissions
             sequence:
               type: string
-              label: 'Permission'
+              label: Permission
     handlers:
       type: sequence
       label: 'Webform handlers'
@@ -451,20 +452,20 @@ webform.webform.*:
             label: 'Handler instance ID'
           label:
             type: label
-            label: 'Label'
+            label: Label
           status:
             type: boolean
-            label: 'Status'
+            label: Status
           conditions:
             type: ignore
             label: 'Conditional logic'
           weight:
             type: integer
-            label: 'Weight'
+            label: Weight
           settings:
-            type: webform.handler.[%parent.id]
+            type: 'webform.handler.[%parent.id]'
     third_party_settings:
       type: sequence
       label: 'Third party settings'
       sequence:
-        type: webform.settings.third_party.[%key]
+        type: 'webform.settings.third_party.[%key]'

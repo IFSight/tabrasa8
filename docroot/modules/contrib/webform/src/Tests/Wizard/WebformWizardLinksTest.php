@@ -27,7 +27,7 @@ class WebformWizardLinksTest extends WebformWizardTestBase {
     $wizard_webform = Webform::load('test_form_wizard_links');
 
     // Check that first page has no links.
-    $this->drupalGet('webform/test_form_wizard_links');
+    $this->drupalGet('/webform/test_form_wizard_links');
     $this->assertCssSelect('.webform-wizard-pages-links');
     $this->assertNoFieldByName('webform_wizard_page-page_1', t('Edit'));
     $this->assertNoFieldByName('webform_wizard_page-page_2', t('Edit'));
@@ -44,6 +44,9 @@ class WebformWizardLinksTest extends WebformWizardTestBase {
     $this->assertFieldByName('webform_wizard_page-page_1', t('Edit'));
     $this->assertFieldByName('webform_wizard_page-page_2', t('Edit'));
 
+    // Check that preview links are not wrapper in .form-actions.
+    $this->assertNoCssSelect('.webform-wizard-pages-links.form-actions');
+
     // Check 'wizard_progress_link' setting.
     $this->assertCssSelect('.webform-wizard-pages-links[data-wizard-progress-link="true"]');
 
@@ -54,7 +57,7 @@ class WebformWizardLinksTest extends WebformWizardTestBase {
     $wizard_webform->setSetting('wizard_preview_link', FALSE)->save();
 
     // Check preview page is not linked.
-    $this->drupalGet('webform/test_form_wizard_links');
+    $this->drupalGet('/webform/test_form_wizard_links');
     $this->assertCssSelect('.webform-wizard-pages-links[data-wizard-progress-link="true"]');
     $this->assertNoCssSelect('.webform-wizard-pages-links[data-wizard-preview-link="true"]');
 
@@ -65,7 +68,7 @@ class WebformWizardLinksTest extends WebformWizardTestBase {
       ->save();
 
     // Check progress bar is not linked.
-    $this->drupalGet('webform/test_form_wizard_links');
+    $this->drupalGet('/webform/test_form_wizard_links');
     $this->assertNoCssSelect('.webform-wizard-pages-links[data-wizard-progress-link="true"]');
     $this->assertCssSelect('.webform-wizard-pages-links[data-wizard-preview-link="true"]');
 
@@ -75,7 +78,7 @@ class WebformWizardLinksTest extends WebformWizardTestBase {
       ->setSetting('wizard_preview_link', FALSE)
       ->save();
 
-    $this->drupalGet('webform/test_form_wizard_links');
+    $this->drupalGet('/webform/test_form_wizard_links');
     $this->assertNoCssSelect('.webform-wizard-pages-links');
   }
 

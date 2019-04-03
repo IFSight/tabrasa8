@@ -57,8 +57,6 @@ class Range extends NumericBase {
       '#max' => $this->getDefaultProperty('max'),
     ];
 
-    $element['#element_validate'][] = [get_class($this), 'validateRange'];
-
     // If no custom range output is defined then exit.
     if (empty($element['#output'])) {
       return;
@@ -155,6 +153,14 @@ class Range extends NumericBase {
   /**
    * {@inheritdoc}
    */
+  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
+    parent::prepareElementValidateCallbacks($element, $webform_submission);
+    $element['#element_validate'][] = [get_class($this), 'validateRange'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preview() {
     return parent::preview() + [
       '#min' => 0,
@@ -226,10 +232,9 @@ class Range extends NumericBase {
    * @see \Drupal\Core\Render\Element\Range::valueCallback
    */
   public static function validateRange(array &$element, FormStateInterface $form_state, array &$completed_form) {
-    $name = $element['#name'];
-    $value = $form_state->getValue($name);
+    $value = $element['#value'];
     $value = ($value === 0) ? '0' : (string) $value;
-    $form_state->setValue($name, $value);
+    $form_state->setValueForElement($element, $value);
   }
 
 }

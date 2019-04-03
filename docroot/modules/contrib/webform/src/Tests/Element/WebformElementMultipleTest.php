@@ -110,7 +110,7 @@ webform_multiple_no_items: {  }");
     // Rendering.
     /**************************************************************************/
 
-    $this->drupalGet('webform/test_element_multiple');
+    $this->drupalGet('/webform/test_element_multiple');
 
     // Check first tr.
     $this->assertRaw('<tr class="draggable odd" data-drupal-selector="edit-webform-multiple-default-items-0">');
@@ -207,7 +207,7 @@ webform_multiple_no_items: {  }");
     // Check no items message is never displayed when #required.
     $webform->setElementProperties('webform_multiple_no_items', ['#type' => 'webform_multiple', '#title' => 'webform_multiple_no_items', '#required' => TRUE]);
     $webform->save();
-    $this->drupalGet('webform/test_element_multiple');
+    $this->drupalGet('/webform/test_element_multiple');
     $this->assertNoRaw('No items entered. Please add items below.');
     $this->drupalPostAjaxForm(NULL, $edit, 'webform_multiple_default_table_remove_0');
     $this->assertNoRaw('No items entered. Please add items below.');

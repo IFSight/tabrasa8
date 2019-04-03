@@ -274,6 +274,14 @@
       $('.webform-ajax-refresh').click();
     }
     else {
+      // Clear unsaved information flag so that the current webform page
+      // can be redirected.
+      // @see Drupal.behaviors.webformUnsaved.clear
+      if (Drupal.behaviors.webformUnsaved) {
+        Drupal.behaviors.webformUnsaved.clear();
+      }
+
+
       this.redirect(ajax, response, status);
     }
   };

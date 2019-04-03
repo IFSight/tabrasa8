@@ -34,7 +34,7 @@ class WebformNodeEntityReferenceTest extends WebformNodeTestBase {
     $this->drupalLogin($this->rootUser);
 
     // Check that both webform A & B are being displayed.
-    $this->drupalGet('node/1');
+    $this->drupalGet('/node/1');
     $this->assertRaw('webform_test_multiple_a');
     $this->assertRaw('textfield_a');
     $this->assertRaw('webform_test_multiple_b');
@@ -43,17 +43,17 @@ class WebformNodeEntityReferenceTest extends WebformNodeTestBase {
     /**************************************************************************/
 
     // Check test form B (B is the default because its weight is -1).
-    $this->drupalGet('node/1/webform/test');
+    $this->drupalGet('/node/1/webform/test');
     $this->assertNoRaw('textfield_a');
     $this->assertRaw('textfield_b');
 
     // Check result webform B.
-    $this->drupalGet('node/1/webform/results/submissions');
+    $this->drupalGet('/node/1/webform/results/submissions');
     $this->assertNoRaw('textfield_a');
     $this->assertRaw('textfield_b');
 
     // Check export webform B.
-    $this->drupalGet('node/1/webform/results/download');
+    $this->drupalGet('/node/1/webform/results/download');
     $this->assertNoRaw('textfield_a');
     $this->assertRaw('textfield_b');
 
@@ -63,48 +63,48 @@ class WebformNodeEntityReferenceTest extends WebformNodeTestBase {
     /**************************************************************************/
 
     // Select webform A.
-    $this->drupalGet('node/1/webform/test');
+    $this->drupalGet('/node/1/webform/test');
     $this->clickLink('Test: Webform Node Multiple A');
 
     // Check user data is set to webform A.
     $this->assertEqual(['target_id' => 'webform_node_test_multiple_a'], $user_data->get('webform_node', $this->rootUser->id(), 1));
 
     // Check test webform A.
-    $this->drupalGet('node/1/webform/test');
+    $this->drupalGet('/node/1/webform/test');
     $this->assertRaw('textfield_a');
     $this->assertNoRaw('textfield_b');
 
     // Check result webform A.
-    $this->drupalGet('node/1/webform/results/submissions');
+    $this->drupalGet('/node/1/webform/results/submissions');
     $this->assertRaw('textfield_a');
     $this->assertNoRaw('textfield_b');
 
     // Check export webform A.
-    $this->drupalGet('node/1/webform/results/download');
+    $this->drupalGet('/node/1/webform/results/download');
     $this->assertRaw('textfield_a');
     $this->assertNoRaw('textfield_b');
 
     /**************************************************************************/
 
     // Select webform A.
-    $this->drupalGet('node/1/webform/test');
+    $this->drupalGet('/node/1/webform/test');
     $this->clickLink('Test: Webform Node Multiple A');
 
     // Check user data is set to webform A.
     $this->assertEqual(['target_id' => 'webform_node_test_multiple_a'], $user_data->get('webform_node', $this->rootUser->id(), 1));
 
     // Check test webform A.
-    $this->drupalGet('node/1/webform/test');
+    $this->drupalGet('/node/1/webform/test');
     $this->assertRaw('textfield_a');
     $this->assertNoRaw('textfield_b');
 
     // Check result webform A.
-    $this->drupalGet('node/1/webform/results/submissions');
+    $this->drupalGet('/node/1/webform/results/submissions');
     $this->assertRaw('textfield_a');
     $this->assertNoRaw('textfield_b');
 
     // Check export webform A.
-    $this->drupalGet('node/1/webform/results/download');
+    $this->drupalGet('/node/1/webform/results/download');
     $this->assertRaw('textfield_a');
     $this->assertNoRaw('textfield_b');
 

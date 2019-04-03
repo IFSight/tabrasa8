@@ -29,12 +29,18 @@
   cursor: help;
 }
 
-.ui-tooltip.webform-element-help--tooltip {
-  max-width: 400px;
-}
-
 .webform-element-help--title {
   font-weight: bold;
   font-size: 1.1em;
   margin: 0 0 .2em 0;
+}
+
+.ui-tooltip.webform-element-help--tooltip {
+  max-width: 400px;
+}
+
+@media only screen and (max-width : 400px) {
+  .ui-tooltip.webform-element-help--tooltip {
+    max-width: 300px;
+  }
 }

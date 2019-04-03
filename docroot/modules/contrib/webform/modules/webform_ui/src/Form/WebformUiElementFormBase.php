@@ -607,18 +607,17 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
     }
     else {
       // Add 'Set default value' button.
-      $form['properties']['default']['set_default_value'] = [
+      $form['properties']['default']['actions'] = ['#type' => 'container'];
+      $form['properties']['default']['actions']['set_default_value'] = [
         '#type' => 'submit',
         '#value' => $this->t('Set default value'),
         '#submit' => ['::setDefaultValue'],
-        // Disable client-site validation to allow tokens to be posted back to
-        // server.
-        '#attributes' => ['class' => ['js-webform-novalidate']],
+        '#attributes' => ['formnovalidate' => 'formnovalidate'],
         '#_validate_form' => TRUE,
       ];
 
       if ($this->isAjax()) {
-        $form['properties']['default']['set_default_value']['#ajax'] = [
+        $form['properties']['default']['actions']['set_default_value']['#ajax'] = [
           'callback' => '::submitAjaxForm',
           'event' => 'click',
         ];

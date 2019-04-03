@@ -26,6 +26,13 @@ use Drupal\webform\WebformSubmissionInterface;
  * @ContentEntityType(
  *   id = "webform_submission",
  *   label = @Translation("Webform submission"),
+ *   label_collection = @Translation("Submissions"),
+ *   label_singular = @Translation("submission"),
+ *   label_plural = @Translation("submissions"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count submission",
+ *     plural = "@count submissions",
+ *   ),
  *   bundle_label = @Translation("Webform"),
  *   handlers = {
  *     "storage" = "Drupal\webform\WebformSubmissionStorage",
@@ -47,6 +54,7 @@ use Drupal\webform\WebformSubmissionInterface;
  *   },
  *   bundle_entity_type = "webform",
  *   list_cache_contexts = { "user" },
+ *   list_cache_tags = { "config:webform_list", "webform_submission_list" },
  *   base_table = "webform_submission",
  *   admin_permission = "administer webform",
  *   entity_keys = {
@@ -225,7 +233,10 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
   public function label() {
     $submission_label = $this->getWebform()->getSetting('submission_label')
       ?: \Drupal::config('webform.settings')->get('settings.default_submission_label');
-    return PlainTextOutput::renderFromHtml(\Drupal::service('webform.token_manager')->replace($submission_label, $this));
+
+    /** @var \Drupal\webform\WebformTokenManagerInterface $token_manager */
+    $token_manager = \Drupal::service('webform.token_manager');
+    return PlainTextOutput::renderFromHtml($token_manager->replaceNoRenderContext($submission_label, $this));
   }
 
   /**
@@ -707,7 +718,7 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
       'langcode' => \Drupal::languageManager()->getCurrentLanguage()->getId(),
       'token' => Crypt::randomBytesBase64(),
       'uri' => preg_replace('#^' . base_path() . '#', '/', $current_request->getRequestUri()),
-      'remote_addr' => ($webform && $webform->isConfidential()) ? '' : $current_request->getClientIp(),
+      'remote_addr' => ($webform && $webform->hasRemoteAddr()) ? '' : $current_request->getClientIp(),
     ];
 
     $webform->invokeHandlers(__FUNCTION__, $values);
@@ -718,20 +729,31 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
+    // Because the original data is not stored in the persistent entity storage
+    // cache we have to reset it for the original webform submission entity.
+    // @see \Drupal\Core\Entity\EntityStorageBase::doPreSave
+    // @see \Drupal\Core\Entity\ContentEntityStorageBase::getFromPersistentCache
+    if (isset($this->original)) {
+      $this->original->setData($this->originalData);
+      $this->original->setOriginalData($this->originalData);
+    }
+
+    $request_time = \Drupal::time()->getRequestTime();
+
     // Set created.
     if (!$this->created->value) {
-      $this->created->value = REQUEST_TIME;
+      $this->created->value = $request_time;
     }
 
     // Set changed.
-    $this->changed->value = REQUEST_TIME;
+    $this->changed->value = $request_time;
 
     // Set completed.
     if ($this->isDraft()) {
       $this->completed->value = NULL;
     }
     elseif (!$this->isCompleted()) {
-      $this->completed->value = REQUEST_TIME;
+      $this->completed->value = $request_time;
     }
 
     parent::preSave($storage);
@@ -749,7 +771,7 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
    */
   public function save() {
     // Clear the remote_addr for confidential submissions.
-    if ($this->getWebform()->isConfidential()) {
+    if (!$this->getWebform()->hasRemoteAddr()) {
       $this->get('remote_addr')->value = '';
     }
 

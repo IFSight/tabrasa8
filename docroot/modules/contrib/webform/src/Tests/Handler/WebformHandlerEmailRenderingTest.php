@@ -37,7 +37,7 @@ class WebformHandlerEmailRenderingTest extends WebformTestBase {
     $webform = Webform::load('contact');
 
     // Check that we are currently using the bartik.theme.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw('core/themes/bartik/css/base/elements.css');
 
     // Post submission and send emails.
@@ -68,7 +68,7 @@ class WebformHandlerEmailRenderingTest extends WebformTestBase {
     $webform->save();
 
     // Check that we are now using the seven.theme.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertNoRaw('core/themes/bartik/css/base/elements.css');
 
     // Post submission and send emails.

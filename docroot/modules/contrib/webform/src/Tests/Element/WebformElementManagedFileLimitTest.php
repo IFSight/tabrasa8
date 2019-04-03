@@ -40,12 +40,12 @@ class WebformElementManagedFileLimitTest extends WebformElementManagedFileTestBa
     $webform = Webform::load('test_element_managed_file_limit');
 
     // Check form file limit.
-    $this->drupalGet('webform/test_element_managed_file_limit');
+    $this->drupalGet('/webform/test_element_managed_file_limit');
     $this->assertRaw('1 MB limit per form.');
 
     // Check empty form file limit.
     $webform->setSetting('form_file_limit', '')->save();
-    $this->drupalGet('webform/test_element_managed_file_limit');
+    $this->drupalGet('/webform/test_element_managed_file_limit');
     $this->assertNoRaw('1 MB limit per form.');
 
     // Check default form file limit.
@@ -53,7 +53,7 @@ class WebformElementManagedFileLimitTest extends WebformElementManagedFileTestBa
       ->getEditable('webform.settings')
       ->set('settings.default_form_file_limit', '2 MB')
       ->save();
-    $this->drupalGet('webform/test_element_managed_file_limit');
+    $this->drupalGet('/webform/test_element_managed_file_limit');
     $this->assertRaw('2 MB limit per form.');
 
     // Set limit to 2 files.
@@ -61,7 +61,7 @@ class WebformElementManagedFileLimitTest extends WebformElementManagedFileTestBa
       ->getEditable('webform.settings')
       ->set('settings.default_form_file_limit', ($bytes * 2) . ' bytes')
       ->save();
-    $this->drupalGet('webform/test_element_managed_file_limit');
+    $this->drupalGet('/webform/test_element_managed_file_limit');
     $this->assertRaw(format_size($bytes * 2) . ' limit per form.');
 
     // Check valid file upload.
@@ -78,7 +78,7 @@ class WebformElementManagedFileLimitTest extends WebformElementManagedFileTestBa
       'files[managed_file_03]' => \Drupal::service('file_system')->realpath($file->uri),
     ];
     $this->postSubmission($webform, $edit);
-    $this->assertRaw('This form\'s file upload quota of <em class="placeholder">2 KB</em> has been exceeded. Please remove some files.<div class="item-list"><ul><li>text-0.txt - 1 KB</li><li>text-0.txt - 1 KB</li><li>text-0.txt - 1 KB</li></ul>');
+    $this->assertRaw('This form\'s file upload quota of <em class="placeholder">2 KB</em> has been exceeded. Please remove some files.');
   }
 
 }

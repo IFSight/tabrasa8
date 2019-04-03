@@ -52,7 +52,7 @@ content:
     label: hidden
     settings:
       label: Register
-      dialog: wide
+      dialog: normal
       attributes:
         class:
           - button

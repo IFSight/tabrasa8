@@ -34,6 +34,7 @@ class WebformCommands extends WebformCommandsBase {
    *
    * @command webform:export
    * @param $webform The webform ID you want to export (required unless --entity-type and --entity-id are specified)
+   * @option exporter The type of export. (delimited, table, yaml, or json)
    * @option delimiter Delimiter between columns (defaults to site-wide setting). This option may need to be wrapped in quotes. i.e. --delimiter="\t".
    * @option multiple-delimiter Delimiter between an element with multiple values (defaults to site-wide setting).
    * @option file-name File name used to export submission and uploaded filed. You may use tokens.
@@ -43,6 +44,7 @@ class WebformCommands extends WebformCommandsBase {
    * @option options-multiple-format Set to "separate" (default) or "compact" to determine how multiple select list values are exported.
    * @option entity-reference-items Comma-separated list of entity reference items (id, title, and/or url) to be exported.
    * @option excluded-columns Comma-separated list of component IDs or webform keys to exclude.
+   * @option uuid  Use UUIDs for all entity references. (Only applies to CSV download)
    * @option entity-type The entity type to which this submission was submitted from.
    * @option entity-id The ID of the entity of which this webform submission was submitted from.
    * @option range-type Range of submissions to export: "all", "latest", "serial", "sid", or "date".
@@ -53,11 +55,40 @@ class WebformCommands extends WebformCommandsBase {
    * @option state Submission state to be included: "completed", "draft" or "all" (default).
    * @option sticky Flagged/starred submission status.
    * @option files Download files: "1" or "0" (default). If set to 1, the exported CSV file and any submission file uploads will be download in a gzipped tar file.
-   * @option destination The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the commandline.
+   * @option destination The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the command line.
    * @aliases wfx
    */
-  public function drush_webform_export($webform = NULL, array $options = ['delimiter' => NULL, 'multiple-delimiter' => NULL, 'file-name' => NULL, 'header-format' => NULL, 'options-item-format' => NULL, 'options-single-format' => NULL, 'options-multiple-format' => NULL, 'entity-reference-items' => NULL, 'excluded-columns' => NULL, 'entity-type' => NULL, 'entity-id' => NULL, 'range-type' => NULL, 'range-latest' => NULL, 'range-start' => NULL, 'range-end' => NULL, 'order' => NULL, 'state' => NULL, 'sticky' => NULL, 'files' => NULL, 'destination' => NULL]) {
+  public function drush_webform_export($webform = NULL, array $options = ['exporter' => NULL, 'delimiter' => NULL, 'multiple-delimiter' => NULL, 'file-name' => NULL, 'header-format' => NULL, 'options-item-format' => NULL, 'options-single-format' => NULL, 'options-multiple-format' => NULL, 'entity-reference-items' => NULL, 'excluded-columns' => NULL, 'uuid' => NULL, 'entity-type' => NULL, 'entity-id' => NULL, 'range-type' => NULL, 'range-latest' => NULL, 'range-start' => NULL, 'range-end' => NULL, 'order' => NULL, 'state' => NULL, 'sticky' => NULL, 'files' => NULL, 'destination' => NULL]) {
     $this->cliService->drush_webform_export($webform);
+  }
+
+  /****************************************************************************/
+  // drush webform:import. DO NOT EDIT.
+  /****************************************************************************/
+
+  /**
+   * @hook validate webform:import
+   */
+  public function drush_webform_import_validate(CommandData $commandData) {
+    $arguments = $commandData->arguments();
+    array_shift($arguments);
+    call_user_func_array([$this->cliService, 'drush_webform_import_validate'], $arguments);
+  }
+
+  /**
+   * Imports webform submissions from a CSV file.
+   *
+   * @command webform:import
+   * @param $webform The webform ID you want to import (required unless --entity-type and --entity-id are specified)
+   * @param $import_uri The path or URI for the CSV file to be imported.
+   * @option skip_validation Skip form validation.
+   * @option treat_warnings_as_errors Treat all warnings as errors.
+   * @option entity-type The entity type to which this submission was submitted from.
+   * @option entity-id The ID of the entity of which this webform submission was submitted from.
+   * @aliases wfi
+   */
+  public function drush_webform_import($webform = NULL, $import_uri = NULL, array $options = ['skip_validation' => NULL, 'treat_warnings_as_errors' => NULL, 'entity-type' => NULL, 'entity-id' => NULL]) {
+    $this->cliService->drush_webform_import($webform, $import_uri);
   }
 
   /****************************************************************************/
@@ -81,11 +112,11 @@ class WebformCommands extends WebformCommandsBase {
    * @option all Flush all submissions
    * @option entity-type The entity type for webform submissions to be purged
    * @option entity-id The ID of the entity for webform submissions to be purged
-   * @usage drush webform-purge
+   * @usage drush webform:purge
    *   Pick a webform and then purge its submissions.
-   * @usage drush webform-purge contact
+   * @usage drush webform:purge contact
    *   Delete 'Contact' webform submissions.
-   * @usage drush webform-purge --all
+   * @usage drush webform:purge ::all
    *   Purge all webform submissions.
    * @aliases wfp
    */
@@ -113,7 +144,7 @@ class WebformCommands extends WebformCommandsBase {
    * @param $target The module (config/install), config directory (sync), or path (/some/path) that needs its YAML configuration files tidied. (Defaults to webform)
    * @option dependencies Add module dependencies to installed webform and options configuration entities.
    * @option prefix Prefix for file names to be tidied. (Defaults to webform)
-   * @usage drush webform-tidy webform
+   * @usage drush webform:tidy webform
    *   Tidies YAML configuration files in 'webform/config' for the Webform module
    * @aliases wft
    */
@@ -129,7 +160,7 @@ class WebformCommands extends WebformCommandsBase {
    * Displays the status of third party libraries required by the Webform module.
    *
    * @command webform:libraries:status
-   * @usage webform-libraries-status
+   * @usage webform:libraries:status
    *   Displays the status of third party libraries required by the Webform module.
    * @aliases wfls
    */
@@ -145,7 +176,7 @@ class WebformCommands extends WebformCommandsBase {
    * Generates libraries YAML to be included in a drush.make.yml files.
    *
    * @command webform:libraries:make
-   * @usage webform-libraries-make
+   * @usage webform:libraries:make
    *   Generates libraries YAML to be included in a drush.make.yml file.
    * @aliases wflm
    */
@@ -162,7 +193,7 @@ class WebformCommands extends WebformCommandsBase {
    *
    * @command webform:libraries:composer
    * @option disable-tls If set to true all HTTPS URLs will be tried with HTTP instead and no network level encryption is performed.
-   * @usage webform-libraries-composer
+   * @usage webform:libraries:composer
    *   Generates the Webform module's composer.json with libraries as repositories.
    * @aliases wflc
    */
@@ -178,7 +209,7 @@ class WebformCommands extends WebformCommandsBase {
    * Download third party libraries required by the Webform module.
    *
    * @command webform:libraries:download
-   * @usage webform-libraries-download
+   * @usage webform:libraries:download
    *   Download third party libraries required by the Webform module.
    * @aliases wfld
    */
@@ -194,7 +225,7 @@ class WebformCommands extends WebformCommandsBase {
    * Removes all downloaded third party libraries required by the Webform module.
    *
    * @command webform:libraries:remove
-   * @usage webform-libraries-remove
+   * @usage webform:libraries:remove
    *   Removes all downloaded third party libraries required by the Webform module.
    * @aliases wflr
    */
@@ -236,11 +267,11 @@ class WebformCommands extends WebformCommandsBase {
   /****************************************************************************/
 
   /**
-   * Makes sure all Webform admin settings and webforms are up-to-date.
+   * Makes sure all Webform admin configuration and webform settings are up-to-date.
    *
    * @command webform:repair
-   * @usage webform-repair
-   *   Repairs admin settings and webforms are up-to-date.
+   * @usage webform:repair
+   *   Repairs admin configuration and webform settings are up-to-date.
    * @aliases wfr
    */
   public function drush_webform_repair() {
@@ -264,7 +295,7 @@ class WebformCommands extends WebformCommandsBase {
    * Generates HTML documentation.
    *
    * @command webform:docs
-   * @usage webform-repair
+   * @usage webform:repair
    *   Generates HTML documentation used by the Webform module's documentation pages.
    * @aliases wfd
    */
@@ -290,7 +321,7 @@ class WebformCommands extends WebformCommandsBase {
    *
    * @command webform:composer:update
    * @option disable-tls If set to true all HTTPS URLs will be tried with HTTP instead and no network level encryption is performed.
-   * @usage webform-composer-update
+   * @usage webform:composer:update
    *   Updates the Drupal installation's composer.json to include the Webform module's selected libraries as repositories.
    * @aliases wfcu
    */
@@ -306,7 +337,7 @@ class WebformCommands extends WebformCommandsBase {
    * Generate Drush commands from webform.drush.inc for Drush 8.x to WebformCommands for Drush 9.x.
    *
    * @command webform:generate:commands
-   * @usage drush webform-generate-commands
+   * @usage drush webform:generate:commands
    *   Generate Drush commands from webform.drush.inc for Drush 8.x to WebformCommands for Drush 9.x.
    * @aliases wfgc
    */

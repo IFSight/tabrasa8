@@ -64,10 +64,6 @@ class Select extends OptionsBase {
       }
     }
 
-    if (!empty($element['#multiple'])) {
-      $element['#element_validate'][] = [get_class($this), 'validateMultipleOptions'];
-    }
-
     // If select2 or chosen is not available, see if we can use the alternative.
     if (isset($element['#select2'])
       && !$this->librariesManager->isIncluded('jquery.select2')

@@ -21,7 +21,7 @@ class WebformElementSelectTest extends WebformElementTestBase {
    */
   public function testSelectElement() {
     // Check default empty option always included.
-    $this->drupalGet('webform/test_element_select');
+    $this->drupalGet('/webform/test_element_select');
     $this->assertRaw('<select data-drupal-selector="edit-select-empty-option-optional" id="edit-select-empty-option-optional" name="select_empty_option_optional" class="form-select"><option value="" selected="selected">- None -</option>');
     $this->assertRaw('<select data-drupal-selector="edit-select-empty-option-optional-default-value" id="edit-select-empty-option-optional-default-value" name="select_empty_option_optional_default_value" class="form-select"><option value="">- None -</option>');
     $this->assertRaw('<select data-drupal-selector="edit-select-empty-option-required" id="edit-select-empty-option-required" name="select_empty_option_required" class="form-select required" required="required" aria-required="true"><option value="" selected="selected">- Select -</option>');
@@ -32,7 +32,7 @@ class WebformElementSelectTest extends WebformElementTestBase {
       ->save();
 
     // Check default empty option is not always included.
-    $this->drupalGet('webform/test_element_select');
+    $this->drupalGet('/webform/test_element_select');
     $this->assertNoRaw('<select data-drupal-selector="edit-select-empty-option-optional" id="edit-select-empty-option-optional" name="select_empty_option_optional" class="form-select"><option value="" selected="selected">- None -</option>');
     $this->assertNoRaw('<select data-drupal-selector="edit-select-empty-option-optional-default-value" id="edit-select-empty-option-optional-default-value" name="select_empty_option_optional_default_value" class="form-select"><option value="">- None -</option>');
     $this->assertRaw('<select data-drupal-selector="edit-select-empty-option-required" id="edit-select-empty-option-required" name="select_empty_option_required" class="form-select required" required="required" aria-required="true"><option value="" selected="selected">- Select -</option>');
@@ -45,7 +45,7 @@ class WebformElementSelectTest extends WebformElementTestBase {
       ->save();
 
     // Check customize empty option displayed.
-    $this->drupalGet('webform/test_element_select');
+    $this->drupalGet('/webform/test_element_select');
     $this->assertRaw('<select data-drupal-selector="edit-select-empty-option-optional" id="edit-select-empty-option-optional" name="select_empty_option_optional" class="form-select"><option value="" selected="selected">{optional}</option>');
     $this->assertRaw('<select data-drupal-selector="edit-select-empty-option-optional-default-value" id="edit-select-empty-option-optional-default-value" name="select_empty_option_optional_default_value" class="form-select"><option value="">{optional}</option>');
     $this->assertRaw('<select data-drupal-selector="edit-select-empty-option-required" id="edit-select-empty-option-required" name="select_empty_option_required" class="form-select required" required="required" aria-required="true"><option value="" selected="selected">{required}</option>');

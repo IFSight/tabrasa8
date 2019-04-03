@@ -2,7 +2,6 @@
 
 namespace Drupal\linkit\Tests;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\linkit\Entity\Profile;
 
 /**
@@ -29,7 +28,7 @@ trait ProfileCreationTrait {
   protected function createProfile(array $settings = []) {
     // Populate defaults array.
     $settings += [
-      'id' => Unicode::strtolower($this->randomMachineName()),
+      'id' => mb_strtolower($this->randomMachineName()),
       'label' => $this->randomMachineName(),
     ];
 

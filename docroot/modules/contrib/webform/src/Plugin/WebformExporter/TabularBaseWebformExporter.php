@@ -114,7 +114,9 @@ abstract class TabularBaseWebformExporter extends WebformExporterBase {
       case 'changed':
       case 'timestamp':
         if (!empty($webform_submission->$field_name->value)) {
-          $record[] = date('Y-m-d H:i:s', $webform_submission->$field_name->value);
+          /** @var \Drupal\Core\Datetime\DateFormatterInterface $date_formatter */
+          $date_formatter = \Drupal::service('date.formatter');
+          $record[] = $date_formatter->format($webform_submission->$field_name->value, 'custom', 'Y-m-d H:i:s');
         }
         else {
           $record[] = '';

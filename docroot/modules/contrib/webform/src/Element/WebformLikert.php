@@ -50,6 +50,9 @@ class WebformLikert extends FormElement {
     // Get answer with optional N/A.
     static::processWebformLikertAnswers($element);
 
+    // Remove 'for' from element's label.
+    $element['#label_attributes']['webform-remove-for-attribute'] = TRUE;
+
     // Process answers.
     $answers = [];
     foreach ($element['#answers'] as $answer_key => $answer) {
@@ -141,6 +144,7 @@ class WebformLikert extends FormElement {
         '#value' => '<span></span>',
         '#webform_element' => TRUE,
         '#required' => $element['#required'],
+        '#label_attributes' => ['webform-remove-for-attribute' => TRUE],
       ];
       if ($question_description_property_name) {
         $row['likert_question'][$question_description_property_name] = $question_description;

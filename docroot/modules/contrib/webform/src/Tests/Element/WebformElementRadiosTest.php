@@ -22,7 +22,7 @@ class WebformElementRadiosTest extends WebformElementTestBase {
   public function testElementRadios() {
     $this->drupalLogin($this->rootUser);
 
-    $this->drupalGet('webform/test_element_radios');
+    $this->drupalGet('/webform/test_element_radios');
 
     // Check radios with description display.
     $this->assertRaw('<input data-drupal-selector="edit-radios-description-one" aria-describedby="edit-radios-description-one--description" type="radio" id="edit-radios-description-one" name="radios_description" value="one" class="form-radio" />');

@@ -21,7 +21,7 @@ class WebformElementOptionsTest extends WebformElementTestBase {
    */
   public function testElementOptions() {
     // Check options maxlength.
-    $this->drupalGet('webform/test_element_options');
+    $this->drupalGet('/webform/test_element_options');
     $this->assertRaw('<input class="js-webform-options-sync form-text" data-drupal-selector="edit-webform-options-maxlength-options-items-0-value" type="text" id="edit-webform-options-maxlength-options-items-0-value" name="webform_options_maxlength[options][items][0][value]" value="one" size="60" maxlength="20" placeholder="Enter value…" />');
     $this->assertRaw('<input data-drupal-selector="edit-webform-options-maxlength-options-items-0-text" type="text" id="edit-webform-options-maxlength-options-items-0-text" name="webform_options_maxlength[options][items][0][text]" value="One" size="60" maxlength="20" placeholder="Enter text…" class="form-text" />');
 
@@ -52,6 +52,14 @@ webform_element_options_custom:
     // Check default value handling.
     $this->drupalPostForm('webform/test_element_options', ['webform_element_options_custom[options]' => 'yes_no'], t('Submit'));
     $this->assertRaw("webform_element_options_custom: yes_no");
+
+    // Check unique option value validation.
+    $edit = [
+      'webform_options[options][items][0][value]' => 'test',
+      'webform_options[options][items][1][value]' => 'test',
+    ];
+    $this->drupalPostForm('webform/test_element_options', $edit, t('Submit'));
+    $this->assertRaw('The <em class="placeholder">Option value</em> \'test\' is already in use. It must be unique.');
   }
 
 }

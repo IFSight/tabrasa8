@@ -81,7 +81,6 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
         $value = $default_settings["default_$key"];
         if (!is_array($value)) {
           $element['#description'] .= ($element['#description'] ? '<br /><br />' : '');
-          // @todo: Stop quotes from being encoded. (i.e. "Submit" => &quot;Submit&quote;)
           $element['#description'] .= $this->t('Defaults to: %value', ['%value' => $value]);
         }
       }

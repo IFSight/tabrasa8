@@ -324,9 +324,23 @@ if (!function_exists('dd')) {
   /**
    * Wrapper for DevelDumperManager::debug().
    *
+   * @deprecated since Drupal 8.6.0 because symfony now has dd() as a function.
+   *   Use the ddm() function instead.
+   * 
    * @see \Drupal\devel\DevelDumperManager::debug()
    */
   function dd($data, $label = NULL) {
+    return \Drupal::service('devel.dumper')->debug($data, $label, 'default');
+  }
+}
+
+if (!function_exists('ddm')) {
+  /**
+   * Wrapper for DevelDumperManager::debug() to replace previous dd function.
+   *
+   * @see \Drupal\devel\DevelDumperManager::debug()
+   */
+  function ddm($data, $label = NULL) {
     return \Drupal::service('devel.dumper')->debug($data, $label, 'default');
   }
 }

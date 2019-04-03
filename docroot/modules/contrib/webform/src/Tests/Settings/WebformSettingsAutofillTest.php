@@ -28,7 +28,7 @@ class WebformSettingsAutofillTest extends WebformTestBase {
     $webform = Webform::load('test_form_autofill');
 
     // Check that elements are both blank.
-    $this->drupalGet('webform/test_form_autofill');
+    $this->drupalGet('/webform/test_form_autofill');
     $this->assertNoRaw('This submission has been autofilled with your previous submission.');
     $this->assertFieldByName('textfield_autofill', '');
     $this->assertFieldByName('textfield_excluded', '');
@@ -42,13 +42,13 @@ class WebformSettingsAutofillTest extends WebformTestBase {
 
     // Check that 'textfield_autofill' is autofilled and 'textfield_excluded'
     // is empty.
-    $this->drupalGet('webform/test_form_autofill');
+    $this->drupalGet('/webform/test_form_autofill');
     $this->assertFieldByName('textfield_autofill', '{textfield_autofill}');
     $this->assertNoFieldByName('textfield_autofill', '{textfield_excluded}');
     $this->assertFieldByName('textfield_excluded', '');
 
     // Check that default configuration message is displayed.
-    $this->drupalGet('webform/test_form_autofill');
+    $this->drupalGet('/webform/test_form_autofill');
     $this->assertFieldByName('textfield_autofill', '{textfield_autofill}');
     $this->assertRaw('This submission has been autofilled with your previous submission.');
 
@@ -58,7 +58,7 @@ class WebformSettingsAutofillTest extends WebformTestBase {
       ->save();
 
     // Check no autofill message is displayed.
-    $this->drupalGet('webform/test_form_autofill');
+    $this->drupalGet('/webform/test_form_autofill');
     $this->assertFieldByName('textfield_autofill', '{textfield_autofill}');
     $this->assertNoRaw('This submission has been autofilled with your previous submission.');
 
@@ -68,7 +68,7 @@ class WebformSettingsAutofillTest extends WebformTestBase {
       ->save();
 
     // Check custom autofill message is displayed.
-    $this->drupalGet('webform/test_form_autofill');
+    $this->drupalGet('/webform/test_form_autofill');
     $this->assertFieldByName('textfield_autofill', '{textfield_autofill}');
     $this->assertRaw('{autofill_message}');
   }

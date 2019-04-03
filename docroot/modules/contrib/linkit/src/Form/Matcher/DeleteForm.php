@@ -70,7 +70,7 @@ class DeleteForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->linkitProfile->removeMatcher($this->linkitMatcher);
 
-    drupal_set_message($this->t('The matcher %label has been deleted.', ['%label' => $this->linkitMatcher->getLabel()]));
+    $this->messenger()->addMessage($this->t('The matcher %label has been deleted.', ['%label' => $this->linkitMatcher->getLabel()]));
     $this->logger('linkit')->notice('The matcher %label has been deleted in the @profile profile.', [
       '%label' => $this->linkitMatcher->getLabel(),
       '@profile' => $this->linkitProfile->label(),

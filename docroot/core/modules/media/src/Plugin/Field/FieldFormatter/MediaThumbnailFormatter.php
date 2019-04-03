@@ -142,9 +142,6 @@ class MediaThumbnailFormatter extends ImageFormatter {
 
     /** @var \Drupal\media\MediaInterface[] $media_items */
     foreach ($media_items as $delta => $media) {
-      // Explicitly set the thumbnail alt text to match the
-      // underlying image alt text.
-      $media->thumbnail->alt = $media->field_image->alt;
       $elements[$delta] = [
         '#theme' => 'image_formatter',
         '#item' => $media->get('thumbnail')->first(),

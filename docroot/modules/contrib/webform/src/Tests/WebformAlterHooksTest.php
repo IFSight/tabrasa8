@@ -23,7 +23,7 @@ class WebformAlterHooksTest extends WebformNodeTestBase {
    */
   public function testWebformAlterHooks() {
     // Check webform alter hooks.
-    $this->drupalGet('webform/contact');
+    $this->drupalGet('/webform/contact');
     $this->assertRaw("hook_webform_submission_form_alter(): 'webform_submission_contact_add_form' executed.");
     $this->assertRaw("hook_form_alter(): 'webform_submission_contact_add_form' executed.");
     $this->assertRaw("hook_form_webform_submission_BASE_FORM_ID_form_alter(): 'webform_submission_contact_add_form' executed.");

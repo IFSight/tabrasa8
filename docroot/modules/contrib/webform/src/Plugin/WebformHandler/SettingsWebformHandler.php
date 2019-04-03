@@ -130,7 +130,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#description' => $this->t('A message to be displayed on the preview page.'),
       '#default_value' => $this->configuration['preview_message'],
     ];
-    $form['preview_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
+    $form['preview_settings']['token_tree_link'] = $this->buildTokenTreeElement();
 
     // Confirmation settings.
     $confirmation_type = $this->getWebform()->getSetting('confirmation_type');
@@ -164,7 +164,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#default_value' => $this->configuration['confirmation_message'],
       '#access' => !empty($this->configuration['confirmation_message']) || $has_confirmation_message,
     ];
-    $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
+    $form['confirmation_settings']['token_tree_link'] = $this->buildTokenTreeElement();
 
     // Custom settings.
     $custom_settings = $this->configuration;
@@ -181,6 +181,8 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#title' => $this->t('Custom settings (YAML)'),
       '#description' => $this->t('Enter the setting name and value as YAML.'),
       '#default_value' => $custom_settings,
+      // Must set #parents because custom is not a configuration value.
+      // @see \Drupal\webform\Plugin\WebformHandler\SettingsWebformHandler::submitConfigurationForm
       '#parents' => ['settings', 'custom'],
     ];
 
@@ -226,9 +228,9 @@ class SettingsWebformHandler extends WebformHandlerBase {
       '#default_value' => $this->configuration['debug'],
     ];
 
-    $this->tokenManager->elementValidate($form);
+    $this->elementTokenValidate($form);
 
-    return $this->setSettingsParentsRecursively($form);
+    return $this->setSettingsParents($form);
   }
 
   /**
@@ -394,7 +396,7 @@ class SettingsWebformHandler extends WebformHandlerBase {
       // Replace token value and cast booleans and integers.
       $type = $settings_definitions[$name]['type'];
       if (in_array($type, ['boolean', 'integer'])) {
-        $value = $this->tokenManager->replace($value, $webform_submission);
+        $value = $this->replaceTokens($value, $webform_submission);
         settype($value, $type);
         $settings_override[$name] = $value;
       }

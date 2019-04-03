@@ -77,7 +77,6 @@ elements: |
       Two: Two
       Three: Three
     '#description': 'This is a description'
-  radios_wrapper_fieldset_element_descriptions:
   radios_wrapper_form_element:
     '#type': radios
     '#title': radios_wrapper_form_element
@@ -96,7 +95,44 @@ elements: |
       Two: Two
       Three: Three
     '#wrapper_type': container
-  
+  states_checkbox:
+    '#type': checkbox
+    '#title': states_checkbox
+  states_fieldset:
+    '#type': radios
+    '#title': states_fieldset
+    '#options':
+      One: One
+      Two: Two
+      Three: Three
+    '#states':
+      visible:
+        ':input[name="states_checkbox"]':
+          checked: true
+  states_form_item:
+    '#type': radios
+    '#title': states_form_item
+    '#options':
+      One: One
+      Two: Two
+      Three: Three
+    '#wrapper_type': form_element
+    '#states':
+      visible:
+        ':input[name="states_checkbox"]':
+          checked: true
+  states_container:
+    '#type': radios
+    '#title': states_container
+    '#options':
+      One: One
+      Two: Two
+      Three: Three
+    '#wrapper_type': container
+    '#states':
+      visible:
+        ':input[name="states_checkbox"]':
+          checked: true
 css: ''
 javascript: ''
 settings:
@@ -113,6 +149,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -242,6 +279,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

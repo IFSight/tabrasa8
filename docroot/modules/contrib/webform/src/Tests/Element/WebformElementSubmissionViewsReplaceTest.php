@@ -28,7 +28,7 @@ class WebformElementSubmissionViewsReplaceTest extends WebformElementTestBase {
    */
   public function testSubmissionViewsReplace() {
     // Check rendering.
-    $this->drupalGet('webform/test_element_submission_views_r');
+    $this->drupalGet('/webform/test_element_submission_views_r');
     $this->assertRaw('<fieldset data-drupal-selector="edit-webform-submission-views-replace-global-global-routes" id="edit-webform-submission-views-replace-global-global-routes--wrapper" class="fieldgroup form-composite js-form-item form-item js-form-wrapper form-wrapper">');
     $this->assertRaw('<fieldset data-drupal-selector="edit-webform-submission-views-replace-global-webform-routes" id="edit-webform-submission-views-replace-global-webform-routes--wrapper" class="fieldgroup form-composite js-form-item form-item js-form-wrapper form-wrapper">');
     $this->assertRaw('<fieldset data-drupal-selector="edit-webform-submission-views-replace-global-node-routes" id="edit-webform-submission-views-replace-global-node-routes--wrapper" class="fieldgroup form-composite js-form-item form-item js-form-wrapper form-wrapper">');
@@ -61,7 +61,7 @@ webform_submission_views_replace:
       ->save();
 
     // Check that the webform replace element is visible.
-    $this->drupalGet('webform/test_element_submission_views_r');
+    $this->drupalGet('/webform/test_element_submission_views_r');
     $this->assertRaw('<fieldset data-drupal-selector="edit-webform-submission-views-replace-webform-routes" id="edit-webform-submission-views-replace-webform-routes--wrapper" class="fieldgroup form-composite js-form-item form-item js-form-wrapper form-wrapper">');
     $this->assertRaw('<fieldset data-drupal-selector="edit-webform-submission-views-replace-node-routes" id="edit-webform-submission-views-replace-node-routes--wrapper" class="fieldgroup form-composite js-form-item form-item js-form-wrapper form-wrapper">');
 

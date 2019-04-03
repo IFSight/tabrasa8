@@ -190,22 +190,30 @@ class FileMatcher extends EntityMatcher {
     /** @var \Drupal\file\FileInterface $entity */
     $file = $entity->getFileUri();
 
-    /** @var \Drupal\Core\Image\ImageInterface $image */
-    $image = \Drupal::service('image.factory')->get($file);
-    if ($image->isValid()) {
-      if ($this->configuration['images']['show_dimensions']) {
-        $description_array[] = $image->getWidth() . 'x' . $image->getHeight() . 'px';
-      }
+    if ($this->configuration['images']['show_dimensions'] || $this->configuration['images']['show_thumbnail']) {
+      $image_factory = \Drupal::service('image.factory');
+      $supported_extensions = $image_factory->getSupportedExtensions();
 
-      if ($this->configuration['images']['show_thumbnail'] && $this->moduleHandler->moduleExists('image')) {
-        $image_element = [
-          '#weight' => -10,
-          '#theme' => 'image_style',
-          '#style_name' => $this->configuration['images']['thumbnail_image_style'],
-          '#uri' => $entity->getFileUri(),
-        ];
+      // Check if the file extension is supported by the image toolkit.
+      if (empty(file_validate_extensions($entity, implode(' ', $supported_extensions)))) {
+        /** @var \Drupal\Core\Image\ImageInterface $image */
+        $image = $image_factory->get($file);
+        if ($image->isValid()) {
+          if ($this->configuration['images']['show_dimensions']) {
+            $description_array[] = $image->getWidth() . 'x' . $image->getHeight() . 'px';
+          }
 
-        $description_array[] = (string) \Drupal::service('renderer')->render($image_element);
+          if ($this->configuration['images']['show_thumbnail'] && $this->moduleHandler->moduleExists('image')) {
+            $image_element = [
+              '#weight' => -10,
+              '#theme' => 'image_style',
+              '#style_name' => $this->configuration['images']['thumbnail_image_style'],
+              '#uri' => $entity->getFileUri(),
+            ];
+
+            $description_array[] = (string) \Drupal::service('renderer')->render($image_element);
+          }
+        }
       }
     }
 

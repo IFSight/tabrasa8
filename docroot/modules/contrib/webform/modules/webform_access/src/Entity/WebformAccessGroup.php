@@ -13,6 +13,13 @@ use Drupal\webform_access\WebformAccessGroupInterface;
  * @ConfigEntityType(
  *   id = "webform_access_group",
  *   label = @Translation("Webform access group"),
+ *   label_collection = @Translation("Access groups"),
+ *   label_singular = @Translation("access group"),
+ *   label_plural = @Translation("access groups"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count access group",
+ *     plural = "@count access groups",
+ *   ),
  *   handlers = {
  *     "storage" = "\Drupal\webform_access\WebformAccessGroupStorage",
  *     "access" = "Drupal\webform_access\WebformAccessGroupAccessControlHandler",
@@ -31,7 +38,7 @@ use Drupal\webform_access\WebformAccessGroupInterface;
  *   },
  *   links = {
  *     "add-form" = "/admin/structure/webform/config/access/group/add",
- *     "edit-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/edit",
+ *     "edit-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}",
  *     "duplicate-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/duplicate",
  *     "delete-form" = "/admin/structure/webform/config/access/group/manage/{webform_access_group}/delete",
  *     "collection" = "/admin/structure/webform/config/access/group/manage",

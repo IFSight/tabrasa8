@@ -175,6 +175,24 @@ class WebformRequest implements WebformRequestInterface {
   /**
    * {@inheritdoc}
    */
+  public function getCurrentWebformUrl($route_name, array $route_options = []) {
+    $webform_entity = $this->getCurrentWebform();
+    $source_entity = $this->getCurrentSourceEntity();
+    return $this->getUrl($webform_entity, $source_entity, $route_name, $route_options);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCurrentWebformSubmissionUrl($route_name, array $route_options = []) {
+    $webform_entity = $this->getCurrentWebformSubmission();
+    $source_entity = $this->getCurrentSourceEntity();
+    return $this->getUrl($webform_entity, $source_entity, $route_name, $route_options);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getWebformEntities() {
     $webform = $this->getCurrentWebform();
     $source_entity = $this->getCurrentSourceEntity('webform');

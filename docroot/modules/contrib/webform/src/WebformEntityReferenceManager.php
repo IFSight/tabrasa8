@@ -243,7 +243,6 @@ class WebformEntityReferenceManager implements WebformEntityReferenceManagerInte
    * {@inheritdoc}
    */
   public function getTableNames() {
-    // @todo Figure out a better way to determine webform field table names.
     /** @var \Drupal\field\FieldStorageConfigInterface[] $field_storage_configs */
     $field_storage_configs = FieldStorageConfig::loadMultiple();
     $tables = [];

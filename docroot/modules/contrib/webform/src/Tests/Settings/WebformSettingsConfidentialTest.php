@@ -36,38 +36,38 @@ class WebformSettingsConfidentialTest extends WebformTestBase {
 
     $this->drupalLogin($this->rootUser);
 
-    $webform_confidential = Webform::load('test_form_confidential');
+    $webform = Webform::load('test_form_confidential');
 
     // Check logout warning when accessing webform.
-    $this->drupalGet('webform/test_form_confidential');
+    $this->drupalGet('/webform/test_form_confidential');
     $this->assertNoFieldById('edit-name');
     $this->assertRaw('This form is confidential.');
 
     // Check no logout warning when testing webform.
-    $this->drupalGet('webform/test_form_confidential/test');
+    $this->drupalGet('/webform/test_form_confidential/test');
     $this->assertFieldById('edit-name');
     $this->assertNoRaw('This form is confidential.');
 
     // Check that test submission does not record the IP address.
-    $sid = $this->postSubmissionTest($webform_confidential, ['name' => 'John']);
+    $sid = $this->postSubmissionTest($webform, ['name' => 'John']);
     $webform_submission = WebformSubmission::load($sid);
     $this->assertEqual($webform_submission->getRemoteAddr(), t('(unknown)'));
     $this->assertEqual($webform_submission->getOwnerId(), 0);
 
     // Check anonymous access to webform.
     $this->drupalLogout();
-    $this->drupalGet('webform/test_form_confidential');
+    $this->drupalGet('/webform/test_form_confidential');
     $this->assertFieldById('edit-name');
     $this->assertNoRaw('This form is confidential.');
 
     // Check that submission does not track the requests IP address.
-    $sid = $this->postSubmission($webform_confidential, ['name' => 'John']);
+    $sid = $this->postSubmission($webform, ['name' => 'John']);
     $webform_submission = WebformSubmission::load($sid);
     $this->assertEqual($webform_submission->getRemoteAddr(), t('(unknown)'));
     $this->assertEqual($webform_submission->getOwnerId(), 0);
 
     // Check that previous submissions are visible.
-    $this->drupalGet('webform/test_form_confidential');
+    $this->drupalGet('/webform/test_form_confidential');
     $this->assertRaw('View your previous submission');
 
     // Check that anonymous submission is not converted to authenticated.
@@ -78,7 +78,7 @@ class WebformSettingsConfidentialTest extends WebformTestBase {
 
     // Check that previous submissions $_SESSION was unset after login/logout.
     $this->drupalLogout();
-    $this->drupalGet('webform/test_form_confidential');
+    $this->drupalGet('/webform/test_form_confidential');
     $this->assertNoRaw('View your previous submission.');
   }
 

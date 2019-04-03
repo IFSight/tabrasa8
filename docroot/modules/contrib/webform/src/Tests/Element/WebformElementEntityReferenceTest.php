@@ -32,7 +32,7 @@ class WebformElementEntityReferenceTest extends WebformElementTestBase {
     $webform = Webform::load('test_element_entity_reference');
 
     // Check render entity_autocomplete.
-    $this->drupalGet('webform/test_element_entity_reference');
+    $this->drupalGet('/webform/test_element_entity_reference');
     $this->assertFieldByName('entity_autocomplete_user_default', 'admin (1)');
     $this->assertFieldByName('entity_autocomplete_user_tags', 'admin (1)');
 

@@ -12,12 +12,13 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
-use Psr\Log\LoggerInterface;
 use Drupal\webform\Element\WebformHtmlEditor;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformTokenManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -102,9 +103,9 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
    * {@inheritdoc}
    */
   protected static function getPriority() {
-    // Execute before CustomPageExceptionHtmlSubscriber which is -128.
-    // @see \Drupal\Core\EventSubscriber\CustomPageExceptionHtmlSubscriber
-    return -127;
+    // Execute before CustomPageExceptionHtmlSubscriber which is -50.
+    // @see \Drupal\Core\EventSubscriber\CustomPageExceptionHtmlSubscriber::getPriority
+    return -49;
   }
 
   /**
@@ -194,7 +195,7 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
         case WebformInterface::ACCESS_DENIED_DEFAULT:
         default:
           // Make the default 403 request so that we can add cacheable dependencies.
-          $this->makeSubrequest($event, '/system/403', Response::HTTP_FORBIDDEN);
+          $this->makeSubrequest($event, $this->getSystemSite403Path(), Response::HTTP_FORBIDDEN);
           break;
       }
 
@@ -230,13 +231,13 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
           // Display message.
           $this->setMessage($webform_access_denied_message, $webform);
           // Make the default 403 request so that we can add cacheable dependencies.
-          $this->makeSubrequest($event, '/system/403', Response::HTTP_FORBIDDEN);
+          $this->makeSubrequest($event, $this->getSystemSite403Path(), Response::HTTP_FORBIDDEN);
           break;
 
         case WebformInterface::ACCESS_DENIED_DEFAULT:
         default:
           // Make the default 403 request so that we can add cacheable dependencies.
-          $this->makeSubrequest($event, '/system/403', Response::HTTP_FORBIDDEN);
+          $this->makeSubrequest($event, $this->getSystemSite403Path(), Response::HTTP_FORBIDDEN);
           break;
       }
       // Add cacheable dependencies.
@@ -254,6 +255,28 @@ class WebformExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
    */
   protected function getHandledFormats() {
     return ['html'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onException(GetResponseForExceptionEvent $event) {
+    // Only handle 403 exception.
+    // @see \Drupal\webform\EventSubscriber\WebformExceptionHtmlSubscriber::on403
+    $exception = $event->getException();
+    if ($exception instanceof HttpExceptionInterface && $exception->getStatusCode() === 403) {
+      parent::onException($event);
+    }
+  }
+
+  /**
+   * Get 403 path from system.site config.
+   *
+   * @return string
+   *   The custom 403 path or Drupal's default 403 path.
+   */
+  protected function getSystemSite403Path() {
+    return $this->configFactory->get('system.site')->get('page.403') ?: '/system/403';
   }
 
   /**

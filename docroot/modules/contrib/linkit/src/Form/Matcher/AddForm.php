@@ -120,7 +120,7 @@ class AddForm extends FormBase {
       ]);
     }
     else {
-      drupal_set_message($this->t('Added %label matcher.', ['%label' => $plugin->getLabel()]));
+      $this->messenger()->addMessage($this->t('Added %label matcher.', ['%label' => $plugin->getLabel()]));
 
       $form_state->setRedirect('linkit.matchers', [
         'linkit_profile' => $this->linkitProfile->id(),

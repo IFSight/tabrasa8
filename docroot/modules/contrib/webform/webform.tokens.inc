@@ -145,34 +145,35 @@ function webform_token_info() {
   ];
   $webform_submission['values'] = [
     'name' => t('Submission values'),
-    'description' => Markup::create((string) t('Webform tokens from submitted data.') .
-      t("Replace the '?' with…") . '<br />' .
-      '<ul>' .
-      '<li>element_key</li>' .
-      '<li>element_key:format:items</li>' .
-      '<li>element_key:delta</li>' .
-      '<li>element_key:sub_element_key</li>' .
-      '<li>element_key:delta:sub_element_key</li>' .
-      '<li>element_key:sub_element_key:format</li>' .
-      '<li>element_key:delta:sub_element_key:format</li>' .
-      '<li>element_key:delta:format</li>' .
-      '<li>element_key:delta:format:html</li>' .
-      '<li>element_key:entity:*</li>' .
-      '<li>element_key:entity:*</li>' .
-      '<li>element_key:delta:entity:*</li>' .
-      '<li>element_key:delta:entity:field_name:*</li>' .
-      '<li>element_key:sub_element_key:entity:*</li>' .
-      '<li>element_key:sub_element_key:entity:field_name:*</li>' .
-      '<li>element_key:delta:sub_element_key:entity:*</li>' .
-      '</ul>' .
-      t("All items after the 'element_key' are optional.") . '<br />' .
-      t("The 'delta' is the numeric index for specific value") . '<br />' .
-      t("The 'sub_element_key' is a composite element's sub element key.") . '<br />' .
-      t("The 'format' can be 'value', 'raw', or custom format specifically associated with the element") . '<br />' .
-      t("The 'items' can be 'comma', 'semicolon', 'and', 'ol', 'ul', or custom delimiter") . '<br />' .
-      t("The 'entity:*' applies to the referenced entity") . '<br />' .
-      t("Add 'html' at the end of the token to return HTML markup instead of plain text.") . '<br />' .
-      t("For example, to display the Contact webform's 'Subject' element's value you would use the [webform_submission:values:subject] token.")
+    'description' => Markup::create(t('Webform tokens from submitted data.') .
+      _webform_token_render_more(t('Learn about submission value tokens'),
+        t("Replace the '?' with…") . '<br />' .
+        '<ul>' .
+        '<li>element_key</li>' .
+        '<li>element_key:format:items</li>' .
+        '<li>element_key:delta</li>' .
+        '<li>element_key:sub_element_key</li>' .
+        '<li>element_key:delta:sub_element_key</li>' .
+        '<li>element_key:sub_element_key:format</li>' .
+        '<li>element_key:delta:sub_element_key:format</li>' .
+        '<li>element_key:delta:format</li>' .
+        '<li>element_key:delta:format:html</li>' .
+        '<li>element_key:entity:*</li>' .
+        '<li>element_key:delta:entity:*</li>' .
+        '<li>element_key:delta:entity:field_name:*</li>' .
+        '<li>element_key:sub_element_key:entity:*</li>' .
+        '<li>element_key:sub_element_key:entity:field_name:*</li>' .
+        '<li>element_key:delta:sub_element_key:entity:*</li>' .
+        '</ul>' .
+        t("All items after the 'element_key' are optional.") . '<br />' .
+        t("The 'delta' is the numeric index for specific value") . '<br />' .
+        t("The 'sub_element_key' is a composite element's sub element key.") . '<br />' .
+        t("The 'format' can be 'value', 'raw', or custom format specifically associated with the element") . '<br />' .
+        t("The 'items' can be 'comma', 'semicolon', 'and', 'ol', 'ul', or custom delimiter") . '<br />' .
+        t("The 'entity:*' applies to the referenced entity") . '<br />' .
+        t("Add 'html' at the end of the token to return HTML markup instead of plain text.") . '<br />' .
+        t("For example, to display the Contact webform's 'Subject' element's value you would use the [webform_submission:values:subject] token.")
+      )
     ),
     'dynamic' => TRUE,
   ];
@@ -268,13 +269,15 @@ function webform_token_info() {
   ];
   $webform['handler'] = [
     'name' => t('Handler response'),
-    'description' => Markup::create((string) t('Webform handler response tokens.') . '<br/>' .
-      t("Replace the '?' with…") . '<br />' .
-      '<ul>' .
-      '<li>handler_id:state:key</li>' .
-      '<li>handler_id:state:key1:key2</li>' .
-      '</ul>' .
-      t("For example, to display a remote post's confirmation number you would use the [webform:handler:remote_post:completed:confirmation_number] token.")
+    'description' => Markup::create(t('Webform handler response tokens.') .
+      _webform_token_render_more(t('Learn about handler response tokens'),
+        t("Replace the '?' with…") . '<br />' .
+        '<ul>' .
+        '<li>handler_id:state:key</li>' .
+        '<li>handler_id:state:key1:key2</li>' .
+        '</ul>' .
+        t("For example, to display a remote post's confirmation number you would use the [webform:handler:remote_post:completed:confirmation_number] token.")
+      )
     ),
     'dynamic' => TRUE,
   ];
@@ -845,4 +848,24 @@ function _webform_token_get_submission_values(array $options, WebformSubmissionI
   $rendering = FALSE;
 
   return $value;
+}
+
+/**
+ * Render webform more element (slideouts) for token descriptions.
+ *
+ * @param string $more_title
+ *   More title.
+ * @param string $more
+ *   More content.
+ *
+ * @return string
+ *   Rendered webform more element.
+ */
+function _webform_token_render_more($more_title, $more) {
+  $build = [
+    '#type' => 'webform_more',
+    '#more' => $more,
+    '#more_title' => $more_title,
+  ];
+  return (string) \Drupal::service('renderer')->renderPlain($build);
 }

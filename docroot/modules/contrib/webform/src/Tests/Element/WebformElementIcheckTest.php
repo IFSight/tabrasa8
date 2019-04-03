@@ -31,7 +31,7 @@ class WebformElementIcheckTest extends WebformElementTestBase {
    */
   public function testIcheckElement() {
 
-    $this->drupalGet('webform/test_element_icheck');
+    $this->drupalGet('/webform/test_element_icheck');
 
     // Check custom iCheck style set to 'flat'.
     $this->assertRaw('<div class="js-form-item form-item js-form-type-checkbox form-type-checkbox js-form-item-checkbox-custom form-item-checkbox-custom">');
@@ -50,7 +50,7 @@ class WebformElementIcheckTest extends WebformElementTestBase {
       ->set('element.default_icheck', 'minimal')
       ->save();
 
-    $this->drupalGet('webform/test_element_icheck');
+    $this->drupalGet('/webform/test_element_icheck');
 
     // Check custom iCheck style still set to 'flat'.
     $this->assertRaw('<div class="js-form-item form-item js-form-type-checkbox form-type-checkbox js-form-item-checkbox-custom form-item-checkbox-custom">');

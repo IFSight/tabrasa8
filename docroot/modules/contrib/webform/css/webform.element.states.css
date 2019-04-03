@@ -65,3 +65,14 @@ tr.webform-states-table--state td select {
 .webform-states-table .tabledrag-changed {
   display: none !important; /* Must use !important because .tabledrag-changed 'display' is set via JavaScript */
 }
+
+/**
+ * Limit results in jQuery UI Autocomplete
+ *
+ * https://stackoverflow.com/questions/7617373/limit-results-in-jquery-ui-autocomplete
+ */
+.ui-autocomplete {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

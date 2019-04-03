@@ -28,7 +28,11 @@ class WebformSubmissionsPurgeForm extends WebformSubmissionsDeleteFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $submission_total = \Drupal::entityQuery('webform_submission')->count()->execute();
+    $submission_total = $this->entityTypeManager
+      ->getStorage('webform_submission')
+      ->getQuery()
+      ->count()
+      ->execute();
     if ($submission_total) {
       return parent::buildForm($form, $form_state);
     }
@@ -58,8 +62,16 @@ class WebformSubmissionsPurgeForm extends WebformSubmissionsDeleteFormBase {
    * {@inheritdoc}
    */
   public function getDescription() {
-    $submission_total = \Drupal::entityQuery('webform_submission')->count()->execute();
-    $form_total = \Drupal::entityQuery('webform')->count()->execute();
+    $submission_total = $this->entityTypeManager
+      ->getStorage('webform_submission')
+      ->getQuery()
+      ->count()
+      ->execute();
+    $form_total = $this->entityTypeManager
+      ->getStorage('webform')
+      ->getQuery()
+      ->count()
+      ->execute();
 
     $t_args = [
       '@submission_total' => $submission_total,

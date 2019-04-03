@@ -86,8 +86,8 @@ elements: |
       '#type': textfield
       '#title': 'Please enter a value'
     checkbox_target:
-      '#type': 'checkboxes'
-      '#title': 'Checkboxes'
+      '#type': checkboxes
+      '#title': Checkboxes
       '#options':
         1: One
         2: Two
@@ -97,7 +97,6 @@ elements: |
         enabled:
           ':input[name="checkboxes_trigger"]':
             filled: true
-  
 css: ''
 javascript: ''
 settings:
@@ -114,6 +113,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
+  form_remote_addr: true
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -243,6 +243,10 @@ access:
     users: {  }
     permissions: {  }
   test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
     roles: {  }
     users: {  }
     permissions: {  }

@@ -1,31 +1,30 @@
-webform.handler.*:
+'webform.handler.*':
   type: mapping
   label: 'Handler settings'
-
 webform.handler.action:
   type: mapping
-  label: 'Action'
+  label: Action
   mapping:
     states:
       type: sequence
-      label: 'States'
+      label: States
       sequence:
         type: string
-        label: 'State'
+        label: State
     notes:
-      label: 'Notes'
+      label: Notes
       type: text
     sticky:
-      label: 'Flag'
+      label: Flag
       type: boolean
     locked:
-      label: 'Locked'
+      label: Locked
       type: boolean
     data:
-      label: 'Data'
+      label: Data
       type: text
     message:
-      label: 'Message'
+      label: Message
       type: text
     message_type:
       label: 'Message type'
@@ -33,22 +32,20 @@ webform.handler.action:
     debug:
       type: boolean
       label: 'Enable debugging'
-
 webform.handler.log:
   type: mapping
-  label: 'Log'
+  label: Log
   mapping: {  }
-
 webform.handler.email:
   type: mapping
-  label: 'Email'
+  label: Email
   mapping:
     states:
       type: sequence
-      label: 'States'
+      label: States
       sequence:
         type: string
-        label: 'State'
+        label: State
     to_mail:
       label: 'Email to address'
       type: email
@@ -111,29 +108,28 @@ webform.handler.email:
       label: 'Exclude unselected checkboxes'
     html:
       type: boolean
-      label: 'HTML'
+      label: HTML
     attachments:
       type: boolean
-      label: 'Attachments'
+      label: Attachments
     twig:
       type: boolean
-      label: 'Twig'
+      label: Twig
     theme_name:
       type: string
       label: 'Theme name'
     debug:
       type: boolean
       label: 'Enable debugging'
-
 webform.handler.remote_post:
   type: mapping
   label: 'Remote Post'
   mapping:
     method:
-      label: 'Method'
+      label: Method
       type: string
     type:
-      label: 'Type'
+      label: Type
       type: string
     excluded_data:
       type: sequence
@@ -188,7 +184,7 @@ webform.handler.remote_post:
       type: sequence
       sequence:
         type: mapping
-        label: 'Message'
+        label: Message
         mapping:
           code:
             type: integer
@@ -196,18 +192,13 @@ webform.handler.remote_post:
           message:
             type: text
             label: 'Response message'
-
 webform.handler.settings:
   type: mapping
-  label: 'Settings'
+  label: Settings
   mapping:
     debug:
       type: string
       label: 'Enable debugging'
-    # Below mapping is copied from: webform.webform.*
-    # @see webform.entity.webform.schema.yml
-    # NOTE: 'type: boolean' is changed to 'type: string
-    # NOTE: 'type: integer' is changed to 'type: string
     ajax:
       type: string
       label: 'Use Ajax'
@@ -282,7 +273,7 @@ webform.handler.settings:
       label: 'Display required indicator'
     form_autofocus:
       type: string
-      label: 'Autofocus'
+      label: Autofocus
     form_details_toggle:
       type: string
       label: 'Display collapse/expand all details link'
@@ -318,11 +309,11 @@ webform.handler.settings:
       label: 'Submission views'
       sequence:
         type: mapping
-        label:  'Submission view'
+        label: 'Submission view'
         mapping:
           title:
             type: text
-            label: 'Title'
+            label: Title
           view:
             type: string
             label: 'View name / Display ID'
@@ -331,13 +322,13 @@ webform.handler.settings:
             label: 'Apply to webform'
             sequence:
               type: string
-              label: 'Route'
+              label: Route
           node_routes:
             type: sequence
             label: 'Apply to node'
             sequence:
               type: string
-              label: 'Route'
+              label: Route
     submission_views_replace:
       type: mapping
       label: 'Submission view replace'
@@ -347,19 +338,19 @@ webform.handler.settings:
           label: 'Replace to global'
           sequence:
             type: string
-            label: 'Route'
+            label: Route
         webform_routes:
           type: sequence
           label: 'Replace to webform'
           sequence:
             type: string
-            label: 'Route'
+            label: Route
         node_routes:
           type: sequence
           label: 'Replace to node'
           sequence:
             type: string
-            label: 'Route'
+            label: Route
     submission_user_columns:
       type: sequence
       label: 'Submission user columns'

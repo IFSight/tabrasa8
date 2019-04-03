@@ -219,7 +219,9 @@ trait ViewsReferenceTrait {
   protected function getViewNames($views_array) {
     foreach ($views_array as $key => $value) {
       $view = Views::getView($key);
-      $views_list[$view->storage->id()] = $view->storage->label();
+      if (isset($view)) {
+        $views_list[$view->storage->id()] = $view->storage->label();
+      }
     }
     return $views_list;
   }

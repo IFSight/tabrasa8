@@ -28,6 +28,10 @@ class WebformAccessSubmissionPermissionsTest extends WebformTestBase {
       'administer webform submission',
     ]);
 
+    $own_webform_account = $this->drupalCreateUser([
+      'edit own webform',
+    ]);
+
     $any_submission_account = $this->drupalCreateUser([
       'view any webform submission',
       'edit any webform submission',
@@ -57,7 +61,7 @@ class WebformAccessSubmissionPermissionsTest extends WebformTestBase {
     $this->assertResponse(403);
 
     // Check cannot view own previous submission message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertNoRaw('You have already submitted this webform.');
 
     // Check cannot 'view own submission' permission.
@@ -79,7 +83,7 @@ class WebformAccessSubmissionPermissionsTest extends WebformTestBase {
     $this->assertResponse(200);
 
     // Check view own previous submission message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertRaw('You have already submitted this webform.');
     $this->assertRaw("<a href=\"{$base_path}webform/{$webform_id}/submissions/{$sid_2}\">View your previous submission</a>.");
 
@@ -98,7 +102,7 @@ class WebformAccessSubmissionPermissionsTest extends WebformTestBase {
     $sid_3 = $this->postSubmission($webform, $edit);
 
     // Check view own previous submissions message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertRaw('You have already submitted this webform.');
     $this->assertRaw("<a href=\"{$base_path}webform/{$webform_id}/submissions\">View your previous submissions</a>");
 
@@ -169,7 +173,7 @@ class WebformAccessSubmissionPermissionsTest extends WebformTestBase {
     $sid_4 = $this->postSubmission($webform, $edit);
 
     // Check view own previous submission message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertRaw('You have already submitted this webform.');
     $this->assertRaw("<a href=\"{$base_path}webform/{$webform_id}/submissions/{$sid_4}\">View your previous submission</a>.");
 
@@ -188,7 +192,7 @@ class WebformAccessSubmissionPermissionsTest extends WebformTestBase {
     $sid_5 = $this->postSubmission($webform, $edit);
 
     // Check view own previous submissions message.
-    $this->drupalGet('webform/' . $webform->id());
+    $this->drupalGet('/webform/' . $webform->id());
     $this->assertRaw('You have already submitted this webform.');
     $this->assertRaw("<a href=\"{$base_path}webform/{$webform_id}/submissions\">View your previous submissions</a>");
 
@@ -211,6 +215,25 @@ class WebformAccessSubmissionPermissionsTest extends WebformTestBase {
     $uid = $own_submission_account->id();
     $this->drupalGet("user/$uid/submissions");
     $this->assertResponse(200);
+
+    // Check user can't see all submissions unless they are the owner.
+    $this->drupalLogin($own_webform_account);
+    $this->drupalGet("/admin/structure/webform/manage/{$webform_id}/results/submissions");
+    $this->assertResponse(403);
+
+    // Check user can see all submissions when they are the webform owner.
+    $webform->setOwner($own_webform_account)->save();
+    $this->drupalGet("/admin/structure/webform/manage/{$webform_id}/results/submissions");
+    $this->assertResponse(200);
+    $this->assertLinkByHref("{$base_path}admin/structure/webform/manage/{$webform_id}/submission/{$sid_1}");
+    $this->assertLinkByHref("{$base_path}admin/structure/webform/manage/{$webform_id}/submission/{$sid_2}");
+    $this->assertLinkByHref("{$base_path}admin/structure/webform/manage/{$webform_id}/submission/{$sid_3}");
+    $this->assertLinkByHref("{$base_path}admin/structure/webform/manage/{$webform_id}/submission/{$sid_4}");
+
+    // Check user can the submissions when they are the webform owner.
+    $this->drupalGet("admin/structure/webform/manage/{$webform_id}/submission/{$sid_4}");
+    $this->assertResponse(200);
+
   }
 
 }

@@ -23,7 +23,7 @@ function webform_requirements($phase) {
   // Check HTML email handling.
   /****************************************************************************/
 
-  /** @var \Drupal\webform\WebformEmailProviderInterface $email_provider */
+  /** @var \Drupal\webform\WebformEProviderInterface $email_provider */
   $email_provider = \Drupal::service('webform.email_provider');
   $mail_module_name = $email_provider->getModuleName();
   $mail_plugin_id = $email_provider->getMailPluginId();

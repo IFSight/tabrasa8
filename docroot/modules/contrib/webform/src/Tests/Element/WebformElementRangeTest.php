@@ -20,7 +20,7 @@ class WebformElementRangeTest extends WebformElementTestBase {
    * Test range element.
    */
   public function testRating() {
-    $this->drupalGet('webform/test_element_range');
+    $this->drupalGet('/webform/test_element_range');
 
     // Check basic range element.
     $this->assertRaw('<input data-drupal-selector="edit-range" type="range" id="edit-range" name="range" value="" step="1" min="0" max="100" class="form-range" />');

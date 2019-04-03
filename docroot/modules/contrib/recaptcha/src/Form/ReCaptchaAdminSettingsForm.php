@@ -39,7 +39,7 @@ class ReCaptchaAdminSettingsForm extends ConfigFormBase {
 
     $form['general']['recaptcha_site_key'] = [
       '#default_value' => $config->get('site_key'),
-      '#description' => $this->t('The site key given to you when you <a href=":url">register for reCAPTCHA</a>.', [':url' => 'http://www.google.com/recaptcha/admin']),
+      '#description' => $this->t('The site key given to you when you <a href=":url">register for reCAPTCHA</a>.', [':url' => 'https://www.google.com/recaptcha/admin']),
       '#maxlength' => 40,
       '#required' => TRUE,
       '#title' => $this->t('Site key'),
@@ -48,11 +48,25 @@ class ReCaptchaAdminSettingsForm extends ConfigFormBase {
 
     $form['general']['recaptcha_secret_key'] = [
       '#default_value' => $config->get('secret_key'),
-      '#description' => $this->t('The secret key given to you when you <a href=":url">register for reCAPTCHA</a>.', [':url' => 'http://www.google.com/recaptcha/admin']),
+      '#description' => $this->t('The secret key given to you when you <a href=":url">register for reCAPTCHA</a>.', [':url' => 'https://www.google.com/recaptcha/admin']),
       '#maxlength' => 40,
       '#required' => TRUE,
       '#title' => $this->t('Secret key'),
       '#type' => 'textfield',
+    ];
+
+    $form['general']['recaptcha_verify_hostname'] = [
+      '#default_value' => $config->get('verify_hostname'),
+      '#description' => $this->t('Checks the hostname on your server when verifying a solution. Enable this validation only, if <em>Verify the origin of reCAPTCHA solutions</em> is unchecked for your key pair. Provides crucial security by verifying requests come from one of your listed domains.'),
+      '#title' => $this->t('Local domain name validation'),
+      '#type' => 'checkbox',
+    ];
+
+    $form['general']['recaptcha_use_globally'] = [
+      '#default_value' => $config->get('use_globally'),
+      '#description' => $this->t('Enable this in circumstances when "www.google.com" is not accessible, e.g. China.'),
+      '#title' => $this->t('Use reCAPTCHA globally'),
+      '#type' => 'checkbox',
     ];
 
     // Widget configurations.
@@ -93,7 +107,7 @@ class ReCaptchaAdminSettingsForm extends ConfigFormBase {
     ];
     $form['widget']['recaptcha_tabindex'] = [
       '#default_value' => $config->get('widget.tabindex'),
-      '#description' => $this->t('Set the <a href=":tabindex">tabindex</a> of the widget and challenge (Default = 0). If other elements in your page use tabindex, it should be set to make user navigation easier.', [':tabindex' => Url::fromUri('http://www.w3.org/TR/html4/interact/forms.html', ['fragment' => 'adef-tabindex'])->toString()]),
+      '#description' => $this->t('Set the <a href=":tabindex">tabindex</a> of the widget and challenge (Default = 0). If other elements in your page use tabindex, it should be set to make user navigation easier.', [':tabindex' => Url::fromUri('https://www.w3.org/TR/html4/interact/forms.html', ['fragment' => 'adef-tabindex'])->toString()]),
       '#maxlength' => 4,
       '#title' => $this->t('Tabindex'),
       '#type' => 'number',
@@ -117,6 +131,8 @@ class ReCaptchaAdminSettingsForm extends ConfigFormBase {
     $config
       ->set('site_key', $form_state->getValue('recaptcha_site_key'))
       ->set('secret_key', $form_state->getValue('recaptcha_secret_key'))
+      ->set('verify_hostname', $form_state->getValue('recaptcha_verify_hostname'))
+      ->set('use_globally', $form_state->getValue('recaptcha_use_globally'))
       ->set('widget.theme', $form_state->getValue('recaptcha_theme'))
       ->set('widget.type', $form_state->getValue('recaptcha_type'))
       ->set('widget.size', $form_state->getValue('recaptcha_size'))

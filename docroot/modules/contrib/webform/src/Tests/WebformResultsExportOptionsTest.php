@@ -30,7 +30,6 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
    */
   public function testExportOptions() {
     $admin_submission_user = $this->drupalCreateUser([
-      'access webform submission log',
       'administer webform submission',
     ]);
 
@@ -167,7 +166,7 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
     $this->assertNoRaw('Hillary,Clinton');
 
     // Check entity type and id hidden.
-    $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/download');
+    $this->drupalGet('/admin/structure/webform/manage/' . $webform->id() . '/results/download');
     $this->assertNoFieldById('edit-entity-type');
 
     // Change submission 0 & 1 to be submitted user account.
@@ -175,7 +174,7 @@ class WebformResultsExportOptionsTest extends WebformTestBase {
     $submissions[1]->set('entity_type', 'user')->set('entity_id', '2')->save();
 
     // Check entity type and id visible.
-    $this->drupalGet('admin/structure/webform/manage/' . $webform->id() . '/results/download');
+    $this->drupalGet('/admin/structure/webform/manage/' . $webform->id() . '/results/download');
     $this->assertFieldById('edit-entity-type');
 
     // Check entity type limit.

@@ -2,6 +2,7 @@
 
 namespace Drupal\webform_example_handler\Plugin\WebformHandler;
 
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -83,7 +84,6 @@ class ExampleWebformHandler extends WebformHandlerBase {
       '#type' => 'textfield',
       '#title' => $this->t('Message to be displayed when form is completed'),
       '#default_value' => $this->configuration['message'],
-      '#parents' => ['settings', 'message'],
       '#required' => TRUE,
     ];
 
@@ -97,11 +97,10 @@ class ExampleWebformHandler extends WebformHandlerBase {
       '#title' => $this->t('Enable debugging'),
       '#description' => $this->t('If checked, every handler method invoked will be displayed onscreen to all users.'),
       '#return_value' => TRUE,
-      '#parents' => ['settings', 'debug'],
       '#default_value' => $this->configuration['debug'],
     ];
 
-    return $form;
+    return $this->setSettingsParents($form);
   }
 
   /**
@@ -156,8 +155,8 @@ class ExampleWebformHandler extends WebformHandlerBase {
    */
   public function confirmForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission) {
     $message = $this->configuration['message'];
-    $message = $this->tokenManager->replace($message, $this->getWebformSubmission());
-    $this->messenger()->addStatus(Markup::create($message), FALSE);
+    $message = $this->replaceTokens($message, $this->getWebformSubmission());
+    $this->messenger()->addStatus(Markup::create(Xss::filter($message)), FALSE);
     $this->debug(__FUNCTION__);
   }
 

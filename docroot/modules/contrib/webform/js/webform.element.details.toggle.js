@@ -25,7 +25,6 @@
         // Get only the main details elements and ignore all nested details.
         var selector = ($tabs.length) ? '.webform-tab' : '.js-webform-details-toggle';
         var $details = $form.find('details').filter(function () {
-          // @todo Figure out how to optimize the below code.
           var $parents = $(this).parentsUntil(selector);
           return ($parents.find('details').length === 0);
         });
@@ -56,7 +55,7 @@
 
             // Set the saved states for all the details elements.
             // @see webform.element.details.save.js
-            if (!Drupal.webformDetailsSaveGetName) {
+            if (Drupal.webformDetailsSaveGetName) {
               $form.find('details').each(function () {
                 var name = Drupal.webformDetailsSaveGetName($(this));
                 if (name) {
@@ -70,7 +69,7 @@
 
         if ($tabs.length) {
           // Add toggle state before the tabs.
-          $tabs.find('.item-list:first-child').before($toggle);
+          $tabs.find('.item-list:first-child').eq(0).before($toggle);
         }
         else {
           // Add toggle state link to first details element.

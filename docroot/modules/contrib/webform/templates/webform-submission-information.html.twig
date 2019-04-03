@@ -4,7 +4,26 @@
  * Default theme implementation for webform submission information.
  *
  * Available variables:
- * @todo Add variables.
+ * - serial: The serial number of the submission entity.
+ * - sid: The ID of the submission entity.
+ * - uuid: The UUID of the submission entity.
+ * - token: A secure token used to look up a submission.
+ * - uri: The URI the user submitted the webform.
+ * - created: The time that the submission was first saved.
+ * - completed: The time that the submission was completed.
+ * - changed: The time that the submission was saved.
+ * - in_draft: Is this a draft of the submission?
+ * - current_page: The current wizard page.
+ * - remote_addr: The IP address of the user that submitted the webform.
+ * - submitted_by: The user that submitted the webform.
+ * - submitted_to: Link to the submission's URI.
+ * - langcode: The submission language code.
+ * - locked: A flag that indicates a locked submission.
+ * - sticky: A flag that indicate the status of the submission.
+ * - notes: Administrative notes about the submission.
+ * - webform: The associated webform.
+ * - token_update: The tokenize URL used to update the submission.
+ * - delete: Link to delete the submission.
  *
  * @see template_preprocess_webform_submission_information()
  *

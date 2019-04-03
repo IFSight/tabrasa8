@@ -53,7 +53,7 @@ function devel_generate_entity_insert(EntityInterface $entity) {
       'source' => '/node/' . $entity->id(),
       'alias' => '/node-' . $entity->id() . '-' . $entity->bundle(),
     );
-    \Drupal::service('path.alias_storage')->save($path['source'], $path['alias']);
+    \Drupal::service('path.alias_storage')->save($path['source'], $path['alias'], $entity->language()->getId());
   }
 
   // Add node statistics.

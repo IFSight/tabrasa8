@@ -31,7 +31,7 @@ class WebformElementSignatureTest extends WebformElementTestBase {
     $signature_directory = 'public://webform/test_element_signature/signature';
 
     // Check signature display.
-    $this->drupalGet('webform/test_element_signature');
+    $this->drupalGet('/webform/test_element_signature');
     $this->assertRaw('<input data-drupal-selector="edit-signature" aria-describedby="edit-signature--description" type="hidden" name="signature" value="" class="js-webform-signature form-webform-signature" />');
     $this->assertRaw('<input type="submit" name="op" value="Reset" class="button js-form-submit form-submit" />');
     $this->assertRaw('<canvas></canvas>');
