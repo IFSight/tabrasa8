@@ -1,0 +1,15 @@
+name: CloudFlare Purger
+type: module
+description: CloudFlare CDN integration.
+# core: 8.x
+package: Purge - reverse proxies & CDNs
+configure: cloudflare.admin_settings_form
+dependencies:
+  - cloudflare:cloudflare
+  - purge:purge
+
+# Information added by Drupal.org packaging script on 2019-03-15
+version: '8.x-1.0-alpha11'
+core: '8.x'
+project: 'cloudflare'
+datestamp: 1552652605

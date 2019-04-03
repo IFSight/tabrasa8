@@ -1,7 +1,7 @@
 {
     "name": "drupal/drupal",
     "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-    "type": "project",
+    "type": "ifsight-docroot",
     "license": "GPL-2.0+",
     "require": {
         "composer/installers": "^1.0.24",
@@ -56,7 +56,10 @@
         "drupal/webform": "^5.0",
         "drupal/youtube": "^1.0@beta",
         "drupal/console": "~1.0",
-        "moxiecode/plupload": "^3.1"
+        "moxiecode/plupload": "^3.1",
+        "drupal/cloudflare": "^1.0@alpha",
+        "drupal/elasticsearch_connector": "^6.0@alpha",
+        "drupal/search_api": "^1.12"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -88,11 +91,6 @@
             "drush/contrib/{$name}": ["type:drupal-drush"],
             "modules/custom/{$name}": ["type:drupal-custom-module"],
             "themes/custom/{$name}": ["type:drupal-custom-theme"]
-        },
-        "patches" : {
-            "drupal/core": {
-                "Replaces 'thumbnail' text with actual alt text for thumbnail formatter": "sites/patches/core/media-IFCUSTOM-fix-thumbnail-image-alt-text.patch"
-            }
         }
     },
     "autoload": {
