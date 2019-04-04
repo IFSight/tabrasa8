@@ -1,0 +1,20 @@
+{
+  "name": "paladin",
+  "version": "1.0.0",
+  "description": "Paladin Theme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "if-jds",
+  "license": "ISC",
+  "devDependencies": {
+    "breakpoint-sass": "^2.7.1",
+    "bulma": "^0.7.2",
+    "gulp": "^4.0.0",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.4"
+  }
+}

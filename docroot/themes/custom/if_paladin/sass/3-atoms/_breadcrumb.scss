@@ -1,0 +1,28 @@
+/* ============================================================
+  Styles for the breadcrumb.
+  ============================================================ */
+#block-breadcrumbs {
+  margin: 0 0 2em;
+
+  ol {
+    @extend %nospacing;
+    list-style: none;
+
+    li {
+      display: inline-block;
+      
+      a {
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      svg {
+        color: $dark-blue;
+        font-size: 1.6em;
+        margin: 0 .2em;
+        position: relative;
+        top: .175em;
+      }
+    }
+  }
+}

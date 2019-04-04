@@ -60,7 +60,8 @@
         "drupal/cloudflare": "^1.0@alpha",
         "drupal/elasticsearch_connector": "^6.0@alpha",
         "drupal/search_api": "^1.12",
-        "drupal/adminimal_theme": "^1.4"
+        "drupal/adminimal_theme": "^1.4",
+        "drupal/if_paladin": "^1.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -121,8 +122,20 @@
                 "dist": {
                     "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip",
                     "type": "zip"
-             },
-          "require": { "composer/installers": "~1.0" }
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/if_paladin",
+                "version": "1.0",
+                "type": "drupal-custom-theme",
+                "source": {
+                    "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
+                    "type": "git",
+                    "reference": "8.x-1.0"
+                }
             }
         }
     ]
