@@ -1,3 +1,10 @@
+```
+   ___        _             _  _        
+  / _ \ __ _ | |  __ _   __| |(_) _ __  
+ / /_)// _` || | / _` | / _` || || '_ \ 
+/ ___/| (_| || || (_| || (_| || || | | |
+\/     \__,_||_| \__,_| \__,_||_||_| |_|
+```
 # Paladin Theme for Drupal 8
 
 Paladin is a Drupal 8 theme that leverages the inverted triangle CSS concept and atomic design for a super-lightweight and componentized experience. The structure of Paladin's SASS is largely inspired by Lindsay Grizzard's article on creating CSS systems: https://medium.com/gusto-design/creating-the-perfect-css-system-fa38f5bcdd9e.
@@ -27,5 +34,3 @@ All of the folders contain SCSS partials that are imported into a main SCSS file
 ### The organisms directory
 
 Everything in the organisms directory that should be globally applied follows the same structure of a SCSS partial being imported into the global-components.scss file. The difference here is that there are certain organisms that do not need to be applied globally. For example, an accordion library can be attached to an accordion template and used only when needed. Therefore, these files exist as standalone, non-partial SCSS files that can be referenced in their own libraries for efficient attachment.
-
-### Placeholder for rscss??????

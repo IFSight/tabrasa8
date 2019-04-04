@@ -10,4 +10,7 @@
   @include add-breakpoint(l,    (1024px, 'no-query' true));
   @include add-breakpoint(xl,   (1280px));
   @include add-breakpoint(xxl,  (1440px));
+  @include add-breakpoint(xxxl,  (1920px));
+
+  @include add-breakpoint(landscape, (max-width 666px) (orientation landscape));
   

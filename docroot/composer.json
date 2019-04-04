@@ -61,7 +61,7 @@
         "drupal/elasticsearch_connector": "^6.0@alpha",
         "drupal/search_api": "^1.12",
         "drupal/adminimal_theme": "^1.4",
-        "drupal/if_paladin": "^1.0"
+        "drupal/paladin": "^1.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -128,7 +128,7 @@
         {
             "type": "package",
             "package": {
-                "name": "drupal/if_paladin",
+                "name": "drupal/paladin",
                 "version": "1.0",
                 "type": "drupal-custom-theme",
                 "source": {

@@ -1,85 +1,61 @@
-// /* ============================================================
-//   Styles for background colors/gradients, opacity, and type color.
-//   ============================================================ */
+/* ============================================================
+  Styles for background colors/gradients, opacity, and type color.
+  ============================================================ */
 
-// /* Background color/gradient styles */
-// .dark-blue-bg {
-//   background: $dark-blue;
-//   color: #fff;
-// }
+/* Background color/gradient styles */
+.dark-blue-bg {
+  background: $dark-blue;
+  color: #fff;
+}
 
-// .blue-bg {
-//   background: $blue;
-// }
+.blue-bg {
+  background: $brand-blue;
+}
 
-// .light-blue-bg {
-//   background: $light-blue;
-// }
+.gray-bg {
+  background: $gray;
+}
 
-// .green-bg {
-//   background: $green;
-// }
+.light-gray-bg {
+  background: $light-gray;
+}
 
-// .gray-bg {
-//   background: $gray;
-// }
+.white-bg {
+  background: $white;
+}
 
-// .light-gray-bg {
-//   background: $light-gray;
-// }
+.red-bg {
+  background: $brand-red;
+}
 
-// .white-bg {
-//   background: $white;
-// }
+/* Opacity styles in an opacity-%% format */
 
-// .red-bg {
-//   background: $red;
-// }
+.opacity-90 {
+  opacity: .9;
+}
 
-// .teal-bg {
-//   background: $teal;
-// }
+.opacity-50 {
+  opacity: .5;
+}
 
-// .blue-gradient-1-bg {
-//   background: $blue-gradient-1;
-// }
+.opacity-20 {
+  opacity: .2;
+}
 
-// .blue-gradient-2-bg {
-//   background: $blue-gradient-2;
-// }
+/* Type color styles */
 
-// .blue-gradient-3-bg {
-//   background: $blue-gradient-3;
-// }
+.white {
+  color: #fff;
+}
 
-// .city-bg {
-//   @extend %city-bg;
-// }
+.black {
+  color: #000;
+}
 
-// /* Opacity styles in an opacity-%% format */
+.dark-blue {
+  color: $dark-blue;
+}
 
-// .opacity-90 {
-//   opacity: .9;
-// }
-
-// .opacity-50 {
-//   opacity: .5;
-// }
-
-// .opacity-20 {
-//   opacity: .2;
-// }
-
-// /* Type color styles */
-
-// .white {
-//   color: #fff;
-// }
-
-// .black {
-//   color: #000;
-// }
-
-// .dark-blue {
-//   color: $dark-blue;
-// }
+.blue {
+  color: $brand-blue;
+}

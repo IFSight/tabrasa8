@@ -3740,18 +3740,6 @@
         }
     },
     {
-        "name": "drupal/if_paladin",
-        "version": "1.0",
-        "version_normalized": "1.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
-            "reference": "8.x-1.0"
-        },
-        "type": "drupal-custom-theme",
-        "installation-source": "source"
-    },
-    {
         "name": "drupal/inline_entity_form",
         "version": "1.0.0-rc1",
         "version_normalized": "1.0.0.0-RC1",
@@ -4212,6 +4200,18 @@
             "source": "http://cgit.drupalcode.org/metatag",
             "issues": "http://drupal.org/project/issues/metatag"
         }
+    },
+    {
+        "name": "drupal/paladin",
+        "version": "1.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
+            "reference": "8.x-1.0"
+        },
+        "type": "drupal-custom-theme",
+        "installation-source": "source"
     },
     {
         "name": "drupal/paragraphs",

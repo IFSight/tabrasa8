@@ -3,7 +3,7 @@
   ============================================================ */
 
 a {
-  // color: $dark-blue;
+  color: $dark-blue;
 
   &:hover {
     text-decoration: underline;
@@ -18,4 +18,28 @@ a {
 
 p {
   margin: 0 0 1em;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+// only style this stuff in the main body
+#block-paladin-content {
+  ul,
+  ol {
+    font-size: 1.125rem;
+    line-height: 1.5;
+
+    li {
+      margin: .5em 0 .5em 1em;
+      padding: 0 0 0 .5em;
+    }
+  }
+
+  ul li {
+    list-style: disc;
+  }
+
+  ol li {
+    list-style: decimal;
+  }
 }
