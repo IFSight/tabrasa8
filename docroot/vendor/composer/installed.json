@@ -2522,17 +2522,17 @@
     },
     {
         "name": "drupal/core",
-        "version": "8.6.14",
-        "version_normalized": "8.6.14.0",
+        "version": "8.6.16",
+        "version_normalized": "8.6.16.0",
         "source": {
             "type": "git",
             "url": "https://github.com/drupal/core.git",
-            "reference": "7f5f0369ffe08478aa0f26bd48dc95bcc9cde4b5"
+            "reference": "a9c4c97c7da9ec1a38782912bb06784d28590539"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/drupal/core/zipball/7f5f0369ffe08478aa0f26bd48dc95bcc9cde4b5",
-            "reference": "7f5f0369ffe08478aa0f26bd48dc95bcc9cde4b5",
+            "url": "https://api.github.com/repos/drupal/core/zipball/a9c4c97c7da9ec1a38782912bb06784d28590539",
+            "reference": "a9c4c97c7da9ec1a38782912bb06784d28590539",
             "shasum": ""
         },
         "require": {
@@ -2563,9 +2563,9 @@
             "symfony-cmf/routing": "^1.4",
             "symfony/class-loader": "~3.4.0",
             "symfony/console": "~3.4.0",
-            "symfony/dependency-injection": "~3.4.0",
+            "symfony/dependency-injection": "~3.4.26",
             "symfony/event-dispatcher": "~3.4.0",
-            "symfony/http-foundation": "~3.4.14",
+            "symfony/http-foundation": "~3.4.26",
             "symfony/http-kernel": "~3.4.14",
             "symfony/polyfill-iconv": "^1.0",
             "symfony/process": "~3.4.0",
@@ -2576,7 +2576,7 @@
             "symfony/validator": "~3.4.0",
             "symfony/yaml": "~3.4.5",
             "twig/twig": "^1.38.2",
-            "typo3/phar-stream-wrapper": "^2.0.1",
+            "typo3/phar-stream-wrapper": "^2.1.1",
             "zendframework/zend-diactoros": "^1.1",
             "zendframework/zend-feed": "^2.4"
         },
@@ -2705,7 +2705,7 @@
             "symfony/debug": "^3.4.0",
             "symfony/phpunit-bridge": "^3.4.3"
         },
-        "time": "2019-04-08T01:37:34+00:00",
+        "time": "2019-05-08T16:00:58+00:00",
         "type": "drupal-core",
         "extra": {
             "merge-plugin": {
@@ -9057,17 +9057,17 @@
     },
     {
         "name": "symfony/dependency-injection",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.27",
+        "version_normalized": "3.4.27.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/dependency-injection.git",
-            "reference": "9c98452ac7fff4b538956775630bc9701f5384ba"
+            "reference": "be0feb3fa202aedfd8d1956f2dafd563fb13acbf"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/9c98452ac7fff4b538956775630bc9701f5384ba",
-            "reference": "9c98452ac7fff4b538956775630bc9701f5384ba",
+            "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/be0feb3fa202aedfd8d1956f2dafd563fb13acbf",
+            "reference": "be0feb3fa202aedfd8d1956f2dafd563fb13acbf",
             "shasum": ""
         },
         "require": {
@@ -9095,7 +9095,7 @@
             "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
             "symfony/yaml": ""
         },
-        "time": "2018-10-31T10:49:51+00:00",
+        "time": "2019-04-20T15:32:49+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -9357,17 +9357,17 @@
     },
     {
         "name": "symfony/http-foundation",
-        "version": "v3.4.18",
-        "version_normalized": "3.4.18.0",
+        "version": "v3.4.27",
+        "version_normalized": "3.4.27.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/http-foundation.git",
-            "reference": "5aea7a86ca3203dd7a257e765b4b9c9cfd01c6c0"
+            "reference": "fa02215233be8de1c2b44617088192f9e8db3512"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/http-foundation/zipball/5aea7a86ca3203dd7a257e765b4b9c9cfd01c6c0",
-            "reference": "5aea7a86ca3203dd7a257e765b4b9c9cfd01c6c0",
+            "url": "https://api.github.com/repos/symfony/http-foundation/zipball/fa02215233be8de1c2b44617088192f9e8db3512",
+            "reference": "fa02215233be8de1c2b44617088192f9e8db3512",
             "shasum": ""
         },
         "require": {
@@ -9378,7 +9378,7 @@
         "require-dev": {
             "symfony/expression-language": "~2.8|~3.0|~4.0"
         },
-        "time": "2018-10-31T08:57:11+00:00",
+        "time": "2019-05-01T08:04:33+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
