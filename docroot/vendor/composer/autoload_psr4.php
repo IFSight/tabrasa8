@@ -68,6 +68,7 @@ return array(
     'Goutte\\' => array($vendorDir . '/fabpot/goutte/Goutte'),
     'Elasticsearch\\' => array($vendorDir . '/elasticsearch/elasticsearch/src/Elasticsearch'),
     'Elastica\\' => array($vendorDir . '/ruflin/elastica/lib/Elastica'),
+    'Egulias\\EmailValidator\\' => array($vendorDir . '/egulias/email-validator/EmailValidator'),
     'Drupal\\redis\\' => array($baseDir . '/modules/contrib/redis/src'),
     'Drupal\\Driver\\' => array($baseDir . '/drivers/lib/Drupal/Driver', $baseDir . '/drivers/lib/Drupal/Driver'),
     'Drupal\\Core\\Composer\\' => array($baseDir . '/core/lib/Drupal/Core/Composer'),
