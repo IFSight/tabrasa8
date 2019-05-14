@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\entity_embed\Tests;
+namespace Drupal\Tests\entity_embed\Functional;
 
 use Drupal\Core\Form\FormState;
 
@@ -19,17 +19,17 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
   protected $menu;
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
 
     // Add a new menu entity which does not has a view controller.
-    $this->menu = entity_create('menu', array(
+    $this->menu = entity_create('menu', [
       'id' => 'menu_name',
       'label' => 'Label',
       'description' => 'Description text',
-    ));
+    ]);
     $this->menu->save();
   }
 
@@ -60,33 +60,33 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
 
     // Ensure that correct form attributes are returned for
     // 'entity_reference:entity_reference_entity_id' plugin.
-    $form = array();
+    $form = [];
     $form_state = new FormState();
-    $display = $this->container->get('plugin.manager.entity_embed.display')->createInstance('entity_reference:entity_reference_entity_id', array());
+    $display = $this->container->get('plugin.manager.entity_embed.display')->createInstance('entity_reference:entity_reference_entity_id', []);
     $display->setContextValue('entity', $this->node);
     $conf_form = $display->buildConfigurationForm($form, $form_state);
-    $this->assertIdentical(array_keys($conf_form), array());
+    $this->assertSame([], array_keys($conf_form));
 
     // Ensure that correct form attributes are returned for
     // 'entity_reference:entity_reference_entity_view' plugin.
-    $form = array();
+    $form = [];
     $form_state = new FormState();
-    $display = $this->container->get('plugin.manager.entity_embed.display')->createInstance('entity_reference:entity_reference_entity_view', array());
+    $display = $this->container->get('plugin.manager.entity_embed.display')->createInstance('entity_reference:entity_reference_entity_view', []);
     $display->setContextValue('entity', $this->node);
     $conf_form = $display->buildConfigurationForm($form, $form_state);
-    $this->assertIdentical($conf_form['view_mode']['#type'], 'select');
-    $this->assertIdentical((string) $conf_form['view_mode']['#title'], 'View mode');
+    $this->assertSame('select', $conf_form['view_mode']['#type']);
+    $this->assertSame('View mode', (string) $conf_form['view_mode']['#title']);
 
     // Ensure that correct form attributes are returned for
     // 'entity_reference:entity_reference_label' plugin.
-    $form = array();
+    $form = [];
     $form_state = new FormState();
-    $display = $this->container->get('plugin.manager.entity_embed.display')->createInstance('entity_reference:entity_reference_label', array());
+    $display = $this->container->get('plugin.manager.entity_embed.display')->createInstance('entity_reference:entity_reference_label', []);
     $display->setContextValue('entity', $this->node);
     $conf_form = $display->buildConfigurationForm($form, $form_state);
-    $this->assertIdentical(array_keys($conf_form), array('link'));
-    $this->assertIdentical($conf_form['link']['#type'], 'checkbox');
-    $this->assertIdentical((string) $conf_form['link']['#title'], 'Link label to the referenced entity');
+    $this->assertSame(['link'], array_keys($conf_form));
+    $this->assertSame('checkbox', $conf_form['link']['#type']);
+    $this->assertSame('Link label to the referenced entity', (string) $conf_form['link']['#title']);
 
     // Ensure that 'Rendered Entity' plugin is not available for an entity not
     // having a view controller.
@@ -100,10 +100,10 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
   public function testFilterEntityReferencePlugins() {
     // Test 'Label' Entity Embed Display plugin.
     $content = '<drupal-entity data-entity-type="node" data-entity-uuid="' . $this->node->uuid() . '" data-entity-embed-display="entity_reference:entity_reference_label" data-entity-embed-display-settings=\'{"link":1}\'>This placeholder should not be rendered.</drupal-entity>';
-    $settings = array();
+    $settings = [];
     $settings['type'] = 'page';
     $settings['title'] = 'Test entity_reference:entity_reference_label Entity Embed Display plugin';
-    $settings['body'] = array(array('value' => $content, 'format' => 'custom_format'));
+    $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
     $this->assertText($this->node->title->value, 'Title of the embedded node exists in page.');
@@ -113,10 +113,10 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
 
     // Test 'Entity ID' Entity Embed Display plugin.
     $content = '<drupal-entity data-entity-type="node" data-entity-uuid="' . $this->node->uuid() . '" data-entity-embed-display="entity_reference:entity_reference_entity_id">This placeholder should not be rendered.</drupal-entity>';
-    $settings = array();
+    $settings = [];
     $settings['type'] = 'page';
     $settings['title'] = 'Test entity_reference:entity_reference_entity_id Entity Embed Display plugin';
-    $settings['body'] = array(array('value' => $content, 'format' => 'custom_format'));
+    $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
     $this->assertText($this->node->id(), 'ID of the embedded node exists in page.');
@@ -127,10 +127,10 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
 
     // Test 'Rendered entity' Entity Embed Display plugin.
     $content = '<drupal-entity data-entity-type="node" data-entity-uuid="' . $this->node->uuid() . '" data-entity-embed-display="entity_reference:entity_reference_entity_view" data-entity-embed-display-settings=\'{"view_mode":"teaser"}\'>This placeholder should not be rendered.</drupal-entity>';
-    $settings = array();
+    $settings = [];
     $settings['type'] = 'page';
     $settings['title'] = 'Test entity_reference:entity_reference_label Entity Embed Display plugin';
-    $settings['body'] = array(array('value' => $content, 'format' => 'custom_format'));
+    $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
     $this->assertText($this->node->body->value, 'Body of embedded node does not exists in page.');

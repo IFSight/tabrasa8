@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\entity_embed\Tests;
+namespace Drupal\Tests\entity_embed\Functional;
 
-use Drupal\system\Tests\Update\UpdatePathTestBase;
+use Drupal\FunctionalTests\Update\UpdatePathTestBase;
 
 /**
  * Tests the update hooks in entity_embed module.
@@ -17,7 +17,7 @@ class EntityEmbedUpdateHookTest extends UpdatePathTestBase {
   protected function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
       DRUPAL_ROOT . '/core/modules/system/tests/fixtures/update/drupal-8.bare.standard.php.gz',
-      __DIR__ . '/../../tests/fixtures/update/entity_embed.update-hook-test.php',
+      __DIR__ . '/../../fixtures/update/entity_embed.update-hook-test.php',
     ];
   }
 
@@ -41,7 +41,7 @@ class EntityEmbedUpdateHookTest extends UpdatePathTestBase {
   protected function doSelectionTest() {
     parent::doSelectionTest();
     $this->assertRaw('8002 -   Updates the default mode settings.');
-    $this->assertRaw('8003 -   Updates allowed HTML for all filter format config entities that have an  Entity Embed button.');
+    $this->assertRaw('8003 -   Updates allowed HTML for all filter configs that have an Entity Embed button.');
   }
 
   /**
@@ -74,7 +74,7 @@ class EntityEmbedUpdateHookTest extends UpdatePathTestBase {
     $this->runUpdates();
     $filter_format = $this->container->get('entity_type.manager')->getStorage('filter_format')->load('full_html');
     $filter_html = $filter_format->filters('filter_html');
-    $this->assertEqual($expected_allowed_html, $filter_html->getConfiguration()['settings']['allowed_html'], 'Allowed html is correct');
+    $this->assertEquals($expected_allowed_html, $filter_html->getConfiguration()['settings']['allowed_html'], 'Allowed html is correct');
   }
 
 }

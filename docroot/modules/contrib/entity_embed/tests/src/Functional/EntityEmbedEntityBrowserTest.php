@@ -4,6 +4,7 @@ namespace Drupal\entity_embed\Tests;
 
 use Drupal\entity_browser\Entity\EntityBrowser;
 use Drupal\embed\Entity\EmbedButton;
+use Drupal\Tests\entity_embed\Functional\EntityEmbedDialogTest;
 
 /**
  * Tests the entity_embed entity_browser integration.
@@ -54,6 +55,12 @@ class EntityEmbedEntityBrowserTest extends EntityEmbedDialogTest {
     $embed_button = EmbedButton::load('node');
     $embed_button->type_settings['entity_browser'] = 'entity_embed_entity_browser_test';
     $embed_button->save();
+
+    // Rebuild routes, so the route called by getEmbedDialog() exists.
+    $this->container->get('router.builder')->rebuild();
+
+    $dependencies = $embed_button->getDependencies();
+    $this->assertContains('entity_browser.browser.entity_embed_entity_browser_test', $dependencies['config']);
 
     $this->getEmbedDialog('custom_format', 'node');
     $this->assertResponse(200, 'Embed dialog is accessible with custom filter format and default embed button.');

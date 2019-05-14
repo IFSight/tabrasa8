@@ -1,24 +1,32 @@
 <?php
 
-namespace Drupal\entity_embed\Tests;
+namespace Drupal\Tests\entity_embed\Functional;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 use Drupal\filter\Entity\FilterFormat;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\TestFileCreationTrait;
 
 /**
  * Base class for all entity_embed tests.
  */
-abstract class EntityEmbedTestBase extends WebTestBase {
+abstract class EntityEmbedTestBase extends BrowserTestBase {
+
+  use TestFileCreationTrait;
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['entity_embed', 'entity_embed_test', 'node', 'ckeditor'];
+  protected static $modules = [
+    'entity_embed',
+    'entity_embed_test',
+    'node',
+    'ckeditor',
+  ];
 
   /**
    * The test user.
@@ -35,7 +43,7 @@ abstract class EntityEmbedTestBase extends WebTestBase {
   protected $node;
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
@@ -48,6 +56,15 @@ abstract class EntityEmbedTestBase extends WebTestBase {
       'format' => 'custom_format',
       'name' => 'Custom format',
       'filters' => [
+        'filter_align' => [
+          'status' => 1,
+        ],
+        'filter_caption' => [
+          'status' => 1,
+        ],
+        'filter_html_image_secure' => [
+          'status' => 1,
+        ],
         'entity_embed' => [
           'status' => 1,
         ],
@@ -81,10 +98,10 @@ abstract class EntityEmbedTestBase extends WebTestBase {
     $this->drupalLogin($this->webUser);
 
     // Create a sample node to be embedded.
-    $settings = array();
+    $settings = [];
     $settings['type'] = 'page';
     $settings['title'] = 'Embed Test Node';
-    $settings['body'] = array('value' => 'This node is to be used for embedding in other nodes.', 'format' => 'custom_format');
+    $settings['body'] = ['value' => 'This node is to be used for embedding in other nodes.', 'format' => 'custom_format'];
     $this->node = $this->drupalCreateNode($settings);
   }
 
@@ -92,10 +109,11 @@ abstract class EntityEmbedTestBase extends WebTestBase {
    * Retrieves a sample file of the specified type.
    *
    * @return \Drupal\file\FileInterface
+   *   The test file created.
    */
   protected function getTestFile($type_name, $size = NULL) {
     // Get a file to upload.
-    $file = current($this->drupalGetTestFiles($type_name, $size));
+    $file = current($this->getTestFiles($type_name, $size));
 
     // Add a filesize property to files as would be read by
     // \Drupal\file\Entity\File::load().
@@ -107,15 +125,12 @@ abstract class EntityEmbedTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert that the expected display plugins are available for the entity.
    */
   public function assertAvailableDisplayPlugins(EntityInterface $entity, array $expected_plugins, $message = '') {
     $plugin_options = $this->container->get('plugin.manager.entity_embed.display')
       ->getDefinitionOptionsForEntity($entity);
-    // @todo Remove the sorting so we can actually test return order.
-    ksort($plugin_options);
-    sort($expected_plugins);
-    $this->assertEqual(array_keys($plugin_options), $expected_plugins, $message);
+    $this->assertEquals([], array_diff($expected_plugins, array_keys($plugin_options)), $message);
   }
 
 }

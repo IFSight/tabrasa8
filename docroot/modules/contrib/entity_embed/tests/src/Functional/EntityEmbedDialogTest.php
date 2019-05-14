@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\entity_embed\Tests;
+namespace Drupal\Tests\entity_embed\Functional;
 
 use Drupal\editor\Entity\Editor;
 
@@ -55,11 +55,6 @@ class EntityEmbedDialogTest extends EntityEmbedTestBase {
 
     // Ensure form structure of the 'select' step and submit form.
     $this->assertFieldByName('entity_id', '', 'Entity ID/UUID field is present.');
-
-    // $edit = ['attributes[data-entity-id]' => $this->node->id()];
-    // $this->drupalPostAjaxForm(NULL, $edit, 'op');
-    // Ensure form structure of the 'embed' step and submit form.
-    // $this->assertFieldByName('attributes[data-entity-embed-display]', 'Entity Embed Display plugin field is present.');.
   }
 
   /**
@@ -91,46 +86,6 @@ class EntityEmbedDialogTest extends EntityEmbedTestBase {
 
     // Check that 'Next' is a primary button.
     $this->assertFieldByXPath('//input[contains(@class, "button--primary")]', 'Next', 'Next is a primary button');
-
-    $title = $this->node->getTitle() . ' (' . $this->node->id() . ')';
-    $edit = ['entity_id' => $title];
-    $response = $this->drupalPostAjaxForm(NULL, $edit, 'op');
-    $plugins = [
-      'entity_reference:entity_reference_label',
-      'entity_reference:entity_reference_entity_id',
-      'view_mode:node.full',
-      'view_mode:node.rss',
-      'view_mode:node.search_index',
-      'view_mode:node.search_result',
-      'view_mode:node.teaser',
-    ];
-    foreach ($plugins as $plugin) {
-      $this->assertTrue(strpos($response[2]['data'], $plugin), 'Plugin ' . $plugin . ' is available in selection.');
-    }
-
-    $this->container->get('config.factory')->getEditable('entity_embed.settings')
-      ->set('rendered_entity_mode', TRUE)->save();
-    $this->container->get('plugin.manager.entity_embed.display')->clearCachedDefinitions();
-
-    $this->getEmbedDialog('custom_format', 'node');
-    $title = $this->node->getTitle() . ' (' . $this->node->id() . ')';
-    $edit = ['entity_id' => $title];
-    $response = $this->drupalPostAjaxForm(NULL, $edit, 'op');
-
-    $plugins = [
-      'entity_reference:entity_reference_label',
-      'entity_reference:entity_reference_entity_id',
-      'entity_reference:entity_reference_entity_view',
-    ];
-    foreach ($plugins as $plugin) {
-      $this->assertTrue(strpos($response[2]['data'], $plugin), 'Plugin ' . $plugin . ' is available in selection.');
-    }
-    /*$this->drupalPostForm(NULL, $edit, 'Next');
-    // Ensure form structure of the 'embed' step and submit form.
-    $this->assertFieldByName('attributes[data-entity-embed-display]', 'Entity Embed Display plugin field is present.');
-
-    // Check that 'Embed' is a primary button.
-    $this->assertFieldByXPath('//input[contains(@class, "button--primary")]', 'Embed', 'Embed is a primary button');*/
   }
 
   /**

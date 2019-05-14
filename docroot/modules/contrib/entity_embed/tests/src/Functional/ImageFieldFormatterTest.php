@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\entity_embed\Tests;
+namespace Drupal\Tests\entity_embed\Functional;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormState;
@@ -34,7 +34,7 @@ class ImageFieldFormatterTest extends EntityEmbedTestBase {
   protected $file;
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
@@ -58,36 +58,37 @@ class ImageFieldFormatterTest extends EntityEmbedTestBase {
     ]);
 
     // Ensure that correct form attributes are returned for the image plugin.
-    $form = array();
+    $form = [];
     $form_state = new FormState();
     $display = $this->container->get('plugin.manager.entity_embed.display')
       ->createInstance('image:image', []);
     $display->setContextValue('entity', $this->image);
     $conf_form = $display->buildConfigurationForm($form, $form_state);
-    $this->assertIdentical(array_keys($conf_form), array(
+    $expected = [
       'image_style',
       'image_link',
       'alt',
       'title',
-    ));
-    $this->assertIdentical($conf_form['image_style']['#type'], 'select');
-    $this->assertIdentical((string) $conf_form['image_style']['#title'], 'Image style');
-    $this->assertIdentical($conf_form['image_link']['#type'], 'select');
-    $this->assertIdentical((string) $conf_form['image_link']['#title'], 'Link image to');
-    $this->assertIdentical($conf_form['alt']['#type'], 'textfield');
-    $this->assertIdentical((string) $conf_form['alt']['#title'], 'Alternate text');
-    $this->assertIdentical($conf_form['title']['#type'], 'textfield');
-    $this->assertIdentical((string) $conf_form['title']['#title'], 'Title');
+    ];
+    $this->assertSame($expected, array_keys($conf_form));
+    $this->assertSame('select', $conf_form['image_style']['#type']);
+    $this->assertSame('Image style', (string) $conf_form['image_style']['#title']);
+    $this->assertSame('select', $conf_form['image_link']['#type']);
+    $this->assertSame('Link image to', (string) $conf_form['image_link']['#title']);
+    $this->assertSame('textfield', $conf_form['alt']['#type']);
+    $this->assertSame('Alternate text', (string) $conf_form['alt']['#title']);
+    $this->assertSame('textfield', $conf_form['title']['#type']);
+    $this->assertSame('Title', (string) $conf_form['title']['#title']);
 
     // Test entity embed using 'Image' Entity Embed Display plugin.
     $alt_text = "This is sample description";
     $title = "This is sample title";
-    $embed_settings = array('image_link' => 'file');
+    $embed_settings = ['image_link' => 'file'];
     $content = '<drupal-entity data-entity-type="file" data-entity-uuid="' . $this->image->uuid() . '" data-entity-embed-display="image:image" data-entity-embed-display-settings=\'' . Json::encode($embed_settings) . '\' alt="' . $alt_text . '" title="' . $title . '">This placeholder should not be rendered.</drupal-entity>';
-    $settings = array();
+    $settings = [];
     $settings['type'] = 'page';
     $settings['title'] = 'Test entity embed with image:image';
-    $settings['body'] = array(array('value' => $content, 'format' => 'custom_format'));
+    $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw($alt_text, 'Alternate text for the embedded image is visible when embed is successful.');
@@ -98,10 +99,10 @@ class ImageFieldFormatterTest extends EntityEmbedTestBase {
     $content = '<drupal-entity data-entity-type="node" data-entity-uuid="' . $this->node->uuid() . '" data-entity-embed-display="entity_reference:entity_reference_label"></drupal-entity>';
     $content .= '<drupal-entity data-entity-type="file" data-entity-uuid="' . $this->file->uuid() . '" data-entity-embed-display="file:file_default"></drupal-entity>';
     $content .= '<drupal-entity data-entity-type="file" data-entity-uuid="' . $this->image->uuid() . '" data-entity-embed-display="image:image"></drupal-entity>';
-    $settings = array();
+    $settings = [];
     $settings['type'] = 'page';
     $settings['title'] = 'Test node entity embedded first then a file entity';
-    $settings['body'] = array(array('value' => $content, 'format' => 'custom_format'));
+    $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
   }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\entity_embed\Tests;
+namespace Drupal\Tests\entity_embed\Functional;
 
 /**
  * Tests Twig extension provided by entity_embed.
@@ -10,11 +10,11 @@ namespace Drupal\entity_embed\Tests;
 class EntityEmbedTwigTest extends EntityEmbedTestBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
-    \Drupal::service('theme_handler')->install(array('test_theme'));
+    \Drupal::service('theme_handler')->install(['test_theme']);
   }
 
   /**
