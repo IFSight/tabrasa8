@@ -13,6 +13,11 @@ class EasyBreadcrumbConstants {
   const MODULE_NAME = 'easy_breadcrumb';
 
   /**
+   * Flag for applying easy breadcrumb to admin routes.
+   */
+  const APPLIES_ADMIN_ROUTES = 'applies_admin_routes';
+
+  /**
    * Flag for including invalid paths while generating the breadcrumb segments.
    */
   const INCLUDE_INVALID_PATHS = 'include_invalid_paths';
@@ -23,9 +28,14 @@ class EasyBreadcrumbConstants {
   const EXCLUDED_PATHS = 'excluded_paths';
 
   /**
-   * List of paths to be excluded from the generated segments.
+   * List of titles to replace.
    */
   const REPLACED_TITLES = 'replaced_titles';
+
+  /**
+   * List of paths for custom breadcrumbs.
+   */
+  const CUSTOM_PATHS = 'custom_paths';
 
   /**
    * Separator between segments.
@@ -83,6 +93,11 @@ class EasyBreadcrumbConstants {
   const USE_MENU_TITLE_AS_FALLBACK = 'use_menu_title_as_fallback';
 
   /**
+   * Use page title as fallback for menu title.
+   */
+  const USE_PAGE_TITLE_AS_MENU_TITLE_FALLBACK = 'use_page_title_as_menu_title_fallback';
+
+  /**
    * Flag for removing repeated identical segments from the breadcrumb.
    */
   const REMOVE_REPEATED_SEGMENTS = 'remove_repeated_segments';
@@ -96,6 +111,11 @@ class EasyBreadcrumbConstants {
    * Flag for storing single home item settings.
    */
   const HIDE_SINGLE_HOME_ITEM = 'hide_single_home_item';
+
+  /**
+   * Flag for using term hierarchy.
+   */
+  const TERM_HIERARCHY = 'term_hierarchy';
 
   /**
    * Default list of excluded paths.
@@ -122,6 +142,18 @@ class EasyBreadcrumbConstants {
     static $default_replaced_titles = [];
 
     return $default_replaced_titles;
+  }
+
+  /**
+   * Default list of replaced titles.
+   *
+   * @return array
+   *   Default list of replaced titles.
+   */
+  public static function defaultCustomPaths() {
+    static $default_custom_paths = [];
+
+    return $default_custom_paths;
   }
 
   /**

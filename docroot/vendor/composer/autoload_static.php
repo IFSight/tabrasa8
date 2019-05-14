@@ -120,6 +120,7 @@ class ComposerStaticInitDrupal8
         ),
         'J' => 
         array (
+            'JsonSchema\\' => 11,
             'JakubOnderka\\PhpConsoleHighlighter\\' => 35,
             'JakubOnderka\\PhpConsoleColor\\' => 29,
         ),
@@ -384,6 +385,10 @@ class ComposerStaticInitDrupal8
         'MakinaCorpus\\Lucene\\' => 
         array (
             0 => __DIR__ . '/..' . '/makinacorpus/php-lucene/src',
+        ),
+        'JsonSchema\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/justinrainbow/json-schema/src/JsonSchema',
         ),
         'JakubOnderka\\PhpConsoleHighlighter\\' => 
         array (

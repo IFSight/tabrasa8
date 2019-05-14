@@ -2205,18 +2205,18 @@
     },
     {
         "name": "drupal/components",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/components.git",
-            "reference": "8.x-1.0"
+            "reference": "8.x-1.1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/components-8.x-1.0.zip",
-            "reference": "8.x-1.0",
-            "shasum": "adb1872a655466d575c2d3396f7ca2daba0a2918"
+            "url": "https://ftp.drupal.org/files/projects/components-8.x-1.1.zip",
+            "reference": "8.x-1.1",
+            "shasum": "72af8ff1ca842556ee4b95335595c24703acdb75"
         },
         "require": {
             "drupal/core": "~8.0"
@@ -2227,8 +2227,8 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.0",
-                "datestamp": "1461060840",
+                "version": "8.x-1.1",
+                "datestamp": "1556870881",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -2253,7 +2253,7 @@
         "description": "Registers “component libraries” defined in modules and themes with the Twig system",
         "homepage": "https://www.drupal.org/project/components",
         "support": {
-            "source": "http://cgit.drupalcode.org/components"
+            "source": "https://git.drupalcode.org/project/components"
         }
     },
     {
@@ -2993,18 +2993,18 @@
     },
     {
         "name": "drupal/easy_breadcrumb",
-        "version": "1.8.0",
-        "version_normalized": "1.8.0.0",
+        "version": "1.12.0",
+        "version_normalized": "1.12.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/easy_breadcrumb.git",
-            "reference": "8.x-1.8"
+            "reference": "8.x-1.12"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/easy_breadcrumb-8.x-1.8.zip",
-            "reference": "8.x-1.8",
-            "shasum": "75be89f78e9b47daf0bb54429652180a2e6063b5"
+            "url": "https://ftp.drupal.org/files/projects/easy_breadcrumb-8.x-1.12.zip",
+            "reference": "8.x-1.12",
+            "shasum": "1364f8d3e36b1847279eeabf14ed26c62afcd750"
         },
         "require": {
             "drupal/core": "~8.0"
@@ -3015,8 +3015,8 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.8",
-                "datestamp": "1524864180",
+                "version": "8.x-1.12",
+                "datestamp": "1557509285",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3038,6 +3038,14 @@
                 "homepage": "https://www.drupal.org/user/3326031"
             },
             {
+                "name": "diamondsea",
+                "homepage": "https://www.drupal.org/user/430714"
+            },
+            {
+                "name": "hmartens",
+                "homepage": "https://www.drupal.org/user/622826"
+            },
+            {
                 "name": "loopduplicate",
                 "homepage": "https://www.drupal.org/user/717290"
             },
@@ -3057,7 +3065,7 @@
         "description": "Adds configuration to the system breadcrumbs.",
         "homepage": "https://www.drupal.org/project/easy_breadcrumb",
         "support": {
-            "source": "http://cgit.drupalcode.org/easy_breadcrumb"
+            "source": "https://git.drupalcode.org/project/easy_breadcrumb"
         }
     },
     {
@@ -3357,21 +3365,21 @@
     },
     {
         "name": "drupal/entity_embed",
-        "version": "1.0.0-beta2",
-        "version_normalized": "1.0.0.0-beta2",
+        "version": "1.0.0-beta3",
+        "version_normalized": "1.0.0.0-beta3",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/entity_embed.git",
-            "reference": "8.x-1.0-beta2"
+            "reference": "8.x-1.0-beta3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/entity_embed-8.x-1.0-beta2.zip",
-            "reference": "8.x-1.0-beta2",
-            "shasum": "21cdeb2b058efce461683aed9a8951053512dca7"
+            "url": "https://ftp.drupal.org/files/projects/entity_embed-8.x-1.0-beta3.zip",
+            "reference": "8.x-1.0-beta3",
+            "shasum": "2ecb2e88e5ecc217195dfa291b4959ea6b83aa8c"
         },
         "require": {
-            "drupal/core": "*",
+            "drupal/core": "^8.4.0",
             "drupal/embed": "*"
         },
         "require-dev": {
@@ -3383,8 +3391,8 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.0-beta2",
-                "datestamp": "1476698339",
+                "version": "8.x-1.0-beta3",
+                "datestamp": "1556906881",
                 "security-coverage": {
                     "status": "not-covered",
                     "message": "Beta releases are not covered by Drupal security advisories."
@@ -3410,8 +3418,16 @@
                 "homepage": "https://www.drupal.org/user/3260690"
             },
             {
+                "name": "Wim Leers",
+                "homepage": "https://www.drupal.org/user/99777"
+            },
+            {
                 "name": "cs_shadow",
                 "homepage": "https://www.drupal.org/user/2828287"
+            },
+            {
+                "name": "phenaproxima",
+                "homepage": "https://www.drupal.org/user/205645"
             },
             {
                 "name": "slashrsm",
@@ -3421,7 +3437,7 @@
         "description": "Allows any entity to be embedded within a text area using a WYSIWYG editor.",
         "homepage": "https://www.drupal.org/project/entity_embed",
         "support": {
-            "source": "http://cgit.drupalcode.org/entity_embed",
+            "source": "https://git.drupalcode.org/project/entity_embed",
             "issues": "https://www.drupal.org/project/issues/entity_embed",
             "irc": "irc://irc.freenode.org/drupal-media"
         }
@@ -5172,18 +5188,18 @@
     },
     {
         "name": "drupal/twig_tweak",
-        "version": "2.1.0",
-        "version_normalized": "2.1.0.0",
+        "version": "2.3.0",
+        "version_normalized": "2.3.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/twig_tweak.git",
-            "reference": "8.x-2.1"
+            "reference": "8.x-2.3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/twig_tweak-8.x-2.1.zip",
-            "reference": "8.x-2.1",
-            "shasum": "ce1534d3270d916b55902c686057c0b5038d6b1d"
+            "url": "https://ftp.drupal.org/files/projects/twig_tweak-8.x-2.3.zip",
+            "reference": "8.x-2.3",
+            "shasum": "753d69b39d94f9b16723de506d9e13c2415983c5"
         },
         "require": {
             "drupal/core": "~8.0"
@@ -5197,8 +5213,8 @@
                 "dev-2.x": "2.x-dev"
             },
             "drupal": {
-                "version": "8.x-2.1",
-                "datestamp": "1531889025",
+                "version": "8.x-2.3",
+                "datestamp": "1555516385",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -5351,18 +5367,18 @@
     },
     {
         "name": "drupal/video_embed_field",
-        "version": "2.0.0",
-        "version_normalized": "2.0.0.0",
+        "version": "2.1.0",
+        "version_normalized": "2.1.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/video_embed_field.git",
-            "reference": "8.x-2.0"
+            "reference": "8.x-2.1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/video_embed_field-8.x-2.0.zip",
-            "reference": "8.x-2.0",
-            "shasum": "e864f090b3cb9405376ca324d81ace83613e2019"
+            "url": "https://ftp.drupal.org/files/projects/video_embed_field-8.x-2.1.zip",
+            "reference": "8.x-2.1",
+            "shasum": "fa1682741b4a1404df80c709ed8e40b7d8362d67"
         },
         "require": {
             "drupal/core": "*"
@@ -5378,13 +5394,12 @@
                 "dev-2.x": "2.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.x",
-                "datestamp": "1523338084",
+                "version": "8.x-2.1",
+                "datestamp": "1557724385",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
-                },
-                "package": "Field types"
+                }
             }
         },
         "installation-source": "dist",
@@ -5409,7 +5424,7 @@
         "description": "A pluggable field type for storing videos from external video hosts such as Vimeo and YouTube.",
         "homepage": "https://www.drupal.org/project/video_embed_field",
         "support": {
-            "source": "http://cgit.drupalcode.org/video_embed_field"
+            "source": "https://git.drupalcode.org/project/video_embed_field"
         }
     },
     {
@@ -6449,6 +6464,74 @@
             "javascript",
             "phantomjs",
             "testing"
+        ]
+    },
+    {
+        "name": "justinrainbow/json-schema",
+        "version": "5.2.8",
+        "version_normalized": "5.2.8.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/justinrainbow/json-schema.git",
+            "reference": "dcb6e1006bb5fd1e392b4daa68932880f37550d4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/dcb6e1006bb5fd1e392b4daa68932880f37550d4",
+            "reference": "dcb6e1006bb5fd1e392b4daa68932880f37550d4",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "~2.2.20",
+            "json-schema/json-schema-test-suite": "1.2.0",
+            "phpunit/phpunit": "^4.8.35"
+        },
+        "time": "2019-01-14T23:55:14+00:00",
+        "bin": [
+            "bin/validate-json"
+        ],
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "5.0.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "JsonSchema\\": "src/JsonSchema/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Bruno Prieto Reis",
+                "email": "bruno.p.reis@gmail.com"
+            },
+            {
+                "name": "Justin Rainbow",
+                "email": "justin.rainbow@gmail.com"
+            },
+            {
+                "name": "Igor Wiedler",
+                "email": "igor@wiedler.ch"
+            },
+            {
+                "name": "Robert Schönthal",
+                "email": "seroscho@googlemail.com"
+            }
+        ],
+        "description": "A library to validate a json schema.",
+        "homepage": "https://github.com/justinrainbow/json-schema",
+        "keywords": [
+            "json",
+            "schema"
         ]
     },
     {

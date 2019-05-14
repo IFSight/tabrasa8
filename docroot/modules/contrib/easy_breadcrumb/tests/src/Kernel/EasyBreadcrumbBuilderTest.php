@@ -32,13 +32,22 @@ class EasyBreadcrumbBuilderTest extends KernelTestBase {
       ->save();
 
     $request_context = new RequestContext();
+
     $breadcrumb_builder = new EasyBreadcrumbBuilder($request_context,
-      \Drupal::service('access_manager'), \Drupal::service('router'),
+      \Drupal::service('access_manager'),
+      \Drupal::service('router'),
+      \Drupal::service('request_stack'),
       \Drupal::service('path_processor_manager'),
       \Drupal::service('config.factory'),
-      \Drupal::service('title_resolver'), \Drupal::service('current_user'),
+      \Drupal::service('title_resolver'),
+      \Drupal::service('current_user'),
       \Drupal::service('path.current'),
-      \Drupal::service('plugin.manager.menu.link')
+      \Drupal::service('plugin.manager.menu.link'),
+      \Drupal::service('language_manager'),
+      \Drupal::service('entity_type.manager'),
+      \Drupal::service('entity.repository'),
+      \Drupal::service('logger.factory'),
+      \Drupal::service('messenger')
     );
 
     $route_match = new RouteMatch('test_front', new Route('/front'));
@@ -68,20 +77,30 @@ class EasyBreadcrumbBuilderTest extends KernelTestBase {
    */
   public function testGetTitleString($route_name) {
     $url = Url::fromRoute($route_name);
-    $breadcrumb_builder = new EasyBreadcrumbBuilder(new RequestContext($url->getInternalPath()),
-      \Drupal::service('access_manager'), \Drupal::service('router'),
+    $request_context = new RequestContext();
+
+    $breadcrumb_builder = new EasyBreadcrumbBuilder($request_context,
+      \Drupal::service('access_manager'),
+      \Drupal::service('router'),
+      \Drupal::service('request_stack'),
       \Drupal::service('path_processor_manager'),
       \Drupal::service('config.factory'),
-      \Drupal::service('title_resolver'), \Drupal::service('current_user'),
+      \Drupal::service('title_resolver'),
+      \Drupal::service('current_user'),
       \Drupal::service('path.current'),
-      \Drupal::service('plugin.manager.menu.link')
+      \Drupal::service('plugin.manager.menu.link'),
+      \Drupal::service('language_manager'),
+      \Drupal::service('entity_type.manager'),
+      \Drupal::service('entity.repository'),
+      \Drupal::service('logger.factory'),
+      \Drupal::service('messenger')
     );
 
     $request = Request::create($url->getInternalPath());
     $router = \Drupal::service('router.no_access_checks');
     $route_match = new RouteMatch($route_name, $router->match($url->getInternalPath())['_route_object']);
     $result = $breadcrumb_builder->getTitleString($request, $route_match, []);
-    $this->assertTrue(is_string($result));
+    $this->assertInternalType('string', $result);
   }
 
 }
