@@ -79,4 +79,4 @@ MAINTAINERS
 
 Supporting organization:
 
- * Hook 42 - https://www.drupal.org/hook-42
+ * Kanopi Studios - https://www.drupal.org/kanopi-studios

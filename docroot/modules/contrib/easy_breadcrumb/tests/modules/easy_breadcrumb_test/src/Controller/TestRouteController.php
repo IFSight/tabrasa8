@@ -25,7 +25,8 @@ class TestRouteController extends ControllerBase {
   /**
    * Returns the page title as FormattableMarkup.
    *
-   * Among other places, used in Drupal\search_api\Controller\IndexController.php
+   * Among other places,
+   *  used in Drupal\search_api\Controller\IndexController.php.
    *
    * @return \Drupal\Component\Render\FormattableMarkup
    *   The page title.
@@ -55,6 +56,5 @@ class TestRouteController extends ControllerBase {
       '#markup' => 'this is a string',
     ];
   }
-
 
 }
