@@ -107,7 +107,7 @@ class LazyLoad extends FormatterBase implements ContainerFactoryPluginInterface 
       // Add a play button.
       $itemThumb[] = [
         '#type' => 'html_tag',
-        '#tag' => 'div',
+        '#tag' => 'button',
         '#attributes' => [
           'class' => ['video-embed-field-lazy-play']
         ],
