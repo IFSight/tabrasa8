@@ -1,0 +1,28 @@
+uuid: 4fdf4467-8d01-4206-871a-da3c95bbacaa
+langcode: en
+status: true
+dependencies: {  }
+id: e056c8a39b
+name: varnish1
+invalidationtype: tag
+hostname: varnish01-noc2.ifex.ifops
+port: 80
+path: /
+request_method: BAN
+scheme: http
+verify: '1'
+headers:
+  -
+    field: X-Host
+    value: '[site:url-brief]'
+  -
+    field: Cache-Tags
+    value: '[invalidation:expression]'
+body: null
+body_content_type: null
+runtime_measurement: true
+timeout: !!float 1
+connect_timeout: !!float 1
+cooldown_time: !!float 0
+max_requests: 100
+http_errors: true

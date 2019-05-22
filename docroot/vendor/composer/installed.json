@@ -5603,67 +5603,6 @@
         }
     },
     {
-        "name": "drupal/youtube",
-        "version": "1.0.0-beta3",
-        "version_normalized": "1.0.0.0-beta3",
-        "source": {
-            "type": "git",
-            "url": "https://git.drupalcode.org/project/youtube.git",
-            "reference": "8.x-1.0-beta3"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/youtube-8.x-1.0-beta3.zip",
-            "reference": "8.x-1.0-beta3",
-            "shasum": "bea118474961f0e89d3aae29a20e97c6bdb6128b"
-        },
-        "require": {
-            "drupal/core": "*"
-        },
-        "type": "drupal-module",
-        "extra": {
-            "branch-alias": {
-                "dev-1.x": "1.x-dev"
-            },
-            "drupal": {
-                "version": "8.x-1.0-beta3",
-                "datestamp": "1459452539",
-                "security-coverage": {
-                    "status": "not-covered",
-                    "message": "Beta releases are not covered by Drupal security advisories."
-                }
-            }
-        },
-        "installation-source": "dist",
-        "notification-url": "https://packages.drupal.org/8/downloads",
-        "license": [
-            "GPL-2.0-or-later"
-        ],
-        "authors": [
-            {
-                "name": "guschilds",
-                "homepage": "https://www.drupal.org/user/1468898"
-            },
-            {
-                "name": "jenlampton",
-                "homepage": "https://www.drupal.org/user/85586"
-            },
-            {
-                "name": "pferlito",
-                "homepage": "https://www.drupal.org/user/511172"
-            },
-            {
-                "name": "zvse",
-                "homepage": "https://www.drupal.org/user/2870933"
-            }
-        ],
-        "description": "Defines a YouTube video and thumbnail field type.",
-        "homepage": "https://www.drupal.org/project/youtube",
-        "support": {
-            "source": "http://cgit.drupalcode.org/youtube"
-        }
-    },
-    {
         "name": "easyrdf/easyrdf",
         "version": "0.9.1",
         "version_normalized": "0.9.1.0",

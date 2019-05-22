@@ -54,7 +54,6 @@
         "drupal/video_embed_field": "^2.0@alpha",
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
-        "drupal/youtube": "^1.0@beta",
         "drupal/console": "~1.0",
         "moxiecode/plupload": "^3.1",
         "drupal/cloudflare": "^1.0@alpha",
