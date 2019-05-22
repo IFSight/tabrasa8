@@ -1,13 +1,13 @@
-uuid: 5d95ae61-1599-4c8d-88b7-1d4af5d5abb1
+uuid: 93d20d1e-364d-4102-bb99-547b0071c671
 langcode: en
 status: true
 dependencies:
   module:
     - media
 _core:
-  default_config_hash: RLKvR-W0Kn7PZPAKSvcuVp2615NX0vxfxBRfPzlI0N0
+  default_config_hash: VVyUA6PIaVeGtcIbgEWqJ6SYDiJdReBeojFswURFpKs
 id: media_save_action
 label: 'Save media'
 type: media
-plugin: media_save_action
+plugin: 'entity:save_action:media'
 configuration: {  }

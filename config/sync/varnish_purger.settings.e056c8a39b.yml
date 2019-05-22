@@ -1,8 +1,8 @@
-uuid: e86cd59f-ff3c-4e5b-8038-cfe68919c942
+uuid: 4fdf4467-8d01-4206-871a-da3c95bbacaa
 langcode: en
 status: true
 dependencies: {  }
-id: ba23491135
+id: e056c8a39b
 name: varnish1
 invalidationtype: tag
 hostname: varnish01-noc2.ifex.ifops
