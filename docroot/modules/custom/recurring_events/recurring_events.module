@@ -1,0 +1,230 @@
+<?php
+
+/**
+ * @file
+ * Contains recurring_events.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function recurring_events_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the recurring_events module.
+    case 'help.page.recurring_events':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Events and Registration Management Module') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function recurring_events_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'eventinstance') {
+    $inherited_fields = \Drupal::entityTypeManager()->getStorage('field_inheritance')->loadMultiple();
+    if (!empty($inherited_fields)) {
+      foreach ($inherited_fields as $field) {
+        $settings = [
+          'source field' => $field->sourceField(),
+          'method' => $field->type(),
+          'plugin' => $field->plugin(),
+        ];
+
+        if ($field->entityField()) {
+          $settings['entity field'] = $field->entityField();
+        }
+
+        $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('eventseries', 'eventseries');
+
+        $type = 'string';
+        if (!empty($field_definitions[$field->sourceField()])) {
+          $settings = array_merge($settings, $field_definitions[$field->sourceField()]->getSettings());
+          $type = $field_definitions[$field->sourceField()]->getType();
+        }
+
+        $class = '\Drupal\recurring_events\FieldInheritanceFactory';
+        if ($field->plugin() === 'entity_reference_inheritance') {
+          $class = '\Drupal\recurring_events\EntityReferenceFieldInheritanceFactory';
+        }
+
+        // Allow developers to override the class to use for a field.
+        \Drupal::moduleHandler()->alter('recurring_events_inheritance_class', $class, $field);
+
+        $fields[$field->id()] = BaseFieldDefinition::create($type)
+          ->setLabel(t('Inherited @label', ['@label' => $field->label()]))
+          ->setName($field->id())
+          ->setDescription(t('The inherited field: @field', ['@field' => $field->label()]))
+          ->setComputed(TRUE)
+          ->setClass($class)
+          ->setSettings($settings)
+          ->setTargetEntityTypeId($entity_type->id())
+          ->setTranslatable(FALSE)
+          ->setRevisionable(FALSE)
+          ->setReadOnly(TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function recurring_events_entity_operation(EntityInterface $entity) {
+  $operations = [];
+  if ($entity->getEntityTypeId() == 'eventseries' || $entity->getEntityTypeId() == 'eventinstance') {
+    $operations['clone'] = [
+      'title' => t('Clone'),
+      'weight' => 50,
+      'url' => $entity->toUrl('clone-form'),
+    ];
+  }
+
+  return $operations;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function recurring_events_theme() {
+  $theme = [];
+
+  $theme['eventinstance'] = [
+    'render element' => 'elements',
+    'template' => 'eventinstance',
+  ];
+
+  $theme['eventseries'] = [
+    'render element' => 'elements',
+    'template' => 'eventseries',
+  ];
+
+  return $theme;
+}
+
+/**
+ * Implements template_preprocess_entity().
+ */
+function template_preprocess_eventinstance(array &$variables) {
+  // Set the eventinstance object to be accessible in the template.
+  $variables['eventinstance'] = $variables['elements']['#eventinstance'];
+
+  // Set a class on the eventinstance to differentiate between viewmodes.
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['attributes']['class'][] = 'eventinstance-' . $variables['view_mode'];
+
+  // Allow field groups to be rendered too.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements template_preprocess_entity().
+ */
+function template_preprocess_eventseries(array &$variables) {
+  // Set the eventseries object to be accessible in the template.
+  $variables['eventseries'] = $variables['elements']['#eventseries'];
+
+  // Set a class on the eventseries to differentiate between viewmodes.
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['attributes']['class'][] = 'eventseries-' . $variables['view_mode'];
+
+  // Allow field groups to be rendered too.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function recurring_events_eventseries_presave(EntityInterface $entity) {
+  $original = $entity->original;
+  $creation_service = \Drupal::service('recurring_events.event_creation_service');
+
+  // If the eventseries is being published, or created for the first time then
+  // there may be date recurrence changes that need to be converted into new
+  // eventinstance entities.
+  if ($entity->isPublished() || $entity->isNew()) {
+    if ($entity->isDefaultTranslation()) {
+      $creation_service->saveEvent($entity, $original);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function recurring_events_eventseries_insert(EntityInterface $entity) {
+  // When we initially create the eventseries we actually create the instances
+  // before the eventseries gets saved for the first time, so we have no ID for
+  // the series at that point. Now that the eventseries is properly saved we can
+  // go and set the eventseries_id on the eventinstances.
+  $instances = $entity->event_instances->referencedEntities();
+  if (!empty($instances)) {
+    foreach ($instances as $instance) {
+      if (empty($instance->eventseries_id->value)) {
+        $instance->set('eventseries_id', $entity->id());
+        $instance->setNewRevision(FALSE);
+        $instance->save();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function recurring_events_form_content_moderation_entity_moderation_form_alter(&$form, FormStateInterface $form_state) {
+  $entity = $form_state->get('entity');
+  if ($entity->getEntityTypeId() === 'eventseries') {
+    $original = \Drupal::entityTypeManager()->getStorage('eventseries')->load($entity->id());
+    $creation_service = \Drupal::service('recurring_events.event_creation_service');
+    if ($creation_service->checkForOriginalRecurConfigChanges($entity, $original)) {
+      $diff_array = $creation_service->buildDiffArray($original, NULL, $entity);
+      if (!empty($diff_array)) {
+        $form['diff'] = [
+          '#type' => 'container',
+          '#weight' => -99,
+        ];
+
+        $form['diff']['diff_title'] = [
+          '#type' => '#markup',
+          '#prefix' => '<h2>',
+          '#markup' => t('Revision Date Changes'),
+          '#suffix' => '</h2>',
+        ];
+
+        $form['diff']['diff_message'] = [
+          '#type' => '#markup',
+          '#prefix' => '<p>',
+          '#markup' => t('Recurrence configuration has been changed in this revision, as a result if you choose to publish this revision all instances will be removed and recreated. This action cannot be undone.'),
+          '#suffix' => '</p>',
+        ];
+
+        $form['diff']['table'] = [
+          '#type' => 'table',
+          '#header' => [
+            t('Data'),
+            t('Stored'),
+            t('Overridden'),
+          ],
+          '#rows' => $diff_array,
+        ];
+      }
+    }
+  }
+}

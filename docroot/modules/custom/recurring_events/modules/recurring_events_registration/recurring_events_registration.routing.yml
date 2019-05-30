@@ -1,0 +1,172 @@
+# Registrant table list route.
+entity.registrant.collection:
+  path: '/events/registrations'
+  defaults:
+    _entity_list: 'registrant'
+    _title: 'Registrations'
+  requirements:
+    _permission: 'access registrant overview'
+
+
+# Registrant settings admin page.
+registrant.settings:
+  path: '/admin/structure/events/registrant/settings'
+  defaults:
+    _form: '\Drupal\recurring_events_registration\Form\RegistrantSettingsForm'
+    _title: 'Registrant Settings'
+  requirements:
+    _permission: 'administer registrant entity'
+
+# Registrant view route.
+entity.registrant.canonical:
+  path: '/events/{eventinstance}/registration/{registrant}'
+  defaults:
+    _entity_view: 'registrant'
+    _title_callback: '\Drupal\recurring_events_registration\Controller\RegistrantController::getTitle'
+  requirements:
+    _entity_access: 'registrant.view'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+      registrant:
+        type: entity:registrant
+
+# Registrant add route.
+entity.registrant.add_form:
+  path: '/events/{eventinstance}/registration/add'
+  defaults:
+  # Calls the form.add controller, defined in the Registrant entity.
+    _entity_form: registrant.add
+    _title: 'Add Registration'
+  requirements:
+    _entity_create_access: 'registrant'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+
+# Registrant edit route.
+entity.registrant.edit_form:
+  path: '/events/{eventinstance}/registration/{registrant}/edit'
+  defaults:
+  # Calls the form.edit controller, defined in the Registrant entity.
+    _entity_form: registrant.edit
+    _title: 'Edit Registration'
+  requirements:
+    _entity_access: 'registrant.update'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+      registrant:
+        type: entity:registrant
+
+# Registrant delete route.
+entity.registrant.delete_form:
+  path: '/events/{eventinstance}/registration/{registrant}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the Registrant entity.
+    _entity_form: registrant.delete
+    _title: 'Cancel Registration'
+  requirements:
+    _entity_access: 'registrant.delete'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+      registrant:
+        type: entity:registrant
+
+# Resend Registrant email.
+entity.registrant.resend_form:
+  path: '/events/{eventinstance}/registration/{registrant}/resend'
+  defaults:
+    _form: \Drupal\recurring_events_registration\Form\RegistrantResendForm
+    _title: 'Resend Registration Email'
+  requirements:
+    _entity_access: 'registrant.resend'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+      registrant:
+        type: entity:registrant
+
+# Registrant anonymous edit route.
+entity.registrant.anon_edit_form:
+  path: '/events/{eventinstance}/registration/{registrant}/{uuid}/edit'
+  defaults:
+  # Calls the form.edit controller, defined in the Registrant entity.
+    _entity_form: registrant.edit
+  requirements:
+    _entity_access: 'registrant.anon-update'
+    uuid: '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+      registrant:
+        type: entity:registrant
+      uuid:
+        type: string
+
+# Registrant anonymous delete route.
+entity.registrant.anon_delete_form:
+  path: '/events/{eventinstance}/registration/{registrant}/{uuid}/delete'
+  defaults:
+  # Calls the form.delete controller, defined in the Registrant entity.
+    _entity_form: registrant.delete
+  requirements:
+    _entity_access: 'registrant.anon-delete'
+    uuid: '[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+      registrant:
+        type: entity:registrant
+      uuid:
+        type: string
+
+# Registrant listing.
+entity.registrant.instance_listing:
+  path: '/events/{eventinstance}/registrations'
+  defaults:
+    _entity_list: 'registrant'
+    _title: 'Registrations'
+  requirements:
+    _permission: 'access registrant overview'
+    _custom_access:  '\Drupal\recurring_events_registration\Controller\RegistrantController::hasRegistration'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance
+
+# User registrations.
+registrations.user_tab:
+  path: '/user/{user}/registrations'
+  defaults:
+    _entity_list: 'registrant'
+    _title: 'Registrations'
+  requirements:
+    _entity_access: 'user.view'
+    user: \d+
+  options:
+    parameters:
+      user:
+        type: entity:user
+
+# Contact Registrants.
+entity.registrant.instance_contact:
+  path: '/events/{eventinstance}/registrations/contact'
+  defaults:
+    _form: '\Drupal\recurring_events_registration\Form\ContactForm'
+    _title: 'Contact Registrants'
+  requirements:
+    _permission: 'access registrant overview'
+    _custom_access:  '\Drupal\recurring_events_registration\Controller\RegistrantController::canContactRegistrants'
+  options:
+    parameters:
+      eventinstance:
+        type: entity:eventinstance

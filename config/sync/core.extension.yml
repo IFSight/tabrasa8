@@ -19,6 +19,7 @@ module:
   ctools: 0
   date_popup: 0
   datetime: 0
+  datetime_range: 0
   dblog: 0
   dynamic_page_cache: 0
   easy_breadcrumb: 0
@@ -64,6 +65,8 @@ module:
   quickedit: 0
   rdf: 0
   recaptcha: 0
+  recurring_events: 0
+  recurring_events_registration: 0
   redis: 0
   scheduler: 0
   search: 0

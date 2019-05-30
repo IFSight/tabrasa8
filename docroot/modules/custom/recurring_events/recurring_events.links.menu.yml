@@ -1,0 +1,53 @@
+# Parent Menu Structure.
+events.admin.overview:
+  title: 'Events'
+  description: 'Configure Event Series and Instances.'
+  route_name: events.admin.overview
+  parent: system.admin_structure
+
+# Content page.
+events.admin.content:
+  title: 'Events'
+  description: 'View events and registrations.'
+  route_name: events.admin.content
+  parent: system.admin_content
+
+# Add Event page.
+eventseries.add:
+  title: 'Add Event'
+  description: 'Add a new event.'
+  route_name: entity.eventseries.add_form
+  parent: events.admin.content
+  weight: 1
+
+# Event Series listing page.
+eventseries.listing:
+  title: 'Event Series'
+  description: 'Event series listing.'
+  route_name: entity.eventseries.collection
+  parent: events.admin.content
+  weight: 2
+
+# Event Instance listing page.
+eventinstance.listing:
+  title: 'Event Instances'
+  description: 'Event instance listing.'
+  route_name: entity.eventinstance.collection
+  parent: events.admin.content
+  weight: 3
+
+# Events Series settings admin page.
+eventseries.admin.structure.settings:
+  title: 'Event Series Settings'
+  description: 'Configure Event Series Entity'
+  route_name:  eventseries.settings
+  parent: events.admin.overview
+  weight: 0
+
+# Events Instances settings admin page.
+eventinstance.admin.structure.settings:
+  title: 'Event Instance Settings'
+  description: 'Configure Event Instance Entity'
+  route_name:  eventinstance.settings
+  parent: events.admin.overview
+  weight: 1

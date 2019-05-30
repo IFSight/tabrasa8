@@ -1,0 +1,26 @@
+show_capacity: true
+limit: 10
+date_format: 'F jS, Y h:iA'
+email_notifications: true
+registration_notification_enabled: true
+registration_notification_enabled: true
+registration_notification_subject: 'You''ve Successfully Registered'
+registration_notification_body: "Your registration for the [eventinstance:title] [eventinstance:reg_type] was successful.\r\n\r\nModify your registration: [registrant:edit_url]\r\nDelete your registration: [registrant:delete_url]"
+waitlist_notification_enabled: true
+waitlist_notification_subject: 'You''ve Been Added To The Waitlist'
+waitlist_notification_body: "You have been added to the waitlist for the [eventinstance:title] [eventinstance:reg_type].\r\n\r\nModify your registration: [registrant:edit_url]\r\nDelete your registration: [registrant:delete_url]"
+promotion_notification_enabled: true
+promotion_notification_subject: 'You''ve Been Added To The Registration List'
+promotion_notification_body: "You have been promoted from the waitlist to the registration list for the [eventinstance:title] [eventinstance:reg_type].\r\n\r\nModify your registration: [registrant:edit_url]\r\nDelete your registration: [registrant:delete_url]"
+instance_deletion_notification_enabled: true
+instance_deletion_notification_subject: 'An Event Has Been Deleted'
+instance_deletion_notification_body: 'Unfortunately, the [eventinstance:title] [eventinstance:reg_type] has been deleted. Your registration has been deleted.'
+series_deletion_notification_enabled: true
+series_deletion_notification_subject: 'An Event Series Has Been Deleted'
+series_deletion_notification_body: 'Unfortunately, the [eventinstance:title] [eventinstance:reg_type] has been deleted. Your registration has been deleted.'
+instance_modification_notification_enabled: true
+instance_modification_notification_subject: 'An Event Has Been Modified'
+instance_modification_notification_body: "The [eventinstance:title] [eventinstance:reg_type] has been modified, please check back for details.\r\n\r\nModify your registration: [registrant:edit_url]\r\nDelete your registration: [registrant:delete_url]"
+series_modification_notification_enabled: true
+series_modification_notification_subject: 'An Event Series Has Been Modified'
+series_modification_notification_body: 'The [eventinstance:title] [eventinstance:reg_type] has been modified, and all instances have been removed, and your registration has been deleted.'

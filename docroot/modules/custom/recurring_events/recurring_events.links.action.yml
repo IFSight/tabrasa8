@@ -1,0 +1,5 @@
+entity.field_inheritance.add_form:
+  route_name: entity.field_inheritance.add_form
+  title: 'Add Field inheritance'
+  appears_on:
+    - entity.field_inheritance.collection

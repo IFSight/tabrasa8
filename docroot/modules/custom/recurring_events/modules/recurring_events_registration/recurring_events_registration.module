@@ -1,0 +1,288 @@
+<?php
+
+/**
+ * @file
+ * Contains recurring_events_registration.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\recurring_events_registration\Entity\Registrant;
+use Drupal\recurring_events\Entity\EventSeries;
+use Drupal\recurring_events\Entity\EventInstance;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function recurring_events_registration_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the recurring_events_registration module.
+    case 'help.page.recurring_events_registration':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Registration for recurring events') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function recurring_events_registration_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'eventseries') {
+    $fields['event_registration'] = BaseFieldDefinition::create('event_registration')
+      ->setName('event_registration')
+      ->setLabel(t('Event Registration'))
+      ->setDescription('The event registration configuration.')
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRevisionable(TRUE)
+      ->setTranslatable(FALSE)
+      ->setCardinality(1)
+      ->setRequired(FALSE)
+      ->setTargetEntityTypeId($entity_type->id())
+      ->setDisplayOptions('form', [
+        'type' => 'event_registration',
+        'weight' => 4,
+      ]);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function recurring_events_registration_theme() {
+  $theme = [];
+
+  $theme['registrant'] = [
+    'render element' => 'elements',
+    'template' => 'registrant',
+  ];
+
+  return $theme;
+}
+
+/**
+ * Implements template_preprocess_entity().
+ */
+function template_preprocess_registrant(array &$variables) {
+  // Set the registrant object to be accessible in the template.
+  $variables['registrant'] = $variables['elements']['#registrant'];
+
+  // Set a class on the registrant to differentiate between viewmodes.
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['attributes']['class'][] = 'registrant-' . $variables['view_mode'];
+
+  // Allow field groups to be rendered too.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function recurring_events_registration_mail($key, &$message, $params) {
+  $options = [
+    'langcode' => $message['langcode'],
+  ];
+
+  $service = \Drupal::service('recurring_events_registration.notification_service');
+  $service->setKey($key)->setEntity($params['registrant']);
+
+  if ($service->isEnabled()) {
+    if (!empty($params['subject'])) {
+      $service->setSubject($params['subject']);
+    }
+    if (!empty($params['body'])) {
+      $service->setMessage($params['body']);
+    }
+    if (!empty($params['from'])) {
+      $service->setFrom($params['from']);
+    }
+
+    $message['from'] = $service->getFrom();
+    $message['subject'] = $service->getSubject();
+    $message['body'][] = $service->getMessage();
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_recurring_events_registration_notification_types_alter().
+ */
+function recurring_events_registration_recurring_events_registration_notification_types_alter(array &$notification_types) {
+  $notification_types += [
+    'registration' => [
+      'name' => t('Registration Notification'),
+      'description' => t('Send an email to a registrant to confirm they were registered for an event?'),
+    ],
+    'waitlist' => [
+      'name' => t('Waitlist Notification'),
+      'description' => t('Send an email to a registrant to confirm they were added to the waitlist?'),
+    ],
+    'promotion' => [
+      'name' => t('Promotion Notification'),
+      'description' => t('Send an email to a registrant to confirm they were promoted from the waitlist?'),
+    ],
+    'instance_deletion' => [
+      'name' => t('Instance Deletion Notification'),
+      'description' => t('Send an email to a registrant to confirm an instance deletion?'),
+    ],
+    'series_deletion' => [
+      'name' => t('Series Deletion Notification'),
+      'description' => t('Send an email to a registrant to confirm a series deletion?'),
+    ],
+    'instance_modification' => [
+      'name' => t('Instance Modification Notification'),
+      'description' => t('Send an email to a registrant to confirm an instance modification?'),
+    ],
+    'series_modification' => [
+      'name' => t('Series Modification Notification'),
+      'description' => t('Send an email to a registrant to confirm a series modification?'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_recurring_events_save_pre_instances_deletion().
+ */
+function recurring_events_registration_recurring_events_save_pre_instances_deletion(EventSeries $event_series) {
+  $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+  $registration_creation_service->setEventSeries($event_series);
+
+  // Get all the registrants who have registered for any event in this series.
+  $registrants = $registration_creation_service->retrieveAllSeriesRegisteredParties();
+  if (empty($registrants)) {
+    return;
+  }
+
+  $key = 'series_modification_notification';
+
+  // Send an email to all registrants.
+  foreach ($registrants as $registrant) {
+    recurring_events_registration_send_notification($key, $registrant);
+    $registrant->delete();
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function recurring_events_registration_entity_update(EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'eventinstance') {
+    $date_changes = FALSE;
+    $original = $entity->original;
+
+    $date_changes = !(serialize($entity->date->getValue()) === serialize($original->date->getValue()));
+    if (!$date_changes) {
+      return;
+    }
+
+    $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+    $registration_creation_service->setEventInstance($entity);
+
+    $registrants = $registration_creation_service->retrieveRegisteredParties();
+    if (empty($registrants)) {
+      return;
+    }
+
+    $key = 'instance_modification_notification';
+
+    // Send an email to all registrants.
+    foreach ($registrants as $registrant) {
+      recurring_events_registration_send_notification($key, $registrant);
+    }
+  }
+}
+
+/**
+ * Implements hook_recurring_events_pre_delete_instance().
+ */
+function recurring_events_registration_recurring_events_pre_delete_instance(EventInstance $instance) {
+  $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+  $registration_creation_service->setEventInstance($instance);
+
+  $registrants = $registration_creation_service->retrieveRegisteredParties();
+  if (empty($registrants)) {
+    return;
+  }
+
+  $key = 'instance_deletion_notification';
+
+  // Send an email to all registrants.
+  foreach ($registrants as $registrant) {
+    recurring_events_registration_send_notification($key, $registrant);
+    $registrant->delete();
+  }
+}
+
+/**
+ * Implements hook_recurring_events_pre_delete_instances().
+ */
+function recurring_events_registration_recurring_events_pre_delete_instances(EventSeries $event_series) {
+  $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+  $registration_creation_service->setEventSeries($event_series);
+
+  // Get all the registrants who have registered for any event in this series.
+  $registrants = $registration_creation_service->retrieveAllSeriesRegisteredParties();
+  if (empty($registrants)) {
+    return;
+  }
+
+  $key = 'series_deletion_notification';
+
+  // Send an email to all registrants.
+  foreach ($registrants as $registrant) {
+    recurring_events_registration_send_notification($key, $registrant);
+    $registrant->delete();
+  }
+}
+
+/**
+ * Send a notification message.
+ *
+ * @param string $key
+ *   The mail key used to determine the message and subject.
+ * @param \Drupal\recurring_events_registration\Entity\Registrant $registrant
+ *   The registrant this email relates to.
+ */
+function recurring_events_registration_send_notification($key, Registrant $registrant) {
+  $config = \Drupal::config('recurring_events_registration.registrant.config');
+  $send_email = $config->get('email_notifications');
+  if ($send_email) {
+    $params = [
+      'registrant' => $registrant,
+    ];
+
+    $to = $registrant->email->value;
+
+    $mail = \Drupal::service('plugin.manager.mail');
+    $mail->mail('recurring_events_registration', $key, $to, \Drupal::languageManager()->getDefaultLanguage()->getId(), $params);
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function recurring_events_registration_entity_operation(EntityInterface $entity) {
+  $operations = [];
+  if ($entity->getEntityTypeId() == 'registrant') {
+    $operations['resend'] = [
+      'title' => t('Resend Mail'),
+      'weight' => 50,
+      'url' => Url::fromRoute('entity.registrant.resend_form', [
+        'eventinstance' => $entity->getEventInstance()->id(),
+        'registrant' => $entity->id(),
+      ]),
+    ];
+  }
+
+  return $operations;
+}

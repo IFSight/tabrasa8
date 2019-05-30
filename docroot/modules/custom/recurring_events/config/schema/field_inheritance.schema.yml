@@ -1,0 +1,20 @@
+recurring_events.field_inheritance.*:
+  type: config_entity
+  label: 'Field inheritance config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    type:
+      type: string
+    sourceField:
+      type: string
+    entityField:
+      type: string
+    plugin:
+      type: string

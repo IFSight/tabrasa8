@@ -1,0 +1,7 @@
+name: 'Recurring Events Registration'
+type: module
+description: 'Provides the ability to register for recurring events'
+core: 8.x
+package: 'Recurring Events'
+dependencies:
+  - recurring_events:recurring_events

@@ -1,0 +1,22 @@
+uuid: 10cd96c6-94e6-4ee9-9071-811347035e2d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.registrant.field_phone
+  module:
+    - recurring_events_registration
+_core:
+  default_config_hash: e2LslLPdO3GBCUg6-HVg7sjEV2qv_DgMhDkxFABerAI
+id: registrant.registrant.field_phone
+field_name: field_phone
+entity_type: registrant
+bundle: registrant
+label: Phone
+description: 'Enter your phone number.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

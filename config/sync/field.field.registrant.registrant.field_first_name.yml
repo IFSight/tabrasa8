@@ -1,0 +1,22 @@
+uuid: bbf65fb7-9583-4872-a497-db7fe796e2d0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.registrant.field_first_name
+  module:
+    - recurring_events_registration
+_core:
+  default_config_hash: PyaTQFhbqgkCv8OgYuLQ62m4d8Gk2pCR2jW1kOjBGqk
+id: registrant.registrant.field_first_name
+field_name: field_first_name
+entity_type: registrant
+bundle: registrant
+label: 'First Name'
+description: 'Enter your first name.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

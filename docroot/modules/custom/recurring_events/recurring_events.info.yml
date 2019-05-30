@@ -1,0 +1,8 @@
+name: 'Recurring Events'
+type: module
+description: 'Provides the ability to create recurring events'
+core: 8.x
+package: 'Recurring Events'
+dependencies:
+  - drupal:datetime_range
+  - drupal:options

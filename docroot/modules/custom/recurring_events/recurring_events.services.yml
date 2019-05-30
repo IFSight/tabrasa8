@@ -1,0 +1,7 @@
+services:
+  recurring_events.event_creation_service:
+    class: Drupal\recurring_events\EventCreationService
+    arguments: ['@string_translation', '@database', '@logger.factory', '@messenger', '@date.formatter']
+  plugin.manager.field_inheritance:
+    class: Drupal\recurring_events\FieldInheritancePluginManager
+    parent: default_plugin_manager

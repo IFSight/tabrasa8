@@ -1,0 +1,36 @@
+recurring_events.eventseries.config:
+  type: config_object
+  label: 'Recurring Events Series Config'
+  mapping:
+    interval:
+      type: integer
+      label: 'The interval between times when creating event series'
+    min_time:
+      type: string
+      label: 'The earliest an event can start'
+    max_time:
+      type: string
+      label: 'The latest an event can start'
+    date_format:
+      type: string
+      label: 'The formatting of dates when displaying event series'
+    time_format:
+      type: string
+      label: 'The formatting of times when creating event series'
+    days:
+      type: string
+      label: 'The days of the week available when creating event series'
+    limit:
+      type: integer
+      label: 'The items per page to show on event series listing'
+
+recurring_events.eventinstance.config:
+  type: config_object
+  label: 'Recurring Events Instance Config'
+  mapping:
+    date_format:
+      type: string
+      label: 'The formatting of dates when displaying event instances'
+    limit:
+      type: integer
+      label: 'The items per page to show on event instance listing'

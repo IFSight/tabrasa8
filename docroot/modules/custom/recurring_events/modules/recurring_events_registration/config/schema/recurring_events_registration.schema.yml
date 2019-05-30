@@ -1,0 +1,79 @@
+recurring_events_registration.registrant.config:
+  type: config_object
+  label: 'Recurring Events Registration Config'
+  mapping:
+    show_capacity:
+      type: boolean
+      label: 'Whether to display the remaining capacity for an event during registration'
+    limit:
+      type: integer
+      label: 'The items per page to show on registrant listing'
+    date_format:
+      type: string
+      label: 'The formatting of dates when displaying registrants'
+    email_notifications:
+      type: boolean
+      label: 'Whether to enable email notifications'
+    registration_notification_enabled:
+      type: boolean
+      label: 'Whether to enable registration email notifications'
+    registration_notification_subject:
+      type: string
+      label: 'The email subject for the registration emails'
+    registration_notification_body:
+      type: string
+      label: 'The email body for the registration emails'
+    waitlist_notification_enabled:
+      type: boolean
+      label: 'Whether to enable waitlist email notifications'
+    waitlist_notification_subject:
+      type: string
+      label: 'The email subject for the waitlist emails'
+    waitlist_notification_body:
+      type: string
+      label: 'The email body for the waitlist emails'
+    promotion_notification_enabled:
+      type: boolean
+      label: 'Whether to enable promotion email notifications'
+    promotion_notification_subject:
+      type: string
+      label: 'The email subject for the promotion emails'
+    promotion_notification_body:
+      type: string
+      label: 'The email body for the promotion emails'
+    instance_deletion_notification_enabled:
+      type: boolean
+      label: 'Whether to enable instance deletion email notifications'
+    instance_deletion_notification_subject:
+      type: string
+      label: 'The email subject for the instance deletion emails'
+    instance_deletion_notification_body:
+      type: string
+      label: 'The email body for the instance deletion emails'
+    series_deletion_notification_enabled:
+      type: boolean
+      label: 'Whether to enable series deletion email notifications'
+    series_deletion_notification_subject:
+      type: string
+      label: 'The email subject for the series deletion emails'
+    series_deletion_notification_body:
+      type: string
+      label: 'The email body for the series deletion emails'
+    instance_modification_notification_enabled:
+      type: boolean
+      label: 'Whether to enable instance modification email notifications'
+    instance_modification_notification_subject:
+      type: string
+      label: 'The email subject for the instance modification emails'
+    instance_modification_notification_body:
+      type: string
+      label: 'The email body for the instance modification emails'
+    series_modification_notification_enabled:
+      type: boolean
+      label: 'Whether to enable series modification email notifications'
+    series_modification_notification_subject:
+      type: string
+      label: 'The email subject for the series modification emails'
+    series_modification_notification_body:
+      type: string
+      label: 'The email body for the series modification emails'

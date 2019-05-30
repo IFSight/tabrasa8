@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: title
+label: Title
+type: inherit
+sourceField: title
+entityField: ''
+plugin: string_inheritance

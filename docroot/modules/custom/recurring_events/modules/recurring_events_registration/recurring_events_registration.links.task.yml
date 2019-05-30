@@ -1,0 +1,39 @@
+# Registrant routing definition
+registrant.settings_tab:
+  route_name: registrant.settings
+  title: 'Settings'
+  base_route: registrant.settings
+
+entity.registrant.canonical:
+  route_name: entity.registrant.canonical
+  base_route: entity.registrant.canonical
+  title: 'View'
+
+entity.registrant.edit_form:
+  route_name: entity.registrant.edit_form
+  base_route: entity.registrant.canonical
+  title: 'Edit'
+
+entity.registrant.delete_form:
+  route_name:  entity.registrant.delete_form
+  base_route:  entity.registrant.canonical
+  title: Delete
+  weight: 10
+
+entity.registrant.add_form:
+  route_name: entity.registrant.add_form
+  base_route: entity.eventinstance.canonical
+  title: 'Register'
+  weight: 11
+
+entity.registrant.instance_listing:
+  route_name: entity.registrant.instance_listing
+  base_route: entity.eventinstance.canonical
+  title: 'Registrations'
+  weight: 12
+
+entity.user.registrations:
+  route_name: registrations.user_tab
+  base_route: entity.user.canonical
+  title: 'Registrations'
+  weight: 12

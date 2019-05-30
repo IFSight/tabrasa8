@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Installation functionality for the recurring events registration module.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Install the schema updates for eventseries entities to add registration.
+ *
+ * @see hook_install()
+ */
+function recurring_events_registration_install() {
+  $storage_definition = BaseFieldDefinition::create('event_registration')
+    ->setName('event_registration')
+    ->setLabel(t('Event Registration'))
+    ->setDescription('The event registration configuration.')
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE)
+    ->setRevisionable(TRUE)
+    ->setTranslatable(FALSE)
+    ->setCardinality(1)
+    ->setRequired(FALSE)
+    ->setDisplayOptions('form', [
+      'type' => 'event_registration',
+      'weight' => 4,
+    ]);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('event_registration', 'eventseries', 'eventseries', $storage_definition);
+}

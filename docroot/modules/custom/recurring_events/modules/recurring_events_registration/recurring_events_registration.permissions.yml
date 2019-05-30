@@ -1,0 +1,38 @@
+# Registrant Entities.
+add registrant entities:
+  title: 'Create new registrant entities'
+  description: 'Create new registrant entities'
+edit registrant entities:
+  title: 'Edit any registrant entities'
+  description: 'Edit any registrant entities'
+edit own registrant entities:
+  title: 'Edit own registrant entities'
+  description: 'Edit own registrant entities'
+delete registrant entities:
+  title: 'Delete registrant entities'
+  description: 'Delete registrant entities'
+delete own registrant entities:
+  title: 'Delete own registrant entities'
+  description: 'Delete own registrant entities'
+edit registrant entities anonymously:
+  title: 'Edit registrant entities anonymously'
+  description: 'Modify a registrant using the UUID path'
+delete registrant entities anonymously:
+  title: 'Delete registrant entities anonymously'
+  description: 'Delete a registrant using the UUID path'
+modify registrant waitlist:
+  title: 'Modify registrant waitlist value'
+  decription: 'Allow a role to set and override the waitlist value of a registrant'
+modify registrant author:
+  title: 'Modify registrant author value'
+  decription: 'Allow a role to set and override the author value of a registrant'
+resend registrant emails:
+  title: 'Resend registrant emails'
+  description: 'Allow a role to resent the registration confirmation emails'
+contact registrants:
+  title: 'Contact registrants'
+  decription: 'Allow a role to set contact registrants'
+administer registrant entities:
+  title: 'Administer registrant entities'
+  description: 'Allow to access the administration form to configure registrant entities'
+  restrict access: true

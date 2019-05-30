@@ -1,0 +1,87 @@
+### Event Series local links.
+
+# Event Series view link.
+eventseries.view:
+  route_name: entity.eventseries.canonical
+  base_route: entity.eventseries.canonical
+  title: View
+
+# Event Series edit link.
+eventseries.edit_form:
+  route_name: entity.eventseries.edit_form
+  base_route: entity.eventseries.canonical
+  title: Edit
+
+# Event Series delete link.
+eventseries.delete_form:
+  route_name:  entity.eventseries.delete_form
+  base_route:  entity.eventseries.canonical
+  title: Delete
+  weight: 10
+
+# Event Series revisions link.
+entity.eventseries.version_history:
+  route_name: entity.eventseries.version_history
+  base_route: entity.eventseries.canonical
+  title: 'Revisions'
+  weight: 11
+  
+# Event Series clone link.
+eventseries.clone_form:
+  route_name:  entity.eventseries.clone_form
+  base_route:  entity.eventseries.canonical
+  title: Clone
+  weight: 12
+
+### Event Instance local links.
+
+# Event Instance view link.
+eventinstance.view:
+  route_name: entity.eventinstance.canonical
+  base_route: entity.eventinstance.canonical
+  title: View
+
+# Event Instance edit link.
+eventinstance.edit_form:
+  route_name: entity.eventinstance.edit_form
+  base_route: entity.eventinstance.canonical
+  title: Edit
+
+# Event Instance delete link.
+eventinstance.delete_form:
+  route_name:  entity.eventinstance.delete_form
+  base_route:  entity.eventinstance.canonical
+  title: Delete
+  weight: 10
+
+# Event Instance revisions link.
+entity.eventinstance.version_history:
+  route_name: entity.eventinstance.version_history
+  base_route: entity.eventinstance.canonical
+  title: 'Revisions'
+  weight: 11
+
+# Event Instance clone link.
+eventinstance.clone_form:
+  route_name:  entity.eventinstance.clone_form
+  base_route:  entity.eventinstance.canonical
+  title: Clone
+  weight: 12
+
+# Event Series settings admin page.
+entity.eventseries.settings:
+  route_name: eventseries.settings
+  title: Event Series Settings
+  base_route: eventseries.settings
+
+# Event Instance settings admin page.
+entity.eventinstance.settings:
+  route_name: eventinstance.settings
+  title: Event Instance Settings
+  base_route: eventinstance.settings
+
+# Field Inheritance settings admin page.
+entity.field_inheritance.collection:
+  route_name: entity.field_inheritance.collection
+  title: Field Inheritance
+  base_route: eventinstance.settings

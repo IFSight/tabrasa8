@@ -1,0 +1,22 @@
+uuid: 90fbea87-aa35-49f3-a609-d718172bba9c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.registrant.field_last_name
+  module:
+    - recurring_events_registration
+_core:
+  default_config_hash: mhJkiE8CC_bcdp5Xn8T70KCwlP9iX-hsiyB6wEBDGDA
+id: registrant.registrant.field_last_name
+field_name: field_last_name
+entity_type: registrant
+bundle: registrant
+label: 'Last Name'
+description: 'Enter your last name.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

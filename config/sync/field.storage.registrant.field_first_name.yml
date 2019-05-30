@@ -1,0 +1,23 @@
+uuid: 1fdac02a-b9fe-4688-8f77-061bbfcfd695
+langcode: en
+status: true
+dependencies:
+  module:
+    - recurring_events_registration
+_core:
+  default_config_hash: NFn-vyKICFCucHUBGrNsDdktnue2MYbqVI2FjLrtCM4
+id: registrant.field_first_name
+field_name: field_first_name
+entity_type: registrant
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
