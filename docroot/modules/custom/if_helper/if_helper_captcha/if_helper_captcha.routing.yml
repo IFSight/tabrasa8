@@ -1,0 +1,8 @@
+# Event Series settings admin page.
+if_helper_captcha.settings:
+  path: '/admin/structure/if_helper_captcha'
+  defaults:
+    _form: '\Drupal\if_helper_captcha\Form\DefaultCaptchaConfigForm'
+    _title: 'Configure a default captcha for webforms'
+  requirements:
+    _permission: 'administer site configuration'

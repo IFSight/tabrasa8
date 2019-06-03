@@ -1,0 +1,6 @@
+if_helper_captcha.admin:
+  title: 'Webform Captcha Settings'
+  description: 'Enable default captchas for webforms.'
+  route_name: if_helper_captcha.settings
+  parent: system.admin_structure
+  weight: 1
