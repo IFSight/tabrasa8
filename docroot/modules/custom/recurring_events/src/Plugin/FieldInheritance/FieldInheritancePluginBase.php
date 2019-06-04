@@ -148,6 +148,9 @@ abstract class FieldInheritancePluginBase extends PluginBase implements FieldInh
    */
   protected function inheritData() {
     $series = $this->getEventSeries();
+    if ($series === FALSE) {
+      return [];
+    }
     return $series->{$this->getSourceField()}->getValue() ?? '';
   }
 
@@ -160,8 +163,12 @@ abstract class FieldInheritancePluginBase extends PluginBase implements FieldInh
   protected function prependData() {
     $series = $this->getEventSeries();
     $instance = $this->getEventInstance();
-
     $values = [];
+
+    if ($series === FALSE) {
+      return $values;
+    }
+
     if (!empty($instance->{$this->getEntityField()}->getValue())) {
       $values = array_merge($values, $instance->{$this->getEntityField()}->getValue());
     }
@@ -180,8 +187,12 @@ abstract class FieldInheritancePluginBase extends PluginBase implements FieldInh
   protected function appendData() {
     $series = $this->getEventSeries();
     $instance = $this->getEventInstance();
-
     $values = [];
+
+    if ($series === FALSE) {
+      return $values;
+    }
+
     if (!empty($series->{$this->getSourceField()}->getValue())) {
       $values = array_merge($values, $series->{$this->getSourceField()}->getValue());
     }
@@ -200,8 +211,11 @@ abstract class FieldInheritancePluginBase extends PluginBase implements FieldInh
   protected function fallbackData() {
     $series = $this->getEventSeries();
     $instance = $this->getEventInstance();
-
     $values = [];
+
+    if ($series === FALSE) {
+      return $values;
+    }
 
     if (!empty($instance->{$this->getEntityField()}->getValue())) {
       $values = $instance->{$this->getEntityField()}->getValue();
@@ -243,11 +257,14 @@ abstract class FieldInheritancePluginBase extends PluginBase implements FieldInh
   /**
    * Get the translated eventseries entity.
    *
-   * @return Drupal\Core\Entity\EntityInterface
-   *   The translated eventseries entity.
+   * @return Drupal\Core\Entity\EntityInterface|bool
+   *   The translated eventseries entity, or FALSE.
    */
   protected function getEventSeries() {
     $series = $this->entity->getEventSeries();
+    if (empty($series)) {
+      return FALSE;
+    }
     if ($series->hasTranslation($this->langCode)) {
       return $series->getTranslation($this->langCode);
     }
