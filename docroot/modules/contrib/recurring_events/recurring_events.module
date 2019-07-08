@@ -1,0 +1,301 @@
+<?php
+
+/**
+ * @file
+ * Contains recurring_events.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function recurring_events_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the recurring_events module.
+    case 'help.page.recurring_events':
+      $output = '';
+      $output .= '<h2>' . t('Introduction') . '</h2>';
+      $output .= '<p>' . t('The Recurring Events module is a plug-and-play recurring events system designed to be site agnostic and extensible. The core module offers the basic building blocks to build a recurring events management system, and the APIs and integrations enable developers and site builders to extend and enhance the core functionality.') . '</p>';
+      $output .= '<h2>' . t('Data Modelling Concepts') . '</h2>';
+      $output .= '<p>' . t('There are several data models relating to the Recurring Events module.') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('<b>Event Series</b>') . '<p>' . t('The <code>eventseries</code> custom entity type is used as a wrapper around a series of event instances. The <code>eventseries</code> entity holds all the data necessary to build out and schedule event instances on particular dates at set times. The eventseries entity also contains the title, and description for all the events in the series (unless they are overridden - see below).') . '</p></li>';
+      $output .= '<li>' . t('<b>Event Instances</b>') . '<p>' . t('The <code>eventinstance</code> custom entity type represents a single event occurrence. For every date/time that an event takes place on, there will be an associated <code>eventinstance</code>. This makes querying, calendar display and list displays much simpler as they are single entities - we do not have to do any special display-time logic to generate instances on the fly. Out-of-the-box, the <code>eventinstance</code> entity type is very basic - the date/time can be changed, and an additional description can be appended to the series description. The title, and main description, are inherited directly from the <code>eventseries</code>.') . '</p></li>';
+      $output .= '<li>' . t('<b>Field Inheritance Config Entity</b>') . '<p>' . t('The way that data gets inherited from the <code>eventseries</code> to the <code>eventinstance</code> is using a concept of config entities to store the mappings between fields. Out-of-the-box the <code>title</code> field gets inherited, and the <code>body</code> field gets appended to, if there is <code>eventinstance</code> specific body content. These configurations can be changed, or added to.') . '</p></li>';
+      $output .= '</ol>';
+      $output .= '<h2>' . t('Adding Events') . '</h2>';
+      $output .= '<p>' . t('When creating an event, what is really happening is an <code>eventseries</code> entity is being created which will then automatically generate the associated <code>eventinstance</code> entities for each occurrence. There is no way to create an <code>eventinstance</code> outside of an <code>eventseries</code> entity. If more dates need to be added, then the <code>eventseries</code> will need to be modified, or an <code>eventinstance</code> will need to be cloned.') . '</p>';
+      $output .= '<p>' . t('Creating an <code>eventseries</code> involves choosing what type of recurrence the event will have. There are 3 options.') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('<b>Custom Dates</b>') . '<p>' . t('A <code>custom dates eventseries</code> allows a user to create one or more <code>eventinstance</code> entities without a repeatable or structured recurrence pattern. Despite what the name may suggest, there can multiple occurrences of a <code>custom dates eventseries</code>. The difference between a <code>custom dates eventseries</code> and any other type of recurring event is that the dates and times are individual and do not recur. So, the event could take place at noon on a Wednesday in June, then a 10am on a Monday in August. There is no structure to how and when the events take place.') . '</p>';
+      $output .= '<p>' . t('When creating a <code>custom dates eventseries</code> you will be asked to specify a date and time for each individual occurrence of the event.') . '</p></li>';
+      $output .= '<li>' . t('<b>Weekly Event</b>') . '<p>' . t('A <code>weekly event</code> is an event that recurs based on the day of the week, every week. For example, if you wanted to run a Toddler Story Time every Monday at 10am, you would set that up as a weekly event recurring on Mondays. With a <code>weekly event</code> you are asked to select a date range, between which the events will take place. This means that all Mondays between two particular dates will have an <code>eventinstance</code> created for this event. You will also enter a start time of the event, and an event duration. The system will then create event instances on every occurrence of the weekdays you specify, between the date range, starting at the time you specify and lasting for as long as the duration set. To achieve an <code>every day event</code>, a user could create a <code>weekly event</code> that recurs on every day of the week.') . '</p></li>';
+      $output .= '<li>' . t('<b>Monthly Event</b>') . '<p>' . t('A <code>monthly recurring event</code> is one which recurs on a monthly basis, as opposed to weekly. There are 2 types of <code>monthly recurring event</code>.') . '</p></li>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('<b>Weekday Occurrence</b>') . '<p>' . t('You can choose for an event to take place on the <code>first</code>, <code>second</code>, <code>third</code>, <code>fourth</code> or <code>last</code> weekday of a month. As an example you can have an event take place every first and third Monday and Friday of every month.') . '</p></li>';
+      $output .= '<li>' . t('<b>Day of Month Occurrence</b>') . '<p>' . t('You can alternatively choose for an event to take place on a specific day of the month, for example the 6th of every month, or the last day of every month.') . '</p>';
+      $output .= '<p>' . t('<b>Note:</b> If the day of the month selected does not actually occur in any given month then no event will be scheduled that month. As an example, if you choose to run an event on the 31st of every month between January 1st and September 30th of a particular year, then no events would be scheduled in February, April, June or September because those months do not have a 31st day.') . '</p></li>';
+      $output .= '</ol>';
+      $output .= '</ol>';
+      $output .= '<h2>' . t('Modifying and Deleting Events') . '</h2>';
+      $output .= '<p>' . t('Providing a user has the appropriate permissions to do so, events can be modified or deleted after they have been created. When modifying an event, a warning will be displayed to show that any changes made to date configurations or recurring types will cause all <code>eventinstance</code> entities in that <code>eventseries</code> to be deleted, and recreated. All other changes are non-breaking changes and will not result in any instances being removed. <code>eventinstance</code> entities inherit their title, and description from the <code>eventseries</code>, so any changes made to those fields will cascade down to all <code>eventinstances</code> in the <code>eventseries</code>.') . '</p>';
+      $output .= '<p>' . t('Deleting an <code>eventseries</code> will also remove all the <code>eventinstance</code> entities in that <code>eventseries</code>. This action cannot be undone.') . '</p>';
+      $output .= '<h2>' . t('Modifying and Deleting Event Instances') . '</h2>';
+      $output .= '<p>' . t('Individual <code>eventinstance</code> entities can be modified or deleted providing the user has the appropriate permissions to do so. When modifying an <code>eventinstance</code>, no changes will be made upstream to the <code>eventseries</code> or the other <code>eventinstance</code> entities in the series. This way an individual occurrence of an event can be moved to a different day (in case of a booking conflict, or public holiday/close day for example) or a different time to the rest of the events in that series. Equally, an individual occurrence can be removed without affecting any of the other instances in that series.') . '</p>';
+      $output .= '<p>' . t('<b>Note:</b> If an <code>eventinstance</code> is removed, and then the <code>eventseries</code> is modified, the removed <code>eventinstance</code> may be recreated if the date recurrence configuration gets changed.') . '</p>';
+      $output .= '<h2>' . t('Field Inheritance from Series to Instance') . '</h2>';
+      $output .= '<p>' . t('As previously mentioned there are two fields which are automatically inherited from the <code>eventseries</code> down to the <code>eventinstance</code>. All fields created using the Field API may be inherited, providing there is a Field Inheritance Plugin written for that particular field type.') . '</p>';
+      $output .= '<p>' . t('There are four different field inheritance strategies built into <code>recurring_events</code>.') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('Inherit – a field that is inherited means is taken directly from the <code>eventseries</code> and made available to the <code>eventinstances</code> in that series.') . '</li>';
+      $output .= '<li>' . t('Prepend - a field that is prepended means that any contents of a defined <code>eventinstance</code> field is added before the contents of a defined <code>eventseries</code> field.') . '</li>';
+      $output .= '<li>' . t('Append - a field that is appended means that any contents of a defined <code>eventinstance</code> field is added after the contents of a defined <code>eventseries</code> field.') . '</li>';
+      $output .= '<li>' . t('Fallback - a field that is configued to be a fallback field will show the contents of a defined <code>eventinstance</code> field if set, otherwise it will show the contents of the defined <code>eventseries</code> field.') . '</li>';
+      $output .= '</ol>';
+      $output .= '<p>' . t('Below are the field inheritance fields that come out-of-the-box with the module.') . '</p>';
+      $output .= '<table><thead><tr>';
+      $output .= '<th>' . t('Field') . '</th>';
+      $output .= '<th>' . t('Strategy') . '</th>';
+      $output .= '<th>' . t('Notes') . '</th></tr></thead>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Title') . '</td>';
+      $output .= '<td>' . t('Inherit') . '</td>';
+      $output .= '<td>' . t('The title for an event is always controlled by the series and cannot be changed on a per-instance basis. The field is inherited directly to the eventinstance entities within that series.') . '</td>';
+      $output .= '</tr>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Body') . '</td>';
+      $output .= '<td>' . t('Append') . '</td>';
+      $output .= '<td>' . t('The body field from the <code>eventinstance</code> (if set) is appended to the end of the body field from the <code>eventseries</code> (if set).') . '</td>';
+      $output .= '</tr>';
+      $output .= '</table>';
+      $output .= '<h2>' . t('Publishing Workflow and Revisions') . '</h2>';
+      $output .= '<p>' . t('Out-of-the-box the module supports Drupal core content moderation and workflow modules, although the module does not depend on those modules being enabled. Both <code>eventseries</code> and <code>eventinstance</code> entities support revisioning.') . '</p>';
+      $output .= '<p>' . t('Revisioning and Content Moderation do play a conceptually interesting role when it comes to <code>eventseries</code> entities due to the way that <code>eventinstance</code> entities are automatically created, or recreated. If an event series is already published, and has a number of <code>eventinstance</code> entities associated with it, then if a user creates a new draft of the <code>eventseries</code> and that draft contains data recurrence configuration changes, then we must not recreate any <code>eventinstances</code> until that revision is published. The module handles this concept as part of its core offering.') . '</p>';
+      $output .= '<h2>' . t('Hooks, extensibility and APIs') . '</h2>';
+      $output .= '<p>' . t('All <code>eventseries</code> and <code>eventinstance</code> entities are compatible with the Drupal core translation API.') . '</p>';
+      $output .= '<h2>' . t('Publishing Workflow and Revisions') . '</h2>';
+      $output .= '<p>' . t('The <code>recurring_events</code> module exposes its own hooks to use to modify core functionality. These hooks are defined in <code>recurring_events.api.php</code>. Custom modules can be written to modify, or enhance the core functionality of <code>recurring_events</code> by making use of these hooks.') . '</p>';
+      $output .= '<p>' . t('The <code>recurring_events</code> module also has a number of Field Inheritance plugins written to handle core fields, and custom plugins can be creared providing they implement the <code>FieldInheritance</code> annotation and extend the <code>FieldInheritancePluginBase</code> class. The core plugins are defined in <code>src/Plugin/FieldInheritance</code>.') . '</p>';
+      $output .= '<h2>' . t('Dependencies') . '</h2>';
+      $output .= '<p>' . t('This module only relies on the following two core modules being enabled:') . '</p>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('drupal:datetime_range') . '</li>';
+      $output .= '<li>' . t('drupal:options') . '</li>';
+      $output .= '</ul>';
+      $output .= '<h2>' . t('Similar Modules') . '</h2>';
+      $output .= '<p>' . t('The closest comparison would be the <code>date_recur</code> module, which adds a field type which allows RRule compliant date recurrence configuration to be added. While that module does a really great job, this module approaches things differently. With <code>date_recur</code>, a content editor would have a single entity with a recurrence field that builds instances of that event at display time. With <code>recurring_events</code>, <code>eventinstances</code> are separate entities completely, and therefore can be overridden or extended, without affecting the rest of the series. This module also comes with a registration submodule, including the ability to register either for an entire series, or individual events. Using <code>date_recur</code> that would not be possible as there is only one entity.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function recurring_events_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'eventinstance') {
+    $inherited_fields = \Drupal::entityTypeManager()->getStorage('field_inheritance')->loadMultiple();
+    if (!empty($inherited_fields)) {
+      foreach ($inherited_fields as $field) {
+        $settings = [
+          'source field' => $field->sourceField(),
+          'method' => $field->type(),
+          'plugin' => $field->plugin(),
+        ];
+
+        if ($field->entityField()) {
+          $settings['entity field'] = $field->entityField();
+        }
+
+        $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('eventseries', 'eventseries');
+
+        $type = 'string';
+        if (!empty($field_definitions[$field->sourceField()])) {
+          $settings = array_merge($settings, $field_definitions[$field->sourceField()]->getSettings());
+          $type = $field_definitions[$field->sourceField()]->getType();
+        }
+
+        $class = '\Drupal\recurring_events\FieldInheritanceFactory';
+        if ($field->plugin() === 'entity_reference_inheritance') {
+          $class = '\Drupal\recurring_events\EntityReferenceFieldInheritanceFactory';
+        }
+
+        // Allow developers to override the class to use for a field.
+        \Drupal::moduleHandler()->alter('recurring_events_inheritance_class', $class, $field);
+
+        $fields[$field->id()] = BaseFieldDefinition::create($type)
+          ->setLabel(t('Inherited @label', ['@label' => $field->label()]))
+          ->setName($field->id())
+          ->setDescription(t('The inherited field: @field', ['@field' => $field->label()]))
+          ->setComputed(TRUE)
+          ->setClass($class)
+          ->setSettings($settings)
+          ->setTargetEntityTypeId($entity_type->id())
+          ->setTranslatable(FALSE)
+          ->setRevisionable(FALSE)
+          ->setReadOnly(TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function recurring_events_entity_operation(EntityInterface $entity) {
+  $operations = [];
+  if ($entity->getEntityTypeId() == 'eventseries' || $entity->getEntityTypeId() == 'eventinstance') {
+    $operations['clone'] = [
+      'title' => t('Clone'),
+      'weight' => 50,
+      'url' => $entity->toUrl('clone-form'),
+    ];
+  }
+
+  return $operations;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function recurring_events_theme() {
+  $theme = [];
+
+  $theme['eventinstance'] = [
+    'render element' => 'elements',
+    'template' => 'eventinstance',
+  ];
+
+  $theme['eventseries'] = [
+    'render element' => 'elements',
+    'template' => 'eventseries',
+  ];
+
+  return $theme;
+}
+
+/**
+ * Implements template_preprocess_entity().
+ */
+function template_preprocess_eventinstance(array &$variables) {
+  // Set the eventinstance object to be accessible in the template.
+  $variables['eventinstance'] = $variables['elements']['#eventinstance'];
+
+  // Set a class on the eventinstance to differentiate between viewmodes.
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['attributes']['class'][] = 'eventinstance-' . $variables['view_mode'];
+
+  // Allow field groups to be rendered too.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements template_preprocess_entity().
+ */
+function template_preprocess_eventseries(array &$variables) {
+  // Set the eventseries object to be accessible in the template.
+  $variables['eventseries'] = $variables['elements']['#eventseries'];
+
+  // Set a class on the eventseries to differentiate between viewmodes.
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['attributes']['class'][] = 'eventseries-' . $variables['view_mode'];
+
+  // Allow field groups to be rendered too.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function recurring_events_eventseries_presave(EntityInterface $entity) {
+  $original = $entity->original;
+  $creation_service = \Drupal::service('recurring_events.event_creation_service');
+
+  // If the eventseries is being published, or created for the first time then
+  // there may be date recurrence changes that need to be converted into new
+  // eventinstance entities.
+  if ($entity->isPublished() || $entity->isNew()) {
+    if ($entity->isDefaultTranslation()) {
+      $creation_service->saveEvent($entity, $original);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function recurring_events_eventseries_insert(EntityInterface $entity) {
+  // When we initially create the eventseries we actually create the instances
+  // before the eventseries gets saved for the first time, so we have no ID for
+  // the series at that point. Now that the eventseries is properly saved we can
+  // go and set the eventseries_id on the eventinstances.
+  $instances = $entity->event_instances->referencedEntities();
+  if (!empty($instances)) {
+    foreach ($instances as $instance) {
+      if (empty($instance->eventseries_id->value)) {
+        $instance->set('eventseries_id', $entity->id());
+        $instance->setNewRevision(FALSE);
+        $instance->save();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function recurring_events_form_content_moderation_entity_moderation_form_alter(&$form, FormStateInterface $form_state) {
+  $entity = $form_state->get('entity');
+  if ($entity->getEntityTypeId() === 'eventseries') {
+    $original = \Drupal::entityTypeManager()->getStorage('eventseries')->load($entity->id());
+    $creation_service = \Drupal::service('recurring_events.event_creation_service');
+    if ($creation_service->checkForOriginalRecurConfigChanges($entity, $original)) {
+
+      // Show a table when viewing a revision displaying any date recurrence
+      // differences to alert users before they publish the revision.
+      $diff_array = $creation_service->buildDiffArray($original, NULL, $entity);
+      if (!empty($diff_array)) {
+        $form['diff'] = [
+          '#type' => 'container',
+          '#weight' => -99,
+        ];
+
+        $form['diff']['diff_title'] = [
+          '#type' => '#markup',
+          '#prefix' => '<h2>',
+          '#markup' => t('Revision Date Changes'),
+          '#suffix' => '</h2>',
+        ];
+
+        $form['diff']['diff_message'] = [
+          '#type' => '#markup',
+          '#prefix' => '<p>',
+          '#markup' => t('Recurrence configuration has been changed in this revision, as a result if you choose to publish this revision all instances will be removed and recreated. This action cannot be undone.'),
+          '#suffix' => '</p>',
+        ];
+
+        $form['diff']['table'] = [
+          '#type' => 'table',
+          '#header' => [
+            t('Data'),
+            t('Stored'),
+            t('Overridden'),
+          ],
+          '#rows' => $diff_array,
+        ];
+      }
+    }
+  }
+}

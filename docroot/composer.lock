@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fadd6d274d0a04b1bed4c5e1b7bfe7f3",
+    "content-hash": "dd3ac6c6b30716b41afdbb81c38eb564",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -4222,6 +4222,56 @@
                 "source": "https://git.drupal.org/project/recaptcha.git",
                 "issues": "https://www.drupal.org/project/issues/recaptcha"
             }
+        },
+        {
+            "name": "drupal/recurring_events",
+            "version": "dev-1.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/recurring_events.git",
+                "reference": "8.x-1.x"
+            },
+            "require": {
+                "drupal/core": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.x-dev",
+                    "datestamp": "1562596386",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "if-jds",
+                    "homepage": "https://www.drupal.org/user/3422223"
+                },
+                {
+                    "name": "owenbush",
+                    "homepage": "https://www.drupal.org/user/2765259"
+                }
+            ],
+            "description": "Events and Registration Management Module",
+            "homepage": "https://www.drupal.org/project/recurring_events",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/recurring_events",
+                "issues": "https://www.drupal.org/project/issues/recurring_events"
+            },
+            "time": "2019-06-29T01:34:35+00:00"
         },
         {
             "name": "drupal/redirect",
@@ -10932,6 +10982,7 @@
         "drupal/video_embed_field": 15,
         "drupal/cloudflare": 15,
         "drupal/elasticsearch_connector": 15,
+        "drupal/recurring_events": 20,
         "behat/mink": 20,
         "behat/mink-selenium2-driver": 20
     },

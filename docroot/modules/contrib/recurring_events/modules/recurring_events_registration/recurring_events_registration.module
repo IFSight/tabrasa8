@@ -1,0 +1,361 @@
+<?php
+
+/**
+ * @file
+ * Contains recurring_events_registration.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\recurring_events_registration\Entity\Registrant;
+use Drupal\recurring_events\Entity\EventSeries;
+use Drupal\recurring_events\Entity\EventInstance;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function recurring_events_registration_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the recurring_events_registration module.
+    case 'help.page.recurring_events_registration':
+      $output = '';
+      $output .= '<h2>' . t('Introduction') . '</h2>';
+      $output .= '<p>' . t('The Recurring Events Registration module is a submodule of <code>recurring_events</code>. It provides a registration system designed to be site agnostic and extensible.') . '</p>';
+      $output .= '<h2>' . t('Data Modeling Concepts') . '</h2>';
+      $output .= '<p>' . t('The <code>registrant</code> custom entity type represents a single person who has registered for an <code>eventseries</code> or <code>eventinstance</code> - depending on the registration configuration for the <code>eventseries</code>. The <code>registrant</code> entity type is only available when the <code>recurring_events_registration</code> sub-module is enabled.') . '</p>';
+      $output .= '<p>' . t('The <code>registrant</code> entity type has one base field - <code>email</code>, because email is so integral to most registration systems. The entity is also fieldable and the module ships with some installation configuration to add first name, last name and phone number. These are added using the Fields API, so they can be removed or edited as needed.') . '</p>';
+      $output .= '<p>' . t('Registrants are not revisionable or translatable.') . '</p>';
+      $output .= '<p>' . t('If an <code>eventseries</code> is set to have registrations enabled, then a number of things are checked:') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('What is the capacity of the event?') . '</li>';
+      $output .= '<li>' . t('How many users are already registered?') . '</li>';
+      $output .= '<li>' . t('Is there a waiting list?') . '</li>';
+      $output .= '</ol>';
+      $output .= '<p>' . t('The answer to those questions dictates what experience a user has when they try to register for an event. If registration is enabled and there is capacity then the user will be able to register for the event one at a time. If there is no capacity left, but there is a waiting list the verbiage will change a little and the user will be added to a waitlist instead. If there is no capacity and no waitlist, then the user cannot register.') . '</p>';
+      $output .= '<p>' . t('There are several settings related to registration for events:') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('Registration type');
+      $output .= '<p>' . t('There are two registration types:') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('Series Registration - when this mode is used users register for all instances in a series with one registration. This is helpful should a user need to attend all instances in a series, for example if the series was a set of six computer classes.') . '</li>';
+      $output .= '<li>' . t('Instance Registration - when this mode is used users register for individual instances in a series. This is helpful if a user does not need to attend every event, for example if the series is a recurring story time at a library with limited capacity.') . '</li>';
+      $output .= '</ol></li>';
+      $output .= '<li>' . t('Registration Dates');
+      $output .= '<p>' . t('A user creating an event series can specify when registration is allowed for an event series or instance. There are two options:') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('Open Registration - when this mode is enabled then registration for an event instance is available from the moment the instance is published, until the moment the instance begins. For series registration users are able to register from the moment the instances are published until the moment the first event in the series begins.') . '</li>';
+      $output .= '<li>' . t('Scheduled Registration - when registering for an entire series, users are able to specify the date and time that event registration opens and closes. For individual instance registration a user can specify how many days or hours prior to the instance start date that registration opens - in this case, registration closes when the event instance begins.') . '</li>';
+      $output .= '</ol></li>';
+      $output .= '<li>' . t('Capacity');
+      $output .= '<p>' . t('Users can specify how many registrants can attend an event. If event series registration is enabled, then the capacity applies across all instances. If individual event instance registration is enabled, then each instance will have the same capacity.') . '</p></li>';
+      $output .= '<li>' . t('Waitlist');
+      $output .= '<p>' . t('Users can specify whether an event has a waitlist. If event series registration is enabled, then the waitlist applies across all instances. If individual event instance registration is enabled, then each instance will have its own waitlist. When an event is full users will automatically get added to the waitlist if enabled. If a spot opens up on the registration list because someone deleted their registration, then the first person on the waitlist is automatically promoted to the registration list.') . '</p></li>';
+      $output .= '</ol>';
+      $output .= '<p>' . t('Users with appropriate permissions will be allowed to view the list of registrants for an event and modify or delete them.') . '</p>';
+      $output .= '<p>' . t('<code>Authenticated users</code> are able to modify and delete their own registrations through their account page via a new <code>Registrations</code> tab in the user profile.') . '</p>';
+      $output .= '<p>' . t('<code>Anonymous users</code> can optionally receive an email to the email address provided, with a unique URL to edit/cancel their registration. The URL will contain a UUID value to make them difficult to guess and therefore reduce the risk of gaming the system. An <code>anonymous user</code> will be unable to view a list of their registrations anywhere because they do not have an account page. Instead, they will manage their registrations purely through emails and links within those emails.') . '</p>';
+      $output .= '<h2>' . t('Registration Emails') . '</h2>';
+      $output .= '<p>' . t('The ability to enable/disable individual registration emails or modify their subject/body fields is built in to the core of the module. This gives users lots of flexibility when it comes to messaging registrants. There are a number of tokens available to administrators to use in the emails.') . '</p>';
+      $output .= '<p>' . t('Out-of-the-box the following registrant emails are available') . '</p>';
+      $output .= '<table><thead><tr>';
+      $output .= '<th>' . t('Email') . '</th>';
+      $output .= '<th>' . t('Notes') . '</th></tr></thead>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Registration') . '</td>';
+      $output .= '<td>' . t('Send an email to a registrant to confirm they were registered for an event') . '</td>';
+      $output .= '</tr>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Waitlist') . '</td>';
+      $output .= '<td>' . t('Send an email to a registrant to confirm they were added to the waitlist') . '</td>';
+      $output .= '</tr>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Promotion') . '</td>';
+      $output .= '<td>' . t('Send an email to a registrant to confirm they were promoted from the waitlist') . '</td>';
+      $output .= '</tr>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Instance Deletion') . '</td>';
+      $output .= '<td>' . t('Send an email to a registrant to confirm an instance deletion') . '</td>';
+      $output .= '</tr>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Series Deletion') . '</td>';
+      $output .= '<td>' . t('Send an email to a registrant to confirm a series deletion') . '</td>';
+      $output .= '</tr>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Instance Modification') . '</td>';
+      $output .= '<td>' . t('Send an email to a registrant to confirm an instance modification') . '</td>';
+      $output .= '</tr>';
+      $output .= '<tr>';
+      $output .= '<td>' . t('Series Modification') . '</td>';
+      $output .= '<td>' . t('Send an email to a registrant to confirm a series modification') . '</td>';
+      $output .= '</tr>';
+      $output .= '</table>';
+      $output .= '<p>' . t('More can be added using the Registrant API by implementing the <code>hook_recurring_events_registration_notification_types_alter</code> hook.') . '</p>';
+      $output .= '<p>' . t('Users with appropriate permissions are also able to resend emails to registrants in the case that an email was not delivered. This is available from the registrant list pages.') . '</p>';
+      $output .= '<p>' . t('Users with appropriate permissions can also contact all registrants of an event through a form where they can specify the subject and body of the email, again with tokens available. Users can specify whether to contact just registrants, just waitlisted users, or both.') . '</p>';
+      $output .= '<h2>' . t('Hooks, extensibility and APIs') . '</h2>';
+      $output .= '<p>' . t('The Recurring Events Registration module exposes its own hooks to use to modify core functionality. These hooks are defined in: <code>recurring_events_registration.api.php</code>.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function recurring_events_registration_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'eventseries') {
+    $fields['event_registration'] = BaseFieldDefinition::create('event_registration')
+      ->setName('event_registration')
+      ->setLabel(t('Event Registration'))
+      ->setDescription('The event registration configuration.')
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRevisionable(TRUE)
+      ->setTranslatable(FALSE)
+      ->setCardinality(1)
+      ->setRequired(FALSE)
+      ->setTargetEntityTypeId($entity_type->id())
+      ->setDisplayOptions('form', [
+        'type' => 'event_registration',
+        'weight' => 4,
+      ]);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function recurring_events_registration_theme() {
+  $theme = [];
+
+  $theme['registrant'] = [
+    'render element' => 'elements',
+    'template' => 'registrant',
+  ];
+
+  return $theme;
+}
+
+/**
+ * Implements template_preprocess_entity().
+ */
+function template_preprocess_registrant(array &$variables) {
+  // Set the registrant object to be accessible in the template.
+  $variables['registrant'] = $variables['elements']['#registrant'];
+
+  // Set a class on the registrant to differentiate between viewmodes.
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['attributes']['class'][] = 'registrant-' . $variables['view_mode'];
+
+  // Allow field groups to be rendered too.
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function recurring_events_registration_mail($key, &$message, $params) {
+  $options = [
+    'langcode' => $message['langcode'],
+  ];
+
+  $service = \Drupal::service('recurring_events_registration.notification_service');
+  $service->setKey($key)->setEntity($params['registrant']);
+
+  if ($service->isEnabled()) {
+    if (!empty($params['subject'])) {
+      $service->setSubject($params['subject']);
+    }
+    if (!empty($params['body'])) {
+      $service->setMessage($params['body']);
+    }
+    if (!empty($params['from'])) {
+      $service->setFrom($params['from']);
+    }
+
+    $message['from'] = $service->getFrom();
+    $message['subject'] = $service->getSubject();
+    $message['body'][] = $service->getMessage();
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_recurring_events_registration_notification_types_alter().
+ */
+function recurring_events_registration_recurring_events_registration_notification_types_alter(array &$notification_types) {
+  $notification_types += [
+    'registration' => [
+      'name' => t('Registration Notification'),
+      'description' => t('Send an email to a registrant to confirm they were registered for an event?'),
+    ],
+    'waitlist' => [
+      'name' => t('Waitlist Notification'),
+      'description' => t('Send an email to a registrant to confirm they were added to the waitlist?'),
+    ],
+    'promotion' => [
+      'name' => t('Promotion Notification'),
+      'description' => t('Send an email to a registrant to confirm they were promoted from the waitlist?'),
+    ],
+    'instance_deletion' => [
+      'name' => t('Instance Deletion Notification'),
+      'description' => t('Send an email to a registrant to confirm an instance deletion?'),
+    ],
+    'series_deletion' => [
+      'name' => t('Series Deletion Notification'),
+      'description' => t('Send an email to a registrant to confirm a series deletion?'),
+    ],
+    'instance_modification' => [
+      'name' => t('Instance Modification Notification'),
+      'description' => t('Send an email to a registrant to confirm an instance modification?'),
+    ],
+    'series_modification' => [
+      'name' => t('Series Modification Notification'),
+      'description' => t('Send an email to a registrant to confirm a series modification?'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_recurring_events_save_pre_instances_deletion().
+ */
+function recurring_events_registration_recurring_events_save_pre_instances_deletion(EventSeries $event_series) {
+  $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+  $registration_creation_service->setEventSeries($event_series);
+
+  // Get all the registrants who have registered for any event in this series.
+  $registrants = $registration_creation_service->retrieveAllSeriesRegisteredParties();
+  if (empty($registrants)) {
+    return;
+  }
+
+  $key = 'series_modification_notification';
+
+  // Send an email to all registrants.
+  foreach ($registrants as $registrant) {
+    recurring_events_registration_send_notification($key, $registrant);
+    $registrant->delete();
+  }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function recurring_events_registration_entity_update(EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'eventinstance') {
+    $date_changes = FALSE;
+    $original = $entity->original;
+
+    $date_changes = !(serialize($entity->date->getValue()) === serialize($original->date->getValue()));
+    if (!$date_changes) {
+      return;
+    }
+
+    $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+    $registration_creation_service->setEventInstance($entity);
+
+    $registrants = $registration_creation_service->retrieveRegisteredParties();
+    if (empty($registrants)) {
+      return;
+    }
+
+    $key = 'instance_modification_notification';
+
+    // Send an email to all registrants.
+    foreach ($registrants as $registrant) {
+      recurring_events_registration_send_notification($key, $registrant);
+    }
+  }
+}
+
+/**
+ * Implements hook_recurring_events_pre_delete_instance().
+ */
+function recurring_events_registration_recurring_events_pre_delete_instance(EventInstance $instance) {
+  $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+  $registration_creation_service->setEventInstance($instance);
+
+  $registrants = $registration_creation_service->retrieveRegisteredParties();
+  if (empty($registrants)) {
+    return;
+  }
+
+  $key = 'instance_deletion_notification';
+
+  // Send an email to all registrants.
+  foreach ($registrants as $registrant) {
+    recurring_events_registration_send_notification($key, $registrant);
+    $registrant->delete();
+  }
+}
+
+/**
+ * Implements hook_recurring_events_pre_delete_instances().
+ */
+function recurring_events_registration_recurring_events_pre_delete_instances(EventSeries $event_series) {
+  $registration_creation_service = \Drupal::service('recurring_events_registration.creation_service');
+  $registration_creation_service->setEventSeries($event_series);
+
+  // Get all the registrants who have registered for any event in this series.
+  $registrants = $registration_creation_service->retrieveAllSeriesRegisteredParties();
+  if (empty($registrants)) {
+    return;
+  }
+
+  $key = 'series_deletion_notification';
+
+  // Send an email to all registrants.
+  foreach ($registrants as $registrant) {
+    recurring_events_registration_send_notification($key, $registrant);
+    $registrant->delete();
+  }
+}
+
+/**
+ * Send a notification message.
+ *
+ * @param string $key
+ *   The mail key used to determine the message and subject.
+ * @param \Drupal\recurring_events_registration\Entity\Registrant $registrant
+ *   The registrant this email relates to.
+ */
+function recurring_events_registration_send_notification($key, Registrant $registrant) {
+  $config = \Drupal::config('recurring_events_registration.registrant.config');
+  $send_email = $config->get('email_notifications');
+  if ($send_email) {
+    $params = [
+      'registrant' => $registrant,
+    ];
+
+    $to = $registrant->email->value;
+
+    $mail = \Drupal::service('plugin.manager.mail');
+    $mail->mail('recurring_events_registration', $key, $to, \Drupal::languageManager()->getDefaultLanguage()->getId(), $params);
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function recurring_events_registration_entity_operation(EntityInterface $entity) {
+  $operations = [];
+  if ($entity->getEntityTypeId() == 'registrant') {
+    $operations['resend'] = [
+      'title' => t('Resend Mail'),
+      'weight' => 50,
+      'url' => Url::fromRoute('entity.registrant.resend_form', [
+        'eventinstance' => $entity->getEventInstance()->id(),
+        'registrant' => $entity->id(),
+      ]),
+    ];
+  }
+
+  return $operations;
+}

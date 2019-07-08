@@ -60,7 +60,8 @@
         "drupal/elasticsearch_connector": "^6.0@alpha",
         "drupal/search_api": "^1.12",
         "drupal/adminimal_theme": "^1.4",
-        "drupal/paladin": "^1.0"
+        "drupal/paladin": "^1.0",
+        "drupal/recurring_events": "1.x-dev"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
