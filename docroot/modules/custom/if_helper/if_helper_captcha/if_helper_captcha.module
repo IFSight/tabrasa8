@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Contains if_helper_captcha.module.
+ */
+
+use Drupal\webform\WebformInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_create() for webform entities.
+ */
+function if_helper_webform_create(WebformInterface $webform) {
+  // Get stored config that determines whether captchas are enabled by default.
+  $config = \Drupal::config('if_helper_captcha.settings');
+  $enable_captcha = $config->get('enable_captcha');
+  // Only do this if the checkbox is checked.
+  if ($enable_captcha == '1') {
+    // Automatically adds a recaptcha field to new webforms.
+    // If reCAPTCHA is not enabled it defaults to the site-wide default.
+    $elements = [
+      'captcha' => [
+        '#type' => 'captcha',
+        '#captcha_type' => 'recaptcha/reCAPTCHA',
+      ],
+    ];
+    $webform->setElements($elements);
+  }
+}
