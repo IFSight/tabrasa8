@@ -8,7 +8,7 @@ use Drupal\entity_test\Entity\EntityTestMul;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\linkit\Tests\ProfileCreationTrait;
 use Drupal\node\Entity\NodeType;
@@ -18,7 +18,7 @@ use Drupal\node\Entity\NodeType;
  *
  * @group linkit
  */
-class LinkitDialogTest extends JavascriptTestBase {
+class LinkitDialogTest extends WebDriverTestBase {
 
   use ProfileCreationTrait;
 
@@ -175,7 +175,8 @@ class LinkitDialogTest extends JavascriptTestBase {
     $this->assertFalse($autocomplete_container->isVisible());
 
     // Trigger a keydown event to active a autocomplete search.
-    $href_field->keyDown('f');
+    $href_field->setValue('f');
+    $this->getSession()->getDriver()->keyDown($href_field->getXpath(), ' ');
 
     // Wait for the results to load.
     $this->getSession()->wait(5000, "jQuery('.linkit-result-line.ui-menu-item').length > 0");

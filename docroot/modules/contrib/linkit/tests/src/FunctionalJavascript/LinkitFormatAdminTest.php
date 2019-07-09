@@ -2,14 +2,14 @@
 
 namespace Drupal\Tests\linkit\FunctionalJavascript;
 
-use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 
 /**
  * Tests the linkit alterations on the text format forms.
  *
  * @group linkit
  */
-class LinkitFormatAdminTest extends JavascriptTestBase {
+class LinkitFormatAdminTest extends WebDriverTestBase {
 
   /**
    * Modules to enable.
@@ -39,7 +39,6 @@ class LinkitFormatAdminTest extends JavascriptTestBase {
 
     // Go to add filter page.
     $this->drupalGet('admin/config/content/formats/add');
-    $this->assertSession()->statusCodeEquals(200);
 
     // Enable the 'Limit allowed HTML tags and correct faulty HTML' filter.
     $page->findField('filters[filter_html][status]')->check();

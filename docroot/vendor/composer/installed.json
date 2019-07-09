@@ -1618,18 +1618,18 @@
     },
     {
         "name": "drupal/admin_toolbar",
-        "version": "1.26.0",
-        "version_normalized": "1.26.0.0",
+        "version": "1.27.0",
+        "version_normalized": "1.27.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/admin_toolbar.git",
-            "reference": "8.x-1.26"
+            "reference": "8.x-1.27"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/admin_toolbar-8.x-1.26.zip",
-            "reference": "8.x-1.26",
-            "shasum": "7be9f91008bf17cf49b43d1c8e2211e7a8e40ce4"
+            "url": "https://ftp.drupal.org/files/projects/admin_toolbar-8.x-1.27.zip",
+            "reference": "8.x-1.27",
+            "shasum": "fed1fbbdf8f805b1da63d73e7e2c54750f354d61"
         },
         "require": {
             "drupal/core": "*"
@@ -1640,8 +1640,8 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.26",
-                "datestamp": "1549559402",
+                "version": "8.x-1.27",
+                "datestamp": "1558553350",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -1701,18 +1701,18 @@
     },
     {
         "name": "drupal/adminimal_theme",
-        "version": "1.4.0",
-        "version_normalized": "1.4.0.0",
+        "version": "1.5.0",
+        "version_normalized": "1.5.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/adminimal_theme.git",
-            "reference": "8.x-1.4"
+            "reference": "8.x-1.5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/adminimal_theme-8.x-1.4.zip",
-            "reference": "8.x-1.4",
-            "shasum": "af9cbce473d0bd9590889992200ed175cb7e1159"
+            "url": "https://ftp.drupal.org/files/projects/adminimal_theme-8.x-1.5.zip",
+            "reference": "8.x-1.5",
+            "shasum": "fb4457015d743faafecaa0776d2bebf2829a6738"
         },
         "require": {
             "drupal/core": "~8.0"
@@ -1723,8 +1723,8 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.4",
-                "datestamp": "1547996580",
+                "version": "8.x-1.5",
+                "datestamp": "1558584484",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3208,18 +3208,18 @@
     },
     {
         "name": "drupal/entity",
-        "version": "1.0.0-rc2",
-        "version_normalized": "1.0.0.0-RC2",
+        "version": "1.0.0-rc3",
+        "version_normalized": "1.0.0.0-RC3",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/entity.git",
-            "reference": "8.x-1.0-rc2"
+            "reference": "8.x-1.0-rc3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/entity-8.x-1.0-rc2.zip",
-            "reference": "8.x-1.0-rc2",
-            "shasum": "616b4c095dc8cf67f318f2d5504aed1c4d6dd363"
+            "url": "https://ftp.drupal.org/files/projects/entity-8.x-1.0-rc3.zip",
+            "reference": "8.x-1.0-rc3",
+            "shasum": "6b4ccc0231c52ed9594502a0718057f53d98404d"
         },
         "require": {
             "drupal/core": "^8.6"
@@ -3230,8 +3230,8 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.0-rc2",
-                "datestamp": "1553254684",
+                "version": "8.x-1.0-rc3",
+                "datestamp": "1559579884",
                 "security-coverage": {
                     "status": "not-covered",
                     "message": "RC releases are not covered by Drupal security advisories."
@@ -3273,36 +3273,38 @@
     },
     {
         "name": "drupal/entity_browser",
-        "version": "2.1.0",
-        "version_normalized": "2.1.0.0",
+        "version": "2.2.0",
+        "version_normalized": "2.2.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/entity_browser.git",
-            "reference": "8.x-2.1"
+            "reference": "8.x-2.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/entity_browser-8.x-2.1.zip",
-            "reference": "8.x-2.1",
-            "shasum": "56cf190f3ea3fc0af71becbc44af5954a71f216b"
+            "url": "https://ftp.drupal.org/files/projects/entity_browser-8.x-2.2.zip",
+            "reference": "8.x-2.2",
+            "shasum": "083a21040ad7bcb9aef25d8b4a0e702d02574261"
         },
         "require": {
-            "drupal/core": "~8.0"
+            "drupal/core": "~8.4"
         },
         "require-dev": {
-            "drupal/inline_entity_form": "*",
-            "drupal/paragraphs": "*",
-            "drupal/token": "*"
+            "drupal/embed": "~1.0",
+            "drupal/entity_embed": "~1.0",
+            "drupal/entityqueue": "~1.0",
+            "drupal/inline_entity_form": "~1.0",
+            "drupal/paragraphs": "~1.0",
+            "drupal/token": "~1.0"
         },
         "type": "drupal-module",
         "extra": {
             "branch-alias": {
-                "dev-2.x": "2.x-dev",
-                "dev-8.x-1.x": "8.1.x-dev"
+                "dev-2.x": "2.x-dev"
             },
             "drupal": {
-                "version": "8.x-2.1",
-                "datestamp": "1550237365",
+                "version": "8.x-2.2",
+                "datestamp": "1562240585",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -3358,25 +3360,25 @@
         "description": "Entity browsing and selecting component.",
         "homepage": "http://drupal.org/project/entity_browser",
         "support": {
-            "source": "http://cgit.drupalcode.org/entity_browser",
-            "issues": "http://drupal.org/project/issues/entity_browser",
+            "source": "https://git.drupalcode.org/project/entity_browser",
+            "issues": "https://www.drupal.org/project/issues/entity_browser",
             "irc": "irc://irc.freenode.org/drupal-contribute"
         }
     },
     {
         "name": "drupal/entity_embed",
-        "version": "1.0.0-beta3",
-        "version_normalized": "1.0.0.0-beta3",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/entity_embed.git",
-            "reference": "8.x-1.0-beta3"
+            "reference": "8.x-1.0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/entity_embed-8.x-1.0-beta3.zip",
-            "reference": "8.x-1.0-beta3",
-            "shasum": "2ecb2e88e5ecc217195dfa291b4959ea6b83aa8c"
+            "url": "https://ftp.drupal.org/files/projects/entity_embed-8.x-1.0.zip",
+            "reference": "8.x-1.0",
+            "shasum": "abd37a54162a702cf696ef0e5f8b2b1082263c21"
         },
         "require": {
             "drupal/core": "^8.4.0",
@@ -3391,11 +3393,11 @@
                 "dev-1.x": "1.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.0-beta3",
-                "datestamp": "1556906881",
+                "version": "8.x-1.0",
+                "datestamp": "1561765981",
                 "security-coverage": {
-                    "status": "not-covered",
-                    "message": "Beta releases are not covered by Drupal security advisories."
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
                 }
             }
         },
@@ -3504,18 +3506,18 @@
     },
     {
         "name": "drupal/field_group",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
+        "version": "3.0.0-rc1",
+        "version_normalized": "3.0.0.0-RC1",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/field_group.git",
-            "reference": "8.x-1.0"
+            "reference": "8.x-3.0-rc1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/field_group-8.x-1.0.zip",
-            "reference": "8.x-1.0",
-            "shasum": "e8aa3fae5c3c5dec84644bb577996938d638a611"
+            "url": "https://ftp.drupal.org/files/projects/field_group-8.x-3.0-rc1.zip",
+            "reference": "8.x-3.0-rc1",
+            "shasum": "e291b5468c834a344e9aa6cafd3a76171d473a22"
         },
         "require": {
             "drupal/core": "*"
@@ -3523,14 +3525,14 @@
         "type": "drupal-module",
         "extra": {
             "branch-alias": {
-                "dev-1.x": "1.x-dev"
+                "dev-3.x": "3.x-dev"
             },
             "drupal": {
-                "version": "8.x-1.0",
-                "datestamp": "1510352885",
+                "version": "8.x-3.0-rc1",
+                "datestamp": "1558647185",
                 "security-coverage": {
-                    "status": "covered",
-                    "message": "Covered by Drupal's security advisory policy"
+                    "status": "not-covered",
+                    "message": "RC releases are not covered by Drupal security advisories."
                 }
             }
         },
@@ -3564,7 +3566,7 @@
         "description": "Provides the field_group module.",
         "homepage": "https://www.drupal.org/project/field_group",
         "support": {
-            "source": "http://cgit.drupalcode.org/field_group"
+            "source": "https://git.drupalcode.org/project/field_group"
         }
     },
     {
@@ -3928,18 +3930,18 @@
     },
     {
         "name": "drupal/linkit",
-        "version": "5.0.0-beta8",
-        "version_normalized": "5.0.0.0-beta8",
+        "version": "5.0.0-beta9",
+        "version_normalized": "5.0.0.0-beta9",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/linkit.git",
-            "reference": "8.x-5.0-beta8"
+            "reference": "8.x-5.0-beta9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/linkit-8.x-5.0-beta8.zip",
-            "reference": "8.x-5.0-beta8",
-            "shasum": "677be19d6128f1d5c6d239132e98b1817ad91acb"
+            "url": "https://ftp.drupal.org/files/projects/linkit-8.x-5.0-beta9.zip",
+            "reference": "8.x-5.0-beta9",
+            "shasum": "150291dd87a4f65027492020c28635e2b5249d1a"
         },
         "require": {
             "drupal/core": "~8.0"
@@ -3953,8 +3955,8 @@
                 "dev-5.x": "5.x-dev"
             },
             "drupal": {
-                "version": "8.x-5.0-beta8",
-                "datestamp": "1545966784",
+                "version": "8.x-5.0-beta9",
+                "datestamp": "1562194985",
                 "security-coverage": {
                     "status": "not-covered",
                     "message": "Beta releases are not covered by Drupal security advisories."

@@ -5,6 +5,11 @@ dependencies:
   module:
     - file
     - node
+    - imce
+third_party_settings:
+  imce:
+    use: 1
+    scheme: public
 id: test_profile
 label: 'Test profile'
 description: 'This is a test profile'

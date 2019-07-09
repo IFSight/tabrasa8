@@ -4,6 +4,12 @@ global-styling:
     base:
       css/adminimal.css: {}
 
+google-fonts:
+  version: VERSION
+  css:
+    base:
+      css/adminimal_fonts.css: {}
+
 custom-styling:
   version: VERSION
   css:
