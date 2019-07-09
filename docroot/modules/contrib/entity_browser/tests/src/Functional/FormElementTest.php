@@ -1,16 +1,16 @@
 <?php
 
-namespace Drupal\entity_browser\Tests;
+namespace Drupal\Tests\entity_browser\Functional;
 
 use Drupal\entity_browser\Element\EntityBrowserElement;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests the entity browser form element.
  *
  * @group entity_browser
  */
-class FormElementTest extends WebTestBase {
+class FormElementTest extends BrowserTestBase {
 
   /**
    * Modules to enable.
@@ -47,28 +47,35 @@ class FormElementTest extends WebTestBase {
    * Tests the Entity browser form element.
    */
   public function testFormElement() {
+    // See \Drupal\entity_browser_test\Form\FormElementTest.
     $this->drupalGet('/test-element');
-    $this->assertLink('Select entities', 0, 'Trigger link found.');
-    $this->assertFieldByXPath("//input[@type='hidden' and @id='edit-fancy-entity-browser-target']", '', "Entity browser's hidden element found.");
+    $this->assertSession()->linkExists('Select entities', 0, 'Trigger link found.');
 
-    $edit = [
-      'fancy_entity_browser[entity_ids]' => $this->nodes[0]->getEntityTypeId() . ':' . $this->nodes[0]->id() . ' ' . $this->nodes[1]->getEntityTypeId() . ':' . $this->nodes[1]->id(),
+    $ids = [
+      $this->nodes[0]->getEntityTypeId() . ':' . $this->nodes[0]->id(),
+      $this->nodes[1]->getEntityTypeId() . ':' . $this->nodes[1]->id(),
     ];
-    $this->drupalPostForm(NULL, $edit, 'Submit');
+
+    $ids = implode(' ', $ids);
+
+    $this->assertSession()->hiddenFieldExists("fancy_entity_browser[entity_ids]")->setValue($ids);
+
+    $this->assertSession()->buttonExists('Submit')->press();
     $expected = 'Selected entities: ' . $this->nodes[0]->label() . ', ' . $this->nodes[1]->label();
-    $this->assertText($expected, 'Selected entities detected.');
+    $this->assertSession()->responseContains($expected, 'Selected entities detected.');
 
     $default_entity = $this->nodes[0]->getEntityTypeId() . ':' . $this->nodes[0]->id();
     $this->drupalGet('/test-element', ['query' => ['default_entity' => $default_entity, 'selection_mode' => EntityBrowserElement::SELECTION_MODE_EDIT]]);
-    $this->assertLink('Select entities', 0, 'Trigger link found.');
-    $this->assertFieldByXPath("//input[@type='hidden' and @id='edit-fancy-entity-browser-target']", $default_entity, "Entity browser's hidden element found.");
+    $this->assertSession()->linkExists('Select entities', 0, 'Trigger link found.');
 
-    $edit = [
-      'fancy_entity_browser[entity_ids]' => $this->nodes[1]->getEntityTypeId() . ':' . $this->nodes[1]->id() . ' ' . $this->nodes[0]->getEntityTypeId() . ':' . $this->nodes[0]->id(),
-    ];
-    $this->drupalPostForm(NULL, $edit, 'Submit');
+    $this->assertSession()->hiddenFieldValueEquals("fancy_entity_browser[entity_ids]", $default_entity);
+    $hidden_field = $this->assertSession()->hiddenFieldExists("fancy_entity_browser[entity_ids]");
+    $new_value = 'node:' . $this->nodes[1]->id() . ' node:' . $this->nodes[0]->id();
+    $hidden_field->setValue($new_value);
+
+    $this->submitForm([], 'Submit');
     $expected = 'Selected entities: ' . $this->nodes[1]->label() . ', ' . $this->nodes[0]->label();
-    $this->assertText($expected, 'Selected entities detected.');
+    $this->assertSession()->responseContains($expected, 'Selected entities detected.');
   }
 
 }

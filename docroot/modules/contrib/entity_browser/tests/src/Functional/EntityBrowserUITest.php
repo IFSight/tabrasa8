@@ -1,16 +1,19 @@
 <?php
 
-namespace Drupal\entity_browser\Tests;
+namespace Drupal\Tests\entity_browser\Functional;
 
 use Drupal\file\Entity\File;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\TestFileCreationTrait;
 
 /**
  * Tests the entity browser UI.
  *
  * @group entity_browser
  */
-class EntityBrowserUITest extends WebTestBase {
+class EntityBrowserUITest extends BrowserTestBase {
+
+  use TestFileCreationTrait;
 
   /**
    * Modules to enable.
@@ -26,7 +29,7 @@ class EntityBrowserUITest extends WebTestBase {
   /**
    * Tests entity browser UI.
    */
-  public function testEntityBrowserUserInterface() {
+  public function testEntityBrowserUI() {
     $account = $this->drupalCreateUser([
       'administer entity browsers',
       'access test_entity_browser_iframe entity browser pages',
@@ -34,14 +37,14 @@ class EntityBrowserUITest extends WebTestBase {
     $this->drupalLogin($account);
     // Go to the entity browser iframe link.
     $this->drupalGet('/entity-browser/iframe/test_entity_browser_iframe');
-    $this->assertRaw('Select');
+    $this->assertSession()->responseContains('Select');
     $this->drupalGet('/admin/config/content/entity_browser/test_entity_browser_iframe/widgets');
     $edit = [
       'table[871dbf77-012e-41cb-b32a-ada353d2de35][form][submit_text]' => 'Different',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
+    $this->submitForm($edit, 'Save');
     $this->drupalGet('/entity-browser/iframe/test_entity_browser_iframe');
-    $this->assertRaw('Different');
+    $this->assertSession()->responseContains('Different');
   }
 
   /**
@@ -55,16 +58,16 @@ class EntityBrowserUITest extends WebTestBase {
     $this->drupalLogin($account);
     // Go to the entity browser iframe link.
     $this->drupalGet('/entity-browser/iframe/test_entity_browser_token');
-    $image = current($this->drupalGetTestFiles('image'));
+    $image = current($this->getTestFiles('image'));
     $edit = [
       'files[upload][]' => $this->container->get('file_system')->realpath($image->uri),
     ];
-    $this->drupalPostForm(NULL, $edit, 'Select files');
+    $this->submitForm($edit, 'Select files');
 
     $file = File::load(1);
     // Test entity browser token that has upload location configured to
     // public://[current-user:account-name]/.
-    $this->assertEqual($file->getFileUri(), 'public://' . $account->getUsername() . '/' . $file->getFilename(), 'Image has the correct uri.');
+    $this->assertEquals($file->getFileUri(), 'public://' . $account->getAccountName() . '/' . $file->getFilename(), 'Image has the correct uri.');
   }
 
 }
