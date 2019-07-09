@@ -45,7 +45,7 @@ class MatcherAdminTest extends LinkitBrowserTestBase {
     $this->drupalLogin($this->adminUser);
 
     $this->drupalGet('/admin/config/content/linkit/manage/' . $this->linkitProfile->id() . '/matchers');
-    $this->assertSession()->pageTextContains(t('No matchers added.'));
+    $this->assertSession()->pageTextContains('No matchers added.');
 
     // Make sure the 'Add matcher' action link is present.
     $this->assertSession()->linkByHrefExists('/admin/config/content/linkit/manage/' . $this->linkitProfile->id() . '/matchers/add');
@@ -62,17 +62,10 @@ class MatcherAdminTest extends LinkitBrowserTestBase {
     // Create matcher.
     $edit = [];
     $edit['plugin'] = 'dummy_matcher';
-    $this->submitForm($edit, t('Save and continue'));
+    $this->submitForm($edit, 'Save and continue');
 
-    // Reload the profile.
-    $this->linkitProfile = Profile::load($this->linkitProfile->id());
-
-    $matcher_ids = $this->linkitProfile->getMatchers()->getInstanceIds();
-    /** @var \Drupal\linkit\MatcherInterface $plugin */
-    $plugin = $this->linkitProfile->getMatcher(current($matcher_ids));
-
-    $this->assertSession()->responseContains(t('Added %label matcher.', ['%label' => $plugin->getLabel()]));
-    $this->assertSession()->pageTextNotContains(t('No matchers added.'));
+    $this->assertSession()->pageTextContains('Added Dummy Matcher matcher.');
+    $this->assertSession()->pageTextNotContains('No matchers added.');
   }
 
   /**
@@ -86,7 +79,7 @@ class MatcherAdminTest extends LinkitBrowserTestBase {
     // Create configurable matcher.
     $edit = [];
     $edit['plugin'] = 'configurable_dummy_matcher';
-    $this->submitForm($edit, t('Save and continue'));
+    $this->submitForm($edit, 'Save and continue');
 
     // Reload the profile.
     $this->linkitProfile = Profile::load($this->linkitProfile->id());
@@ -98,7 +91,7 @@ class MatcherAdminTest extends LinkitBrowserTestBase {
     $this->assertSession()->addressEquals('/admin/config/content/linkit/manage/' . $this->linkitProfile->id() . '/matchers/' . $plugin->getUuid());
     $this->drupalGet('/admin/config/content/linkit/manage/' . $this->linkitProfile->id() . '/matchers');
 
-    $this->assertSession()->pageTextNotContains(t('No matchers added.'));
+    $this->assertSession()->pageTextNotContains('No matchers added.');
   }
 
   /**
@@ -126,9 +119,9 @@ class MatcherAdminTest extends LinkitBrowserTestBase {
     $this->drupalGet('/admin/config/content/linkit/manage/' . $this->linkitProfile->id() . '/matchers/' . $plugin_uuid . '/delete');
 
     $this->submitForm([], t('Confirm'));
-    $this->assertSession()->responseContains(t('The matcher %plugin has been deleted.', ['%plugin' => $plugin->getLabel()]));
+    $this->assertSession()->pageTextContains('The matcher Dummy Matcher has been deleted.');
     $this->assertSession()->addressEquals('/admin/config/content/linkit/manage/' . $this->linkitProfile->id() . '/matchers');
-    $this->assertSession()->pageTextContains(t('No matchers added.'));
+    $this->assertSession()->pageTextContains('No matchers added.');
 
     /** @var \Drupal\linkit\Entity\Profile $updated_profile */
     $updated_profile = Profile::load($this->linkitProfile->id());
