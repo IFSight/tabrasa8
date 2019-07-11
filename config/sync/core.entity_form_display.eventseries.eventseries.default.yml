@@ -28,6 +28,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  event_registration:
+    type: event_registration
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   monthly_recurring_date:
     type: monthly_recurring_date
     weight: 3

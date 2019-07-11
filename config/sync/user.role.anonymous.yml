@@ -11,7 +11,12 @@ is_admin: false
 permissions:
   - 'access comments'
   - 'access content'
+  - 'access eventinstance overview'
+  - 'access eventseries overview'
   - 'access site-wide contact form'
+  - 'add registrant entities'
+  - 'delete own registrant entities'
+  - 'delete registrant entities anonymously'
   - 'search content'
   - 'use text format restricted_html'
   - 'view files'
