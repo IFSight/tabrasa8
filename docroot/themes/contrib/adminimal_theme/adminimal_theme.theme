@@ -6,17 +6,27 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Implements hook_preprocess_HOOK() for HTML document templates.
  */
 function adminimal_theme_preprocess_html(&$variables) {
   // Add adminimal class to the body.
-  $variables['attributes']['class'][] = 'adminimal';
+  if ($variables['attributes'] instanceof Attribute) {
+    $variables['attributes']->addClass('adminimal');
+  }
+  else {
+    $variables['attributes']['class'][] = 'adminimal';
+  }
 
   // Add library with custom CSS.
   if (theme_get_setting('custom_css')) {
     $variables['#attached']['library'][] = 'adminimal_theme/custom-styling';
+  }
+  // Add Open Sans font styles based on the theme setting.
+  if (!theme_get_setting('disable_google_fonts')) {
+    $variables['#attached']['library'][] = 'adminimal_theme/google-fonts';
   }
 }
 
@@ -103,4 +113,17 @@ function adminimal_theme_form_system_theme_settings_alter(&$form, \Drupal\Core\F
       ],
     ];
   }
+
+  $form['adminimal_theme_settings'] = [
+    '#type' => 'details',
+    '#title' => t('Adminimal theme settings'),
+    '#open' => TRUE,
+  ];
+
+  $form['adminimal_theme_settings']['disable_google_fonts'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Avoid using "Open Sans" font'),
+    '#default_value' => theme_get_setting('disable_google_fonts'),
+    '#description' => t('Useful for languages that are not well supported by the "Open sans" font. Like Japanese for example.'),
+  ];
 }

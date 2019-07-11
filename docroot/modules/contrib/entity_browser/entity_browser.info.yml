@@ -8,10 +8,12 @@ test_dependencies:
   - inline_entity_form:inline_entity_form
   - drupal:media (>= 8.4)
   - paragraphs:paragraphs
+  - embed:embed
+  - entity_embed:entity_embed
 configure: entity.entity_browser.collection
 
-# Information added by Drupal.org packaging script on 2019-02-15
-version: '8.x-2.1'
+# Information added by Drupal.org packaging script on 2019-07-04
+version: '8.x-2.2'
 core: '8.x'
 project: 'entity_browser'
-datestamp: 1550236988
+datestamp: 1562240594

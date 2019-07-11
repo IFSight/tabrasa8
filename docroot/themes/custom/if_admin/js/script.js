@@ -17,21 +17,7 @@
   // To understand behaviors, see https://drupal.org/node/756722#behaviors
   Drupal.behaviors.if_admin_utils = {
     attach: function (context, settings) {
-      var $bgcheckbox = $('.field--name-field-background-image').find('.form-checkbox');
-
-      $bgcheckbox.each(function(){
-        if ($(this).is(':checked')) {
-          $(this).closest('.field--name-field-background-image').next('.field--name-field-overlay-color').addClass('visible');
-        }
-      })
-
-      $bgcheckbox.change(function(){
-        if ($(this).is(':checked')) {
-            $(this).closest('.field--name-field-background-image').next('.field--name-field-overlay-color').addClass('visible');
-        } else {
-            $(this).closest('.field--name-field-background-image').next('.field--name-field-overlay-color').removeClass('visible');
-        }
-      });
+      // Code goes here.
     }
   };
 

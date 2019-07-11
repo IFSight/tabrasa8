@@ -6,7 +6,7 @@
 }
 
 [dir="rtl"] .horizontal-tabs {
-    margin: 0 0 1em 0;
+  margin: 0 0 1em 0;
 }
 
 .horizontal-tabs .horizontal-tabs-list {
@@ -27,9 +27,10 @@
   border-left: 1px solid #dedede;
 }
 
-.horizontal-tabs-pane {
+.horizontal-tabs-panes .horizontal-tabs-pane {
   padding: 0 1em;
   border: 0;
+  background-color: unset;
 }
 
 .horizontal-tabs-pane > summary {
@@ -95,7 +96,7 @@
   display: block;
   text-decoration: none;
   padding: 0.5em 0.6em 0.3em 0.6em;
-  position:relative;
+  position: relative;
   top: 0px;
 }
 
@@ -124,6 +125,6 @@ div.field-group-htabs-wrapper .field-group-format-wrapper {
 .horizontal-tabs .horizontal-tab-hidden {
   display: block;
   position: absolute;
-  top: -100000px;
+  top: -100000000px;
   width: 100%;
 }

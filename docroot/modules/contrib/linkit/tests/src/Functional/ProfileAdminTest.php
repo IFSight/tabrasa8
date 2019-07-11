@@ -64,10 +64,10 @@ class ProfileAdminTest extends LinkitBrowserTestBase {
     $edit['label'] = mb_strtolower($this->randomMachineName());
     $edit['id'] = mb_strtolower($this->randomMachineName());
     $edit['description'] = $this->randomMachineName(16);
-    $this->submitForm($edit, t('Save and manage matchers'));
+    $this->submitForm($edit, 'Save and manage matchers');
 
     // Make sure that the new profile was saved properly.
-    $this->assertSession()->responseContains(t('Created new profile %label.', ['%label' => $edit['label']]));
+    $this->assertSession()->pageTextContains('Created new profile ' . $edit['label']);
     $this->drupalGet('/admin/config/content/linkit');
     $this->assertSession()->pageTextContains($edit['label']);
   }
@@ -95,10 +95,10 @@ class ProfileAdminTest extends LinkitBrowserTestBase {
     $edit = [];
     $edit['label'] = $this->randomMachineName();
     $edit['description'] = $this->randomMachineName(16);
-    $this->submitForm($edit, t('Update profile'));
+    $this->submitForm($edit, 'Update profile');
 
     // Make sure that the profile was updated properly.
-    $this->assertSession()->responseContains(t('Updated profile %label.', ['%label' => $edit['label']]));
+    $this->assertSession()->pageTextContains('Updated profile ' . $edit['label']);
     $this->drupalGet('/admin/config/content/linkit');
     $this->assertSession()->pageTextContains($edit['label']);
   }
@@ -116,12 +116,12 @@ class ProfileAdminTest extends LinkitBrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     // Delete the profile.
-    $this->submitForm([], t('Delete'));
+    $this->submitForm([], 'Delete');
 
     // Make sure that the profile was deleted properly.
-    $this->assertSession()->responseContains(t('The linkit profile %label has been deleted.', ['%label' => $profile->label()]));
+    $this->assertSession()->pageTextContains('The linkit profile ' . $profile->label() . ' has been deleted.');
     $this->drupalGet('/admin/config/content/linkit');
-    $this->assertSession()->responseNotContains($profile->label());
+    $this->assertSession()->pageTextNotContains($profile->label());
   }
 
 }

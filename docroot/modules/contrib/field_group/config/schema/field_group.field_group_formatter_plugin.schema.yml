@@ -55,6 +55,9 @@ field_group.field_group_formatter_plugin.html_element:
     label_element:
       type: string
       label: 'html element tag to be used for the label'
+    label_element_classes:
+      type: string
+      label: 'html classes to be used for the label'
     attributes:
       type: string
       label: 'html attributes for the element'
@@ -86,6 +89,15 @@ field_group.field_group_formatter_plugin.tabs:
   type: field_group.field_group_formatter_plugin.base
   label: 'Mapping for the tab formatter settings'
   mapping:
+    formatter:
+      type: string
+      label: 'default state for the tabs'
+    description:
+      type: string
+      label: 'description of the tabs'
+    required_fields:
+      type: boolean
+      label: 'Mark for required fields'
     direction:
       type: string
       label: 'Direction of the tabs'
