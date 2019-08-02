@@ -83,7 +83,6 @@ module:
   update: 0
   user: 0
   varnish_purger: 0
-  video_embed_field: 0
   views_ui: 0
   viewsreference: 0
   webform: 0
