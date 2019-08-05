@@ -59,7 +59,7 @@ class FormElementTest extends FormBase {
       },
       $entities
     ));
-    $this->messenger()->addMessage($message);
+    drupal_set_message($message);
   }
 
 }

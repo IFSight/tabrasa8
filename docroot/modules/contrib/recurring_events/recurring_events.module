@@ -222,11 +222,12 @@ function template_preprocess_eventseries(array &$variables) {
 function recurring_events_eventseries_presave(EntityInterface $entity) {
   $original = $entity->original;
   $creation_service = \Drupal::service('recurring_events.event_creation_service');
+  $moderated = $entity->hasField('moderation_state');
 
   // If the eventseries is being published, or created for the first time then
   // there may be date recurrence changes that need to be converted into new
   // eventinstance entities.
-  if ($entity->isPublished() || $entity->isNew()) {
+  if ($entity->isPublished() || $entity->isNew() || !$moderated) {
     if ($entity->isDefaultTranslation()) {
       $creation_service->saveEvent($entity, $original);
     }

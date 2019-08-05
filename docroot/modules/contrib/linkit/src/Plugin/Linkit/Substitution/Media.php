@@ -7,9 +7,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\file\FileInterface;
 use Drupal\linkit\SubstitutionInterface;
-use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,34 +33,40 @@ class Media extends PluginBase implements SubstitutionInterface, ContainerFactor
   }
 
   /**
-   * {@inheritdoc}
+   * Get the URL associated with a given entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to get a URL for.
+   *
+   * @return \Drupal\Core\GeneratedUrl
+   *   A url to replace.
    */
   public function getUrl(EntityInterface $entity) {
     $url = new GeneratedUrl();
 
-    if (!($entity instanceof MediaInterface)) {
-      return $url;
-    }
-
-    $source_field = $entity->getSource()->getSourceFieldDefinition($entity->get('bundle')->entity);
-    if ($source_field && $entity->hasField($source_field->getName()) && $entity->get($source_field->getName())->entity instanceof FileInterface) {
-      /** @var \Drupal\file\FileInterface $file */
-      $file = $entity->get($source_field->getName())->entity;
-      $url->setGeneratedUrl(file_create_url($file->getFileUri()));
-      $url->addCacheableDependency($entity);
-    }
-
-    // If available, fall back to the canonical URL if the bundle doesn't have
-    // a file source field.
-    if ($entity->getEntityType()->getLinkTemplate('canonical') != $entity->getEntityType()->getLinkTemplate('edit-form')) {
+    /** @var \Drupal\media\MediaTypeInterface $media_type */
+    $media_type = $entity->get('bundle')->entity;
+    // Default to the canonical URL if the bundle doesn't have a source field.
+    if (empty($media_type->getSource()->getConfiguration()['source_field'])) {
       return $entity->toUrl('canonical')->toString(TRUE);
     }
 
+    $source_field = $media_type->getSource()->getConfiguration()['source_field'];
+    /** @var \Drupal\file\FileInterface $file */
+    $file = $entity->{$source_field}->entity;
+    $url->setGeneratedUrl(file_create_url($file->getFileUri()));
+    $url->addCacheableDependency($entity);
     return $url;
   }
 
   /**
-   * {@inheritdoc}
+   * Checks if this substitution plugin is applicable for the given entity type.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   An entity type object.
+   *
+   * @return bool
+   *   If the plugin is applicable.
    */
   public static function isApplicable(EntityTypeInterface $entity_type) {
     return $entity_type->entityClassImplements('Drupal\media\MediaInterface');

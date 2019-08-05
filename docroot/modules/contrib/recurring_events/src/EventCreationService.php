@@ -489,9 +489,23 @@ class EventCreationService {
       switch ($form_data['type']) {
         case 'custom':
           if (!empty($form_data['custom_dates'])) {
+            $events_to_create = [];
             foreach ($form_data['custom_dates'] as $date_range) {
-              // Create this event instance.
-              $event_instances[] = $this->createEventInstance($event, $date_range['start_date'], $date_range['end_date']);
+              // Set this event to be created.
+              $events_to_create[$date_range['start_date']->format('r')] = [
+                'start_date' => $date_range['start_date'],
+                'end_date' => $date_range['end_date'],
+              ];
+            }
+
+            // Allow modules to alter the array of event instances before they
+            // get created.
+            \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create);
+
+            if (!empty($events_to_create)) {
+              foreach ($events_to_create as $custom_event) {
+                $event_instances[] = $this->createEventInstance($event, $custom_event['start_date'], $custom_event['end_date']);
+              }
             }
           }
           break;
@@ -509,6 +523,7 @@ class EventCreationService {
             $time_parts = $this->convertTimeTo24hourFormat($form_data['time']);
 
             if (!empty($dates)) {
+              $events_to_create = [];
               foreach ($dates as $weekly_date) {
                 // Set the time of the start date to be the hours and minutes.
                 $weekly_date->setTime($time_parts[0], $time_parts[1]);
@@ -518,8 +533,21 @@ class EventCreationService {
                 $weekly_date_end = clone $weekly_date;
                 // Add the number of seconds specified in the duration field.
                 $weekly_date_end->modify('+' . $form_data['duration'] . ' seconds');
-                // Create this event instance.
-                $event_instances[] = $this->createEventInstance($event, $weekly_date, $weekly_date_end);
+                // Set this event to be created.
+                $events_to_create[$weekly_date->format('r')] = [
+                  'start_date' => $weekly_date,
+                  'end_date' => $weekly_date_end,
+                ];
+              }
+
+              // Allow modules to alter the array of event instances before they
+              // get created.
+              \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create);
+
+              if (!empty($events_to_create)) {
+                foreach ($events_to_create as $weekly_event) {
+                  $event_instances[] = $this->createEventInstance($event, $weekly_event['start_date'], $weekly_event['end_date']);
+                }
               }
             }
           }
@@ -557,6 +585,7 @@ class EventCreationService {
 
             // If valid recurring dates were found.
             if (!empty($dates)) {
+              $events_to_create = [];
               foreach ($dates as $monthly_date) {
                 // Set the time of the start date to be the hours and
                 // minutes.
@@ -568,8 +597,21 @@ class EventCreationService {
                 // Add the number of seconds specified in the duration
                 // field.
                 $monthly_date_end->modify('+' . $form_data['duration'] . ' seconds');
-                // Create this event instance.
-                $event_instances[] = $this->createEventInstance($event, $monthly_date, $monthly_date_end);
+                // Set this event to be created.
+                $events_to_create[$monthly_date->format('r')] = [
+                  'start_date' => $monthly_date,
+                  'end_date' => $monthly_date_end,
+                ];
+              }
+
+              // Allow modules to alter the array of event instances before they
+              // get created.
+              \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create);
+
+              if (!empty($events_to_create)) {
+                foreach ($events_to_create as $monthly_event) {
+                  $event_instances[] = $this->createEventInstance($event, $monthly_event['start_date'], $monthly_event['end_date']);
+                }
               }
             }
           }

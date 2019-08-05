@@ -25,13 +25,11 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
     parent::setUp();
 
     // Add a new menu entity which does not has a view controller.
-    $this->menu = \Drupal::entityTypeManager()
-      ->getStorage('menu')
-      ->create([
-        'id' => 'menu_name',
-        'label' => 'Label',
-        'description' => 'Description text',
-      ]);
+    $this->menu = entity_create('menu', [
+      'id' => 'menu_name',
+      'label' => 'Label',
+      'description' => 'Description text',
+    ]);
     $this->menu->save();
   }
 
@@ -108,12 +106,10 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
     $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
-    // Verify title of embedded node exists in page.
-    $this->assertSession()->responseContains($this->node->title->value);
-    // Verify body of embedded node does not exists in page.
-    $this->assertSession()->responseNotContains($this->node->body->value);
-    $this->assertSession()->responseNotContains('This placeholder should not be rendered.');
-    $this->assertSession()->linkByHrefExists('node/' . $this->node->id(), 0, 'Link to the embedded node exists.');
+    $this->assertText($this->node->title->value, 'Title of the embedded node exists in page.');
+    $this->assertNoText($this->node->body->value, 'Body of embedded node does not exists in page.');
+    $this->assertNoText(strip_tags($content), 'Placeholder does not appears in the output when embed is successful.');
+    $this->assertLinkByHref('node/' . $this->node->id(), 0, 'Link to the embedded node exists.');
 
     // Test 'Entity ID' Entity Embed Display plugin.
     $content = '<drupal-entity data-entity-type="node" data-entity-uuid="' . $this->node->uuid() . '" data-entity-embed-display="entity_reference:entity_reference_entity_id">This placeholder should not be rendered.</drupal-entity>';
@@ -123,11 +119,11 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
     $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
-    $this->assertSession()->responseContains($this->node->id());
-    $this->assertSession()->responseNotContains($this->node->title->value);
-    $this->assertSession()->responseNotContains($this->node->body->value);
-    $this->assertSession()->responseNotContains('This placeholder should not be rendered.');
-    $this->assertSession()->linkByHrefNotExists('node/' . $this->node->id(), 'Link to the embedded node does not exists.');
+    $this->assertText($this->node->id(), 'ID of the embedded node exists in page.');
+    $this->assertNoText($this->node->title->value, 'Title of the embedded node does not exists in page.');
+    $this->assertNoText($this->node->body->value, 'Body of embedded node does not exists in page.');
+    $this->assertNoText(strip_tags($content), 'Placeholder does not appears in the output when embed is successful.');
+    $this->assertNoLinkByHref('node/' . $this->node->id(), 'Link to the embedded node does not exists.');
 
     // Test 'Rendered entity' Entity Embed Display plugin.
     $content = '<drupal-entity data-entity-type="node" data-entity-uuid="' . $this->node->uuid() . '" data-entity-embed-display="entity_reference:entity_reference_entity_view" data-entity-embed-display-settings=\'{"view_mode":"teaser"}\'>This placeholder should not be rendered.</drupal-entity>';
@@ -137,8 +133,8 @@ class EntityReferenceFieldFormatterTest extends EntityEmbedTestBase {
     $settings['body'] = [['value' => $content, 'format' => 'custom_format']];
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
-    $this->assertSession()->responseContains($this->node->body->value, 'Body of embedded node does not exists in page.');
-    $this->assertSession()->responseNotContains('This placeholder should not be rendered.');
+    $this->assertText($this->node->body->value, 'Body of embedded node does not exists in page.');
+    $this->assertNoText(strip_tags($content), 'Placeholder does not appears in the output when embed is successful.');
   }
 
 }

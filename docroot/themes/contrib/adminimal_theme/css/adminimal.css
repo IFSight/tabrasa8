@@ -1,5 +1,25 @@
 /* Adminimal Theme overrides file. All selectors must start with ".adminimal" */
 
+/* Import the Open Sans webfont from Google CDN */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(https://themes.googleusercontent.com/static/fonts/opensans/v6/DXI1ORHCpsQm3Vp6mXoaTRsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans'), url(https://themes.googleusercontent.com/static/fonts/opensans/v6/uYKcPVoh6c5R0NpdEY5A-Q.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(https://themes.googleusercontent.com/static/fonts/opensans/v6/MTP_ySUJH_bn48VBG8sNShsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+
 /*html {
   zoom: 1.1;
 }*/
@@ -9,7 +29,11 @@
   zoom: 0.9;
 }*/
 
-.adminimal .page-title,
+body.adminimal {
+  font: normal 81.3%/1.538em "Open Sans", sans-serif;
+}
+
+.adminimal h1,
 .adminimal .heading-a {
   color: #fff;
   font-size: 2.35em;
@@ -19,8 +43,8 @@
 }
 
 .adminimal .content-header {
-  background-color: #434343;
-  padding: 2rem 0 0;
+  background-color: #333;
+  padding: 1rem 0 0;
 }
 
 .adminimal thead th {
@@ -162,6 +186,30 @@
   transition: all, 0.2s;
 }
 
+.adminimal .vertical-tabs__menu-item a:hover,
+.adminimal .vertical-tabs__menu-item a:focus {
+  background: #d2e7f4;
+}
+
+.adminimal .vertical-tabs__menu-item.is-selected a:hover,
+.adminimal .vertical-tabs__menu-item.is-selected a:focus {
+  background: #fcfcfa;
+}
+
+.adminimal .vertical-tabs__menu-item.is-selected {
+  border: none;
+  box-shadow: none;
+}
+
+.adminimal .button:not(.media-library-item__remove) {
+  background-image: none;
+}
+
+.adminimal .button:not(.media-library-item__remove):hover,
+.adminimal .button:not(.media-library-item__remove):focus {
+  background-image: none;
+}
+
 .adminimal .button {
   background-color: #f9f9f9;
   border-radius: 0;
@@ -181,13 +229,6 @@
 
 .adminimal .action-links {
   margin: 2em 0;
-}
-
-.adminimal .button--small {
-  background: #fff;
-  border-color: #cacaca;
-  border-radius: 0.2rem;
-  font-weight: 500;
 }
 
 .adminimal .button--primary {
@@ -234,6 +275,13 @@
 .adminimal .action-links .button--primary:focus {
   border-color: #08639b;
   outline: none;
+}
+
+.adminimal .button--small {
+  background: #fff;
+  border-color: #cacaca;
+  border-radius: 0.2rem;
+  font-weight: 500;
 }
 
 .adminimal .button--danger {
@@ -376,13 +424,15 @@
   margin-bottom: 0.3em;
 }
 
+.adminimal .toolbar {
+  font-family: "Open Sans";
+}
+
 .adminimal.toolbar-fixed.toolbar-vertical {
   padding-top: 32px !important;
 }
 
-.adminimal .toolbar .toolbar-tray-vertical a,
-.adminimal .toolbar .toolbar-tray-horizontal .menu-item,
-.menu-item a {
+.adminimal .toolbar a {
   transition: all, 0.2s;
 }
 
@@ -395,18 +445,6 @@
   background: #333;
 }
 
-.adminimal .toolbar .toolbar-tray-vertical .level-2 {
-  background: rgba(255,255,255,0.03);
-}
-
-.adminimal .toolbar .toolbar-tray-vertical .level-3 {
-  background: rgba(255,255,255,0.05);
-}
-
-.adminimal .toolbar .toolbar-tray-vertical .level-4 {
-  background: rgba(255,255,255,0.07);
-}
-
 .adminimal .toolbar .toolbar-tray-vertical {
   border: none;
   box-shadow: none;
@@ -416,12 +454,15 @@
   color: #bbbbbb;
 }
 
-.adminimal .toolbar .toolbar-bar .toolbar-tab:not(.workspaces-toolbar-tab) > .toolbar-item {
-  color: #bebebe;
+.adminimal .toolbar .toolbar-bar .toolbar-tab > .toolbar-item {
   font-weight: 600;
 }
 
-.adminimal .toolbar .toolbar-bar .toolbar-tab:not(.workspaces-toolbar-tab) > .toolbar-item:hover {
+.adminimal .toolbar .toolbar-bar .toolbar-item {
+  color: #bebebe;
+}
+
+.adminimal .toolbar .toolbar-bar .toolbar-tab > .toolbar-item:hover {
   background-color: #2d2d2d;
   background-image: none;
   color: #fff;
@@ -435,9 +476,9 @@
   text-decoration: none;
 }
 
-.adminimal.toolbar-horizontal .toolbar-tray .menu-item + .menu-item,
-[dir="rtl"] .adminimal.toolbar-horizontal .toolbar-tray .menu-item + .menu-item,
-.adminimal.toolbar-horizontal .toolbar-tray .menu-item:last-child {
+.adminimal .toolbar .toolbar-tray-horizontal .menu-item + .menu-item,
+[dir="rtl"] .adminimal .toolbar .toolbar-tray-horizontal .menu-item + .menu-item,
+.adminimal .toolbar .toolbar-tray-horizontal .menu-item:last-child {
   border-left: none; /* LTR */
   border-right: none;
 }
@@ -449,23 +490,7 @@
   text-decoration: none;
 }
 
-.adminimal .toolbar .toolbar-tray-horizontal ul li.menu-item {
-  border: none;
-}
-
-.adminimal .toolbar .toolbar-tray-horizontal ul li.menu-item a:hover {
-  text-decoration: none;
-}
-
-.adminimal .toolbar .toolbar-tray-horizontal ul li.menu-item a.is-active:hover {
-  text-decoration: underline;
-}
-
-.adminimal .toolbar-tray-horizontal .menu-item--expanded {
-  background: #333;
-}
-
-.adminimal .toolbar .menu-item + .menu-item {
+.adminimal .toolbar .toolbar-tray-vertical .menu-item + .menu-item {
   border: 0 none;
 }
 
@@ -475,7 +500,7 @@
 }
 
 .adminimal .toolbar .toolbar-tray-horizontal {
-  border-bottom: 0;
+  border-bottom: 1px solid #333;
   box-shadow: none;
 }
 
@@ -511,36 +536,19 @@
   background-image: url(../images//chevron-disc-up.svg);
 }
 
-.adminimal .toolbar .toolbar-menu .toolbar-menu a {
-  color: #bbb;
-}
-
-.adminimal .toolbar-tray-horizontal a:focus,
-.adminimal .toolbar-box a:focus {
+.adminimal .toolbar-tray-horizontal a:focus, .toolbar-box a:focus {
   background: transparent;
 }
 
-.adminimal .toolbar-tray-horizontal ul ul li.menu-item:first-child {
-  border-top: 1px solid #555;
-}
-
-.adminimal .toolbar .toolbar-menu a {
+.adminimal .toolbar .toolbar-tray-vertical .toolbar-menu a {
   color: #bbb;
 }
 
-.adminimal .toolbar .toolbar-menu a:hover,
-.adminimal .toolbar .toolbar-menu .toolbar-menu a.is-active {
-  background-color: #327ebd;
+.adminimal .toolbar .toolbar-tray-vertical .toolbar-menu a:hover {
   color: #fff;
-  text-decoration: none;
 }
 
-.adminimal .toolbar a.is-active:hover,
-.adminimal .toolbar .toolbar-menu .toolbar-menu a.is-active:hover {
-  text-decoration: underline;
-}
-
-.adminimal .toolbar .toolbar-menu ul ul {
+.adminimal .toolbar .toolbar-tray-vertical .toolbar-menu ul ul {
   border: none;
 }
 
@@ -604,10 +612,6 @@ input[type=radio].error:checked,
 input[type=radio].error:focus:checked {
   background: #0074bd;
   box-shadow: inset 0 0 0 3px #fff;
-}
-
-.form-item input[type='checkbox'].error {
-  border-color: #B5B5B5;
 }
 
 input[type=checkbox]#edit-delete:checked,
@@ -816,15 +820,6 @@ input[type=radio]:disabled:hover {
 
 .adminimal .views-ui-dialog .views-override {
   background-color: #f6f6f6;
-}
-
-#block-adminimal-theme-content ul.admin-list .description {
-  margin-bottom: 10px;
-}
-
-#block-adminimal-theme-content ul.admin-list .description a {
-  background: none;
-  padding: 0px;
 }
 
 .adminimal .field-multiple-table .form-item {

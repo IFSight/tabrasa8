@@ -113,7 +113,10 @@ class RegistrantListBuilder extends EntityListBuilder {
 
     $row['id'] = $entity->id();
     $row['series'] = $series->toLink($series->title->value);
-    $row['instance'] = $instance->toLink($instance->date->start_date->format($this->config->get('recurring_events_registration.registrant.config')->get('date_format')));
+    $timezone = new \DateTimeZone(drupal_get_user_timezone());
+    $date = $instance->date->start_date;
+    $date->setTimezone($timezone);
+    $row['instance'] = $instance->toLink($date->format($this->config->get('recurring_events_registration.registrant.config')->get('date_format')));
     $row['type'] = $entity->getRegistrationType() == 'series' ? $this->t('Series') : $this->t('Instance');
     foreach ($this->getCustomFields() as $machine_name => $field) {
       $row[$machine_name] = $entity->get($machine_name)->value;

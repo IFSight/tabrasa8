@@ -1,24 +1,13 @@
-INTRODUCTION
-------------
+Linkit
+===========
 Linkit provides an **enriched linking experience for internal and 
 external linking** with editors by using an autocomplete field. Linkit 
 has by default support for nodes, users, taxonomy terms, files, 
 comments and **basic support for all types of entities** that defines a 
 canonical link template.
 
- * For a full description of the module, visit the project page:
-   https://www.drupal.org/project/linkit
 
- * To submit bug reports and feature suggestions, or track changes:
-   https://www.drupal.org/project/issues/linkit
-
-REQUIREMENTS
-------------
-
-No special requirements
-
-
-INSTALLATION
+Installation
 ------------
 
 * Normal module installation procedure. See
@@ -48,8 +37,8 @@ If automatic titles is enabled in the Linkit filter settings, and
 `<a href data-entity-type data-entity-uuid title>`).
 
 
-CONFIGURATION
--------------
+Configuration
+------------
 
 A default Linkit profile will have been installed as a step in the 
 module installation process. The profile will contain information about 
@@ -58,15 +47,8 @@ which plugins to use.
 You can create additional profiles at `/admin/config/content/linkit`.
 
 
-PLUGIN EXAMPLES
----------------
+Plugins examples
+------------
 
 There are plugin implementation examples in the linkit_test module 
 bundled with Linkit core.
-
-
-MAINTAINERS
------------
-
-Current maintainers:
- * Emil Stjerneman (anon) - https://www.drupal.org/user/464598

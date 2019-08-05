@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 
 /**
- * Provides entity form widget.
+ * Uses a view to provide entity listing in a browser's widget.
  *
  * @EntityBrowserWidget(
  *   id = "entity_form",

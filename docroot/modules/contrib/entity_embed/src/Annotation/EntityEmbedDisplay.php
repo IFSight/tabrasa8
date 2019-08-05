@@ -55,14 +55,4 @@ class EntityEmbedDisplay extends Plugin {
    */
   public $no_ui = FALSE;
 
-  /**
-   * Alt and title access.
-   *
-   * Whether the plugin supports per-embed alt and title overrides for media
-   * entities with an image source.
-   *
-   * @var bool
-   */
-  public $supports_image_alt_and_title = FALSE;
-
 }

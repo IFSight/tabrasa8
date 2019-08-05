@@ -48,7 +48,7 @@ class AdminToolbarToolsAlterTest extends BrowserTestBase {
    */
   public function testAdminToolbarTools() {
     // Assert that special menu items are present in the HTML.
-    $this->assertSession()->responseContains('class="toolbar-icon toolbar-icon-admin-toolbar-tools-flush"');
+    $this->assertRaw('class="toolbar-icon toolbar-icon-admin-toolbar-tools-flush"');
   }
 
 }

@@ -2,15 +2,24 @@
 
 namespace Drupal\Tests\entity_embed\FunctionalJavascript;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\editor\Entity\Editor;
+use Drupal\file\Entity\File;
+use Drupal\filter\Entity\FilterFormat;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\Tests\TestFileCreationTrait;
 
 /**
  * Base class for all entity_embed tests.
  */
 abstract class EntityEmbedTestBase extends WebDriverTestBase {
 
+  use TestFileCreationTrait;
+
   /**
-   * {@inheritdoc}
+   * Modules to enable.
+   *
+   * @var array
    */
   protected static $modules = [
     'entity_embed',
@@ -20,83 +29,102 @@ abstract class EntityEmbedTestBase extends WebDriverTestBase {
   ];
 
   /**
-   * Assigns a name to the CKEditor iframe, to allow use of ::switchToIFrame().
+   * The test user.
    *
-   * @see \Behat\Mink\Session::switchToIFrame()
+   * @var \Drupal\user\UserInterface
    */
-  protected function assignNameToCkeditorIframe() {
-    $javascript = <<<JS
-(function(){
-  document.getElementsByClassName('cke_wysiwyg_frame')[0].id = 'ckeditor';
-})()
-JS;
-    $this->getSession()->evaluateScript($javascript);
-  }
+  protected $webUser;
 
   /**
-   * Clicks a CKEditor button.
+   * A test node to be used for embedding.
    *
-   * @param string $name
-   *   The name of the button, such as drupalink, source, etc.
+   * @var \Drupal\node\NodeInterface
    */
-  protected function pressEditorButton($name) {
-    $this->getSession()->switchToIFrame();
-    $this->assertSession()
-      ->waitForElementVisible('css', 'a.cke_button__' . $name)
-      ->click();
+  protected $node;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+
+    // Create a page content type.
+    $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
+
+    // Create a text format and enable the entity_embed filter.
+    $format = FilterFormat::create([
+      'format' => 'custom_format',
+      'name' => 'Custom format',
+      'filters' => [
+        'entity_embed' => [
+          'status' => 1,
+        ],
+      ],
+    ]);
+    $format->save();
+
+    $editor_group = [
+      'name' => 'Entity Embed',
+      'items' => [
+        'node',
+      ],
+    ];
+    $editor = Editor::create([
+      'format' => 'custom_format',
+      'editor' => 'ckeditor',
+      'settings' => [
+        'toolbar' => [
+          'rows' => [[$editor_group]],
+        ],
+      ],
+    ]);
+    $editor->save();
+
+    // Create a user with required permissions.
+    $this->webUser = $this->drupalCreateUser([
+      'access content',
+      'create page content',
+      'use text format custom_format',
+    ]);
+    $this->drupalLogin($this->webUser);
+
+    // Create a sample node to be embedded.
+    $settings = [];
+    $settings['type'] = 'page';
+    $settings['title'] = 'Embed Test Node';
+    $settings['body'] = [
+      'value' => 'This node is to be used for embedding in other nodes.',
+      'format' => 'custom_format',
+    ];
+    $this->node = $this->drupalCreateNode($settings);
   }
 
   /**
-   * Waits for CKEditor to initialize.
+   * Retrieves a sample file of the specified type.
    *
-   * @param string $instance_id
-   *   The CKEditor instance ID.
-   * @param int $timeout
-   *   (optional) Timeout in milliseconds, defaults to 10000.
+   * @return \Drupal\file\FileInterface
+   *   The created file entity.
    */
-  protected function waitForEditor($instance_id = 'edit-body-0-value', $timeout = 10000) {
-    $condition = <<<JS
-      (function() {
-        return (
-          typeof CKEDITOR !== 'undefined'
-          && typeof CKEDITOR.instances["$instance_id"] !== 'undefined'
-          && CKEDITOR.instances["$instance_id"].instanceReady
-        );
-      }());
-JS;
+  protected function getTestFile($type_name, $size = NULL) {
+    // Get a file to upload.
+    $file = current($this->getTestFiles($type_name, $size));
 
-    $this->getSession()->wait($timeout, $condition);
+    // Add a filesize property to files as would be read by
+    // \Drupal\file\Entity\File::load().
+    $file->filesize = filesize($file->uri);
+
+    $file = File::create((array) $file);
+    $file->save();
+    return $file;
   }
 
   /**
-   * Helper function to reopen EntityEmbedDialog for first embed.
+   * Assert that the expected display plugins are available for the entity.
    */
-  protected function reopenDialog() {
-    $this->getSession()->switchToIFrame();
-    $select_and_edit_embed = <<<JS
-var editor = CKEDITOR.instances['edit-body-0-value'];
-var entityEmbed = editor.widgets.getByElement(editor.editable().findOne('div'));
-entityEmbed.focus();
-editor.execCommand('editdrupalentity');
-JS;
-    $this->getSession()->executeScript($select_and_edit_embed);
-    $this->assertSession()->assertWaitOnAjaxRequest();
-    $this->assertSession()->waitForElementVisible('css', 'form.entity-embed-dialog-step--embed');
-  }
-
-  /**
-   * Show visually hidden fields.
-   */
-  protected function showHiddenFields() {
-    $script = <<<JS
-      var hidden_fields = document.querySelectorAll(".visually-hidden");
-
-      [].forEach.call(hidden_fields, function(el) {
-        el.classList.remove("visually-hidden");
-      });
-JS;
-
-    $this->getSession()->executeScript($script);
+  public function assertAvailableDisplayPlugins(EntityInterface $entity, array $expected_plugins, $message = '') {
+    $plugin_options = $this->container->get('plugin.manager.entity_embed.display')
+      ->getDefinitionOptionsForEntity($entity);
+    $this->assertEquals([], array_diff($expected_plugins, array_keys($plugin_options)), $message);
   }
 
 }

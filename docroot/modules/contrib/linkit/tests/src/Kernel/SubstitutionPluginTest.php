@@ -15,6 +15,8 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
  * Tests the substitution plugins.
  *
  * @group linkit
+ *
+ * @requires module media_entity
  */
 class SubstitutionPluginTest extends LinkitKernelTestBase {
 
@@ -41,7 +43,6 @@ class SubstitutionPluginTest extends LinkitKernelTestBase {
     'file',
     'entity_test',
     'media',
-    'media_test_source',
     'image',
     'field',
   ];
@@ -61,8 +62,6 @@ class SubstitutionPluginTest extends LinkitKernelTestBase {
     $this->installEntitySchema('field_storage_config');
     $this->installEntitySchema('field_config');
     $this->installSchema('file', ['file_usage']);
-    $this->installConfig(['media']);
-    \Drupal::entityTypeManager()->clearCachedDefinitions();
 
     unset($GLOBALS['config']['system.file']);
     \Drupal::configFactory()->getEditable('system.file')->set('default_scheme', 'public')->save();
@@ -177,39 +176,6 @@ class SubstitutionPluginTest extends LinkitKernelTestBase {
 
     $entity_type = $this->entityTypeManager->getDefinition('file');
     $this->assertFalse(MediaSubstitutionPlugin::isApplicable($entity_type), 'The entity type File is not applicable the media substitution.');
-  }
-
-  /**
-   * Test the media substitution when there is no supported source field.
-   */
-  public function testMediaSubstitutionWithoutFileSource() {
-    // Set up media bundle and fields.
-    $media_type = MediaType::create([
-      'label' => 'test',
-      'id' => 'test',
-      'description' => 'Test type.',
-      'source' => 'test',
-    ]);
-    $media_type->save();
-    $source_field = $media_type->getSource()->createSourceField($media_type);
-    $source_field->getFieldStorageDefinition()->save();
-    $source_field->save();
-    $media_type->set('source_configuration', [
-      'source_field' => $source_field->getName(),
-    ])->save();
-
-    $media = Media::create([
-      'bundle' => 'test',
-      $source_field->getName() => ['value' => 'foobar'],
-    ]);
-    $media->save();
-
-    $media_substitution = $this->substitutionManager->createInstance('media');
-    $this->assertEquals('', $media_substitution->getUrl($media)->getGeneratedUrl());
-
-    $this->config('media.settings')->set('standalone_url', TRUE)->save();
-    \Drupal::entityTypeManager()->clearCachedDefinitions();
-    $this->assertEquals('/media/' . $media->id(), $media_substitution->getUrl($media)->getGeneratedUrl());
   }
 
 }

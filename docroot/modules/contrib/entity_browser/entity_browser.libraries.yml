@@ -61,9 +61,6 @@ file_browser:
 
 modal:
   version: VERSION
-  css:
-    component:
-      css/entity_browser.modal.css: {}
   js:
     js/entity_browser.modal.js: {}
   dependencies:

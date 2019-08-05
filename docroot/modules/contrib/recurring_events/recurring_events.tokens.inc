@@ -29,8 +29,13 @@ function recurring_events_token_info() {
   ];
 
   $eventinstance['date'] = [
-    'name' => t('Event Instance Date'),
-    'description' => t('The date of the event instance.'),
+    'name' => t('Event Instance Start Date'),
+    'description' => t('The start date of the event instance.'),
+  ];
+
+  $eventinstance['end_date'] = [
+    'name' => t('Event Instance End Date'),
+    'description' => t('The end date of the event instance.'),
   ];
 
   $eventinstance['url'] = [
@@ -75,6 +80,8 @@ function recurring_events_tokens($type, $tokens, array $data, array $options, Bu
   $replacements = [];
   if ($type == 'eventinstance' && !empty($data['eventinstance'])) {
     $event_instance = $data['eventinstance'];
+    $date_format = \Drupal::config('recurring_events.eventinstance.config')->get('date_format');
+    $timezone = new \DateTimeZone(drupal_get_user_timezone());
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'title':
@@ -86,9 +93,11 @@ function recurring_events_tokens($type, $tokens, array $data, array $options, Bu
           break;
 
         case 'date':
-          $format = \Drupal::config('recurring_events.eventinstance.config')->get('date_format');
-          $timezone = new \DateTimeZone(drupal_get_user_timezone());
-          $replacements[$original] = $event_instance->date->start_date->setTimezone($timezone)->format($format);
+          $replacements[$original] = $event_instance->date->start_date->setTimezone($timezone)->format($date_format);
+          break;
+
+        case 'end_date':
+          $replacements[$original] = $event_instance->date->end_date->setTimezone($timezone)->format($date_format);
           break;
 
         case 'url':

@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\Render\Renderer;
 
@@ -32,6 +33,13 @@ class EventSeriesDeleteForm extends ContentEntityDeleteForm {
   protected $messenger;
 
   /**
+   * The config factory service.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $config;
+
+  /**
    * The renderer service.
    *
    * @var \Drupal\Core\Render\Renderer
@@ -44,7 +52,8 @@ class EventSeriesDeleteForm extends ContentEntityDeleteForm {
     return new static(
       $container->get('entity.manager'),
       $container->get('messenger'),
-      $container->get('renderer')
+      $container->get('renderer'),
+      $container->get('config.factory')
     );
   }
 
@@ -57,10 +66,13 @@ class EventSeriesDeleteForm extends ContentEntityDeleteForm {
    *   The messenger service.
    * @param \Drupal\Core\Render\Renderer $renderer
    *   The renderer service.
+   * @param \Drupal\Core\Config\ConfigFactory $config
+   *   The config factory service.
    */
-  public function __construct(EntityManagerInterface $entity_manager, Messenger $messenger, Renderer $renderer) {
+  public function __construct(EntityManagerInterface $entity_manager, Messenger $messenger, Renderer $renderer, ConfigFactory $config) {
     $this->messenger = $messenger;
     $this->renderer = $renderer;
+    $this->config = $config;
     parent::__construct($entity_manager);
   }
 
@@ -98,9 +110,11 @@ class EventSeriesDeleteForm extends ContentEntityDeleteForm {
         ];
 
         $options = [];
+        $timezone = new \DateTimeZone(drupal_get_user_timezone());
         foreach ($instances as $instance) {
           $date = $instance->date->start_date;
-          $options[] = $instance->toLink($date->format('Y-m-d h:i A'));
+          $date->setTimezone($timezone);
+          $options[] = $instance->toLink($date->format($this->config->get('recurring_events_registration.registrant.config')->get('date_format')));
         }
 
         $description['instances'] = [

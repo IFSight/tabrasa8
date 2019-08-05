@@ -108,6 +108,26 @@ function hook_recurring_events_inheritance_class_alter(&$class, $field) {
 }
 
 /**
+ * Alter the array of event instances before they get created.
+ *
+ * @var array $event_instances
+ *   The array of event instances to be created.
+ */
+function hook_recurring_events_event_instances_pre_create_alter(&$event_instances) {
+  $blacklist_dates = [
+    '2019-07-01',
+    '2019-07-02',
+  ];
+
+  // If this date is blacklisted, then do not create an event.
+  foreach ($event_instances as $key => $instance) {
+    if (array_search($instance['start_date']->format('Y-m-d'), $blacklist_dates) !== FALSE) {
+      unset($event_instances[$key]);
+    }
+  }
+}
+
+/**
  * Execute custom code before event instances are deleted.
  *
  * When an eventseries is updated and has date recurring configuration changes

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd3ac6c6b30716b41afdbb81c38eb564",
+    "content-hash": "a787c7f512ca452d1d73dabcb5d1b8a6",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -1312,7 +1312,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.26",
-                    "datestamp": "1549559402",
+                    "datestamp": "1558552081",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1393,7 +1393,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.4",
-                    "datestamp": "1547996580",
+                    "datestamp": "1558584484",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2588,8 +2588,7 @@
                 "source": "http://cgit.drupalcode.org/devel",
                 "issues": "http://drupal.org/project/devel",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
-            },
-            "time": "2019-04-03T13:06:38+00:00"
+            }
         },
         {
             "name": "drupal/easy_breadcrumb",
@@ -2824,7 +2823,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0-rc2",
-                    "datestamp": "1553254684",
+                    "datestamp": "1559579884",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "RC releases are not covered by Drupal security advisories."
@@ -2893,7 +2892,7 @@
                 },
                 "drupal": {
                     "version": "8.x-2.1",
-                    "datestamp": "1550237365",
+                    "datestamp": "1562240585",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2981,7 +2980,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0-beta3",
-                    "datestamp": "1556906881",
+                    "datestamp": "1560008285",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Beta releases are not covered by Drupal security advisories."
@@ -3090,17 +3089,17 @@
         },
         {
             "name": "drupal/field_group",
-            "version": "1.0.0",
+            "version": "3.0.0-rc1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/field_group.git",
-                "reference": "8.x-1.0"
+                "reference": "8.x-3.0-rc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/field_group-8.x-1.0.zip",
-                "reference": "8.x-1.0",
-                "shasum": "e8aa3fae5c3c5dec84644bb577996938d638a611"
+                "url": "https://ftp.drupal.org/files/projects/field_group-8.x-3.0-rc1.zip",
+                "reference": "8.x-3.0-rc1",
+                "shasum": "e291b5468c834a344e9aa6cafd3a76171d473a22"
             },
             "require": {
                 "drupal/core": "*"
@@ -3108,14 +3107,14 @@
             "type": "drupal-module",
             "extra": {
                 "branch-alias": {
-                    "dev-1.x": "1.x-dev"
+                    "dev-3.x": "3.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0",
-                    "datestamp": "1510352885",
+                    "version": "8.x-3.0-rc1",
+                    "datestamp": "1558647185",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "RC releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -3148,7 +3147,7 @@
             "description": "Provides the field_group module.",
             "homepage": "https://www.drupal.org/project/field_group",
             "support": {
-                "source": "http://cgit.drupalcode.org/field_group"
+                "source": "https://git.drupalcode.org/project/field_group"
             }
         },
         {
@@ -3527,7 +3526,7 @@
                 },
                 "drupal": {
                     "version": "8.x-5.0-beta8",
-                    "datestamp": "1545966784",
+                    "datestamp": "1562194985",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Beta releases are not covered by Drupal security advisories."
@@ -4229,7 +4228,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/recurring_events.git",
-                "reference": "8.x-1.x"
+                "reference": "1efc6cfe4fda498690acf7683a02a8ebbb814222"
             },
             "require": {
                 "drupal/core": "*"
@@ -4241,7 +4240,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.x-dev",
-                    "datestamp": "1562596386",
+                    "datestamp": "1564178286",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Project has not opted into security advisory coverage!"
@@ -4271,7 +4270,7 @@
                 "source": "http://cgit.drupalcode.org/recurring_events",
                 "issues": "https://www.drupal.org/project/issues/recurring_events"
             },
-            "time": "2019-06-29T01:34:35+00:00"
+            "time": "2019-08-05T17:12:38+00:00"
         },
         {
             "name": "drupal/redirect",

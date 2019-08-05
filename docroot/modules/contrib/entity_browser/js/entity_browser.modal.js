@@ -49,16 +49,9 @@
    */
   Drupal.behaviors.fluidModal = {
     attach: function (context) {
-      var $window = $(window);
-      var $document = $(document);
-
-      // Be sure to run only once per window document.
-      if ($document.once('fluid-modal').length === 0) {
-        return;
-      }
 
       // Recalculate dialog size on window resize.
-      $window.resize(function (event) {
+      $(window).resize(function (context) {
         Drupal.entityBrowserModal.fluidDialog();
       });
 
@@ -70,7 +63,7 @@
 
       // Disable scrolling of the whole browser window to not interfere with the
       // iframe scrollbar.
-      $window.on({
+      $(window).on({
         'dialog:aftercreate': function (event, dialog, $element, settings) {
           $('body').css({overflow: 'hidden'});
         },
@@ -110,11 +103,11 @@
         }
         else {
           // If no maxHeight is defined, make it responsive.
-          dialog.option('height', .92 * vHeight);
+          dialog.option('height', vHeight - 100);
 
           // Because there is no iframe height 100% in HTML 5, we have to set
           // the height of the iframe as well.
-          var contentHeight = $this.find('.ui-dialog-content').height();
+          var contentHeight = $this.find('.ui-dialog-content').height() - 20;
           $this.find('iframe').css('height', contentHeight);
         }
 

@@ -11,7 +11,7 @@ use Drupal\field\Entity\FieldStorageConfig;
  *
  * @group entity_browser
  */
-class PagerElementTest extends EntityBrowserWebDriverTestBase {
+class PagerElementTest extends EntityBrowserJavascriptTestBase {
 
   /**
    * Modules to enable.
