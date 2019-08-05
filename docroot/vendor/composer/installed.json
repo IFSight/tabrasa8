@@ -2257,6 +2257,151 @@
         }
     },
     {
+        "name": "drupal/config_filter",
+        "version": "1.4.0",
+        "version_normalized": "1.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/config_filter.git",
+            "reference": "8.x-1.4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/config_filter-8.x-1.4.zip",
+            "reference": "8.x-1.4",
+            "shasum": "4b2b7f4dfc8358212f9e25f63dcc77cc2c1dcf6c"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "suggest": {
+            "drupal/config_split": "Split site configuration for different environments."
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.4",
+                "datestamp": "1542184982",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Fabian Bircher",
+                "homepage": "https://www.drupal.org/u/bircher",
+                "email": "opensource@fabianbircher.com",
+                "role": "Maintainer"
+            },
+            {
+                "name": "Nuvole Web",
+                "homepage": "http://nuvole.org",
+                "email": "info@nuvole.org",
+                "role": "Maintainer"
+            },
+            {
+                "name": "pescetti",
+                "homepage": "https://www.drupal.org/user/436244"
+            }
+        ],
+        "description": "Config Filter allows other modules to interact with a ConfigStorage through filter plugins.",
+        "homepage": "https://www.drupal.org/project/config_filter",
+        "keywords": [
+            "Drupal",
+            "configuration",
+            "configuration management"
+        ],
+        "support": {
+            "source": "http://cgit.drupalcode.org/config_filter",
+            "issues": "https://www.drupal.org/project/issues/config_filter",
+            "irc": "irc://irc.freenode.org/drupal-contribute"
+        }
+    },
+    {
+        "name": "drupal/config_split",
+        "version": "1.4.0",
+        "version_normalized": "1.4.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/config_split.git",
+            "reference": "8.x-1.4"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/config_split-8.x-1.4.zip",
+            "reference": "8.x-1.4",
+            "shasum": "938ea6c88834aa88bb310740758e56c1800e535b"
+        },
+        "require": {
+            "drupal/config_filter": "*",
+            "drupal/core": "~8.0"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.4",
+                "datestamp": "1537971780",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            },
+            "drush": {
+                "services": {
+                    "drush.services.yml": "^9"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Fabian Bircher",
+                "homepage": "https://www.drupal.org/u/bircher",
+                "email": "opensource@fabianbircher.com",
+                "role": "Maintainer"
+            },
+            {
+                "name": "Nuvole Web",
+                "homepage": "http://nuvole.org",
+                "email": "info@nuvole.org",
+                "role": "Maintainer"
+            },
+            {
+                "name": "pescetti",
+                "homepage": "https://www.drupal.org/user/436244"
+            }
+        ],
+        "description": "Configuration filter for importing and exporting extra config",
+        "homepage": "https://www.drupal.org/project/config_split",
+        "keywords": [
+            "Drupal",
+            "configuration",
+            "configuration management"
+        ],
+        "support": {
+            "source": "http://cgit.drupalcode.org/config_split",
+            "issues": "https://www.drupal.org/project/issues/config_split",
+            "irc": "irc://irc.freenode.org/drupal-contribute"
+        }
+    },
+    {
         "name": "drupal/console",
         "version": "1.8.0",
         "version_normalized": "1.8.0.0",
@@ -5365,68 +5510,6 @@
         "homepage": "https://www.drupal.org/project/varnish_purge",
         "support": {
             "source": "http://cgit.drupalcode.org/varnish_purge"
-        }
-    },
-    {
-        "name": "drupal/video_embed_field",
-        "version": "2.1.0",
-        "version_normalized": "2.1.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://git.drupalcode.org/project/video_embed_field.git",
-            "reference": "8.x-2.1"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/video_embed_field-8.x-2.1.zip",
-            "reference": "8.x-2.1",
-            "shasum": "fa1682741b4a1404df80c709ed8e40b7d8362d67"
-        },
-        "require": {
-            "drupal/core": "*"
-        },
-        "require-dev": {
-            "drupal/colorbox": "*",
-            "drupal/media_entity": "*",
-            "drupal/media_entity_embeddable_video": "*"
-        },
-        "type": "drupal-module",
-        "extra": {
-            "branch-alias": {
-                "dev-2.x": "2.x-dev"
-            },
-            "drupal": {
-                "version": "8.x-2.1",
-                "datestamp": "1557724385",
-                "security-coverage": {
-                    "status": "covered",
-                    "message": "Covered by Drupal's security advisory policy"
-                }
-            }
-        },
-        "installation-source": "dist",
-        "notification-url": "https://packages.drupal.org/8/downloads",
-        "license": [
-            "GPL-2.0+"
-        ],
-        "authors": [
-            {
-                "name": "Sam152",
-                "homepage": "https://www.drupal.org/user/1485048"
-            },
-            {
-                "name": "jec006",
-                "homepage": "https://www.drupal.org/user/855980"
-            },
-            {
-                "name": "plopesc",
-                "homepage": "https://www.drupal.org/user/282415"
-            }
-        ],
-        "description": "A pluggable field type for storing videos from external video hosts such as Vimeo and YouTube.",
-        "homepage": "https://www.drupal.org/project/video_embed_field",
-        "support": {
-            "source": "https://git.drupalcode.org/project/video_embed_field"
         }
     },
     {

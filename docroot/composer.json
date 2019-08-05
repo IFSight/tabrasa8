@@ -51,7 +51,6 @@
         "drupal/twig_tweak": "^2.0",
         "drupal/ultimate_cron": "^2.0@alpha",
         "drupal/varnish_purge": "^1.0",
-        "drupal/video_embed_field": "^2.0@alpha",
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
         "drupal/console": "~1.0",
@@ -60,7 +59,8 @@
         "drupal/elasticsearch_connector": "^6.0@alpha",
         "drupal/search_api": "^1.12",
         "drupal/adminimal_theme": "^1.4",
-        "drupal/paladin": "^1.0"
+        "drupal/paladin": "^1.0",
+        "drupal/config_split": "^1.4"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
