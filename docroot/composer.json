@@ -60,7 +60,8 @@
         "drupal/search_api": "^1.12",
         "drupal/adminimal_theme": "^1.4",
         "drupal/paladin": "^1.0",
-        "drupal/config_split": "^1.4"
+        "drupal/config_split": "^1.4",
+        "drupal/environment_indicator": "^3.6"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
