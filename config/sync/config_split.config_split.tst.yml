@@ -1,0 +1,17 @@
+uuid: c1b3c777-3747-44af-bfc9-1e6de8a0eb54
+langcode: en
+status: false
+dependencies: {  }
+id: tst
+label: 'Testing Environment'
+description: 'Specific configuration settings for testing environment, which includes environment switcher settings.'
+folder: ../config/test
+module: {  }
+theme: {  }
+blacklist: {  }
+graylist:
+  - environment_indicator.indicator
+  - system.performance
+graylist_dependents: true
+graylist_skip_equal: true
+weight: 0

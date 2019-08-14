@@ -1,0 +1,17 @@
+uuid: 61c6055c-aa72-4d68-a5b4-b40bbab6fdd3
+langcode: en
+status: false
+dependencies: {  }
+id: trn
+label: 'Training Environment'
+description: 'Specific configuration settings for training environment, which includes environment switcher settings.'
+folder: ../config/train
+module: {  }
+theme: {  }
+blacklist: {  }
+graylist:
+  - environment_indicator.indicator
+  - system.performance
+graylist_dependents: true
+graylist_skip_equal: true
+weight: 0
