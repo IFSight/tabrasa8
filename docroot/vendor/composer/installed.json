@@ -2170,7 +2170,7 @@
         "version_normalized": "8.3.1.0",
         "source": {
             "type": "git",
-            "url": "https://git.drupal.org/project/coder.git",
+            "url": "https://git.drupalcode.org/project/coder.git",
             "reference": "29a25627e7148b3119c84f18e087fc3b8c85b959"
         },
         "require": {
@@ -3647,6 +3647,59 @@
         "homepage": "https://www.drupal.org/project/entity_reference_revisions",
         "support": {
             "source": "http://cgit.drupalcode.org/entity_reference_revisions"
+        }
+    },
+    {
+        "name": "drupal/environment_indicator",
+        "version": "3.6.0",
+        "version_normalized": "3.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/environment_indicator.git",
+            "reference": "8.x-3.6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/environment_indicator-8.x-3.6.zip",
+            "reference": "8.x-3.6",
+            "shasum": "a27e3ab20273cda039610156ab9b9267b5c46b9f"
+        },
+        "require": {
+            "drupal/core": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-3.x": "3.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-3.6",
+                "datestamp": "1553405885",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "e0ipso",
+                "homepage": "https://www.drupal.org/user/550110"
+            },
+            {
+                "name": "mrfelton",
+                "homepage": "https://www.drupal.org/user/305669"
+            }
+        ],
+        "description": "Adds a color indicator for the different environments.",
+        "homepage": "https://www.drupal.org/project/environment_indicator",
+        "support": {
+            "source": "https://git.drupalcode.org/project/environment_indicator"
         }
     },
     {

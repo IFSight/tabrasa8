@@ -1,0 +1,17 @@
+uuid: e2db529b-fe80-4c9e-99aa-dcf1df12eb86
+langcode: en
+status: false
+dependencies: {  }
+id: dev
+label: 'Development Environment'
+description: 'Specific configuration settings for development environment, which includes environment switcher settings.'
+folder: ../config/dev
+module: {  }
+theme: {  }
+blacklist: {  }
+graylist:
+  - environment_indicator.indicator
+  - system.performance
+graylist_dependents: true
+graylist_skip_equal: true
+weight: 0

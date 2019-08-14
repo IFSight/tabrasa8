@@ -1,0 +1,17 @@
+uuid: d6419557-613a-4654-a43e-a9a417e341a8
+langcode: en
+status: false
+dependencies: {  }
+id: local
+label: 'Local Environment'
+description: 'Specific configuration settings for local environment, which includes environment switcher settings.'
+folder: ../config/local
+module: {  }
+theme: {  }
+blacklist: {  }
+graylist:
+  - environment_indicator.indicator
+  - system.performance
+graylist_dependents: true
+graylist_skip_equal: true
+weight: 0
