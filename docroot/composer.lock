@@ -2588,7 +2588,8 @@
                 "source": "http://cgit.drupalcode.org/devel",
                 "issues": "http://drupal.org/project/devel",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
-            }
+            },
+            "time": "2019-04-03T13:06:38+00:00"
         },
         {
             "name": "drupal/easy_breadcrumb",
@@ -4228,7 +4229,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/recurring_events.git",
-                "reference": "1efc6cfe4fda498690acf7683a02a8ebbb814222"
+                "reference": "2161dcc26a6548dfff38d5374b2cb878d3f41883"
             },
             "require": {
                 "drupal/core": "*"
@@ -4240,7 +4241,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.x-dev",
-                    "datestamp": "1564178286",
+                    "datestamp": "1565031487",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Project has not opted into security advisory coverage!"
@@ -4270,7 +4271,7 @@
                 "source": "http://cgit.drupalcode.org/recurring_events",
                 "issues": "https://www.drupal.org/project/issues/recurring_events"
             },
-            "time": "2019-08-05T17:12:38+00:00"
+            "time": "2019-08-22T16:41:19+00:00"
         },
         {
             "name": "drupal/redirect",

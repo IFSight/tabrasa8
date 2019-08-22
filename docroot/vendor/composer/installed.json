@@ -2170,7 +2170,7 @@
         "version_normalized": "8.3.1.0",
         "source": {
             "type": "git",
-            "url": "https://git.drupal.org/project/coder.git",
+            "url": "https://git.drupalcode.org/project/coder.git",
             "reference": "29a25627e7148b3119c84f18e087fc3b8c85b959"
         },
         "require": {
@@ -4680,7 +4680,7 @@
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/recurring_events.git",
-            "reference": "1efc6cfe4fda498690acf7683a02a8ebbb814222"
+            "reference": "2161dcc26a6548dfff38d5374b2cb878d3f41883"
         },
         "require": {
             "drupal/core": "*"
@@ -4692,7 +4692,7 @@
             },
             "drupal": {
                 "version": "8.x-1.x-dev",
-                "datestamp": "1564178286",
+                "datestamp": "1565031487",
                 "security-coverage": {
                     "status": "not-covered",
                     "message": "Project has not opted into security advisory coverage!"
