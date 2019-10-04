@@ -7,6 +7,14 @@ entity.registrant.collection:
   requirements:
     _permission: 'access registrant overview'
 
+# Registrant admin table list route.
+entity.registrant.admin_collection:
+  path: '/admin/content/events/registrations'
+  defaults:
+    _entity_list: 'registrant'
+    _title: 'Registrations'
+  requirements:
+    _permission: 'access registrant overview'
 
 # Registrant settings admin page.
 registrant.settings:

@@ -1,5 +1,29 @@
+# Add Event Series button.
+entity.eventseries.add_form:
+  route_name: entity.eventseries.add_form
+  title: 'Add Event'
+  appears_on:
+    - entity.eventseries.admin_collection
+    - entity.eventseries.collection
+    - entity.eventinstance.admin_collection
+    - entity.eventinstance.collection
+
+
+# Add Field Inheritance button.
 entity.field_inheritance.add_form:
   route_name: entity.field_inheritance.add_form
   title: 'Add Field inheritance'
   appears_on:
     - entity.field_inheritance.collection
+
+entity.excluded_dates.add_form:
+  route_name: entity.excluded_dates.add_form
+  title: 'Add Excluded dates'
+  appears_on:
+    - entity.excluded_dates.collection
+
+entity.included_dates.add_form:
+  route_name: entity.included_dates.add_form
+  title: 'Add Included dates'
+  appears_on:
+    - entity.included_dates.collection

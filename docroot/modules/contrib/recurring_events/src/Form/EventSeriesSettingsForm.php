@@ -48,6 +48,10 @@ class EventSeriesSettingsForm extends ConfigFormBase {
       ->set('time_format', $form_state->getValue('time_format'))
       ->set('days', implode(',', array_filter($form_state->getValue('days'))))
       ->set('limit', $form_state->getValue('limit'))
+      ->set('excludes', $form_state->getValue('excludes'))
+      ->set('includes', $form_state->getValue('includes'))
+      ->set('excluded_dates', implode(',', array_filter($form_state->getValue('excluded_dates'))))
+      ->set('included_dates', implode(',', array_filter($form_state->getValue('included_dates'))))
       ->save();
 
     parent::submitForm($form, $form_state);
@@ -137,6 +141,24 @@ class EventSeriesSettingsForm extends ConfigFormBase {
       '#options' => $days,
       '#description' => $this->t('Select the days of the week available when creating events.'),
       '#default_value' => explode(',', $config->get('days')),
+    ];
+
+    $form['creation']['excludes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Event Specific Excluded Dates'),
+      '#description' => $this->t('Enable event specific excluded dates? To add global excluded dates visit the @link.', [
+        '@link' => Link::createFromRoute($this->t('excluded dates tab'), 'entity.excluded_dates.collection')->toString(),
+      ]),
+      '#default_value' => $config->get('excludes'),
+    ];
+
+    $form['creation']['includes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Event Specific Included Dates'),
+      '#description' => $this->t('Enable event specific included dates? To add global included dates visit the @link.', [
+        '@link' => Link::createFromRoute($this->t('included dates tab'), 'entity.included_dates.collection')->toString(),
+      ]),
+      '#default_value' => $config->get('includes'),
     ];
 
     $form['display'] = [

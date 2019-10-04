@@ -1,39 +1,53 @@
-# Registrant routing definition
+### Registrant local links.
+
+# Registrant settings tab.
 registrant.settings_tab:
   route_name: registrant.settings
   title: 'Settings'
   base_route: registrant.settings
 
+# Registrant view tab.
 entity.registrant.canonical:
   route_name: entity.registrant.canonical
   base_route: entity.registrant.canonical
   title: 'View'
 
+# Registrant edit tab.
 entity.registrant.edit_form:
   route_name: entity.registrant.edit_form
   base_route: entity.registrant.canonical
   title: 'Edit'
 
+# Registrant delete tab.
 entity.registrant.delete_form:
   route_name:  entity.registrant.delete_form
   base_route:  entity.registrant.canonical
   title: Delete
   weight: 10
 
+# Registrant add tab.
 entity.registrant.add_form:
   route_name: entity.registrant.add_form
   base_route: entity.eventinstance.canonical
   title: 'Register'
   weight: 11
 
+# Registrant instance listing tab.
 entity.registrant.instance_listing:
   route_name: entity.registrant.instance_listing
   base_route: entity.eventinstance.canonical
   title: 'Registrations'
   weight: 12
 
+# Registrant user listing tab.
 entity.user.registrations:
   route_name: registrations.user_tab
   base_route: entity.user.canonical
   title: 'Registrations'
   weight: 12
+
+# Registrations list on admin content page.
+entity.registrant.collection:
+  title: Registrations
+  route_name: entity.registrant.admin_collection
+  base_route: system.admin_content

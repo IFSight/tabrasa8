@@ -33,6 +33,12 @@ eventseries.clone_form:
   title: Clone
   weight: 12
 
+# Event Series list on admin content page.
+entity.eventseries.collection:
+  title: Event Series
+  route_name: entity.eventseries.admin_collection
+  base_route: system.admin_content
+
 ### Event Instance local links.
 
 # Event Instance view link.
@@ -68,6 +74,14 @@ eventinstance.clone_form:
   title: Clone
   weight: 12
 
+# Event Instance list on admin content page.
+entity.eventinstance.collection:
+  title: Event Instances
+  route_name: entity.eventinstance.admin_collection
+  base_route: system.admin_content
+
+### Admin settings local links.
+
 # Event Series settings admin page.
 entity.eventseries.settings:
   route_name: eventseries.settings
@@ -85,3 +99,15 @@ entity.field_inheritance.collection:
   route_name: entity.field_inheritance.collection
   title: Field Inheritance
   base_route: eventinstance.settings
+
+# Excluded dates settings admin page.
+entity.excluded_dates.collection:
+  route_name: entity.excluded_dates.collection
+  title: Excluded dates
+  base_route: eventseries.settings
+
+# Included dates settings admin page.
+entity.included_dates.collection:
+  route_name: entity.included_dates.collection
+  title: Included dates
+  base_route: eventseries.settings

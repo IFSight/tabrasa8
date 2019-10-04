@@ -183,6 +183,8 @@ class EventSeriesForm extends ContentEntityForm {
       '#wrapper_attributes' => ['class' => ['entity-meta__author']],
     ];
 
+    $form['#attached']['library'][] = 'recurring_events/recurring_events.create_form';
+
     return $form;
   }
 

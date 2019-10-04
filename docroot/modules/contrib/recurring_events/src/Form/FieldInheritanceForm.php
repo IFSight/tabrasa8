@@ -129,6 +129,12 @@ class FieldInheritanceForm extends EntityForm {
     $instance_fields = array_keys($this->entityFieldManager->getFieldDefinitions('eventinstance', 'eventinstance'));
     $instance_fields = array_combine($instance_fields, $instance_fields);
 
+    // You should never be able to use the inherited field as part of an
+    // inheritance as that creates an infinite loop.
+    if (!empty($field_inheritance->id()) && !empty($instance_fields[$field_inheritance->id()])) {
+      unset($instance_fields[$field_inheritance->id()]);
+    }
+
     $form['entityField'] = [
       '#type' => 'select',
       '#title' => $this->t('Entity/Instance Field'),

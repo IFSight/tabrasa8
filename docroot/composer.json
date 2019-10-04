@@ -77,14 +77,6 @@
             "You can read more about this composer repository at:",
             "https://www.drupal.org/node/2718229"
         ],
-        "merge-plugin": {
-            "include": [
-                "core/composer.json"
-            ],
-            "recurse": false,
-            "replace": false,
-            "merge-extra": false
-        },
         "installer-paths": {
             "core": ["type:drupal-core"],
             "modules/contrib/{$name}": ["type:drupal-module"],
@@ -93,6 +85,14 @@
             "drush/contrib/{$name}": ["type:drupal-drush"],
             "modules/custom/{$name}": ["type:drupal-custom-module"],
             "themes/custom/{$name}": ["type:drupal-custom-theme"]
+        },
+        "patches": {
+            "cweagans/composer-patches": {
+                "Fix patching Drupal core by using Dry Run": "https://patch-diff.githubusercontent.com/raw/cweagans/composer-patches/pull/179.patch"
+            },
+            "drupal/recurring_events": {
+                "Prevent circular dependency when selecting a destination field": "https://www.drupal.org/files/issues/2019-10-04/recurring_events-circular_dependency_3085952-2.patch"
+            }
         }
     },
     "autoload": {

@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * Installation and update functionality for the recurring_events module.
+ */
+
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Install the excluded and included date fields.
+ */
+function recurring_events_update_8001() {
+  /*
+   * @see https://www.drupal.org/node/3068262
+   */
+
+  $excluded_dates = BaseFieldDefinition::create('daterange')
+    ->setLabel(new TranslatableMarkup('Excluded Dates'))
+    ->setDescription('Dates on which to not create any eventinstances.')
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', FALSE)
+    ->setRevisionable(TRUE)
+    ->setTranslatable(FALSE)
+    ->setCardinality(-1)
+    ->setRequired(FALSE)
+    ->setSetting('datetime_type', 'date')
+    ->setDisplayOptions('form', [
+      'type' => 'daterange_default',
+      'label' => 'above',
+      'weight' => 6,
+      'settings' => [
+        'format_type' => 'html_date',
+        'datetime_type' => 'date',
+      ],
+    ]);
+
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('excluded_dates', 'eventseries', 'eventseries', $excluded_dates);
+
+  $included_dates = BaseFieldDefinition::create('daterange')
+    ->setLabel(new TranslatableMarkup('Included Dates'))
+    ->setDescription('Only create eventinstances if they occur on these dates.')
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', FALSE)
+    ->setRevisionable(TRUE)
+    ->setTranslatable(FALSE)
+    ->setCardinality(-1)
+    ->setRequired(FALSE)
+    ->setSetting('datetime_type', 'date')
+    ->setDisplayOptions('form', [
+      'type' => 'daterange_default',
+      'label' => 'above',
+      'weight' => 6,
+      'settings' => [
+        'format_type' => 'html_date',
+        'datetime_type' => 'date',
+      ],
+    ]);
+
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('included_dates', 'eventseries', 'eventseries', $included_dates);
+}

@@ -121,6 +121,8 @@ class EventCreationService {
   public function convertEntityConfigToArray(EventSeries $event) {
     $config = [];
     $config['type'] = $event->getRecurType();
+    $config['excluded_dates'] = $event->getExcludedDates();
+    $config['included_dates'] = $event->getIncludedDates();
 
     switch ($event->getRecurType()) {
       case 'weekly':
@@ -177,6 +179,9 @@ class EventCreationService {
     $user_input = $form_state->getUserInput();
 
     $config['type'] = $user_input['recur_type'];
+
+    $config['excluded_dates'] = $this->getDatesFromForm($user_input['excluded_dates']);
+    $config['included_dates'] = $this->getDatesFromForm($user_input['included_dates']);
 
     switch ($config['type']) {
       case 'weekly':
@@ -312,6 +317,24 @@ class EventCreationService {
       ];
     }
     else {
+      if ($entity_config['excluded_dates'] !== $form_config['excluded_dates']) {
+        $entity_dates = $this->buildDateString($entity_config['excluded_dates']);
+        $config_dates = $this->buildDateString($form_config['excluded_dates']);
+        $diff['excluded_dates'] = [
+          'label' => $this->translation->translate('Excluded Dates'),
+          'stored' => $entity_dates,
+          'override' => $config_dates,
+        ];
+      }
+      if ($entity_config['included_dates'] !== $form_config['included_dates']) {
+        $entity_dates = $this->buildDateString($entity_config['included_dates']);
+        $config_dates = $this->buildDateString($form_config['included_dates']);
+        $diff['included_dates'] = [
+          'label' => $this->translation->translate('Included Dates'),
+          'stored' => $entity_dates,
+          'override' => $config_dates,
+        ];
+      }
       switch ($entity_config['type']) {
         case 'weekly':
         case 'monthly':
@@ -500,7 +523,7 @@ class EventCreationService {
 
             // Allow modules to alter the array of event instances before they
             // get created.
-            \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create);
+            \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create, $event);
 
             if (!empty($events_to_create)) {
               foreach ($events_to_create as $custom_event) {
@@ -542,7 +565,7 @@ class EventCreationService {
 
               // Allow modules to alter the array of event instances before they
               // get created.
-              \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create);
+              \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create, $event);
 
               if (!empty($events_to_create)) {
                 foreach ($events_to_create as $weekly_event) {
@@ -606,7 +629,7 @@ class EventCreationService {
 
               // Allow modules to alter the array of event instances before they
               // get created.
-              \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create);
+              \Drupal::moduleHandler()->alter('recurring_events_event_instances_pre_create', $events_to_create, $event);
 
               if (!empty($events_to_create)) {
                 foreach ($events_to_create as $monthly_event) {
@@ -891,6 +914,58 @@ class EventCreationService {
     $entity->save();
 
     return $entity;
+  }
+
+  /**
+   * Get exclude/include dates from form.
+   *
+   * @param array $field
+   *   The field from which to retrieve the dates.
+   *
+   * @return array
+   *   An array of dates.
+   */
+  private function getDatesFromForm(array $field) {
+    $dates = [];
+
+    if (!empty($field)) {
+      foreach ($field as $date) {
+        if (!empty($date['value']['date']) && !empty($date['end_value']['date'])) {
+          $dates[] = [
+            'value' => $date['value']['date'],
+            'end_value' => $date['end_value']['date'],
+          ];
+        }
+      }
+    }
+    return $dates;
+  }
+
+  /**
+   * Build a string from excluded or included date ranges.
+   *
+   * @var array $config
+   *   The configuration from which to build a string.
+   *
+   * @return string
+   *   The formatted date string.
+   */
+  private function buildDateString(array $config) {
+    $string = '';
+
+    $string_parts = [];
+    if (!empty($config)) {
+      foreach ($config as $date) {
+        $range = $this->translation->translate('@start_date to @end_date', [
+          '@start_date' => $date['value'],
+          '@end_date' => $date['end_value'],
+        ]);
+        $string_parts[] = '(' . $range . ')';
+      }
+
+      $string = implode(', ', $string_parts);
+    }
+    return $string;
   }
 
 }

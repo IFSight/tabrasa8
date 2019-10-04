@@ -85,11 +85,11 @@ function recurring_events_tokens($type, $tokens, array $data, array $options, Bu
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'title':
-          $replacements[$original] = $event_instance->getInheritedTitle();
+          $replacements[$original] = $event_instance->title->value;
           break;
 
         case 'description':
-          $replacements[$original] = $event_instance->getInheritedDescription();
+          $replacements[$original] = $event_instance->description->value;
           break;
 
         case 'date':

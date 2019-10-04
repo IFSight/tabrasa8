@@ -73,7 +73,6 @@ entity.eventseries.collection:
   # Checks for permission directly.
     _permission: 'access eventseries overview'
 
-
 # Event Instances.
 
 # View an EventInstance.
@@ -178,3 +177,23 @@ eventinstance.settings:
     _title: 'Event Instance Settings'
   requirements:
     _permission: 'administer eventinstance entity'
+
+# Event Series admin table list route.
+entity.eventseries.admin_collection:
+  path: '/admin/content/events/series'
+  defaults:
+    _entity_list: 'eventseries'
+    _title: 'Event Series'
+  requirements:
+  # Checks for permission directly.
+    _permission: 'access eventseries overview'
+
+# Event Series admin table list route.
+entity.eventinstance.admin_collection:
+  path: '/admin/content/events/instances'
+  defaults:
+    _entity_list: 'eventinstance'
+    _title: 'Event Instances'
+  requirements:
+  # Checks for permission directly.
+    _permission: 'access eventinstance overview'

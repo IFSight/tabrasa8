@@ -113,7 +113,8 @@ use Drupal\user\UserInterface;
  *     "canonical" = "/events/{eventinstance}",
  *     "edit-form" = "/events/{eventinstance}/edit",
  *     "delete-form" = "/events/{eventinstance}/delete",
- *     "collection" = "/admin/content/events/instances",
+ *     "collection" = "/events",
+ *     "admin_collection" = "/admin/content/events/instances",
  *     "clone-form" = "/events/{eventinstance}/clone",
  *     "version-history" = "/events/{eventinstance}/revisions",
  *     "revision" = "/events/{eventinstance}/revisions/{eventinstance_revision}/view",
@@ -346,6 +347,7 @@ class EventInstance extends EditorialContentEntityBase implements EventInterface
       ->setTranslatable(FALSE)
       ->setRevisionable(TRUE)
       ->setRequired(TRUE)
+      ->setTargetBundle('eventinstance')
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'string',
@@ -408,26 +410,6 @@ class EventInstance extends EditorialContentEntityBase implements EventInterface
    */
   public function getEventSeries() {
     return $this->get('eventseries_id')->entity;
-  }
-
-  /**
-   * Get event instance inherited title.
-   *
-   * @return string
-   *   The event instance inherited title.
-   */
-  public function getInheritedTitle() {
-    return $this->get('title')->value;
-  }
-
-  /**
-   * Get event instance inherited description.
-   *
-   * @return string
-   *   The event instance inherited description.
-   */
-  public function getInheritedDescription() {
-    return $this->get('description')->value;
   }
 
 }

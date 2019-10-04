@@ -1,0 +1,15 @@
+recurring_events.create_form:
+  version: 1.x
+  js:
+    js/recurring_events_create_form.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+
+recurring_events.date_form:
+  version: 1.x
+  js:
+    js/recurring_events_date_form.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery

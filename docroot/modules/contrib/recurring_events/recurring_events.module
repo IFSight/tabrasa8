@@ -11,6 +11,9 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\recurring_events\Entity\EventSeries;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * Implements hook_help().
@@ -296,6 +299,138 @@ function recurring_events_form_content_moderation_entity_moderation_form_alter(&
           ],
           '#rows' => $diff_array,
         ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function recurring_events_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'eventseries_add_form' || $form_id == 'eventseries_edit_form') {
+    $form['excluded_dates_wrapper'] = [
+      '#type' => 'details',
+      '#open' => FALSE,
+      '#title' => t('Excluded Dates'),
+      '#weight' => $form['excluded_dates']['#weight'],
+      'excluded_dates' => $form['excluded_dates'],
+    ];
+    unset($form['excluded_dates']);
+
+    $form['included_dates_wrapper'] = [
+      '#type' => 'details',
+      '#open' => FALSE,
+      '#title' => t('Included Dates'),
+      '#weight' => $form['included_dates']['#weight'],
+      'included_dates' => $form['included_dates'],
+    ];
+    unset($form['included_dates']);
+  }
+}
+
+/**
+ * Implements hook_recurring_events_event_instances_pre_create_alter().
+ */
+function recurring_events_recurring_events_event_instances_pre_create_alter(array &$event_instances, EventSeries $event) {
+  $config = \Drupal::config('recurring_events.eventseries.config');
+
+  $messenger = \Drupal::messenger();
+
+  $global_exclude = $global_include = [];
+  $event_exclude = $event_include = [];
+
+  $exclude_config = \Drupal::entityTypeManager()->getStorage('excluded_dates')->loadMultiple();
+  $include_config = \Drupal::entityTypeManager()->getStorage('included_dates')->loadMultiple();
+
+  if (!empty($exclude_config)) {
+    foreach ($exclude_config as $date_config) {
+      $global_exclude[] = [
+        'value' => $date_config->start(),
+        'end_value' => $date_config->end(),
+      ];
+    }
+  }
+
+  if (!empty($include_config)) {
+    foreach ($include_config as $date_config) {
+      $global_include[] = [
+        'value' => $date_config->start(),
+        'end_value' => $date_config->end(),
+      ];
+    }
+  }
+
+  if ($config->get('excludes')) {
+    if (!empty($event->excluded_dates)) {
+      $event_exclude = $event->excluded_dates->getValue();
+    }
+  }
+
+  if ($config->get('includes')) {
+    if (!empty($event->included_dates)) {
+      $event_include = $event->included_dates->getValue();
+    }
+  }
+
+  $exclude = array_merge($global_exclude, $event_exclude);
+  $include = array_merge($global_include, $event_include);
+
+  if (!empty($exclude)) {
+    foreach ($event_instances as $key => $dates) {
+      $start = $dates['start_date']->getTimestamp();
+      $end = $dates['end_date']->getTimestamp();
+
+      foreach ($exclude as $date) {
+        $exclude_start = DrupalDateTime::createFromFormat(DateTimeItemInterface::DATETIME_STORAGE_FORMAT, $date['value'] . 'T00:00:00');
+        $exclude_start = $exclude_start->getTimestamp();
+        $excluded_end = DrupalDateTime::createFromFormat(DateTimeItemInterface::DATETIME_STORAGE_FORMAT, $date['end_value'] . 'T23:59:59');
+        $excluded_end = $excluded_end->getTimestamp();
+
+        if ($start >= $exclude_start && $start <= $excluded_end) {
+          $messenger->addMessage(t('Skipping excluded date: @start_date - @end_date', [
+            '@start_date' => $dates['start_date']->format($config->get('date_format')),
+            '@end_date' => $dates['end_date']->format($config->get('date_format')),
+          ]));
+          unset($event_instances[$key]);
+          break;
+        }
+
+        if ($end >= $exclude_start && $end <= $excluded_end) {
+          $messenger->addMessage(t('Skipping excluded date: @start_date - @end_date', [
+            '@start_date' => $dates['start_date']->format($config->get('date_format')),
+            '@end_date' => $dates['end_date']->format($config->get('date_format')),
+          ]));
+          unset($event_instances[$key]);
+          break;
+        }
+      }
+    }
+  }
+
+  if (!empty($include)) {
+    foreach ($event_instances as $key => $dates) {
+      $start = $dates['start_date']->getTimestamp();
+      $end = $dates['end_date']->getTimestamp();
+
+      for ($x = 0; $x < (count($include) - 1); $x++) {
+        $include_start = DrupalDateTime::createFromFormat(DateTimeItemInterface::DATETIME_STORAGE_FORMAT, $include[$x]['value'] . 'T00:00:00');
+        $include_start = $include_start->getTimestamp();
+        $included_end = DrupalDateTime::createFromFormat(DateTimeItemInterface::DATETIME_STORAGE_FORMAT, $include[$x]['end_value'] . 'T23:59:59');
+        $included_end = $included_end->getTimestamp();
+
+        if ($start >= $include_start && $start <= $included_end && $end >= $included_start && $end <= $included_end) {
+          // This event is in the inclusion range, so move on to the next one.
+          break;
+        }
+
+        if ($x == (count($include) - 1)) {
+          $messenger->addMessage(t('Skipping non-included date: @start_date - @end_date', [
+            '@start_date' => $dates['start_date']->format($config->get('date_format')),
+            '@end_date' => $dates['end_date']->format($config->get('date_format')),
+          ]));
+          unset($event_instances[$key]);
+        }
       }
     }
   }

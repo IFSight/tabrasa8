@@ -29,25 +29,30 @@ function recurring_events_views_data_alter(array &$data) {
     ],
   ];
 
-  // Create a field to show the inherited title of an event instance.
-  $data['eventinstance_field_data']['eventinstance_title'] = [
-    'title' => t('Event instance title'),
-    'field' => [
-      'title' => t('Event instance title'),
-      'help' => t('The inherited title of an event instance.'),
-      'id' => 'eventinstance_title',
-      'field_name' => 'title',
-    ],
-  ];
+  // Create a views field for each of the inherited fields.
+  $inherited_fields = \Drupal::entityTypeManager()->getStorage('field_inheritance')->loadMultiple();
+  $set = FALSE;
+  if (!empty($inherited_fields)) {
+    foreach ($inherited_fields as $field) {
+      if ($field->id() == 'title') {
+        $data['eventinstance_field_data']['table']['base']['defaults']['field'] = 'title';
+        $set = TRUE;
+      }
+      $data['eventinstance_field_data'][$field->id()] = [
+        'title' => $field->label(),
+        'field' => [
+          'title' => $field->label(),
+          'help' => t('The inherited @field field', [
+            '@field' => $field->label(),
+          ]),
+          'id' => 'inherited_field',
+          'field_name' => $field->id(),
+        ],
+      ];
+    }
+  }
 
-  // Create a field to show the inherited description of an event instance.
-  $data['eventinstance_field_data']['eventinstance_description'] = [
-    'title' => t('Event instance description'),
-    'field' => [
-      'title' => t('Event instance description'),
-      'help' => t('The inherited description of an event instance.'),
-      'id' => 'eventinstance_description',
-      'field_name' => 'description',
-    ],
-  ];
+  if (!$set) {
+    $data['eventinstance_field_data']['table']['base']['defaults']['field'] = 'id';
+  }
 }

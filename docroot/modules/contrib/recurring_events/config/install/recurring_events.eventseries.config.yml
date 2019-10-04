@@ -5,3 +5,5 @@ date_format: 'F jS, Y h:iA'
 time_format: 'h:i A'
 days: 'monday,tuesday,wednesday,thursday,friday,saturday,sunday'
 limit: 10
+excludes: 1
+includes: 1

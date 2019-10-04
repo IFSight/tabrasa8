@@ -113,7 +113,8 @@ use Drupal\user\UserInterface;
  *     "canonical" = "/events/series/{eventseries}",
  *     "edit-form" = "/events/series/{eventseries}/edit",
  *     "delete-form" = "/events/series/{eventseries}/delete",
- *     "collection" = "/admin/content/events/series",
+ *     "collection" = "/events/series",
+ *     "admin_collection" = "/admin/content/events/series",
  *     "clone-form" = "/events/series/{eventseries}/clone",
  *     "version-history" = "/events/series/{eventseries}/revisions",
  *     "revision" = "/events/series/{eventseries}/revisions/{eventseries_revision}/view",
@@ -436,6 +437,46 @@ class EventSeries extends EditorialContentEntityBase implements EventInterface {
         'weight' => 4,
       ]);
 
+    $fields['excluded_dates'] = BaseFieldDefinition::create('daterange')
+      ->setLabel(t('Excluded Dates'))
+      ->setDescription('Dates on which to not create any events.')
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setRevisionable(TRUE)
+      ->setTranslatable(FALSE)
+      ->setCardinality(-1)
+      ->setRequired(FALSE)
+      ->setSetting('datetime_type', 'date')
+      ->setDisplayOptions('form', [
+        'type' => 'daterange_default',
+        'label' => 'above',
+        'weight' => 6,
+        'settings' => [
+          'format_type' => 'html_date',
+          'datetime_type' => 'date',
+        ],
+      ]);
+
+    $fields['included_dates'] = BaseFieldDefinition::create('daterange')
+      ->setLabel(t('Included Dates'))
+      ->setDescription('Only create events if they occur on these dates.')
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', FALSE)
+      ->setRevisionable(TRUE)
+      ->setTranslatable(FALSE)
+      ->setCardinality(-1)
+      ->setRequired(FALSE)
+      ->setSetting('datetime_type', 'date')
+      ->setDisplayOptions('form', [
+        'type' => 'daterange_default',
+        'label' => 'above',
+        'weight' => 6,
+        'settings' => [
+          'format_type' => 'html_date',
+          'datetime_type' => 'date',
+        ],
+      ]);
+
     $fields['event_instances'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Events in this Series'))
       ->setDescription(t('The events in this series.'))
@@ -593,7 +634,41 @@ class EventSeries extends EditorialContentEntityBase implements EventInterface {
   }
 
   /**
-   * Get mnthly recurring start date.
+   * Get excluded dates.
+   *
+   * @return array
+   *   The array of excluded dates.
+   */
+  public function getExcludedDates() {
+    $dates = [];
+    $excluded_dates = $this->get('excluded_dates')->getValue();
+    if (!empty($excluded_dates)) {
+      foreach ($excluded_dates as $date) {
+        $dates[] = $date;
+      }
+    }
+    return $dates;
+  }
+
+  /**
+   * Get included dates.
+   *
+   * @return array
+   *   The array of included dates.
+   */
+  public function getIncludedDates() {
+    $dates = [];
+    $included_dates = $this->get('included_dates')->getValue();
+    if (!empty($included_dates)) {
+      foreach ($included_dates as $date) {
+        $dates[] = $date;
+      }
+    }
+    return $dates;
+  }
+
+  /**
+   * Get monthly recurring start date.
    *
    * @return Drupal\Core\Datetime\DrupalDateTime
    *   The date object for the monthly start date.

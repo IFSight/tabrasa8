@@ -112,8 +112,10 @@ function hook_recurring_events_inheritance_class_alter(&$class, $field) {
  *
  * @var array $event_instances
  *   The array of event instances to be created.
+ * @var \Drupal\recurring_events\Entity\EventSeries $event
+ *   The event series being created or updated.
  */
-function hook_recurring_events_event_instances_pre_create_alter(&$event_instances) {
+function hook_recurring_events_event_instances_pre_create_alter(&$event_instances, EventSeries $event) {
   $blacklist_dates = [
     '2019-07-01',
     '2019-07-02',

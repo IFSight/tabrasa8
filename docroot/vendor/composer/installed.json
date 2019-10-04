@@ -4680,7 +4680,7 @@
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/recurring_events.git",
-            "reference": "2161dcc26a6548dfff38d5374b2cb878d3f41883"
+            "reference": "8d938711622cb018a1b488190c8755cb1847089c"
         },
         "require": {
             "drupal/core": "*"
@@ -4692,11 +4692,14 @@
             },
             "drupal": {
                 "version": "8.x-1.x-dev",
-                "datestamp": "1565031487",
+                "datestamp": "1570056487",
                 "security-coverage": {
                     "status": "not-covered",
                     "message": "Project has not opted into security advisory coverage!"
                 }
+            },
+            "patches_applied": {
+                "Prevent circular dependency when selecting a destination field": "https://www.drupal.org/files/issues/2019-10-04/recurring_events-circular_dependency_3085952-2.patch"
             }
         },
         "installation-source": "source",
@@ -6691,9 +6694,7 @@
         "version_normalized": "3.1.2.0",
         "dist": {
             "type": "zip",
-            "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip",
-            "reference": null,
-            "shasum": null
+            "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip"
         },
         "require": {
             "composer/installers": "~1.0"

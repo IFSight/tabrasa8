@@ -23,6 +23,12 @@ recurring_events.eventseries.config:
     limit:
       type: integer
       label: 'The items per page to show on event series listing'
+    excludes:
+      type: integer
+      label: 'Enable eventseries level excluded dates'
+    includes:
+      type: integer
+      label: 'Enable eventseries level included dates'
 
 recurring_events.eventinstance.config:
   type: config_object
