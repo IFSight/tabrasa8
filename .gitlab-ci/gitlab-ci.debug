@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @file
+ * Checks for debugging code in modified files.
+ */
+
+// Initial values for some variables.
+$files = [];
+$rev = [];
+$exit_status = 0;
+
+// Find files that have been changed in this branch.
+exec("git diff-index --name-only $(git merge-base HEAD origin/master)", $files);
+
+// File extensions to check. If a modified file doesn't contain one of these
+// extensions, then it will be skipped.
+$file_exts = [
+  'php',
+  'module',
+  'inc',
+  'install',
+  'test',
+  'profile',
+  'theme',
+  'txt',
+  'class',
+  'js',
+];
+
+// Ignore filenames that contain these strings.
+$ignore_filename_strings = [
+  '_default.inc',
+  'context.inc',
+  'ds.inc',
+  'features',
+  'field_group.inc',
+  'rules_defaults',
+  'strongarm.inc',
+];
+
+// Ignore file paths that contain these strings.
+$ignore_file_path_strings = [
+  'contrib',
+  'core',
+  'vendor',
+];
+
+// Debugging code segments to make sure they weren't committed.
+$debugging_searches = [
+  'dpm(',
+  'dvm(',
+  'dsm(',
+  'dpr(',
+  'kpr(',
+  'ksm(',
+  'kint(',
+  'dvr(',
+  'print_r(',
+  'var_dump(',
+  'var_export(',
+  'console\.log',
+];
+
+// Loop through each file that has been modified in this commit.
+foreach ($files as $file) {
+  // Skip files that don't exist.
+  if (!file_exists($file)) {
+    continue;
+  }
+
+  // Get the filename and extension.
+  $filename = pathinfo($file, PATHINFO_BASENAME);
+  $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+  // Skip over the file if it matches an ignored filename or an ignored file
+  // path, or does not match one of the included file extensions.
+  $ignore_filenames = array_filter($ignore_filename_strings, function ($item) use ($filename) {
+    return strpos($filename, $item) !== FALSE;
+  });
+  $ignore_file_paths = array_filter($ignore_file_path_strings, function ($item) use ($file) {
+    return strpos($file, $item) !== FALSE;
+  });
+  if (!in_array($ext, $file_exts) || !empty($ignore_filenames) || !empty($ignore_file_paths)) {
+    continue;
+  }
+
+  // Check for debugging code that was committed.
+  foreach ($debugging_searches as $search) {
+    $debugging_output = [];
+    exec("git diff origin/master --unified=0 " . escapeshellarg($file) . " | grep '\+.*" . $search . "'", $debugging_output);
+    if (!empty($debugging_output)) {
+      echo "Debugging code found:\n" . implode("\n", $debugging_output), "\n";
+      $exit_status = 1;
+    }
+  }
+}
+
+exit($exit_status);

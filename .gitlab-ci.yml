@@ -1,0 +1,9 @@
+before_script:
+  # - bash .gitlab-ci/gitlab-ci.sh > /dev/null
+
+php:
+  stage: test
+  script:
+    - php72 .gitlab-ci/gitlab-ci.lint
+    - php72 .gitlab-ci/gitlab-ci.debug
+    - php72 .gitlab-ci/gitlab-ci.phpcs

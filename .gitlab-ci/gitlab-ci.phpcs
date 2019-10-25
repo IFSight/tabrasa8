@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @file
+ * Runs modified files against phpcs using the Drupal coding standards.
+ */
+
+// Initial values for some variables.
+$standard = 'Drupal';
+$files = [];
+$rev = [];
+$exit_status = 0;
+$return = 0;
+
+// Find files that have been changed in this commit.
+exec("git diff-index --name-only $(git merge-base HEAD origin/master)", $files);
+
+// File extensions to check. If a modified file doesn't contain one of these
+// extensions, then it will be skipped.
+$file_exts = [
+  'php',
+  'module',
+  'inc',
+  'install',
+  'test',
+  'profile',
+  'theme',
+  'txt',
+  'class',
+];
+
+// Ignore filenames that contain these strings.
+$ignore_filename_strings = [
+  '_default.inc',
+  'context.inc',
+  'ds.inc',
+  'features',
+  'field_group.inc',
+  'rules_defaults',
+  'strongarm.inc',
+];
+
+// Ignore file paths that contain these strings.
+$ignore_file_path_strings = [
+  'contrib',
+  'core',
+  'vendor',
+];
+
+// Loop through each file that has been modified in this commit.
+foreach ($files as $file) {
+  // Skip files that don't exist.
+  if (!file_exists($file)) {
+    continue;
+  }
+
+  // Get the filename and extension.
+  $filename = pathinfo($file, PATHINFO_BASENAME);
+  $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+  // Skip over the file if it matches an ignored filename or an ignored file
+  // path, or does not match one of the included file extensions.
+  $ignore_filenames = array_filter($ignore_filename_strings, function ($item) use ($filename) {
+    return strpos($filename, $item) !== FALSE;
+  });
+  $ignore_file_paths = array_filter($ignore_file_path_strings, function ($item) use ($file) {
+    return strpos($file, $item) !== FALSE;
+  });
+  if (!in_array($ext, $file_exts) || !empty($ignore_filenames) || !empty($ignore_file_paths)) {
+    continue;
+  }
+
+  // Run phpcs on the file.
+  $phpcs_output = [];
+  $extensions = implode(',', $file_exts);
+  $phpcs_cmd = "~/.config/composer/vendor/bin/phpcs --standard=$standard --extensions=$extensions $file";
+  $file = escapeshellarg($file);
+  exec($phpcs_cmd, $phpcs_output, $return);
+  if (empty($phpcs_output)) {
+    continue;
+  }
+  echo implode("\n", $phpcs_output), "\n";
+
+  // If any errors were returned.
+  if ($return != 0) {
+    $exit_status = $return;
+  }
+}
+
+exit($exit_status);
