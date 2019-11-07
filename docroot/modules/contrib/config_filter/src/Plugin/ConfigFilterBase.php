@@ -2,7 +2,7 @@
 
 namespace Drupal\config_filter\Plugin;
 
-use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\config_filter\Config\TransparentStorageFilterTrait;
 
 /**
