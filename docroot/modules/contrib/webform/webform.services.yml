@@ -30,6 +30,7 @@ services:
     factory: logger.factory:get
     arguments: ['webform_submission']
 
+
   # Services.
 
   webform.addons_manager:
@@ -38,13 +39,9 @@ services:
   webform.cli_service:
     class: Drupal\webform\Commands\WebformCliService
 
-  webform.contribute_manager:
-    class: Drupal\webform\WebformContributeManager
-    arguments: ['@cache.default', '@http_client', '@date.formatter', '@config.factory']
-
   webform.elements_validator:
     class: Drupal\webform\WebformEntityElementsValidator
-    arguments: ['@renderer', '@plugin.manager.webform.element', '@entity_type.manager', '@form_builder']
+    arguments: ['@renderer', '@plugin.manager.webform.element', '@entity_type.manager', '@form_builder', '@config.factory']
 
   webform.email_provider:
     class: Drupal\webform\WebformEmailProvider
@@ -92,7 +89,7 @@ services:
 
   webform.theme_manager:
     class: Drupal\webform\WebformThemeManager
-    arguments: ['@config.factory', '@renderer', '@theme.manager', '@theme_handler', '@theme.initialization']
+    arguments: ['@config.factory', '@renderer', '@theme.manager', '@theme_handler', '@theme.initialization', '@current_route_match']
 
   webform.access_rules_manager:
     class: Drupal\webform\WebformAccessRulesManager
@@ -143,13 +140,13 @@ services:
 
   webform.theme_negotiator:
     class: Drupal\webform\Theme\WebformThemeNegotiator
-    arguments: ['@current_user', '@config.factory']
+    arguments: ['@current_user', '@config.factory', '@webform.request']
     tags:
       - { name: theme_negotiator, priority: -41 }
 
   # Twig extension.
 
   webform.twig_extension:
-    class: Drupal\webform\Twig\TwigExtension
+    class: Drupal\webform\Twig\WebformTwigExtension
     tags:
       - { name: twig.extension }

@@ -74,7 +74,7 @@ class WebformOptionsForm extends EntityForm {
         'label' => '<br/>' . $this->t('Machine name'),
       ],
       '#maxlength' => 32,
-      '#field_suffix' => ' (' . $this->t('Maximum @max characters', ['@max' => 32]) . ')',
+      '#field_suffix' => ($webform_options->isNew()) ? ' (' . $this->t('Maximum @max characters', ['@max' => 32]) . ')' : '',
       '#required' => TRUE,
       '#disabled' => !$webform_options->isNew(),
       '#default_value' => $webform_options->id(),
@@ -189,6 +189,7 @@ class WebformOptionsForm extends EntityForm {
       '#title' => $this->t('Options (YAML)'),
       '#description' => $this->t('Key-value pairs MUST be specified as "safe_key: \'Some readable option\'". Use of only alphanumeric characters and underscores is recommended in keys. One option per line. Option groups can be created by using just the group name followed by indented group options.') . ' ' .
         $this->t("Descriptions, which are only applicable to radios and checkboxes, can be delimited using ' -- '."),
+      '#attributes' => ['style' => 'min-height: 200px'],
       '#default_value' => Yaml::encode($this->getOptions()),
     ];
     return $form;

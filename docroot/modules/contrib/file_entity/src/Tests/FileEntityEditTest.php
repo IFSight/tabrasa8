@@ -43,7 +43,7 @@ class FileEntityEditTest extends FileEntityTestBase {
     }
 
     // Check that the file exists in the database.
-    $file = $this->getFileByFilename($test_file->filename);
+    $file = $this->getFileByFilename('text-0_0.txt');
     $this->assertTrue($file, t('File found in database.'));
 
     // Check that "edit" link points to correct page.
@@ -79,13 +79,13 @@ class FileEntityEditTest extends FileEntityTestBase {
 
     // Create file to edit.
     $test_file = $this->getTestFile('text');
-    $name_key = "filename[0][value]";
     $edit = array();
     $edit['files[upload]'] = drupal_realpath($test_file->uri);
     $this->drupalPostForm('file/add', $edit, t('Next'));
+    $this->drupalPostForm(NULL, array(), t('Next'));
 
     // Check that the file was associated with the currently logged in user.
-    $file = $this->getFileByFilename($test_file->filename);
+    $file = $this->getFileByFilename('text-0_0.txt');
     $this->assertIdentical($file->getOwnerId(), $this->admin_user->id(), 'File associated with admin user.');
 
     // Try to change the 'associated user' field to an invalid user name.

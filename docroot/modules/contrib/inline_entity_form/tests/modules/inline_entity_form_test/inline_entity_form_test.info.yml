@@ -1,7 +1,7 @@
 name: 'IEF test'
 type: module
 description: 'Support module for the Inline entity form module tests.'
-# core: 8.x
+core: 8.x
 package: Testing
 # version: VERSION
 dependencies:
@@ -10,8 +10,7 @@ dependencies:
   - file
   - image
 
-# Information added by Drupal.org packaging script on 2018-05-22
-version: '8.x-1.0-rc1'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2019-09-14
+version: '8.x-1.0-rc2'
 project: 'inline_entity_form'
-datestamp: 1527030788
+datestamp: 1568446687

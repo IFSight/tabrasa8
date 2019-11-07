@@ -94,9 +94,6 @@ class WebformBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     elseif ($route_name === 'webform.reports_plugins.elements.test') {
       $this->type = 'webform_plugins_elements';
     }
-    elseif (strpos($route_name, 'webform.contribute') === 0) {
-      $this->type = 'webform_contribute';
-    }
     elseif (strpos($route_name, 'webform.help.') === 0) {
       $this->type = 'webform_help';
     }
@@ -184,6 +181,9 @@ class WebformBreadcrumbBuilder implements BreadcrumbBuilderInterface {
           $breadcrumb->addLink(Link::createFromRoute($this->t('Configuration'), 'webform.config'));
           if (strpos($route_name, 'config_translation.item.') === 0 && $route_name != 'config_translation.item.overview.webform.config') {
             $breadcrumb->addLink(Link::createFromRoute($this->t('Translate'), 'config_translation.item.overview.webform.config'));
+          }
+          elseif (strpos($route_name, 'entity.webform_options_custom') === 0 && $route_name !== 'entity.webform_options_custom.collection') {
+            $breadcrumb->addLink(Link::createFromRoute($this->t('Custom options'), 'entity.webform_options_custom.collection'));
           }
           elseif (strpos($route_name, 'entity.webform_options') === 0 && $route_name !== 'entity.webform_options.collection') {
             $breadcrumb->addLink(Link::createFromRoute($this->t('Options'), 'entity.webform_options.collection'));

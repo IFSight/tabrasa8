@@ -2,7 +2,7 @@
 
 namespace Drupal\webform\Element;
 
-use Drupal\webform\Twig\TwigExtension;
+use Drupal\webform\Twig\WebformTwigExtension;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -38,14 +38,14 @@ class WebformComputedTwig extends WebformComputedBase {
   /**
    * {@inheritdoc}
    */
-  public static function processValue(array $element, WebformSubmissionInterface $webform_submission) {
+  public static function computeValue(array $element, WebformSubmissionInterface $webform_submission) {
     $whitespace = (!empty($element['#whitespace'])) ? $element['#whitespace'] : '';
 
     $template = ($whitespace === static::WHITESPACE_SPACELESS) ? '{% spaceless %}' . $element['#template'] . '{% endspaceless %}' : $element['#template'];
 
     $options = ['html' => (static::getMode($element) === static::MODE_HTML)];
 
-    $value = TwigExtension::renderTwigTemplate($webform_submission, $template, $options);
+    $value = WebformTwigExtension::renderTwigTemplate($webform_submission, $template, $options);
 
     return ($whitespace === static::WHITESPACE_TRIM) ? trim($value) : $value;
   }

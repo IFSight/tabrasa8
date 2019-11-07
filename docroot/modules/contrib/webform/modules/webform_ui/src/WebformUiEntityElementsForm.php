@@ -4,6 +4,7 @@ namespace Drupal\webform_ui;
 
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Form\OptGroup;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
@@ -351,7 +352,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
 
       if (empty($element['#title'])) {
         if (!empty($element['#markup'])) {
-          $element['#title'] = ['#markup' => Unicode::truncate(strip_tags($element['#markup']), 100, TRUE, TRUE)];
+          $element['#title'] = Markup::create(Unicode::truncate(strip_tags($element['#markup']), 100, TRUE, TRUE));
         }
         else {
           $element['#title'] = '[' . $element_key . ']';
@@ -469,9 +470,11 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
 
     $is_container = $webform_element->isContainer($element);
     $is_root = $webform_element->isRoot();
+    $is_element_disabled = $webform_element->isDisabled();
+    $is_access_disabled = (isset($element['#access']) && $element['#access'] === FALSE);
 
     // If disabled, display warning.
-    if ($webform_element->isDisabled()) {
+    if ($is_element_disabled) {
       $webform_element->displayDisabledWarning($element);
     }
 
@@ -492,6 +495,9 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     }
     else {
       $row_class[] = 'webform-ui-element-container';
+    }
+    if ($is_element_disabled || $is_access_disabled) {
+      $row_class[] = 'webform-ui-element-disabled';
     }
 
     // Add element key.

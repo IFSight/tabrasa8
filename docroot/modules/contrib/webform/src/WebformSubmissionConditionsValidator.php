@@ -2,8 +2,10 @@
 
 namespace Drupal\webform;
 
+use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\webform\Plugin\WebformElement\TextBase;
 use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
 use Drupal\webform\Plugin\WebformElement\WebformElement;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
@@ -59,6 +61,32 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
   }
 
   /****************************************************************************/
+  // Build pages methods.
+  /****************************************************************************/
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildPages(array $pages, WebformSubmissionInterface $webform_submission) {
+    foreach ($pages as $page_key => $page) {
+      // Check #access which can be set via form alter.
+      if ($page['#access'] === FALSE) {
+        unset($pages[$page_key]);
+      }
+      // Check #states (visible/hidden).
+      if (!empty($page['#states'])) {
+        $state = key($page['#states']);
+        $conditions = $page['#states'][$state];
+        $result = $this->validateState($state, $conditions, $webform_submission);
+        if ($result !== NULL && !$result) {
+          unset($pages[$page_key]);
+        }
+      }
+    }
+    return $pages;
+  }
+
+  /****************************************************************************/
   // Build form methods.
   /****************************************************************************/
 
@@ -98,6 +126,12 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
 
         // Skip if evaluating conditions when all targets are visible.
         if ($all_targets_visible) {
+          // Add .js-webform-states-hidden to element's that are not visible when
+          // the form is rendered.
+          if (strpos($state, 'visible') === 0
+            && !$this->validateConditions($conditions, $webform_submission)) {
+            $this->addStatesHiddenToElement($element);
+          }
           continue;
         }
 
@@ -135,7 +169,14 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
 
           case 'visible':
           case 'visible-slide':
-            $element['#access'] = $result;
+            if (!$result) {
+              // Visual hide the element.
+              $this->addStatesHiddenToElement($element);
+              // Clear the default value.
+              if (!isset($element['#states_clear']) || $element['#states_clear'] === TRUE) {
+                unset($element['#default_value']);
+              }
+            }
             break;
 
           case 'collapsed':
@@ -207,7 +248,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         }
 
         $target_trigger = $condition_result ? 'value' : '!value';
-        $target_name = 'webform_states_' . md5($selector);
+        $target_name = 'webform_states_' . Crypt::hashBase64($selector);
         $target_selector = ':input[name="' . $target_name . '"]';
 
         // IMPORTANT:
@@ -313,10 +354,12 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
       else {
         $value = $element['#value'];
       }
+
       $is_empty = (empty($value) && $value !== '0');
+      $is_default_input_mask = (TextBase::isDefaultInputMask($element, $value));
 
       // If required and empty then set required error.
-      if ($is_required && $is_empty) {
+      if ($is_required && ($is_empty || $is_default_input_mask)) {
         WebformElementHelper::setRequiredError($element, $form_state);
       }
     }
@@ -454,6 +497,39 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
     }
 
     return $visible;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isElementEnabled(array $element, WebformSubmissionInterface $webform_submission) {
+    $states = WebformElementHelper::getStates($element);
+
+    $enabled = TRUE;
+    foreach ($states as $state => $conditions) {
+      if (!is_array($conditions)) {
+        continue;
+      }
+
+      // Process state/negate.
+      list($state, $negate) = $this->processState($state);
+
+      $result = $this->validateConditions($conditions, $webform_submission);
+      // Skip invalid conditions.
+      if ($result === NULL) {
+        continue;
+      }
+
+      // Negate the result.
+      $result = ($negate) ? !$result : $result;
+
+      // Apply result to element state.
+      if ($state === 'disabled' && $result === TRUE) {
+        $enabled = FALSE;
+      }
+    }
+
+    return $enabled;
   }
 
   /****************************************************************************/
@@ -926,6 +1002,20 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
 
       $targets[$selector] = $selector;
     }
+  }
+
+  /**
+   * Add .js-webform-states-hidden to an element.
+   *
+   * @param array $element
+   *   An element.
+   */
+  protected function addStatesHiddenToElement(array &$element) {
+    $element_plugin = $this->elementManager->getElementInstance($element);
+    $attributes_property = ($element_plugin->hasWrapper($element) || $element_plugin->getPluginDefinition()['states_wrapper']) ? '#wrapper_attributes' : '#attributes';
+    $element += [$attributes_property => []];
+    $element[$attributes_property] += ['class' => []];
+    $element[$attributes_property]['class'][] = 'js-webform-states-hidden';
   }
 
   /****************************************************************************/

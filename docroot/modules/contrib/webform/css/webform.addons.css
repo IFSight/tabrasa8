@@ -14,3 +14,13 @@
 .webform-addons-projects details {
   background-color: #f8f8f8;
 }
+
+.webform-addons-projects img {
+  float: right;
+  margin-left: 10px;
+  height: 50px;
+}
+
+.webform-addons .admin-list li {
+  clear: both;
+}

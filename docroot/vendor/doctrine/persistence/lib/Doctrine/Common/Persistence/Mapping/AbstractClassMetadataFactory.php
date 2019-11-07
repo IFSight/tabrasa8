@@ -158,7 +158,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
         // Check for namespace alias
         if (strpos($className, ':') !== false) {
-            list($namespaceAlias, $simpleClassName) = explode(':', $className, 2);
+            [$namespaceAlias, $simpleClassName] = explode(':', $className, 2);
 
             $realClassName = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
         } else {
@@ -183,8 +183,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                     foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
                         $this->cacheDriver->save(
                             $loadedClassName . $this->cacheSalt,
-                            $this->loadedMetadata[$loadedClassName],
-                            null
+                            $this->loadedMetadata[$loadedClassName]
                         );
                     }
                 }
@@ -343,6 +342,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * @param bool               $rootEntityFound
      * @param string[]           $nonSuperclassParents All parent class names
      *                                                 that are not marked as mapped superclasses.
+     *
      * @return void
      */
     abstract protected function doLoadMetadata($class, $parent, $rootEntityFound, array $nonSuperclassParents);
@@ -367,8 +367,8 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
         // Check for namespace alias
         if (strpos($class, ':') !== false) {
-            list($namespaceAlias, $simpleClassName) = explode(':', $class, 2);
-            $class                                  = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
+            [$namespaceAlias, $simpleClassName] = explode(':', $class, 2);
+            $class                              = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
         }
 
         return $this->getDriver()->isTransient($class);

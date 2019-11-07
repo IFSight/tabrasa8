@@ -6,7 +6,7 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Render\Element\Textarea;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Entity\WebformSubmission;
-use Drupal\webform\Twig\TwigExtension;
+use Drupal\webform\Twig\WebformTwigExtension;
 use Drupal\webform\Utility\WebformYaml;
 
 /**
@@ -93,7 +93,7 @@ class WebformCodeMirror extends Textarea {
 
     // Check edit Twig template permission and complete disable editing.
     if ($element['#mode'] == 'twig') {
-      if (!TwigExtension::hasEditTwigAccess()) {
+      if (!WebformTwigExtension::hasEditTwigAccess()) {
         $element['#disable'] = TRUE;
         $element['#attributes']['disabled'] = 'disabled';
         $element['#field_prefix'] = [
@@ -143,12 +143,11 @@ class WebformCodeMirror extends Textarea {
       $element['#value'] = $element['#default_value'];
       $form_state->setValueForElement($element, $element['#default_value']);
     }
-
     $errors = static::getErrors($element, $form_state, $complete_form);
     if ($errors) {
       $build = [
         'title' => [
-          '#markup' => t('%title is not valid.', ['%title' => (isset($element['#title']) ? $element['#title'] : t('YAML'))]),
+          '#markup' => t('%title is not valid.', ['%title' => static::getTitle($element)]),
         ],
         'errors' => [
           '#theme' => 'item_list',
@@ -192,6 +191,35 @@ class WebformCodeMirror extends Textarea {
 
       default:
         return NULL;
+    }
+  }
+
+  /**
+   * Get an element's title.
+   *
+   * @param array $element
+   *   An element.
+   *
+   * @return string
+   *   The element's title.
+   */
+  protected static function getTitle(array $element) {
+    if (isset($element['#title'])) {
+      return $element['#title'];
+    }
+
+    switch ($element['#mode']) {
+      case 'html':
+        return t('HTML');
+
+      case 'yaml':
+        return t('YAML');
+
+      case 'twig':
+        return t('Twig');
+
+      default:
+        return t('Code');
     }
   }
 
@@ -279,7 +307,7 @@ class WebformCodeMirror extends Textarea {
           'data' => $webform_submission_generate->getData($webform),
         ];
         $webform_submission = WebformSubmission::create($values);
-        $build = TwigExtension::buildTwigTemplate($webform_submission, $template, []);
+        $build = WebformTwigExtension::buildTwigTemplate($webform_submission, $template, []);
       }
       else {
         $build = [

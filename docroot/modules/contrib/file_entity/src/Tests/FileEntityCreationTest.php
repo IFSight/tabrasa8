@@ -50,10 +50,10 @@ class FileEntityCreationTest extends FileEntityTestBase {
     $this->drupalPostForm('file/add', $edit, t('Next'));
 
     // Check that the document file has been uploaded.
-    $this->assertRaw(t('@type %name was uploaded.', array('@type' => 'Document', '%name' => $test_file->filename)), t('Document file uploaded.'));
+    $this->assertRaw(t('@type %name was uploaded.', array('@type' => 'Document', '%name' => 'text-0_0.txt')), t('Document file uploaded.'));
 
     // Check that the file exists in the database.
-    $file = $this->getFileByFilename($test_file->filename);
+    $file = $this->getFileByFilename('text-0_0.txt');
     $this->assertTrue($file, t('File found in database.'));
   }
 
@@ -86,10 +86,10 @@ class FileEntityCreationTest extends FileEntityTestBase {
     $this->drupalPostForm(NULL, $edit, t('Next'));
 
     // Check that the document file has been uploaded.
-    $this->assertRaw(t('@type %name was uploaded.', array('@type' => 'Document', '%name' => $test_file->filename)), t('Document file uploaded.'));
+    $this->assertRaw(t('@type %name was uploaded.', array('@type' => 'Document', '%name' => 'text-0_0.txt')), t('Document file uploaded.'));
 
     // Check that the file exists in the database.
-    $file = $this->getFileByFilename($test_file->filename);
+    $file = $this->getFileByFilename('text-0_0.txt');
     $this->assertTrue($file, t('File found in database.'));
 
     // Check if the file is stored in the private folder.
@@ -125,7 +125,7 @@ class FileEntityCreationTest extends FileEntityTestBase {
       $edit[$field . '[0][value]'] = $value;
     }
     $this->drupalPostForm(NULL, $edit, t('Save'));
-    $file = $this->getFileByFilename('image-test.png');
+    $file = $this->getFileByFilename('image-test_0.png');
     $this->drupalGet('file/' . $file->id());
     $this->assertRaw('alt="A test image"', 'Alt attribute is shown and has the correct value.');
     $this->assertRaw('title="My image"', 'Title attribute is shown and has the correct value.');

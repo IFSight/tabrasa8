@@ -3,6 +3,7 @@
 namespace Drupal\webform\EntitySettings;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -99,6 +100,39 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
       ],
       '#default_value' => $settings['confirmation_type'],
     ];
+    // Page.
+    if ($webform->isResultsDisabled()) {
+      $form['confirmation_type']['page'] = [
+        '#type' => 'webform_message',
+        '#message_type' => 'warning',
+        '#message_close' => TRUE,
+        '#message_storage' => WebformMessage::STORAGE_SESSION,
+        '#message_message' => $this->t("Because the saving of submissions is disabled, the <code>[webform_submission:values]</code> token will not be available to the confirmation page's message."),
+        '#states' => [
+          'visible' => [
+            ':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_PAGE],
+          ],
+        ],
+      ];
+    }
+    // None.
+    $form['confirmation_type']['none'] = [
+      '#type' => 'webform_message',
+      '#message_type' => 'warning',
+      '#message_message' => $this->t('This setting assumes that a webform handler will manage the displaying of a confirmation message.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_NONE],
+        ],
+      ],
+    ];
+    $form['confirmation_type']['confirmation_update'] = [
+      '#title' => $this->t('Display confirmation when submission is updated.'),
+      '#description' => $this->t('If checked this select confirmation type and message will be displayed when the submission is updated. Otherwise, a status message will be displayed at the top the page when a submission is updated.'),
+      '#type' => 'checkbox',
+      '#return_type' => TRUE,
+      '#default_value' => $settings['confirmation_update'],
+    ];
 
     // Confirmation url.
     $form['confirmation_url'] = [
@@ -143,13 +177,13 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
     $form['confirmation_url']['confirmation_exclude_token'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Exclude token from Confirmation URL'),
-      '#description' => $this->t('If checked, to submissions token will be removed from the Confirmation URL and the [webform-submission] tokens will not be available within the confirmation message.'),
+      '#description' => $this->t('If checked, to submissions token will be removed from the Confirmation URL and the [webform_submission] tokens will not be available within the confirmation message.'),
       '#default_value' => $settings['confirmation_exclude_token'],
       '#access' => !$webform->isResultsDisabled(),
     ];
     $form['confirmation_url']['token_tree_link'] = $this->tokenManager->buildTreeElement(
       ['webform', 'webform_submission', 'webform_handler'],
-      $this->t('You may use tokens to pass query string parameters. Make sure all tokens include the urlencode suffix. (i.e. [webform-submission:values:email:urlencode])')
+      $this->t('You may use tokens to pass query string parameters. Make sure all tokens include the urlencode suffix. (i.e. [webform_submission:values:email:urlencode])')
     );
 
     // Confirmation settings.
@@ -256,18 +290,6 @@ class WebformEntitySettingsConfirmationForm extends WebformEntitySettingsBaseFor
       '#default_value' => $settings['confirmation_back_attributes'],
     ];
     $form['back']['back_container']['token_tree_link'] = $this->tokenManager->buildTreeElement();
-
-    // None.
-    $form['confirmation_type']['none'] = [
-      '#type' => 'webform_message',
-      '#message_type' => 'warning',
-      '#message_message' => $this->t('This setting assumes that a webform handler will manage the displaying of a confirmation message.'),
-      '#states' => [
-        'visible' => [
-          ':input[name="confirmation_type"]' => ['value' => WebformInterface::CONFIRMATION_NONE],
-        ],
-      ],
-    ];
 
     $this->tokenManager->elementValidate($form);
 

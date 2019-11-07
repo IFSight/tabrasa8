@@ -3,9 +3,9 @@
 namespace Drupal\file_entity\Entity;
 
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
@@ -270,12 +270,12 @@ class FileEntity extends File implements FileEntityInterface {
   /**
    * Update the image dimensions on the given image field on the given entity.
    *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *    The entity to be updated.
    * @param string $image_field
    *    The field to be updated.
    */
-  protected function updateImageFieldDimensionsByEntity(ContentEntityInterface $entity, $image_field) {
+  protected function updateImageFieldDimensionsByEntity(FieldableEntityInterface $entity, $image_field) {
     foreach (array_keys($entity->getTranslationLanguages()) as $langcode) {
       $translation = $entity->getTranslation($langcode);
 

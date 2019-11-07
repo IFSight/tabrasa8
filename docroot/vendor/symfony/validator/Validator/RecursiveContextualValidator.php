@@ -12,6 +12,7 @@
 namespace Symfony\Component\Validator\Validator;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\Composite;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\Context\ExecutionContext;
@@ -56,11 +57,11 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
      *                                                                constraint validators
      * @param ObjectInitializerInterface[]        $objectInitializers The object initializers
      */
-    public function __construct(ExecutionContextInterface $context, MetadataFactoryInterface $metadataFactory, ConstraintValidatorFactoryInterface $validatorFactory, array $objectInitializers = array())
+    public function __construct(ExecutionContextInterface $context, MetadataFactoryInterface $metadataFactory, ConstraintValidatorFactoryInterface $validatorFactory, array $objectInitializers = [])
     {
         $this->context = $context;
         $this->defaultPropertyPath = $context->getPropertyPath();
-        $this->defaultGroups = array($context->getGroup() ?: Constraint::DEFAULT_GROUP);
+        $this->defaultGroups = [$context->getGroup() ?: Constraint::DEFAULT_GROUP];
         $this->metadataFactory = $metadataFactory;
         $this->validatorFactory = $validatorFactory;
         $this->objectInitializers = $objectInitializers;
@@ -100,7 +101,7 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
             // You can pass a single constraint or an array of constraints
             // Make sure to deal with an array in the rest of the code
             if (!\is_array($constraints)) {
-                $constraints = array($constraints);
+                $constraints = [$constraints];
             }
 
             $metadata = new GenericMetadata();
@@ -282,7 +283,7 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
             return $groups;
         }
 
-        return array($groups);
+        return [$groups];
     }
 
     /**
@@ -351,24 +352,18 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
      * Validates each object in a collection against the constraints defined
      * for their classes.
      *
-     * If the parameter $recursive is set to true, nested {@link \Traversable}
-     * objects are iterated as well. Nested arrays are always iterated,
-     * regardless of the value of $recursive.
+     * Nested arrays are also iterated.
      *
      * @param iterable                  $collection   The collection
      * @param string                    $propertyPath The current property path
      * @param (string|GroupSequence)[]  $groups       The validated groups
      * @param ExecutionContextInterface $context      The current execution context
-     *
-     * @see ClassNode
-     * @see CollectionNode
      */
     private function validateEachObjectIn($collection, $propertyPath, array $groups, ExecutionContextInterface $context)
     {
         foreach ($collection as $key => $value) {
             if (\is_array($value)) {
-                // Arrays are always cascaded, independent of the specified
-                // traversal strategy
+                // Also traverse nested arrays
                 $this->validateEachObjectIn(
                     $value,
                     $propertyPath.'['.$key.']',
@@ -598,7 +593,8 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
      * in the passed metadata object. Then, if the value is an instance of
      * {@link \Traversable} and the selected traversal strategy permits it,
      * the value is traversed and each nested object validated against its own
-     * constraints. Arrays are always traversed.
+     * constraints. If the value is an array, it is traversed regardless of
+     * the given strategy.
      *
      * @param mixed                     $value             The validated value
      * @param object|null               $object            The current object
@@ -657,8 +653,8 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
 
         $cascadingStrategy = $metadata->getCascadingStrategy();
 
-        // Quit unless we have an array or a cascaded object
-        if (!\is_array($value) && !($cascadingStrategy & CascadingStrategy::CASCADE)) {
+        // Quit unless we cascade
+        if (!($cascadingStrategy & CascadingStrategy::CASCADE)) {
             return;
         }
 
@@ -730,7 +726,7 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
     private function stepThroughGroupSequence($value, $object, $cacheKey, MetadataInterface $metadata = null, $propertyPath, $traversalStrategy, GroupSequence $groupSequence, $cascadedGroup, ExecutionContextInterface $context)
     {
         $violationCount = \count($context->getViolations());
-        $cascadedGroups = $cascadedGroup ? array($cascadedGroup) : null;
+        $cascadedGroups = $cascadedGroup ? [$cascadedGroup] : null;
 
         foreach ($groupSequence->groups as $groupInSequence) {
             $groups = (array) $groupInSequence;
@@ -786,6 +782,10 @@ class RecursiveContextualValidator implements ContextualValidatorInterface
             // that constraints belong to multiple validated groups
             if (null !== $cacheKey) {
                 $constraintHash = spl_object_hash($constraint);
+
+                if ($constraint instanceof Composite) {
+                    $constraintHash .= $group;
+                }
 
                 if ($context->isConstraintValidated($cacheKey, $constraintHash)) {
                     continue;

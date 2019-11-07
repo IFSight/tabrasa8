@@ -893,14 +893,20 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
    * {@inheritdoc}
    */
   public function getBatchLimit() {
-    return $this->configFactory->get('webform.settings')->get('batch.default_batch_export_size') ?: 500;
+    return $this->getExporter()->getBatchLimit();
   }
 
   /**
    * {@inheritdoc}
    */
   public function requiresBatch() {
-    return ($this->getTotal() > $this->getBatchLimit()) ? TRUE : FALSE;
+    // Get the unfiltered total number of submissions for the webform and
+    // source entity.
+    $total = $this->entityStorage->getTotal(
+      $this->getWebform(),
+      $this->getSourceEntity()
+    );
+    return ($total > $this->getBatchLimit()) ? TRUE : FALSE;
   }
 
   /**

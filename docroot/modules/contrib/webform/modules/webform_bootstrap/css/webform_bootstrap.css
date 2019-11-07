@@ -28,6 +28,12 @@
   display: inline;
 }
 
+.webform-element--title-inline .form-control,
+.webform-element--title-inline .select-wrapper {
+  display: inline;
+  width: inherit;
+}
+
 /**
  * Form composite title inline. (applies to radios and checkboxes)
  */
@@ -54,4 +60,14 @@ html.js .form-type-webform-image-select .select-wrapper:after {
   .webform-confirmation-modal {
     width: 90% !important;
   }
+}
+
+/**
+ * Messages.
+ */
+.alert a.btn,
+.alert a.btn:hover,
+.alert a.btn:focus,
+.ui-widget-content a.btn {
+  color: #fff;
 }

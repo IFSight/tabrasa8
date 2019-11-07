@@ -63,6 +63,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
     $form['form_settings']['status'] = [
       '#type' => 'radios',
       '#title' => $this->t('Form status'),
+      '#description' => $this->t('Form status applies to all instances of this webform. For example, if this webform is closed, all webform nodes and blocks will be closed.'),
       '#default_value' => $webform->get('status'),
       '#options' => [
         WebformInterface::STATUS_OPEN => $this->t('Open'),
@@ -185,12 +186,12 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
     $form['form_behaviors']['form_prepopulate_source_entity_required']['#states'] = [
       'visible' => [':input[name="form_prepopulate_source_entity"]' => ['checked' => TRUE]],
     ];
+    // Source entity type.
     $entity_type_options = [];
     foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
       $entity_type_options[$entity_type_id] = $entity_type->getLabel();
     }
     uasort($entity_type_options, 'strnatcasecmp');
-
     $form['form_behaviors']['form_prepopulate_source_entity_type'] = [
       '#type' => 'select',
       '#title' => 'Type of source entity to be populated using query string parameters',
@@ -202,7 +203,14 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
         'visible' => [':input[name="form_prepopulate_source_entity"]' => ['checked' => TRUE]],
       ],
     ];
-
+    // Hide "Submit previous page when browser back button is clicked" when
+    // Ajax is enabled.
+    if ($settings['ajax']) {
+      $form['form_behaviors']['form_submit_back']['#default'] = TRUE;
+      $form['form_behaviors']['form_submit_back']['#disabled'] = TRUE;
+      $form['form_behaviors']['form_submit_back']['#description'] .= '<br/><br/><em>' . t('This behavior is not supoported when Ajax is enabled.') . '</em>';
+    }
+    // Disable warning about drafts.
     if ($settings['draft'] !== WebformInterface::DRAFT_NONE) {
       $form['form_behaviors']['form_reset_message'] = [
         '#type' => 'webform_message',
@@ -340,6 +348,13 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
           ':input[name="preview"]' => ['!value' => DRUPAL_DISABLED],
         ],
       ],
+    ];
+    $form['wizard_settings']['wizard_progress_states'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t("Update wizard progress bar's pages based on conditions"),
+      '#description' => $this->t("If checked, the wizard's progress bar's pages will be hidden on shown based on each pages conditional logic."),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['wizard_progress_states'],
     ];
     $form['wizard_settings']['wizard_confirmation'] = [
       '#type' => 'checkbox',
@@ -507,7 +522,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       '#type' => 'select',
       '#title' => $this->t('Form method'),
       '#description' => $this->t('The HTTP method with which the form will be submitted.') . '<br /><br />' .
-        '<em>' . $this->t('Selecting a custom POST or GET method will automatically disable wizards, previews, drafts, submissions, limits, purging, confirmations, emails, and handlers.') . '</em>',
+        '<em>' . $this->t('Selecting a custom POST or GET method will automatically disable wizards, previews, drafts, submissions, limits, purging, confirmations, emails, computed elements, and handlers.') . '</em>',
       '#options' => [
         '' => $this->t('POST (Default)'),
         'post' => $this->t('POST (Custom)'),
@@ -607,20 +622,37 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
     // Set custom properties, class, and style.
     $elements = $webform->getElementsDecoded();
     $elements = WebformElementHelper::removeProperties($elements);
+
     $properties = [];
+
+    // Unset custom method and action.
+    unset(
+      $properties['#method'],
+      $properties['#action']
+    );
+
+    // Set custom method and action.
     if (!empty($values['method'])) {
       $properties['#method'] = $values['method'];
+      if (!empty($values['action'])) {
+        $properties['#action'] = $values['action'];
+      }
     }
-    if (!empty($values['action'])) {
-      $properties['#action'] = $values['action'];
-    }
+
+    // Set custom properties.
     if (!empty($values['custom'])) {
       $properties += WebformArrayHelper::addPrefix($values['custom']);
     }
+
+    // Set custom attributions.
     if (!empty($values['attributes'])) {
       $properties['#attributes'] = $values['attributes'];
     }
+
+    // Prepend form properties to elements.
     $elements = $properties + $elements;
+
+    // Save elements.
     $webform->setElements($elements);
 
     // Remove custom properties and attributes.

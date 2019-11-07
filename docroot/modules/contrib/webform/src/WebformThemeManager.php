@@ -5,6 +5,7 @@ namespace Drupal\webform;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Theme\ThemeInitializationInterface;
@@ -52,6 +53,13 @@ class WebformThemeManager implements WebformThemeManagerInterface {
   protected $renderer;
 
   /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
    * Contains the current active theme.
    *
    * @var \Drupal\Core\Theme\ActiveTheme
@@ -71,13 +79,18 @@ class WebformThemeManager implements WebformThemeManagerInterface {
    *   The theme handler.
    * @param \Drupal\Core\Theme\ThemeInitializationInterface $theme_initialization
    *   The theme initialization.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
+   *
+   * @todo Webform 8.x-6.x: Move $route_match first.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, RendererInterface $renderer, ThemeManagerInterface $theme_manager, ThemeHandlerInterface $theme_handler, ThemeInitializationInterface $theme_initialization) {
+  public function __construct(ConfigFactoryInterface $config_factory, RendererInterface $renderer, ThemeManagerInterface $theme_manager, ThemeHandlerInterface $theme_handler, ThemeInitializationInterface $theme_initialization, RouteMatchInterface $route_match) {
     $this->configFactory = $config_factory;
     $this->renderer = $renderer;
     $this->themeManager = $theme_manager;
     $this->themeHandler = $theme_handler;
     $this->themeInitialization = $theme_initialization;
+    $this->routeMatch = $route_match;
   }
 
   /**
@@ -118,6 +131,18 @@ class WebformThemeManager implements WebformThemeManagerInterface {
   /**
    * {@inheritdoc}
    */
+  public function hasActiveTheme() {
+    // If there is no route match, then there is no active theme.
+    // If there is no route match the admin theme can't be initialized.
+    // @see \Drupal\Core\Theme\ThemeManager::initTheme
+    // @see \Drupal\Core\Theme\ThemeNegotiator::determineActiveTheme
+    // @see \Drupal\user\Theme\AdminNegotiator::applies
+    return (\Drupal::routeMatch()->getRouteName()) ? TRUE : FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isActiveTheme($theme_name) {
     return in_array($theme_name, $this->getActiveThemeNames());
   }
@@ -129,7 +154,7 @@ class WebformThemeManager implements WebformThemeManagerInterface {
     if (!isset($this->activeTheme)) {
       $this->activeTheme = $this->themeManager->getActiveTheme();
     }
-    $current_theme_name = $this->configFactory->get('system.theme')->get($theme_name ?: 'default');
+    $current_theme_name = $theme_name ?: $this->configFactory->get('system.theme')->get('default');
     $current_theme = $this->themeInitialization->getActiveThemeByName($current_theme_name);
     $this->themeManager->setActiveTheme($current_theme);
   }
