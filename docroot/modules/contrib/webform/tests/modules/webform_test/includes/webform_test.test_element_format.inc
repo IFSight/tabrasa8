@@ -20,6 +20,7 @@ function webform_test_test_element_format(WebformInterface $webform, $composite 
     'text_format_raw',
     'text_format_value',
     'webform_composite',
+    'webform_same',
     // @todo Fix file display
     'webform_audio_file',
     'webform_document_file',
@@ -49,8 +50,7 @@ function webform_test_test_element_format(WebformInterface $webform, $composite 
     'basic_elements' => [],
     'advanced_elements' => [],
   ];
-  foreach ($definitions as $definition) {
-    $element_type = $definition['id'];
+  foreach ($definitions as $element_type => $definition) {
     if (in_array($element_type, $skipped_element_types)) {
       continue;
     }

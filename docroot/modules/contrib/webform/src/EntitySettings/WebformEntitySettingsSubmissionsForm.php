@@ -84,6 +84,7 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
     $form['submission_settings']['submission_label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Submission label'),
+      '#maxlength' => NULL,
       '#default_value' => $settings['submission_label'],
     ];
     $form['submission_settings']['submission_exception_message'] = [
@@ -433,7 +434,7 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
     ];
     $form['submission_limits']['total']['limit_total_unique_warning'] = [
       '#type' => 'webform_message',
-      '#message_message' => $this->t("Please make sure users are allowed to 'edit any submission'."),
+      '#message_message' => $this->t("Please make sure users are allowed to 'view any submission' and 'edit any submission'."),
       '#message_type' => 'warning',
       '#message_close' => TRUE,
       '#message_storage' => WebformMessage::STORAGE_SESSION,
@@ -535,7 +536,7 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
     ];
     $form['submission_limits']['user']['limit_user_unique_warning'] = [
       '#type' => 'webform_message',
-      '#message_message' => $this->t("Please make sure users are allowed to 'edit own submission'."),
+      '#message_message' => $this->t("Please make sure authenticated users are allowed to 'view own submission' and 'edit own submission'."),
       '#message_type' => 'warning',
       '#message_close' => TRUE,
       '#message_storage' => WebformMessage::STORAGE_SESSION,
@@ -619,6 +620,28 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       "#description" => $this->t('If checked, users will be able save and resume multiple drafts.'),
       '#return_value' => TRUE,
       '#default_value' => $settings['draft_multiple'],
+    ];
+    $form['draft_settings']['draft_container']['draft_pending_single_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Draft pending single draft message'),
+      '#description' => $this->t('Message to be displayed when a single draft is saved.'),
+      '#default_value' => $settings['draft_pending_single_message'],
+      '#states' => [
+        'visible' => [
+          ':input[name="draft_multiple"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+    $form['draft_settings']['draft_container']['draft_pending_multiple_message'] = [
+      '#type' => 'webform_html_editor',
+      '#title' => $this->t('Draft pending multiple drafts message'),
+      '#description' => $this->t('Message to be displayed when multiple drafts are saved.'),
+      '#default_value' => $settings['draft_pending_multiple_message'],
+      '#states' => [
+        'visible' => [
+          ':input[name="draft_multiple"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
     $form['draft_settings']['draft_container']['draft_auto_save'] = [
       '#type' => 'checkbox',

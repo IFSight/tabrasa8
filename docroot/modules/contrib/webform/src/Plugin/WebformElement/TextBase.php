@@ -4,6 +4,7 @@ namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformElementBase;
+use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformTextHelper;
 use Drupal\webform\WebformSubmissionInterface;
 
@@ -100,6 +101,7 @@ abstract class TextBase extends WebformElementBase {
 
       $element['#attributes']['class'][] = 'js-webform-input-mask';
       $element['#attached']['library'][] = 'webform/webform.element.inputmask';
+      $element['#element_validate'][] = [get_called_class(), 'validateInputMask'];
     }
 
     // Input hiding.
@@ -159,6 +161,7 @@ abstract class TextBase extends WebformElementBase {
       '#title' => $this->t('Pattern'),
       '#description' => $this->t('A <a href=":href">regular expression</a> that the element\'s value is checked against.', [':href' => 'http://www.w3schools.com/js/js_regexp.asp']),
       '#value__title' => $this->t('Pattern regular expression'),
+      '#value__maxlength' => 255,
     ];
     $form['validation']['pattern_error'] = [
       '#type' => 'textfield',
@@ -226,6 +229,45 @@ abstract class TextBase extends WebformElementBase {
     elseif ($min && $length < $min) {
       $form_state->setError($element, t('@name must be longer than %min @type but is currently %length @type long.', $t_args));
     }
+  }
+
+  /**
+   * Form API callback. Validate input mask and display required error message.
+   *
+   * Makes sure a required element's value doesn't include the default
+   * input mask as the submitted value.
+   *
+   * Applies only to the currency input mask.
+   */
+  public static function validateInputMask(&$element, FormStateInterface $form_state, &$complete_form) {
+    // Set required error when input mask is submitted.
+    if (!empty($element['#required'])
+      && static::isDefaultInputMask($element, $element['#value'])) {
+      WebformElementHelper::setRequiredError($element, $form_state);
+    }
+  }
+
+  /**
+   * Check if an element's value is the input mask's default value.
+   *
+   * @param array $element
+   *   An element.
+   * @param string $value
+   *   A value.
+   *
+   * @return bool
+   *   TRUE if an element's value is the input mask's default value.
+   */
+  public static function isDefaultInputMask(array $element, $value) {
+    if (empty($element['#input_mask']) || $value === '') {
+      return FALSE;
+    }
+
+    $input_mask = $element['#input_mask'];
+    $input_masks = [
+      "'alias': 'currency'" => '$ 0.00',
+    ];
+    return (isset($input_masks[$input_mask]) && $input_masks[$input_mask] === $value) ? TRUE : FALSE;
   }
 
   /**
@@ -357,7 +399,7 @@ abstract class TextBase extends WebformElementBase {
         'example' => 'UPPERCASE',
       ],
       "'casing': 'lower'" => [
-        'title' => $this->t('Lowercase '),
+        'title' => $this->t('Lowercase'),
         'example' => 'lowercase',
       ],
     ];

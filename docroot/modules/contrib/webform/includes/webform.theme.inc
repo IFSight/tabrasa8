@@ -28,14 +28,6 @@ function webform_theme() {
       'variables' => ['youtube_id' => NULL, 'autoplay' => TRUE],
     ],
 
-    'webform_contribute' => [
-      'variables' => [
-        'account' => [],
-        'membership' => [],
-        'contribution' => [],
-      ],
-    ],
-
     'webform' => [
       'render element' => 'element',
     ],
@@ -79,6 +71,9 @@ function webform_theme() {
     ],
     'webform_submission_information' => [
       'variables' => ['webform_submission' => NULL, 'source_entity' => NULL, 'open' => TRUE],
+    ],
+    'webform_submission_data' => [
+      'render element' => 'elements',
     ],
 
     'webform_element_base_html' => [
@@ -168,6 +163,7 @@ function webform_theme() {
     'webform_progress' => [
       'variables' => [
         'webform' => NULL,
+        'webform_submission' => NULL,
         'current_page' => NULL,
         'operation' => NULL,
       ],
@@ -176,6 +172,7 @@ function webform_theme() {
     'webform_progress_bar' => [
       'variables' => [
         'webform' => NULL,
+        'webform_submission' => NULL,
         'current_page' => NULL,
         'operation' => NULL,
         'max_pages' => 10,
@@ -185,6 +182,7 @@ function webform_theme() {
     'webform_progress_tracker' => [
       'variables' => [
         'webform' => NULL,
+        'webform_submission' => NULL,
         'current_page' => NULL,
         'operation' => NULL,
         'max_pages' => 10,
@@ -277,6 +275,15 @@ function webform_preprocess_radios(&$variables) {
   _webform_preprocess_options($variables);
 }
 
+/**
+ * Prepares variable for status_messages.
+ */
+function webform_preprocess_status_messages(&$variables) {
+  if (!isset($variables['status_headings']['info'])) {
+    $variables['status_headings']['info'] = t('Information message');
+  }
+}
+
 /******************************************************************************/
 // Preprocess tables.
 /******************************************************************************/
@@ -311,7 +318,7 @@ function webform_preprocess_table(&$variables) {
       $langcode = (isset($route_parameters['langcode'])) ? $route_parameters['langcode'] : NULL;
       $language = \Drupal::languageManager()->getLanguage($langcode);
 
-      // Convert first to link.
+      // Convert the first cell in the row to a link.
       $row['cells'][0]['content'] = [
         '#type' => 'link',
         '#url' => $webform->toUrl('canonical', ['language' => $language]),
@@ -405,6 +412,12 @@ function webform_preprocess_fieldset(&$variables) {
     $variables['attributes']['class'][] = 'webform-fieldset--title-inline';
   }
 
+  // If the title display is none remove the legend.title and set
+  // display to none.
+  if (isset($element['#title_display']) && $element['#title_display'] === 'none') {
+    $variables['legend'] = ['attributes' => new Attribute(['style' => 'display:none'])];
+  }
+
   // Add .js-webform-form-type-* class to be used JavaScript and #states API.
   // @see js/webform.element.location.geocomplete.js
   // @see js/webform.states.js
@@ -435,14 +448,29 @@ function webform_preprocess_form_element(&$variables) {
   }
 
   // Setup description, help, and more.
-  _webform_preprocess_element($variables);
+  _webform_preprocess_element($variables, ['label', '#title']);
 
-  $element = &$variables['element'];
+  // Add missing classes to the Claro theme's form elements.
+  // @see core/modules/system/templates/form-element.html.twig
+  // @see claro/templates/form-element.html.twig
+  // @todo Once Claro is stable determine if this code should removed.
+  static $is_claro_active_theme;
+  if (!isset($is_claro_active_theme)) {
+    /** @var \Drupal\webform\WebformThemeManagerInterface $theme_manager */
+    $theme_manager = \Drupal::service('webform.theme_manager');
+    $is_claro_active_theme = $theme_manager->isActiveTheme('claro');
+  }
+  if ($is_claro_active_theme) {
+    // Add system .form-type-TYPE class.
+    if (!empty($variables['type'])) {
+      $variables['attributes']['class'][] = 'form-type-' . Html::getClass($variables['type']);
+    }
 
-  // Add #help, #help_attributes, and #_title_display to label.
-  // Note: #_title_display is used to track inline titles.
-  // @see \Drupal\webform\Plugin\WebformElementBase::prepare
-  $variables['label'] += array_intersect_key($element, array_flip(['#help', '#help_title', '#help_attributes', '#_title_display']));
+    // Add system .description class.
+    if (isset($variables['description'])) {
+      $variables['description']['attributes']->addClass('description');
+    }
+  }
 }
 
 /**
@@ -451,8 +479,15 @@ function webform_preprocess_form_element(&$variables) {
 function webform_preprocess_form_element_label(&$variables) {
   $element = &$variables['element'];
 
-  // Restructure the label's title to include #help.
-  _webform_preprocess_help_title($variables['title'], $element);
+  // Fix variable title #markup tha contains a render array which is most
+  // likely a help tooltip.
+  // @see template_preprocess_form_element_label()
+  // @see webform_preprocess_form_element()
+  if (isset($variables['title'])
+    && is_array($variables['title'])
+    && is_array($variables['title']['#markup'])) {
+      $variables['title'] = $variables['title']['#markup'];
+  }
 
   // Remove label 'for' attribute.
   if (!empty($element['#attributes']['webform-remove-for-attribute'])) {
@@ -613,12 +648,9 @@ function _webform_preprocess_element(array &$variables, $title_parents = ['title
   // @see template_preprocess_details
   // @see Issue #2896169: Details elements have incorrect aria-describedby attributes
   if (!empty($element['#description'])) {
-    // Convert the current description to simple #markup.
+    // Normalize description into a simple render array.
     if (is_array($element['#description'])) {
-      // Make a copy of the element's #description so that it can be rendered
-      // without affecting the element's #description.
-      $element_description = $element['#description'];
-      $description = ['#markup' => \Drupal::service('renderer')->render($element_description)];
+      $description = [$element['#description']];
     }
     else {
       $description = ['#markup' => $element['#description']];
@@ -636,6 +668,7 @@ function _webform_preprocess_element(array &$variables, $title_parents = ['title
       ] + $description;
     }
     else {
+      $variables['description'] += ['attributes' => new Attribute()];
       // Wrap description in a container.
       $variables['description']['content'] = [
         '#type' => 'container',
@@ -666,8 +699,6 @@ function _webform_preprocess_element(array &$variables, $title_parents = ['title
     unset($variables['description']);
   }
 
-  $title =& NestedArray::getValue($variables, $title_parents);
-
   // Move #description to #help for webform admin routes.
   _webform_preprocess_description_help($variables);
 
@@ -675,7 +706,7 @@ function _webform_preprocess_element(array &$variables, $title_parents = ['title
   _webform_preprocess_form_element_description_more($variables);
 
   // Add help to title (aka label).
-  _webform_preprocess_help_title($title, $element);
+  _webform_preprocess_help($variables, $title_parents);
 }
 
 /**
@@ -711,11 +742,41 @@ function _webform_preprocess_description_help(array &$variables) {
 }
 
 /**
- * Append #help to title variable.
+ * Append #help to title or element variable.
  */
-function _webform_preprocess_help_title(&$variables, array &$element) {
-  if (empty($variables) || empty($element['#help'])) {
+function _webform_preprocess_help(array &$variables, $title_parents = ['title']) {
+  $element =& $variables['element'];
+  $type = $element['#type'];
+
+  if (empty($element['#help'])) {
     return;
+  }
+
+  $help_display = (isset($element['#help_display'])) ? $element['#help_display'] : 'title_after';
+
+  // Determine target variable (aka render element).
+  $targets = [
+    'title_before' => 'title',
+    'title_after' => 'title',
+    // Details don't support prefix and suffix.
+    // @see details.html.twig
+    'element_before' => ($type === 'details') ? 'children' : 'prefix',
+    'element_after' => ($type === 'details') ? 'children' : 'suffix',
+  ];
+  $target = $targets[$help_display];
+
+  // Determine the target element.
+  if ($target === 'title') {
+    // User title parent to the title (target) element.
+    $target_element =& NestedArray::getValue($variables, $title_parents);
+    // Empty title should not display help.
+    if (empty($target_element)) {
+      return;
+    }
+  }
+  else {
+    $variables += [$target => []];
+    $target_element =& $variables[$target];
   }
 
   // Default #help_title to element's #title.
@@ -723,16 +784,17 @@ function _webform_preprocess_help_title(&$variables, array &$element) {
     $element['#help_title'] = $element['#title'];
   }
 
-  $variables = [
-    'title' => (is_array($variables)) ? $variables : ['#markup' => $variables],
-    'help' => [
-      '#type' => 'webform_help',
-    ] + array_intersect_key($element, array_flip(['#help', '#help_title'])),
-  ];
+  $build = [];
+  if (!empty($target_element)) {
+    $build[$target] = (is_array($target_element)) ? $target_element : ['#markup' => $target_element];
+  }
+  $build['help'] = [
+    '#type' => 'webform_help',
+  ] + array_intersect_key($element, array_flip(['#help', '#help_title']));
 
   // Add help attributes.
   if (isset($element['#help_attributes'])) {
-    $variables['help']['#attributes'] = $element['#help_attributes'];
+    $build['help']['#attributes'] = $element['#help_attributes'];
   }
 
   // Get #title_display and move help before title for 'inline' titles.
@@ -748,10 +810,22 @@ function _webform_preprocess_help_title(&$variables, array &$element) {
     $title_display = NULL;
   }
 
-  if ($title_display === 'inline') {
-    $variables['title']['#weight'] = 0;
-    $variables['help']['#weight'] = -1;
+  // Place help before the target.
+  if (isset($build[$target])) {
+    if (($target == 'title' && $title_display === 'inline')
+      || $help_display === 'title_before'
+      || $help_display === 'element_before') {
+      $build[$target]['#weight'] = 0;
+      $build['help']['#weight'] = -1;
+    }
   }
+
+  // Add help container classes to element wrapper.
+  $variables['attributes']['class'][] = Html::getClass('webform-element-help-container--' . preg_replace('/(_after|_before)/', '', $help_display));
+  $variables['attributes']['class'][] = Html::getClass('webform-element-help-container--' . $help_display);
+
+  // Replace $variables with new render array containing help.
+  $target_element = $build;
 }
 
 /**
@@ -889,7 +963,7 @@ function webform_theme_suggestions_$hook(array \$variables) {
 }
 
 /******************************************************************************/
-// Theme suggestions.
+// Webform theme suggestions.
 // Generate using _webform_devel_hook_theme_suggestions_generate();
 /******************************************************************************/
 
@@ -917,13 +991,6 @@ function webform_theme_suggestions_webform_preview(array $variables) {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function webform_theme_suggestions_webform_submission_navigation(array $variables) {
-  return _webform_theme_suggestions($variables, 'webform_submission_navigation');
-}
-
-/**
- * Implements hook_theme_suggestions_HOOK().
- */
 function webform_theme_suggestions_webform_submission(array $variables) {
   return _webform_theme_suggestions($variables, 'webform_submission');
 }
@@ -938,8 +1005,22 @@ function webform_theme_suggestions_webform_submission_form(array $variables) {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
+function webform_theme_suggestions_webform_submission_navigation(array $variables) {
+  return _webform_theme_suggestions($variables, 'webform_submission_navigation');
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
 function webform_theme_suggestions_webform_submission_information(array $variables) {
   return _webform_theme_suggestions($variables, 'webform_submission_information');
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function webform_theme_suggestions_webform_submission_data(array $variables) {
+  return _webform_theme_suggestions($variables, 'webform_submission_data');
 }
 
 /**
@@ -1010,4 +1091,70 @@ function webform_theme_suggestions_webform_progress_bar(array $variables) {
  */
 function webform_theme_suggestions_webform_progress_tracker(array $variables) {
   return _webform_theme_suggestions($variables, 'webform_progress_tracker');
+}
+
+/******************************************************************************/
+// Custom theme suggestions.
+/******************************************************************************/
+
+/**
+ * Add webform options display suggestions to radios and checkboxes.
+ *
+ * @param array $variables
+ *   Template variables.
+ * @param string $type
+ *   Type of options element. (checkboxes or radios)
+ *
+ * @return array
+ *   If element include #options_display a template suggestion for
+ *   TYPE-OPTIONS-DISPLAY
+ */
+function _webform_theme_suggestions_options(array $variables, $type) {
+  if (!WebformElementHelper::isWebformElement($variables['element'])) {
+    return [];
+  }
+
+  $element = $variables['element'];
+  $suggestions = [];
+  if (!empty($element['#options_display']) && $element['#options_display'] === 'buttons') {
+    $suggestions[] = $type . '__webform_' . $element['#options_display'];
+  }
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function webform_theme_suggestions_radios(array $variables) {
+  return _webform_theme_suggestions_options($variables, 'radios');
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function webform_theme_suggestions_checkboxes(array $variables) {
+  return _webform_theme_suggestions_options($variables, 'checkboxes');
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function webform_theme_suggestions_form_element(array $variables) {
+  if (!WebformElementHelper::isWebformElement($variables['element'])) {
+    return [];
+  }
+  $element = $variables['element'];
+
+  $suggestions = [];
+
+  // Add webform type suggestion.
+  $suggestions[] = 'form_element__webform_' . $element['#type'];
+
+  // Add radio/checkbox displayed as a button suggestion.
+  // @sse webform_process_options()
+  if (!empty($element['#option_display']) && $element['#option_display'] === 'button') {
+    $suggestions[] = 'form_element__webform_' . $element['#type'] . '_' . $element['#option_display'];
+  }
+
+  return $suggestions;
 }

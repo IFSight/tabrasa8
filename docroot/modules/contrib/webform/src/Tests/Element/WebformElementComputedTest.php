@@ -50,6 +50,10 @@ class WebformElementComputedTest extends WebformElementTestBase {
 
     $token_webform = Webform::load('test_element_computed_token');
 
+    // Check computed tokens are processed on form load.
+    $this->drupalGet('webform/test_element_computed_token');
+    $this->assertRaw('<b class="webform_computed_token_auto">simple string:</b> This is a string<br />');
+
     // Get computed token preview.
     $this->drupalPostForm('webform/test_element_computed_token', [], t('Preview'));
 
@@ -84,14 +88,21 @@ class WebformElementComputedTest extends WebformElementTestBase {
     $this->assertEqual($data['webform_computed_token_store'], "sid: $sid");
 
     // Check values not stored in the database.
-    $this->assert(!isset($data['webform_computed_token_auto']));
-    $this->assert(!isset($data['webform_computed_token_html']));
-    $this->assert(!isset($data['webform_computed_token_text']));
+    $result = \Drupal::database()->select('webform_submission_data')
+      ->fields('webform_submission_data', ['value'])
+      ->condition('webform_id', 'test_element_computed_token')
+      ->condition('name', ['webform_computed_token_auto', 'webform_computed_token_html', 'webform_computed_token_text'], 'IN')
+      ->execute()
+      ->fetchAll();
+    $this->assert(empty($result));
 
     /* Twig */
 
     // Get computed Twig form.
     $this->drupalGet('/webform/test_element_computed_twig');
+
+    // Check computed Twig is processed on form load.
+    $this->assertRaw('<b class="webform_computed_twig_auto">number:</b> 2 * 2 = 4<br />');
 
     // Check Twig trim.
     $this->assertFieldByName('webform_computed_twig_trim', '<em>This is trimmed</em>  <br/>');

@@ -220,6 +220,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
           '#title' => $this->t('Cancel'),
           '#url' => new Url('entity.webform_ui.element.edit_form', $route_parameters),
           '#attributes' => WebformDialogHelper::getOffCanvasDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button', 'button--small']),
+          '#prefix' => ' ',
         ];
         $form['properties']['element']['type']['#description'] = '(' . $this->t('Changing from %type', ['%type' => $original_webform_element->getPluginLabel()]) . ')';
       }
@@ -229,6 +230,7 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
           '#title' => $this->t('Change'),
           '#url' => new Url('entity.webform_ui.change_element', $route_parameters),
           '#attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button', 'button--small']),
+          '#prefix' => ' ',
         ];
       }
     }
@@ -247,14 +249,38 @@ abstract class WebformUiElementFormBase extends FormBase implements WebformUiEle
       ];
     }
 
-    // Set element key.
+    // Set element key with custom machine name pattern.
+    // @see \Drupal\webform\WebformEntityElementsValidator::validateNames
+    $machine_name_pattern = $this->config('webform.settings')->get('element.machine_name_pattern') ?: 'a-z0-9_';
+    switch ($machine_name_pattern) {
+      case 'a-z0-9_':
+        $machine_name_requirements = $this->t('lowercase letters, numbers, and underscores');
+        break;
+
+      case 'a-zA-Z0-9_':
+        $machine_name_requirements = $this->t('letters, numbers, and underscores');
+        break;
+
+      case 'a-z0-9_-':
+        $machine_name_requirements = $this->t('lowercase letters, numbers, and underscores');
+        break;
+
+      case 'a-zA-Z0-9_-':
+        $machine_name_requirements = $this->t('letters, numbers, underscores, and dashes');
+        break;
+    }
+    $t_args = ['@requirements' => $machine_name_requirements];
+
     $form['properties']['element']['key'] = [
       '#type' => 'machine_name',
       '#title' => $this->t('Key'),
+      '#description' => $this->t('A unique element key. Can only contain @requirements.', $t_args),
       '#machine_name' => [
         'label' => '<br/>' . $this->t('Key'),
         'exists' => [$this, 'exists'],
         'source' => ['title'],
+        'replace_pattern' => '[^' . $machine_name_pattern . ']+',
+        'error' => $this->t('The element key name must contain only @requirements.', $t_args),
       ],
       '#required' => TRUE,
       '#parents' => ['key'],

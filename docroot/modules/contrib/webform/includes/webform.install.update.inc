@@ -5,6 +5,7 @@
  * Archived Webform update hooks.
  */
 
+use Drupal\Core\Path\Entity\PathAlias;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Component\Uuid\Php as Uuid;
 use Drupal\Core\Cache\Cache;
@@ -2821,20 +2822,38 @@ function webform_update_8153() {
   // Load all webforms to improve performance.
   $webform = Webform::loadMultiple();
 
-  $database = \Drupal::database();
-  $select = $database->select('url_alias', 'u');
-  $select->fields('u', ['pid', 'source', 'alias', 'langcode']);
-  $select->condition('source', '/webform/%', 'LIKE');
-  $result = $select->execute();
-  while ($record = $result->fetchAssoc()) {
-    if (preg_match('#^/webform/([^/]+)/(?:drafts|submissions)$#', $record['source'], $match)) {
-      // Check if the webform still exists.
-      $webform_id = $match[1];
-      if (!isset($webform[$webform_id])) {
-        // Delete the broken URL alias.
-        $database->delete('url_alias')
-          ->condition('pid', $record['pid'])
-          ->execute();
+  if (\Drupal::entityTypeManager()->hasDefinition('path_alias')) {
+    $ids = \Drupal::entityTypeManager()->getStorage('path_alias')->getQuery()
+      ->condition('path', '/webform/', 'STARTS_WITH')
+      ->execute();
+
+    /** @var \Drupal\Core\Path\PathAliasInterface $path_alias */
+    foreach (PathAlias::loadMultiple($ids) as $path_alias) {
+      if (preg_match('#^/webform/([^/]+)/(?:drafts|submissions)$#', $path_alias->getPath(), $match)) {
+        // Check if the webform still exists.
+        $webform_id = $match[1];
+        if (!isset($webform[$webform_id])) {
+          $path_alias->delete();
+        }
+      }
+    }
+  }
+  else {
+    $database = \Drupal::database();
+    $select = $database->select('url_alias', 'u');
+    $select->fields('u', ['pid', 'source', 'alias', 'langcode']);
+    $select->condition('source', '/webform/%', 'LIKE');
+    $result = $select->execute();
+    while ($record = $result->fetchAssoc()) {
+      if (preg_match('#^/webform/([^/]+)/(?:drafts|submissions)$#', $record['source'], $match)) {
+        // Check if the webform still exists.
+        $webform_id = $match[1];
+        if (!isset($webform[$webform_id])) {
+          // Delete the broken URL alias.
+          $database->delete('url_alias')
+            ->condition('pid', $record['pid'])
+            ->execute();
+        }
       }
     }
   }
@@ -2975,7 +2994,7 @@ function webform_update_8157() {
  * Issue #3023863: Typo in State/Province codes options.
  */
 function webform_update_8158() {
-  /** \Drupal\webform\WebformOptionsInterface */
+  /** \Drupal\webform\WebformOptionsInterface $webform_options */
   $webform_options = WebformOptions::load('state_province_codes');
   if (!$webform_options) {
     return;
@@ -3077,4 +3096,194 @@ function webform_update_8162() {
  */
 function webform_update_8163() {
   _webform_update_admin_settings();
+}
+
+/**
+ * Issue #3050884: Allow draft(s) previous message to be customized.
+ */
+function webform_update_8164() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3053420: Allows Ajax visual effects to be customized.
+ */
+function webform_update_8165() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3049023: All Webforms are listed on Content languages form.
+ */
+function webform_update_8166() {
+  _webform_update_webform_submission_translation();
+}
+
+/**
+ * Issue #3026111: Create a logo and header for the Webform module.
+ */
+function webform_update_8167() {
+  \Drupal::configFactory()->getEditable('webform.settings')
+    ->clear('ui.contribute_disabled')
+    ->clear('contribute')
+    ->save();
+}
+
+/**
+ * Issue #3033726: Provide option to redirect to a URL if Remote Post fails.
+ */
+function webform_update_8168() {
+  _webform_update_webform_handler_settings();
+}
+
+/**
+ * Issue #3062308: Add the ability to use admin theme for a webform's canonical route.
+ */
+function webform_update_8169() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3064070: Split STATE_DRAFT into STATE_DRAFT_CREATED and STATE_DRAFT_UPDATE.
+ */
+function webform_update_8170() {
+  // List of handler is that use webform submission state.
+  $states_handler_ids = ['action', 'email', 'scheduled_email', 'remote_post'];
+
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $data = $webform_config->getRawData();
+    $handler_updated = FALSE;
+    foreach ($data['handlers'] as &$handler) {
+      $settings = $handler['settings'];
+      if (!in_array($handler['id'], $states_handler_ids)) {
+        continue;
+      }
+
+      if (isset($settings['states'])
+        && is_array($settings['states'])
+        && in_array('draft', $settings['states'])) {
+        // Remove old 'draft' state.
+        WebformArrayHelper::removeValue($settings['states'], 'draft');
+        // Prepend new 'draft_created' and 'draft_updated' states.
+        $settings['states'] = array_merge([
+          'draft_created',
+          'draft_updated',
+        ], $settings['states']);
+      }
+
+      if ($handler['id'] === 'remote_post'
+        && isset($settings['draft_url'])) {
+        $settings['draft_created_url'] = $settings['draft_url'];
+        $settings['draft_created_custom_data'] = $settings['draft_custom_data'];
+        $settings['draft_updated_url'] = $settings['draft_url'];
+        $settings['draft_updated_custom_data'] = $settings['draft_custom_data'];
+        unset($settings['draft_url']);
+        unset($settings['draft_custom_data']);
+      }
+
+      if ($handler['settings'] != $settings) {
+        $handler_updated = TRUE;
+        $handler['settings'] = $settings;
+      }
+    }
+
+    if ($handler_updated) {
+      $webform_config->setData($data)->save();
+    }
+  }
+}
+
+/**
+ * Issue #3066994: Form elements keys (machine name) to be in all cases not just lowercase.
+ */
+function webform_update_8171() {
+  _webform_update_admin_settings();
+}
+
+/**
+ * Issue #3073995: Setting to enable ajax on all webforms.
+ */
+function webform_update_8172() {
+  _webform_update_admin_settings();
+}
+
+/**
+ * Issue #3076086: Allow confirm email to use flexbox.
+ */
+function webform_update_8173() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $data = $webform_config->getRawData();
+    if (strpos($data['elements'], 'webform_flexbox') !== FALSE
+      && strpos($data['elements'], 'webform_email_confirm') !== FALSE
+    ) {
+      $elements = WebformYaml::decode($data['elements']);
+      _webform_update_8173($elements);
+      $data['elements'] = WebformYaml::encode($elements);
+      $webform_config->setData($data)->save();
+    }
+  }
+}
+
+/**
+ * Recursively add flexbox: '0' to email confirm elements.
+ *
+ * @param array $element
+ *   An element.
+ */
+function _webform_update_8173(array &$element) {
+  if (isset($element['#type'])
+    && $element['#type'] === 'webform_email_confirm'
+    && !isset($element['#flexbox'])) {
+    $element['#flexbox'] = '0';
+  }
+  foreach (Element::children($element) as $key) {
+    if (is_array($element[$key])) {
+      _webform_update_8173($element[$key]);
+    }
+  }
+}
+
+/**
+ * Issue #3084531: Allow Email handler add additional parameters
+ */
+function webform_update_8174() {
+  _webform_update_webform_handler_settings();
+}
+
+/**
+ * Issue #3087865: Webform email handler default subject is missing title.
+ */
+function webform_update_8175() {
+  // Update translated webform.settings configuration.
+  foreach (['config', 'config_snapshot'] as $table_name) {
+    if (!\Drupal::database()->schema()->tableExists($table_name)) {
+      continue;
+    }
+    $query = \Drupal::database()->select($table_name, 'c')
+      ->fields('c', ['name', 'collection', 'data'])
+      ->condition('name', 'webform.settings');
+    $result = $query->execute();
+    while ($record = $result->fetchAssoc()) {
+      $data = unserialize($record['data']);
+      $data['mail']['default_subject'] = str_replace('[webform_submission:source-entity]', '[webform_submission:source-title]', $data['mail']['default_subject']);
+      \Drupal::database()->update($table_name)
+        ->fields(['data' => serialize($data)])
+        ->condition('collection', $record['collection'])
+        ->condition('name', $record['name'])
+        ->execute();
+    }
+  }
+}
+
+/**
+  * Issue #3086507: Allow wizard pages / bar to be updated based on states API.
+  */
+function webform_update_8176() {
+  _webform_update_webform_settings();
 }

@@ -62,6 +62,13 @@ class TestWebformHandler extends WebformHandlerBase {
   /**
    * {@inheritdoc}
    */
+  public function alterElement(array &$element, FormStateInterface $form_state, array $context) {
+    $this->displayMessage(__FUNCTION__);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function overrideSettings(array &$settings, WebformSubmissionInterface $webform_submission) {
     $this->displayMessage(__FUNCTION__);
   }
@@ -102,7 +109,7 @@ class TestWebformHandler extends WebformHandlerBase {
   /**
    * {@inheritdoc}
    */
-  public function preCreate(array $values) {
+  public function preCreate(array &$values) {
     $this->displayMessage(__FUNCTION__);
   }
 
