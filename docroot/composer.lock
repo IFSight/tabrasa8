@@ -3689,17 +3689,17 @@
         },
         {
             "name": "drupal/file_entity",
-            "version": "2.0.0-beta6",
+            "version": "2.0.0-beta7",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/file_entity.git",
-                "reference": "8.x-2.0-beta6"
+                "reference": "8.x-2.0-beta7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/file_entity-8.x-2.0-beta6.zip",
-                "reference": "8.x-2.0-beta6",
-                "shasum": "f39fbb263528bff7442fbe9651a0124a0c7d20b4"
+                "url": "https://ftp.drupal.org/files/projects/file_entity-8.x-2.0-beta7.zip",
+                "reference": "8.x-2.0-beta7",
+                "shasum": "8b683d06c7cbe9a57130edaf875a058a2f1bfc70"
             },
             "require": {
                 "drupal/core": "*",
@@ -3714,11 +3714,11 @@
                     "dev-2.x": "2.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-2.0-beta6",
-                    "datestamp": "1522617782",
+                    "version": "8.x-2.0-beta7",
+                    "datestamp": "1562796485",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
+                        "message": "Beta releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -3776,6 +3776,10 @@
                     "homepage": "https://www.drupal.org/user/266527"
                 },
                 {
+                    "name": "dsutter",
+                    "homepage": "https://www.drupal.org/user/3357810"
+                },
+                {
                     "name": "effulgentsia",
                     "homepage": "https://www.drupal.org/user/78040"
                 },
@@ -3786,6 +3790,10 @@
                 {
                     "name": "mpotter",
                     "homepage": "https://www.drupal.org/user/616192"
+                },
+                {
+                    "name": "mxr576",
+                    "homepage": "https://www.drupal.org/user/315522"
                 },
                 {
                     "name": "robeano",
@@ -3799,7 +3807,7 @@
             "description": "Extends Drupal file entities to be fieldable and viewable.",
             "homepage": "https://www.drupal.org/project/file_entity",
             "support": {
-                "source": "http://cgit.drupalcode.org/file_entity"
+                "source": "https://git.drupalcode.org/project/file_entity"
             }
         },
         {

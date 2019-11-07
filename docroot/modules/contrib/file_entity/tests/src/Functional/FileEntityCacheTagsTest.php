@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\file_entity\Tests;
+namespace Drupal\Tests\file_entity\Functional;
 
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -8,7 +8,7 @@ use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\Node;
-use Drupal\system\Tests\Cache\AssertPageCacheContextsAndTagsTrait;
+use Drupal\Tests\system\Functional\Cache\AssertPageCacheContextsAndTagsTrait;
 
 /**
  * Create a file and test file edit functionality.
@@ -101,7 +101,7 @@ class FileEntityCacheTagsTest extends FileEntityTestBase {
     $node3->save();
 
     // Check cache tags.
-    $contexts = ['languages:language_interface', 'user.permissions', 'theme', 'timezone', 'url.query_args:_wrapper_format', 'user.roles:anonymous'];
+    $contexts = ['languages:language_interface', 'user.permissions', 'theme', 'timezone', 'url.query_args:_wrapper_format', 'user.roles:anonymous', 'url.site'];
     $this->assertPageCacheContextsAndTags($node1->toUrl(), $contexts, [
       'node:' . $node1->id(),
       'node_view',

@@ -4,6 +4,7 @@ namespace Drupal\file_entity\Tests;
 
 use Drupal\file\Entity\File;
 use Drupal\simpletest\WebTestBase;
+use Drupal\views\Views;
 
 /**
  * Test existing file entity classification functionality.
@@ -84,6 +85,16 @@ class FileEntityFileTypeClassificationTest extends WebTestBase {
     $this->assertEqual($file_type['type'], 'document', t('The text file was properly assigned the Document file type.'));
     $file_type = $this->getFileType($image_file);
     $this->assertEqual($file_type['type'], 'image', t('The image file was properly assigned the Image file type.'));
+
+    // Uninstall the file_entity module and ensure that cron can run and files
+    // can still be loaded.
+    \Drupal::service('module_installer')->uninstall(['file_entity']);
+    $this->assertEqual([], \Drupal::entityDefinitionUpdateManager()->getChangeList());
+
+    $image_file = File::load($image_file->id());
+    $this->assertEqual(get_class($image_file), File::class);
+    $this->cronRun();
+    Views::viewsData()->getAll();
   }
 
 }

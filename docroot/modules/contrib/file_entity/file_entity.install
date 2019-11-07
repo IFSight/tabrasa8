@@ -51,16 +51,23 @@ function file_entity_schema() {
  * Implements hook_install().
  */
 function file_entity_install() {
+
+  // Install the type field first, then update the entity type, and then
+  // update the field again.
+
+  /** @var \Drupal\Core\Field\BaseFieldDefinition $type_storage_definition */
+  $type_storage_definition = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('file')['type'];
+  $type_storage_definition->setInitialValue(FILE_TYPE_NONE);
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('type', 'file', 'file_entity', $type_storage_definition);
+
   $entity_type = \Drupal::entityDefinitionUpdateManager()->getEntityType('file');
   $keys = $entity_type->getKeys();
   $keys['bundle'] = 'type';
   $entity_type->set('entity_keys', $keys);
   \Drupal::entityDefinitionUpdateManager()->updateEntityType($entity_type);
 
-  /** @var \Drupal\Core\Field\BaseFieldDefinition $type_storage_definition */
-  $type_storage_definition = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('file')['type'];
-  $type_storage_definition->setInitialValue(FILE_TYPE_NONE);
   \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('type', 'file', 'file_entity', $type_storage_definition);
+
   // Set permissions.
   $roles = user_roles();
   foreach ($roles as $rid => $role) {
@@ -93,8 +100,24 @@ function file_entity_install() {
  * Implements hook_uninstall().
  */
 function file_entity_uninstall() {
-  // Remove the added column to the core {file_managed} table.
-  db_drop_field('file_managed', 'type');
+
+  // Delete all configurable fields first, otherwise they are being deleted
+  // in the wrong order.
+  $field_storages = \Drupal::entityTypeManager()->getStorage('field_storage_config')->loadByProperties(['entity_type' => 'file']);
+  foreach ($field_storages as $field_storage) {
+    $field_storage->delete();
+  }
+
+  // Uninstall the file.type field along with the database column.
+  $update_manager = Drupal::service('entity.definition_update_manager');
+  $definition = $update_manager->getFieldStorageDefinition('type', 'file');
+  $update_manager->uninstallFieldStorageDefinition($definition);
+
+  $entity_type = \Drupal::entityDefinitionUpdateManager()->getEntityType('file');
+  $keys = $entity_type->getKeys();
+  $keys['bundle'] = '';
+  $entity_type->set('entity_keys', $keys);
+  \Drupal::entityDefinitionUpdateManager()->updateEntityType($entity_type);
 }
 
 /**
@@ -160,4 +183,17 @@ function file_entity_update_8004() {
 
   \Drupal::database()->schema()->changeField('file_managed', 'type', 'type', $storage_schema['file_managed']['fields']['type']);
   $key_value->set($key_name, $storage_schema);
+}
+
+/**
+ * Fix the last installed definition for the 'file' entity type.
+ */
+function file_entity_update_8005() {
+  $entity_type = \Drupal::entityDefinitionUpdateManager()->getEntityType('file');
+  $keys = $entity_type->getKeys();
+  if (empty($keys['bundle'])) {
+    $keys['bundle'] = 'type';
+    $entity_type->set('entity_keys', $keys);
+    \Drupal::entityDefinitionUpdateManager()->updateEntityType($entity_type);
+  }
 }
