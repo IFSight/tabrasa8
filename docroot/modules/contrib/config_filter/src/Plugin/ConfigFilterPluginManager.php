@@ -70,9 +70,7 @@ class ConfigFilterPluginManager extends DefaultPluginManager implements ConfigFi
     }, parent::findDefinitions());
 
     // Sort the definitions by weight.
-    uasort($definitions, function ($a, $b) {
-      return strcmp($a['weight'], $b['weight']);
-    });
+    uasort($definitions, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
 
     return $definitions;
   }
