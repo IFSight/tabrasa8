@@ -85,9 +85,9 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
   protected function formMultipleElements(FieldItemListInterface $items, array &$form, FormStateInterface $form_state) {
     $element = parent::formMultipleElements($items, $form, $form_state);
 
-    // If we're using ulimited cardinality we don't display one empty item. Form
-    // validation will kick in if left empty which esentially means people won't
-    // be able to submit w/o creating another entity.
+    // If we're using unlimited cardinality we don't display one empty item.
+    // Form validation will kick in if left empty which essentially means
+    // people won't be able to submit without creating another entity.
     if (!$form_state->isSubmitted() && $element['#cardinality'] == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && $element['#max_delta'] > 0) {
       $max = $element['#max_delta'];
       unset($element[$max]);

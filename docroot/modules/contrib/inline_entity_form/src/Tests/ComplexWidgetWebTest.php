@@ -430,6 +430,42 @@ class ComplexWidgetWebTest extends InlineEntityFormTestBase {
   }
 
   /**
+   * Tests if referencing an existing entity works without submitting the form.
+   */
+  public function testReferencingExistingEntitiesNoSubmit() {
+    // Allow addition of existing nodes.
+    $this->updateSetting('allow_existing', TRUE);
+    $title = $this->randomMachineName();
+
+    $this->drupalCreateNode([
+      'type' => 'ief_reference_type',
+      'title' => $title,
+      'first_name' => $this->randomMachineName(),
+      'last_name' => $this->randomMachineName(),
+    ]);
+    $node = $this->drupalGetNodeByTitle($title);
+    $this->assertTrue($node, 'Created ief_reference_type node "' . $node->label() . '"');;
+
+    $this->drupalGet($this->formContentAddUrl);
+    $this->drupalPostAjaxForm(NULL, [], $this->getButtonName('//input[@type="submit" and @value="Add existing node" and @data-drupal-selector="edit-multi-actions-ief-add-existing"]'));
+    $this->assertResponse(200, 'Opening inline form for existing entity was successful.');
+
+    $parent_title = $this->randomMachineName();
+    $edit = [
+      'multi[form][entity_id]' => $node->getTitle() . ' (' . $node->id() . ')',
+      'title[0][value]' => $parent_title,
+    ];
+
+    // Create ief_test_complex node.
+    $this->assertFieldByName('multi[form][entity_id]', NULL, 'Existing entity reference autocomplete field found.');
+    $this->drupalPostForm(NULL, $edit, t('Save'));
+    $this->assertResponse(200, 'Submission of parent entity was successful.');
+    $this->assertNoText(t("This value should not be null."), "The error message 'This value should not be null.' was not found in the page.");
+    $node = $this->drupalGetNodeByTitle($parent_title);
+    $this->assertTrue($node, 'Created ief_reference_type node.');
+  }
+
+  /**
    * Test if invalid values get correct validation messages in reference existing entity form.
    *
    * Also checks if existing entity reference form can be canceled.
