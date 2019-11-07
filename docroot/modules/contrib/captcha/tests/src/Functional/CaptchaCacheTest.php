@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\captcha\Tests;
+namespace Drupal\Tests\captcha\Functional;
 
 /**
  * Tests CAPTCHA caching on various pages.
  *
  * @group captcha
  */
-class CaptchaCacheTestCase extends CaptchaBaseWebTestCase {
+class CaptchaCacheTest extends CaptchaWebTestBase {
 
   /**
    * Modules to install for this Test class.
@@ -40,11 +40,9 @@ class CaptchaCacheTestCase extends CaptchaBaseWebTestCase {
     captcha_set_form_id_setting('user_login_form', 'captcha/Math');
     $this->drupalGet('');
     $sid = $this->getCaptchaSidFromForm();
-    $math_challenge = (string) $this->xpath('//span[@class="field-prefix"]')[0];
     $this->assertFalse($this->drupalGetHeader('x-drupal-cache'), 'Cache is disabled');
     $this->drupalGet('');
     $this->assertNotEqual($sid, $this->getCaptchaSidFromForm());
-    $this->assertNotEqual($math_challenge, (string) $this->xpath('//span[@class="field-prefix"]')[0]);
 
     // Switch challenge to captcha/Test, check the captcha isn't cached.
     captcha_set_form_id_setting('user_login_form', 'captcha/Test');
@@ -57,11 +55,11 @@ class CaptchaCacheTestCase extends CaptchaBaseWebTestCase {
     // Switch challenge to image_captcha/Image, check the captcha isn't cached.
     captcha_set_form_id_setting('user_login_form', 'image_captcha/Image');
     $this->drupalGet('');
-    $image_path = (string) $this->xpath('//div[@class="details-wrapper"]/img/@src')[0];
+    $image_path = $this->xpath('//div[@class="details-wrapper"]/img')[0]->getAttribute('src');
     $this->assertFalse($this->drupalGetHeader('x-drupal-cache'), 'Cache disabled');
     // Check that we get a new image when vising the page again.
     $this->drupalGet('');
-    $this->assertNotEqual($image_path, (string) $this->xpath('//div[@class="details-wrapper"]/img/@src')[0]);
+    $this->assertNotEqual($image_path, $this->xpath('//div[@class="details-wrapper"]/img')[0]->getAttribute('src'));
     // Check image caching, remove the base path since drupalGet() expects the
     // internal path.
     $this->drupalGet(substr($image_path, strlen($base_path)));

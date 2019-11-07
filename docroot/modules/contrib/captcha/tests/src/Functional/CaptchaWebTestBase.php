@@ -1,31 +1,19 @@
 <?php
 
-namespace Drupal\captcha\Tests;
+namespace Drupal\Tests\captcha\Functional;
 
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\simpletest\WebTestBase;
-
-/**
- * The TODO list.
- *
- * @todo write test for CAPTCHAs on admin pages.
- * @todo test for default challenge type.
- * @todo test about placement (comment form, node forms, log in form, etc).
- * @todo test if captcha_cron does it work right.
- * @todo test custom CAPTCHA validation stuff.
- * @todo test if entry on status report (Already X blocked form submissions).
- * @todo test space ignoring validation of image CAPTCHA.
- * @todo refactor the 'comment_body[0][value]' stuff.
- */
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Base class for CAPTCHA tests.
  *
  * Provides common setup stuff and various helper functions.
  */
-abstract class CaptchaBaseWebTestCase extends WebTestBase {
+abstract class CaptchaWebTestBase extends BrowserTestBase {
 
   use CommentTestTrait;
 
@@ -35,14 +23,21 @@ abstract class CaptchaBaseWebTestCase extends WebTestBase {
   const CAPTCHA_WRONG_RESPONSE_ERROR_MESSAGE = 'The answer you entered for the CAPTCHA was not correct.';
 
   /**
-   * Session reuse attack error message.
-   */
-  const CAPTCHA_SESSION_REUSE_ATTACK_ERROR_MESSAGE = 'CAPTCHA session reuse attack detected.';
-
-  /**
    * Unknown CSID error message.
    */
   const CAPTCHA_UNKNOWN_CSID_ERROR_MESSAGE = 'CAPTCHA validation error: unknown CAPTCHA session ID. Contact the site administrator if this problem persists.';
+
+  /**
+   * Form ID of comment form on standard (page) node.
+   */
+  const COMMENT_FORM_ID = 'comment_comment_form';
+
+  const LOGIN_HTML_FORM_ID = 'user-login-form';
+
+  /**
+   * Drupal path of the (general) CAPTCHA admin page.
+   */
+  const CAPTCHA_ADMIN_PATH = 'admin/config/people/captcha';
 
   /**
    * Modules to install for this Test class.
@@ -50,7 +45,6 @@ abstract class CaptchaBaseWebTestCase extends WebTestBase {
    * @var array
    */
   public static $modules = ['captcha', 'comment'];
-
 
   /**
    * User with various administrative permissions.
@@ -65,18 +59,6 @@ abstract class CaptchaBaseWebTestCase extends WebTestBase {
    * @var \Drupal\user\Entity\User
    */
   protected $normalUser;
-
-  /**
-   * Form ID of comment form on standard (page) node.
-   */
-  const COMMENT_FORM_ID = 'comment_comment_form';
-
-  const LOGIN_HTML_FORM_ID = 'user-login-form';
-
-  /**
-   * Drupal path of the (general) CAPTCHA admin page.
-   */
-  const CAPTCHA_ADMIN_PATH = 'admin/config/people/captcha';
 
   /**
    * {@inheritdoc}
@@ -135,11 +117,6 @@ abstract class CaptchaBaseWebTestCase extends WebTestBase {
     // There should be no error message about unknown CAPTCHA session ID.
     $this->assertNoText(self::CAPTCHA_UNKNOWN_CSID_ERROR_MESSAGE,
       'CAPTCHA response should be accepted (known CSID).',
-      'CAPTCHA'
-    );
-    // There should be no error message about CSID reuse attack.
-    $this->assertNoText(self::CAPTCHA_SESSION_REUSE_ATTACK_ERROR_MESSAGE,
-      'CAPTCHA response should be accepted (no CAPTCHA session reuse attack detection).',
       'CAPTCHA'
     );
     // There should be no error message about wrong response.
@@ -208,7 +185,9 @@ abstract class CaptchaBaseWebTestCase extends WebTestBase {
     else {
       $elements = $this->xpath('//form[@id="' . $form_html_id . '"]//input[@name="captcha_sid"]');
     }
-    $captcha_sid = (int) $elements[0]['value'];
+
+    $element = current($elements);
+    $captcha_sid = (int) $element->getValue();
 
     return $captcha_sid;
   }
@@ -229,7 +208,8 @@ abstract class CaptchaBaseWebTestCase extends WebTestBase {
     else {
       $elements = $this->xpath('//form[@id="' . $form_html_id . '"]//input[@name="captcha_token"]');
     }
-    $captcha_token = (int) $elements[0]['value'];
+    $element = current($elements);
+    $captcha_token = (int) $element->getValue();
 
     return $captcha_token;
   }
@@ -270,7 +250,7 @@ abstract class CaptchaBaseWebTestCase extends WebTestBase {
    */
   protected function allowCommentPostingForAnonymousVisitors() {
     // Enable anonymous comments.
-    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, [
+    user_role_grant_permissions(AccountInterface::ANONYMOUS_ROLE, [
       'access comments',
       'post comments',
       'skip comment approval',

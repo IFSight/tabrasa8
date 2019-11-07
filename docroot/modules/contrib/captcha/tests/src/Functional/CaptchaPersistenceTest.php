@@ -1,13 +1,17 @@
 <?php
 
-namespace Drupal\captcha\Tests;
+namespace Drupal\Tests\captcha\Functional;
+
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Tests CAPTCHA Persistence.
  *
  * @group captcha
  */
-class CaptchaPersistenceTestCase extends CaptchaBaseWebTestCase {
+class CaptchaPersistenceTest extends CaptchaWebTestBase {
+
+  use StringTranslationTrait;
 
   /**
    * Set up the persistence and CAPTCHA settings.
@@ -78,7 +82,7 @@ class CaptchaPersistenceTestCase extends CaptchaBaseWebTestCase {
       'pass' => 'bazlaz',
       'captcha_response' => 'Test 123',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Log in'), [], [], self::LOGIN_HTML_FORM_ID);
+    $this->drupalPostForm(NULL, $edit, $this->t('Log in'), [], self::LOGIN_HTML_FORM_ID);
     // Check that there was no error message for the CAPTCHA.
     $this->assertCaptchaResponseAccepted();
 
@@ -88,7 +92,7 @@ class CaptchaPersistenceTestCase extends CaptchaBaseWebTestCase {
     $this->assertPreservedCsid($captcha_sid_initial);
 
     // Post from again.
-    $this->drupalPostForm(NULL, $edit, t('Log in'), [], [], self::LOGIN_HTML_FORM_ID);
+    $this->drupalPostForm(NULL, $edit, $this->t('Log in'), [], self::LOGIN_HTML_FORM_ID);
     // Check that there was no error message for the CAPTCHA.
     $this->assertCaptchaResponseAccepted();
     $this->assertPreservedCsid($captcha_sid_initial);
@@ -112,7 +116,7 @@ class CaptchaPersistenceTestCase extends CaptchaBaseWebTestCase {
       'pass' => 'bazlaz',
       'captcha_response' => 'Test 123',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Log in'), [], [], self::LOGIN_HTML_FORM_ID);
+    $this->drupalPostForm(NULL, $edit, $this->t('Log in'), [], self::LOGIN_HTML_FORM_ID);
     // Check that there was no error message for the CAPTCHA.
     $this->assertCaptchaResponseAccepted();
     // There shouldn't be a CAPTCHA on the new form.
@@ -149,7 +153,7 @@ class CaptchaPersistenceTestCase extends CaptchaBaseWebTestCase {
       'pass' => 'bazlaz',
       'captcha_response' => 'Test 123',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Log in'), [], [], self::LOGIN_HTML_FORM_ID);
+    $this->drupalPostForm(NULL, $edit, $this->t('Log in'), [], self::LOGIN_HTML_FORM_ID);
     // Check that there was no error message for the CAPTCHA.
     $this->assertCaptchaResponseAccepted();
     // There shouldn't be a CAPTCHA on the new form.
@@ -191,7 +195,7 @@ class CaptchaPersistenceTestCase extends CaptchaBaseWebTestCase {
       'pass' => 'bazlaz',
       'captcha_response' => 'Test 123',
     ];
-    $this->drupalPostForm(NULL, $edit, t('Log in'), [], [], self::LOGIN_HTML_FORM_ID);
+    $this->drupalPostForm(NULL, $edit, $this->t('Log in'), [], self::LOGIN_HTML_FORM_ID);
     // Check that there was no error message for the CAPTCHA.
     $this->assertCaptchaResponseAccepted();
     // There shouldn't be a CAPTCHA on the new form.

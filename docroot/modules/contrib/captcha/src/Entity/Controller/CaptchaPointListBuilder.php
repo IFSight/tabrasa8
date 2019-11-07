@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\captcha\Controller;
+namespace Drupal\captcha\Entity\Controller;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
@@ -14,7 +14,6 @@ class CaptchaPointListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    module_load_include('inc', 'captcha');
     $header['form_id'] = $this->t('Captcha Point form ID');
     $header['captcha_type'] = $this->t('Captcha Point challenge type');
 

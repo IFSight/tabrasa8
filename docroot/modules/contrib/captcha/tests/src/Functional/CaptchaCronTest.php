@@ -1,16 +1,16 @@
 <?php
 
-namespace Drupal\captcha\Tests;
+namespace Drupal\Tests\captcha\Functional;
 
 use Drupal\Core\Database\Database;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Tests CAPTCHA cron.
  *
  * @group captcha
  */
-class CaptchaCronTestCase extends WebTestBase {
+class CaptchaCronTest extends BrowserTestBase {
 
   /**
    * Modules to install for this Test class.
@@ -32,11 +32,14 @@ class CaptchaCronTestCase extends WebTestBase {
   public function setUp() {
     parent::setUp();
 
+    // Get request time.
+    $request_time = \Drupal::time()->getRequestTime();
+
     // Add removed session.
-    $time = REQUEST_TIME - 1 - 60 * 60 * 24;
+    $time = $request_time - 1 - 60 * 60 * 24;
     $this->captchaSessions['remove_sid'] = $this->addCaptchaSession('captcha_cron_test_remove', $time);
     // Add remain session.
-    $this->captchaSessions['remain_sid'] = $this->addCaptchaSession('captcha_cron_test_remain', REQUEST_TIME);
+    $this->captchaSessions['remain_sid'] = $this->addCaptchaSession('captcha_cron_test_remain', $request_time);
   }
 
   /**
@@ -75,7 +78,7 @@ class CaptchaCronTestCase extends WebTestBase {
    * Test CAPTCHA cron.
    */
   public function testCron() {
-    $this->cronRun();
+    \Drupal::service('cron')->run();
 
     $connection = Database::getConnection();
     $sids = $connection->select('captcha_sessions')
@@ -85,10 +88,10 @@ class CaptchaCronTestCase extends WebTestBase {
       ->fetchCol('csid');
 
     // Test if CAPTCHA cron appropriately removes sessions older than a day.
-    $this->assertTrue(!in_array($this->captchaSessions['remove_sid'], $sids), 'CAPTCHA cron removes captcha session data older than 1 day.');
+    $this->assertNotContains($this->captchaSessions['remove_sid'], $sids, 'CAPTCHA cron removes captcha session data older than 1 day.');
 
     // Test if CAPTCHA cron appropriately keeps sessions younger than a day.
-    $this->assertTrue(in_array($this->captchaSessions['remain_sid'], $sids), 'CAPTCHA cron does not remove captcha session data younger than 1 day.');
+    $this->assertContains($this->captchaSessions['remain_sid'], $sids, 'CAPTCHA cron does not remove captcha session data younger than 1 day.');
   }
 
 }

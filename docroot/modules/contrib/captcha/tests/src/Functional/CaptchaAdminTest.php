@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\captcha\Tests;
+namespace Drupal\Tests\captcha\Functional;
 
 use Drupal\captcha\Entity\CaptchaPoint;
 use Drupal\Core\Url;
@@ -10,7 +10,7 @@ use Drupal\Core\Url;
  *
  * @group captcha
  */
-class CaptchaAdminTestCase extends CaptchaBaseWebTestCase {
+class CaptchaAdminTest extends CaptchaWebTestBase {
 
   /**
    * Test access to the admin pages.
@@ -18,8 +18,6 @@ class CaptchaAdminTestCase extends CaptchaBaseWebTestCase {
   public function testAdminAccess() {
     $this->drupalLogin($this->normalUser);
     $this->drupalGet(self::CAPTCHA_ADMIN_PATH);
-    // @TODO do we need this ?
-    // file_put_contents('tmp.simpletest.html', $this->drupalGetContent());
     $this->assertText(t('Access denied'), 'Normal users should not be able to access the CAPTCHA admin pages', 'CAPTCHA');
 
     $this->drupalLogin($this->adminUser);
@@ -258,7 +256,7 @@ class CaptchaAdminTestCase extends CaptchaBaseWebTestCase {
    *   Form machine ID.
    *
    * @return \Drupal\captcha\Entity\CaptchaPoint
-   *    CaptchaPoint with mysql query result.
+   *   CaptchaPoint with mysql query result.
    */
   protected function getCaptchaPointSettingFromDatabase($form_id) {
     $ids = \Drupal::entityQuery('captcha_point')
