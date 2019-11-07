@@ -146,7 +146,9 @@ class MediaLibraryWidget extends WidgetBase implements ContainerFactoryPluginInt
 
     // Get the configured media types from the field storage.
     $handler_settings = $this->getFieldSetting('handler_settings');
-    $allowed_media_type_ids = $handler_settings['target_bundles'];
+    // The target bundles will be blank when saving field storage settings,
+    // when first adding a media reference field.
+    $allowed_media_type_ids = isset($handler_settings['target_bundles']) ? $handler_settings['target_bundles'] : NULL;
 
     // When there are no allowed media types, return the empty array.
     if ($allowed_media_type_ids === []) {
@@ -464,15 +466,19 @@ class MediaLibraryWidget extends WidgetBase implements ContainerFactoryPluginInt
     // attribute is the same as $field_widget_id. The entity ID, entity type ID,
     // bundle, field name are used for access checking.
     $entity = $items->getEntity();
-    $state = MediaLibraryState::create('media_library.opener.field_widget', $allowed_media_type_ids, $selected_type_id, $remaining, [
+    $opener_parameters = [
       'field_widget_id' => $field_widget_id,
       'entity_type_id' => $entity->getEntityTypeId(),
       'bundle' => $entity->bundle(),
       'field_name' => $field_name,
-      // The entity ID needs to be a string to ensure that the media library
-      // state generates its tamper-proof hash in a consistent way.
-      'entity_id' => (string) $entity->id(),
-    ]);
+    ];
+    // Only add the entity ID when we actually have one. The entity ID needs to
+    // be a string to ensure that the media library state generates its
+    // tamper-proof hash in a consistent way.
+    if (!$entity->isNew()) {
+      $opener_parameters['entity_id'] = (string) $entity->id();
+    }
+    $state = MediaLibraryState::create('media_library.opener.field_widget', $allowed_media_type_ids, $selected_type_id, $remaining, $opener_parameters);
 
     // Add a button that will load the Media library in a modal using AJAX.
     $element['media_library_open_button'] = [
