@@ -1,22 +1,21 @@
 <?php
 
-namespace Drupal\entity_reference_revisions\Tests;
+namespace Drupal\Tests\entity_reference_revisions\Functional;
 
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Component\Utility\Html;
-use Drupal\field_ui\Tests\FieldUiTestTrait;
 use Drupal\node\Entity\Node;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\field_ui\Traits\FieldUiTestTrait;
 
 /**
  * Tests the entity_reference_revisions autocomplete.
  *
  * @group entity_reference_revisions
  */
-class EntityReferenceRevisionsAutocompleteTest extends WebTestBase {
+class EntityReferenceRevisionsAutocompleteTest extends BrowserTestBase {
 
   use FieldUiTestTrait;
-  use EntityReferenceRevisionsCoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
@@ -92,7 +91,7 @@ class EntityReferenceRevisionsAutocompleteTest extends WebTestBase {
       'body[0][value]' => 'Revision 1',
       'field_entity_reference_revisions[0][target_id]' => $block_label . ' (' . $block->id() . ')',
     );
-    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
+    $this->drupalPostForm('node/add/article', $edit, t('Save'));
     $this->assertText($title);
     $this->assertText(Html::escape($block_content));
 

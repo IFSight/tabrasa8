@@ -1,20 +1,19 @@
 <?php
 
-namespace Drupal\entity_reference_revisions\Tests;
+namespace Drupal\Tests\entity_reference_revisions\Functional;
 
-use Drupal\field_ui\Tests\FieldUiTestTrait;
 use Drupal\node\Entity\Node;
-use Drupal\simpletest\WebTestBase;
+use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\field_ui\Traits\FieldUiTestTrait;
 
 /**
  * Tests the entity_reference_revisions configuration.
  *
  * @group entity_reference_revisions
  */
-class EntityReferenceRevisionsAdminTest extends WebTestBase {
+class EntityReferenceRevisionsAdminTest extends BrowserTestBase {
 
   use FieldUiTestTrait;
-  use EntityReferenceRevisionsCoreVersionUiTestTrait;
 
   /**
    * Modules to enable.
@@ -90,7 +89,7 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
       'title[0][value]' => $title,
       'body[0][value]' => 'Revision 1',
     );
-    $this->drupalPostNodeForm('node/add/article', $edit, t('Save and publish'));
+    $this->drupalPostForm('node/add/article', $edit, t('Save'));
     $this->assertText($title);
     $this->assertText('Revision 1');
     $node = $this->drupalGetNodeByTitle($title);
@@ -103,7 +102,7 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
       'title[0][value]' => 'Entity reference revision content',
       'field_entity_reference_revisions[1][target_id]' => $node->label() . ' (' . $node->id() . ')',
     ];
-    $this->drupalPostNodeForm(NULL, $edit, t('Save and publish'));
+    $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertLinkByHref('node/' . $node_target->id());
     $this->assertText('Entity revisions Entity reference revision content has been created.');
     $this->assertText('Entity reference revision content');
@@ -115,7 +114,7 @@ class EntityReferenceRevisionsAdminTest extends WebTestBase {
       'body[0][value]' => 'Revision 2',
       'revision' => TRUE,
     );
-    $this->drupalPostNodeForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertText($title);
     $this->assertText('Revision 2');
 
