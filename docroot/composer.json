@@ -38,7 +38,6 @@
         "drupal/paragraphs": "^1.2",
         "drupal/pathauto": "^1.0",
         "drupal/plupload": "^1.0@beta",
-        "drupal/purge": "^3.0@beta",
         "drupal/purge_queuer_url": "^1.0@beta",
         "drupal/recaptcha": "^2.2",
         "drupal/redirect": "^1.0@alpha",
@@ -61,7 +60,8 @@
         "drupal/adminimal_theme": "^1.4",
         "drupal/paladin": "^1.0",
         "drupal/config_split": "^1.4",
-        "drupal/environment_indicator": "^3.6"
+        "drupal/environment_indicator": "^3.6",
+        "drupal/purge": "^3.0@beta"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
