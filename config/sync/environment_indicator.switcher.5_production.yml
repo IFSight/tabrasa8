@@ -5,6 +5,6 @@ dependencies: {  }
 machine: 5_production
 description: null
 name: '5. Production'
-url: 'https://beta.pgh2o.com/'
+url: 'https://www.site'
 fg_color: '#ffffff'
 bg_color: '#b33231'
