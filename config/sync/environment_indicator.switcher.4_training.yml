@@ -5,6 +5,6 @@ dependencies: {  }
 machine: 4_training
 description: null
 name: '4. Training'
-url: 'https://train.pgh2o.com/'
+url: 'https://train.site'
 fg_color: '#333333'
 bg_color: '#ff7f3f'
