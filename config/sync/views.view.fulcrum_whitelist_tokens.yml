@@ -16,7 +16,6 @@ description: ''
 tag: ''
 base_table: fulcrum_whitelist_entity
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -466,6 +465,8 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
