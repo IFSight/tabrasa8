@@ -17,7 +17,7 @@
         "drupal/cloudflare": "^1.0@alpha",
         "drupal/components": "^1.0",
         "drupal/config_split": "^1.4",
-        "drupal/console": "~1.0",
+        "drupal/console": "^1.0",
         "drupal/core-composer-scaffold": "^8.8",
         "drupal/core-project-message": "^8.8",
         "drupal/core-recommended": "^8.8",
@@ -33,6 +33,7 @@
         "drupal/environment_indicator": "^3.6",
         "drupal/field_group": "^3.0",
         "drupal/file_entity": "^2.0@beta",
+        "drupal/fulcrum_whitelist": "^1.1",
         "drupal/geolocation": "^1.0",
         "drupal/google_analytics": "^2.1",
         "drupal/inline_entity_form": "^1.0@beta",
@@ -42,7 +43,7 @@
         "drupal/masquerade": "^2.0@beta",
         "drupal/menu_block": "^1.4",
         "drupal/metatag": "^1.4",
-        "drupal/paladin": "^1.0",
+        "ifsight/paladin": "^1.1",
         "drupal/paragraphs": "^1.2",
         "drupal/pathauto": "^1.0",
         "drupal/plupload": "^1.0@beta",
@@ -90,28 +91,15 @@
     "repositories": [
         {
             "type": "composer",
+            "url": "https://if-satis.s3.us-east-2.amazonaws.com/"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "composer",
             "url": "https://packages.drupal.org/8"
-        },
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "drupal/paladin",
-                "version": "1.0",
-                "type": "drupal-theme",
-                "source": {
-                    "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
-                    "type": "git",
-                    "reference": "8.x-1.0"
-                }
-            }
-        },
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
         }
     ],
     "extra": {
