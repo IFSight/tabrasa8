@@ -1,5 +1,0 @@
-simple_sitemap.settings_views:
-  route_name: simple_sitemap.settings_views
-  title: 'Sitemap views'
-  base_route: simple_sitemap.settings
-  weight: 1

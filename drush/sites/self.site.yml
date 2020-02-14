@@ -1,0 +1,4 @@
+local:
+  host: tabrasa8.ifdev
+  root: /var/www/html/tabrasa8.ifdev
+  uri: https://tabrasa8.ifdev
