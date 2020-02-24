@@ -36,6 +36,7 @@
         "drupal/fulcrum_whitelist": "^1.1",
         "drupal/geolocation": "^1.0",
         "drupal/google_analytics": "^2.1",
+        "ifsight/if_helper":"^0.1",
         "drupal/inline_entity_form": "^1.0@beta",
         "drupal/libraries": "^3.0@alpha",
         "drupal/linkit": "^5.0",
