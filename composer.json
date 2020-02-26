@@ -113,7 +113,8 @@
         "installer-types": [
             "component",
             "bower-asset",
-            "npm-asset"
+            "npm-asset",
+            "third-party-library"
         ],
         "installer-paths": {
             "docroot/core": ["type:drupal-core"],
@@ -122,6 +123,7 @@
                 "type:npm-asset",
                 "type:bower-asset"
             ],
+            "libraries/{$name}": ["type:third-party-library"],
             "docroot/modules/contrib/{$name}": ["type:drupal-module"],
             "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
             "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
