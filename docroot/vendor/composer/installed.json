@@ -3745,131 +3745,6 @@
         }
     },
     {
-        "name": "drupal/file_entity",
-        "version": "2.0.0-beta7",
-        "version_normalized": "2.0.0.0-beta7",
-        "source": {
-            "type": "git",
-            "url": "https://git.drupalcode.org/project/file_entity.git",
-            "reference": "8.x-2.0-beta7"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/file_entity-8.x-2.0-beta7.zip",
-            "reference": "8.x-2.0-beta7",
-            "shasum": "8b683d06c7cbe9a57130edaf875a058a2f1bfc70"
-        },
-        "require": {
-            "drupal/core": "*",
-            "drupal/token": "*"
-        },
-        "require-dev": {
-            "drupal/pathauto": "*"
-        },
-        "type": "drupal-module",
-        "extra": {
-            "branch-alias": {
-                "dev-2.x": "2.x-dev"
-            },
-            "drupal": {
-                "version": "8.x-2.0-beta7",
-                "datestamp": "1562796485",
-                "security-coverage": {
-                    "status": "not-covered",
-                    "message": "Beta releases are not covered by Drupal security advisories."
-                }
-            }
-        },
-        "installation-source": "dist",
-        "notification-url": "https://packages.drupal.org/8/downloads",
-        "license": [
-            "GPL-2.0+"
-        ],
-        "authors": [
-            {
-                "name": "Berdir",
-                "homepage": "https://www.drupal.org/user/214652"
-            },
-            {
-                "name": "DamienMcKenna",
-                "homepage": "https://www.drupal.org/user/108450"
-            },
-            {
-                "name": "Dave Reid",
-                "homepage": "https://www.drupal.org/user/53892"
-            },
-            {
-                "name": "Devin Carlson",
-                "homepage": "https://www.drupal.org/user/290182"
-            },
-            {
-                "name": "Drupal Media Team",
-                "homepage": "https://www.drupal.org/user/3260690"
-            },
-            {
-                "name": "Drupal media CI",
-                "homepage": "https://www.drupal.org/user/3057985"
-            },
-            {
-                "name": "JacobSingh",
-                "homepage": "https://www.drupal.org/user/68912"
-            },
-            {
-                "name": "JeffM2001",
-                "homepage": "https://www.drupal.org/user/262092"
-            },
-            {
-                "name": "ParisLiakos",
-                "homepage": "https://www.drupal.org/user/1011436"
-            },
-            {
-                "name": "aaron",
-                "homepage": "https://www.drupal.org/user/33420"
-            },
-            {
-                "name": "arthurf",
-                "homepage": "https://www.drupal.org/user/27259"
-            },
-            {
-                "name": "dsnopek",
-                "homepage": "https://www.drupal.org/user/266527"
-            },
-            {
-                "name": "dsutter",
-                "homepage": "https://www.drupal.org/user/3357810"
-            },
-            {
-                "name": "effulgentsia",
-                "homepage": "https://www.drupal.org/user/78040"
-            },
-            {
-                "name": "joseph.olstad",
-                "homepage": "https://www.drupal.org/user/1321830"
-            },
-            {
-                "name": "mpotter",
-                "homepage": "https://www.drupal.org/user/616192"
-            },
-            {
-                "name": "mxr576",
-                "homepage": "https://www.drupal.org/user/315522"
-            },
-            {
-                "name": "robeano",
-                "homepage": "https://www.drupal.org/user/67660"
-            },
-            {
-                "name": "slashrsm",
-                "homepage": "https://www.drupal.org/user/744628"
-            }
-        ],
-        "description": "Extends Drupal file entities to be fieldable and viewable.",
-        "homepage": "https://www.drupal.org/project/file_entity",
-        "support": {
-            "source": "https://git.drupalcode.org/project/file_entity"
-        }
-    },
-    {
         "name": "drupal/geolocation",
         "version": "1.11.0",
         "version_normalized": "1.11.0.0",
@@ -6234,7 +6109,8 @@
                 "homepage": "https://github.com/mtdowling"
             }
         ],
-        "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function."
+        "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
+        "abandoned": true
     },
     {
         "name": "guzzlehttp/streams",
@@ -6286,7 +6162,8 @@
         "keywords": [
             "Guzzle",
             "stream"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "instaclick/php-webdriver",
@@ -11420,7 +11297,8 @@
             "http",
             "psr",
             "psr-7"
-        ]
+        ],
+        "abandoned": "laminas/laminas-diactoros"
     },
     {
         "name": "zendframework/zend-escaper",
@@ -11467,7 +11345,8 @@
             "ZendFramework",
             "escaper",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-escaper"
     },
     {
         "name": "zendframework/zend-feed",
@@ -11532,7 +11411,8 @@
             "ZendFramework",
             "feed",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-feed"
     },
     {
         "name": "zendframework/zend-stdlib",
@@ -11580,6 +11460,7 @@
             "ZendFramework",
             "stdlib",
             "zf"
-        ]
+        ],
+        "abandoned": "laminas/laminas-stdlib"
     }
 ]

@@ -25,7 +25,6 @@
         "drupal/entity_embed": "^1.0@beta",
         "drupal/entity_reference_revisions": "^1.0",
         "drupal/field_group": "^3.0",
-        "drupal/file_entity": "^2.0@beta",
         "drupal/geolocation": "^1.0",
         "drupal/google_analytics": "^2.1",
         "drupal/inline_entity_form": "^1.0@beta",
