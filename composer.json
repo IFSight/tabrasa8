@@ -178,7 +178,6 @@
             "drupal/core": "-p2"
         },
         "patches": {
-        "patches": {
             "drupal/better_exposed_filters": {
                 "Support \"preserve URL Query Parameters\"":"https://www.drupal.org/files/issues/2020-02-27/3116411-2.patch"
             },
