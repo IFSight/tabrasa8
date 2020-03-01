@@ -17,60 +17,56 @@
         "drupal/adminimal_theme": "^1.4",
         "drupal/advagg": "^3.0",
         "drupal/allowed_formats": "^1.1",
-        "drupal/better_exposed_filters": "^3.0@alpha",
-        "drupal/block_field": "^1.0@alpha",
-        "drupal/captcha": "^1.0@beta",
-        "drupal/cloudflare": "^1.0@alpha",
+        "drupal/better_exposed_filters": "4.x-dev",
+        "drupal/block_field": "1.x-dev",
+        "drupal/captcha": "^1.0",
+        "drupal/cloudflare": "1.x-dev",
         "drupal/components": "^1.0",
-        "drupal/config_filter": "^2.0@RC",
         "drupal/config_split": "^1.4",
         "drupal/ctools": "^3.0",
         "drupal/date_popup": "^1.0",
         "drupal/easy_breadcrumb": "^1.8",
-        "drupal/elasticsearch_connector": "^6.0@alpha",
+        "drupal/elasticsearch_connector": "6.x-dev",
         "drupal/embed": "~1.0",
-        "drupal/entity": "^1.0@beta",
-        "drupal/entity_browser": "^2.0@alpha",
-        "drupal/entity_embed": "^1.0@beta",
+        "drupal/entity": "^1.0",
+        "drupal/entity_browser": "^2.0",
+        "drupal/entity_embed": "^1.0",
         "drupal/entity_reference_revisions": "^1.0",
         "drupal/environment_indicator": "^3.6",
         "drupal/field_group": "^3.0",
-        "drupal/file_entity": "^2.0@beta",
-        "drupal/fulcrum_whitelist": "^1.1",
         "drupal/geolocation": "^1.0",
         "drupal/google_analytics": "^2.1",
-        "ifsight/if_admin":"0.1",
-        "ifsight/if_helper": "^0.1",
-        "drupal/inline_entity_form": "^1.0@beta",
-        "drupal/libraries": "^3.0@alpha",
-        "drupal/linkit": "^5.0",
+        "drupal/inline_entity_form": "^1.0",
+        "drupal/libraries": "3.x-dev",
+        "drupal/linkit": "5.x-dev",
         "drupal/mailsystem": "^4.1",
-        "drupal/masquerade": "^2.0@beta",
+        "drupal/masquerade": "2.x-dev",
         "drupal/menu_block": "^1.4",
         "drupal/metatag": "^1.4",
-        "ifsight/paladin": "^1.1",
         "drupal/paragraphs": "^1.2",
         "drupal/pathauto": "^1.0",
-        "drupal/plupload": "^1.0@beta",
-        "drupal/purge": "^3.0@beta",
-        "drupal/purge_queuer_url": "^1.0@beta",
+        "drupal/plupload": "^1.0",
+        "drupal/purge": "3.x-dev",
+        "drupal/purge_queuer_url": "1.x-dev",
         "drupal/recaptcha": "^2.2",
-        "drupal/redirect": "^1.0@alpha",
+        "drupal/redirect": "^1.0",
         "drupal/redis": "^1.0",
         "drupal/scheduler": "^1.0",
         "drupal/search_api": "^1.12",
         "drupal/simple_sitemap": "^3.0",
-        "drupal/smtp": "^1.0@beta",
+        "drupal/smtp": "^1.0",
         "drupal/social_media_links": "^2.6",
         "drupal/token": "^1.0",
         "drupal/twig_tweak": "^2.0",
-        "drupal/ultimate_cron": "^2.0@alpha",
+        "drupal/ultimate_cron": "2.x-dev",
         "drupal/varnish_purge": "^1.0",
-        "ifsight/varnish_purge_tags": "^0.2",
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
-        "drush/drush": "^10.0",
-        "bower-asset/plupload": "^2.3"
+        "drupal/youtube": "^1.0",
+        "drush/drush": "^9.0",
+        "ifsight/paladin": "^1.0",
+        "bower-asset/plupload": "^3.1",
+        "nodespark/des-connector": "6.x-dev"
     },
     "require-dev": {
         "behat/mink-selenium2-driver": "1.4.x-dev as 1.3.x-dev",
@@ -104,6 +100,18 @@
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "nodespark/des-connector",
+                "type": "library",
+                "version": "6.x-dev",
+                "dist": {
+                    "url": "https://github.com/nodespark/des-connector/archive/6.x.zip",
+                    "type": "zip"
+                }
+            }
         }
     ],
     "scripts": {
@@ -112,6 +120,36 @@
         ]
     },
     "extra": {
+        "_drupal_9_readiness_assessment": [
+            "Better Exposed filters Drupal 9 Readiness outstanding issues: https://www.drupal.org/project/better_exposed_filters/issues/3114031",
+            "Block field Drupal 9 readiness outstanding issues:  https://www.drupal.org/project/block_field/issues/3042702",
+            "Cloudflare Drupal 9 Readiness outstanding issues (patch only partially addresses): https://www.drupal.org/files/issues/2019-04-22/drupal_9_deprecated_code-3042953-4.patch",
+            "ElasticSearch Connector Drupal 9 Readiness -- no patch available, no work on version 6, which is the version we use",
+            "Inline entity Form Drupal 9 Readiness -- no assessment has been completed, no patch available",
+            "Libraries API Drupal 9 Readiness -- https://www.drupal.org/project/libraries/issues/3110305, support for third party libraries is being added to Drupal 8.9, this module will no lnger be needed.  https://www.drupal.org/project/libraries/issues/3110305",
+            "Linkit Drupal 9 Readiness -- https://www.drupal.org/files/issues/2020-01-28/linkit-d9-3042631-11.patch, patch applied",
+            "Masquerade Drupal 9 Readiness -- running dev version, already D9 ready, https://www.drupal.org/project/masquerade/issues/3042713",
+            "Plupload Drupal 9 Readiness -- running beta version, patch applied for D9 readiness, https://www.drupal.org/project/plupload/issues/3093844",
+            "Purge Drupal 9 Readiness -- running dev version, partially patched for D9 readiness, remaining issues are in issue queue",
+            "URLs queuer (purge_queuer_url) Drupal 9 Readiness, no active issue in issue queue to address",
+            "SMTP Drupal 9 Readiness -- running beta7 version, applied patch ",
+            "Ultimate Cron Drupal 9 Readiness -- open issue in issue queue, no work currently, https://www.drupal.org/project/ultimate_cron/issues/3110312"
+        ],
+        "_modules_not_stable": [
+            "Better Exposed Filters -- dev version, under active development",
+            "Block field -- dev version, patched for D9 readiness, no active development since April 2019",
+            "Cloudflare -- dev version, patched for D9 readiness (partial), no active development since March 2019",
+            "ElasticSearch Connector -- dev version, no active development since October 2019",
+            "Inline Entity Form -- rc3 version, under active development",
+            "Libraries API -- dev version, no active development since June 2019",
+            "Linkit module -- dev version, patched for D9 readiness, under active development",
+            "Masquerade -- dev version, is D8 ready, under active development",
+            "Plupload -- beta2 version, no active development since December 2018",
+            "Purge -- dev version, under active development",
+            "URLs queuer (purge_queuer_url) -- rc1 version, no active development since September 2017",
+            "SMTP -- beta version, under active development",
+            "Ultimate Cron -- dev version, no active development since February 2019"
+        ],
         "drupal-scaffold": {
             "locations": {
                 "web-root": "docroot/"
@@ -120,8 +158,7 @@
         "installer-types": [
             "component",
             "bower-asset",
-            "npm-asset",
-            "third-party-library"
+            "npm-asset"
         ],
         "installer-paths": {
             "docroot/core": ["type:drupal-core"],
@@ -130,7 +167,6 @@
                 "type:npm-asset",
                 "type:bower-asset"
             ],
-            "libraries/{$name}": ["type:third-party-library"],
             "docroot/modules/contrib/{$name}": ["type:drupal-module"],
             "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
             "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
@@ -142,6 +178,77 @@
             "drupal/core": "-p2"
         },
         "patches": {
+        "patches": {
+            "drupal/better_exposed_filters": {
+                "Support \"preserve URL Query Parameters\"":"https://www.drupal.org/files/issues/2020-02-27/3116411-2.patch"
+            },
+            "drupal/block_field": {
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-01-30/block-field-d9-3042702-3.patch",
+                "Allow negating the block selection": "https://www.drupal.org/files/issues/2019-04-24/allow_negating_the_block_selection-2898354-7.patch",
+                "Add proper alter hooks for field rendering": "https://www.drupal.org/files/issues/2019-11-17/2978883-block-field-alter-hooks-4.patch",
+                "BlockFieldLabelFormatter CacheableMetadata::createFromRenderArray points to incorrect array":"https://www.drupal.org/files/issues/2020-02-28/3068281-9-8.7.patch"
+            },
+            "drupal/cloudflare": {
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2019-04-22/drupal_9_deprecated_code-3042953-4.patch",
+                "Cloudflarepurge: Allow for altering targets before purging": "https://www.drupal.org/files/issues/2019-04-01/3044887-n2.patch"
+            },
+            "drupal/elasticsearch_connector": {
+                "Filters breaking score if no query string": "https://www.drupal.org/files/issues/2019-10-15/3087971-filters-breaking-score.patch",
+                "Search API + Elastic connector + VBO error performing action":"https://www.drupal.org/files/issues/2019-09-04/3050133-vbo-fix.patch",
+                "Support different types of queries \"match\" and \"terms\"": "https://www.drupal.org/files/issues/2019-08-05/elasticsearch_connector-3072719-different-query-types-2.patch"
+            },
+            "drupal/inline_entity_form": {
+                "Support adding new entities when translating": "https://www.drupal.org/files/issues/2020-02-19/2822764-53.patch"
+            },
+            "drupal/libraries":{
+                "Coding Standards": "https://www.drupal.org/files/issues/2019-08-15/3075081-coding-standard_0.patch",
+                "Fix subclassing and stop overriding constructors in libraries\\Plugin\\libraries\\Type\\PhpFileLibraryType":"https://www.drupal.org/files/issues/2020-02-13/libraries-Fix_subclassing_and_stop_overriding_constructors_in_libraries_Plugin_libraries_Type_PhpFileLibraryType-3113477-2-D8.patch",
+                "Replace usages of the deprecated functions like drupal_set_message and SafeMarkup":"https://www.drupal.org/files/issues/2020-01-22/libraries-d9ready-3032159-7.patch",
+                "Deprecated function assert message on PHP 7.2": "https://www.drupal.org/files/issues/2019-09-12/fix-deprecated-assertions-3067813-1.patch",
+                "Add new key core_version_requirement in libraries.info.yml": "https://www.drupal.org/files/issues/2019-10-08/libraries-Add_new_key_core_version_requirement_in_libraries.info.yml-3086588-2-D8.patch",
+                "Update Dependencies Format in .info.yml":"https://www.drupal.org/files/issues/2019-02-21/dependencies-3034756-2.patch"
+            },
+            "drupal/linkit": {
+                "Drupal 9 Deprecated Code Report for LinkIt module":"https://www.drupal.org/files/issues/2020-01-28/linkit-d9-3042631-11.patch",
+                "Linkit for Link field":"https://www.drupal.org/files/issues/2020-02-28/linkit_for_link_field-2712951-154.patch"
+            },
+            "drupal/masquerade": {
+                "Provide a foolproof way to unmasquerade": "https://www.drupal.org/files/issues/2019-12-13/temporary%20unmask%20workaround-2962970-8.patch"
+            },
+            "drupal/plupload": {
+                "Deprecated Code (D9) Report":"https://www.drupal.org/files/issues/2019-11-12/deprecated-3093844-2.patch"
+            },
+            "drupal/purge": {
+                "Replace deprecated function drupal_set_message(). (D9)": "https://www.drupal.org/files/issues/2019-10-11/1-purge-drupal9-replace-drupalsetmessage.patch",
+                "Replace deprecated method aliasManager() of class Drush\\Drush. (D9)": "https://www.drupal.org/files/issues/2019-10-12/1-purge-drupal9-replace-aliasmanager.patch"
+            },
+            "drupal/purge_queuer_url": {
+                "Logged-in requests remove items from traffic registry":"https://www.drupal.org/files/issues/2018-05-29/purge_queuer_url-2912139-7-skip-logged-in.patch",
+                "Command 'drush sql-sanitize' errors on uninstalled module": "https://www.drupal.org/files/issues/2950814-drush-sanitize-service-check.patch",
+                "Add Blacklisting of Cache Tags": "https://www.drupal.org/files/issues/2018-10-15/purge_queuer_url-2890476-8.patch",
+                "Deprecation issues": "https://www.drupal.org/files/issues/2019-11-15/purge_queuer_url-3094771-2.patch"
+            },
+            "drupal/smtp": {
+                "Drupal 9 Deprecated Code Report":"https://www.drupal.org/files/issues/2020-02-20/drupal-9-deprecated-code-report-3042630-24.patch",
+                "Drupal 9 Compatibility - fix key in .info.yml": "https://www.drupal.org/files/issues/2020-01-27/3109130-3.patch",
+                "SMTPMailSystem: use EmailValidatorInterface": "https://www.drupal.org/files/issues/2020-02-19/3114689-emailvalidatorinterface.patch"
+            },
+            "drupal/ultimate_cron": {
+                "To make the description of the module more informative": "https://www.drupal.org/files/issues/2019-04-11/ultimate_cron-update-module-description-1.patch",
+                "Drupal\\Component\\Plugin\\Exception\\PluginNotFoundException: The \"feeds_feed_refresh__test_node\"":"https://www.drupal.org/files/issues/2018-09-20/ultimate_cron-3001044-2.patch",
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2019-04-22/drupal_9_deprecated_code-3042656-2.patch",
+                "Disabled jobs are always running": "https://www.drupal.org/files/issues/2019-04-22/ultimate_cron-3049883.patch",
+                "Make global setting ui dynamic and use it": "https://www.drupal.org/files/issues/2019-05-14/2692781-46.patch",
+                "Readme document spelling error \"tu use\"": "https://www.drupal.org/files/issues/2019-05-22/modify-spelling-error.patch",
+                "port drush commands to drush 9.x": "https://www.drupal.org/files/issues/2018-07-16/2912724-17.patch",
+                "Node description Should be updated to reflect actual working of node_cron()": "https://www.drupal.org/files/issues/2018-06-06/node-description-update-2965733-2.patch",
+                "The \"ultimate_cron_job\" entity type does not exist.": "https://www.drupal.org/files/issues/ultimate_cron_job-2778357-06-8.x-2.x.patch",
+                "Allow overriding config entities": "https://www.drupal.org/files/issues/2019-11-12/ultimate_cron-override_entities.diff",
+                "I see this error when a cron task has status \"running\"": "https://www.drupal.org/files/issues/2019-08-22/2998106.patch",
+                "Using a call-time pass-by-reference is deprecated since PHP 5.3 and prohibited since PHP 5.4": "https://www.drupal.org/files/issues/2018-09-25/3002247-2.patch",
+                "Ability to unlock a cron job": "https://www.drupal.org/files/issues/2020-01-31/2977639-7.patch",
+                "Add command to run ultimate cron using drupal console": "https://www.drupal.org/files/issues/2019-01-03/ultimate_cron-drupal-console-cron-command-3023613-2-D8.patch"
+            }
         }
     }
 }
