@@ -3,10 +3,14 @@
     "description": "Drupal is an open source content management platform powering millions of websites and applications.",
     "type": "ifsight-docroot",
     "license": "GPL-2.0+",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "composer/installers": "^1.0.24",
         "wikimedia/composer-merge-plugin": "~1.4",
         "cweagans/composer-patches": "^1.6",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "drupal/console": "^1.0",
         "drupal/core": "^8.8",
         "drupal/admin_toolbar": "^2.0",
         "drupal/advagg": "^3.0",
@@ -50,7 +54,6 @@
         "drupal/varnish_purge": "^1.0",
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
-        "drupal/console": "~1.0",
         "moxiecode/plupload": "^3.1",
         "drupal/cloudflare": "^1.0@alpha",
         "drupal/elasticsearch_connector": "^6.0@alpha",
@@ -62,8 +65,11 @@
         "drupal/purge": "^3.0@beta",
         "drupal/diff": "^1.0"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "require-dev": {
+        "behat/mink": "^1.7",
+        "phpunit/phpunit": "^6.5",
+        "behat/behat": "^3.6"
+    },
     "config": {
         "preferred-install": "dist",
         "autoloader-suffix": "Drupal8"
@@ -129,10 +135,5 @@
                 }
             }
         }
-    ],
-    "require-dev": {
-        "behat/mink": "^1.7",
-        "phpunit/phpunit": "^6.5",
-        "behat/behat": "^3.6"
-    }
+    ]
 }
