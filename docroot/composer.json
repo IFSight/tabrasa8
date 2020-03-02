@@ -60,7 +60,8 @@
         "drupal/paladin": "^1.0",
         "drupal/config_split": "^1.4",
         "drupal/environment_indicator": "^3.6",
-        "drupal/purge": "^3.0@beta"
+        "drupal/purge": "^3.0@beta",
+        "drupal/youtube": "^1.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
