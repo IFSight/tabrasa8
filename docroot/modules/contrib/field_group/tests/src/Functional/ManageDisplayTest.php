@@ -25,7 +25,10 @@ class ManageDisplayTest extends BrowserTestBase {
    */
   protected $type;
 
-  protected $strictConfigSchema = FALSE;
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
@@ -83,6 +86,9 @@ class ManageDisplayTest extends BrowserTestBase {
     // Test if group is in the $groups array.
     $this->group = field_group_load_field_group($group_name, 'node', $this->type, 'form', 'default');
     $this->assertNotNull($group, 'Group was loaded');
+
+    // Test if region key is set.
+    $this->assertEquals('hidden', $this->group->region);
 
     // Add new group on the 'Manage display' page.
     $this->drupalPostForm('admin/structure/types/manage/' . $this->type . '/display/add-group', $group, 'Save and continue');

@@ -318,7 +318,7 @@ class ElasticsearchViewsQuery extends QueryPluginBase {
       $field->aliases['entity_type'] = 'entity_type';
     }
 
-    // Add fields to the query so they will be shown in solr document.
+    // Add fields to the query so they will be shown in document.
     $this->params['fields'] = array_keys($view->field);
     $this->params['fields'][] = '_source';
 
@@ -341,13 +341,20 @@ class ElasticsearchViewsQuery extends QueryPluginBase {
     }
 
     if (!empty($this->where['conditions'])) {
-      $params['query'] = [
-        'bool' => [
-          'must' => [
-            'match' => $this->where['conditions'],
+      if (count($this->where['conditions']) == 1) {
+        $params['query'] = [
+          'bool' => [
+            'should' => $this->where['conditions']
           ],
-        ],
-      ];
+        ];
+      } else {
+        $params['query'] = [
+          'multi_match' => [
+            'query' => implode(' ',array_unique( array_values($this->where['conditions']))),
+            'fields' => array_keys($this->where['conditions'])
+          ]
+        ];
+      }
     }
 
     // Add sorting.

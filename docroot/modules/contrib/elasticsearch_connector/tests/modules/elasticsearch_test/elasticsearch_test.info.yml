@@ -7,8 +7,8 @@ dependencies:
 # core: 8.x
 hidden: true
 
-# Information added by Drupal.org packaging script on 2018-10-06
-version: '8.x-6.0-alpha1'
+# Information added by Drupal.org packaging script on 2019-07-31
+version: '8.x-6.0-alpha2'
 core: '8.x'
 project: 'elasticsearch_connector'
-datestamp: 1538825585
+datestamp: 1564583902

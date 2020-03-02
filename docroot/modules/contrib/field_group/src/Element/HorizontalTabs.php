@@ -72,6 +72,18 @@ class HorizontalTabs extends RenderElement {
       }
     }
 
+    // Search for the correct default active tab.
+    $group_identifier = implode('][', $element['#parents']);
+    if (!empty($element['#groups'][$group_identifier])) {
+      $children = Element::children($element['#groups'][$group_identifier], TRUE);
+      foreach ($children as $key) {
+        if (!empty($element['#groups'][$group_identifier][$key]['#open'])) {
+          $element['#default_tab'] = $element['#groups'][$group_identifier][$key]['#id'];
+          $element[str_replace('][', '__', $group_identifier) . '__active_tab']['#value'] = $element['#default_tab'];
+        }
+      }
+    }
+
     return $element;
   }
 
@@ -118,18 +130,7 @@ class HorizontalTabs extends RenderElement {
       $element['#default_tab'] = $form_state->getValue($name . '__active_tab');
     }
 
-    $groups = &$form_state->getGroups();
-    $group_name = $element['#group_name'];
     $displayed_tab = isset($element['#default_tab']) ? $element['#default_tab'] : '';
-    if (isset($groups[$group_name]) && empty($displayed_tab)) {
-      foreach (Element::children($groups[$group_name]) as $child) {
-        $child_group = $groups[$group_name][$child];
-        if (!empty($child_group['#open']) || empty($displayed_tab)) {
-          // Use the last open group or the first group if none are open.
-          $displayed_tab = $child_group['#id'];
-        }
-      }
-    }
 
     // The JavaScript stores the currently selected tab in this hidden
     // field so that the active tab can be restored the next time the

@@ -189,7 +189,6 @@ function recaptcha_captcha_validation($solution, $response, $element, $form_stat
       'apk_package_name-mismatch' => t('Expected APK package name did not match.'),
       'bad-response' => t('Did not receive a 200 from the service.'),
       'bad-request' => t('The request is invalid or malformed.'),
-      'challenge-timeout' => t('Challenge timeout.'),
       'connection-failed' => t('Could not connect to service.'),
       'invalid-input-response' => t('The response parameter is invalid or malformed.'),
       'invalid-input-secret' => t('The secret parameter is invalid or malformed.'),
@@ -197,15 +196,23 @@ function recaptcha_captcha_validation($solution, $response, $element, $form_stat
       'missing-input-response' => t('The response parameter is missing.'),
       'missing-input-secret' => t('The secret parameter is missing.'),
       'hostname-mismatch' => t('Expected hostname did not match.'),
-      'score-threshold-not-met' => t('Score threshold not met.'),
-      'timeout-or-duplicate' => t('The challenge response timed out or was already verified.'),
       'unknown-error' => t('Not a success, but no error codes received!'),
     ];
+    $info_codes = [
+      'challenge-timeout' => t('Challenge timeout.'),
+      'score-threshold-not-met' => t('Score threshold not met.'),
+      'timeout-or-duplicate' => t('The challenge response timed out or was already verified.'),
+    ];
     foreach ($resp->getErrorCodes() as $code) {
-      if (!isset($error_codes[$code])) {
-        $code = 'unknown-error';
+      if (isset($info_codes[$code])) {
+        \Drupal::logger('reCAPTCHA web service')->info('@info', ['@info' => $info_codes[$code]]);
       }
-      \Drupal::logger('reCAPTCHA web service')->error('@error', ['@error' => $error_codes[$code]]);
+      else {
+        if (!isset($error_codes[$code])) {
+          $code = 'unknown-error';
+        }
+        \Drupal::logger('reCAPTCHA web service')->error('@error', ['@error' => $error_codes[$code]]);
+      }
     }
   }
   return FALSE;
