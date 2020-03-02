@@ -39,7 +39,6 @@ module:
   file: 0
   filter: 0
   fulcrum_whitelist: 0
-  geolocation: 0
   help: 0
   history: 0
   if_varnish_purge_tags: 0

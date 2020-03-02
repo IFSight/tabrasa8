@@ -25,7 +25,6 @@
         "drupal/entity_embed": "^1.0@beta",
         "drupal/entity_reference_revisions": "^1.0",
         "drupal/field_group": "^3.0",
-        "drupal/geolocation": "^1.0",
         "drupal/google_analytics": "^2.1",
         "drupal/inline_entity_form": "^1.0@beta",
         "drupal/libraries": "^3.0@alpha",
@@ -61,7 +60,7 @@
         "drupal/config_split": "^1.4",
         "drupal/environment_indicator": "^3.6",
         "drupal/purge": "^3.0@beta",
-        "drupal/youtube": "^1.0"
+        "drupal/diff": "^1.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -130,5 +129,10 @@
                 }
             }
         }
-    ]
+    ],
+    "require-dev": {
+        "behat/mink": "^1.7",
+        "phpunit/phpunit": "^6.5",
+        "behat/behat": "^3.6"
+    }
 }
