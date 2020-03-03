@@ -1,1 +1,9 @@
 .DS_Store
+*.reg
+*.orig
+/bin
+/vendor
+.editorconfig
+.gitattributes
+/docroot
+composer.lock
