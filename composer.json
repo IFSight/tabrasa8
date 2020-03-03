@@ -34,7 +34,6 @@
         "drupal/environment_indicator": "^3.6",
         "drupal/field_group": "^3.0",
         "drupal/fulcrum_whitelist": "^1.1",
-        "drupal/geolocation": "^1.11",
         "drupal/google_analytics": "^2.1",
         "drupal/inline_entity_form": "^1.0",
         "drupal/libraries": "3.x-dev",
