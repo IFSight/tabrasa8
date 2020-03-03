@@ -37,10 +37,8 @@ module:
   field_group: 0
   field_ui: 0
   file: 0
-  file_entity: 0
   filter: 0
   fulcrum_whitelist: 0
-  geolocation: 0
   help: 0
   history: 0
   if_varnish_purge_tags: 0
@@ -98,7 +96,6 @@ module:
 theme:
   stable: 0
   classy: 0
-  bartik: 0
   seven: 0
   adminimal_theme: 0
   if_admin: 0
