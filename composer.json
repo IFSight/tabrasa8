@@ -5,14 +5,9 @@
     "license": "GPL-2.0+",
     "minimum-stability": "dev",
     "require": {
+        "bower-asset/plupload": "^3.1",
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6",
-        "drupal/core-composer-scaffold": "^8.8",
-        "drupal/core-project-message": "^8.8",
-        "drupal/core-recommended": "^8.8",
-        "oomphinc/composer-installers-extender": "^1.1",
-        "wikimedia/composer-merge-plugin": "~1.4",
-        "drupal/console": "^1.0",
         "drupal/admin_toolbar": "^2.0",
         "drupal/adminimal_theme": "^1.4",
         "drupal/advagg": "^3.0",
@@ -23,6 +18,10 @@
         "drupal/cloudflare": "1.x-dev",
         "drupal/components": "^1.0",
         "drupal/config_split": "^1.4",
+        "drupal/console": "^1.0",
+        "drupal/core-composer-scaffold": "^8.8",
+        "drupal/core-project-message": "^8.8",
+        "drupal/core-recommended": "^8.8",
         "drupal/ctools": "^3.0",
         "drupal/date_popup": "^1.0",
         "drupal/easy_breadcrumb": "^1.8",
@@ -34,7 +33,8 @@
         "drupal/entity_reference_revisions": "^1.0",
         "drupal/environment_indicator": "^3.6",
         "drupal/field_group": "^3.0",
-        "drupal/geolocation": "^1.0",
+        "drupal/fulcrum_whitelist": "^1.1",
+        "drupal/geolocation": "^1.11",
         "drupal/google_analytics": "^2.1",
         "drupal/inline_entity_form": "^1.0",
         "drupal/libraries": "3.x-dev",
@@ -64,9 +64,13 @@
         "drupal/webform": "^5.0",
         "drupal/youtube": "^1.0",
         "drush/drush": "^9.0",
+        "ifsight/if_admin": "^0.1",
+        "ifsight/if_helper": "^0.1",
         "ifsight/paladin": "^1.0",
-        "bower-asset/plupload": "^3.1",
-        "nodespark/des-connector": "6.x-dev"
+        "ifsight/varnish_purge_tags": "^0.2",
+        "nodespark/des-connector": "6.x-dev",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "wikimedia/composer-merge-plugin": "~1.4"
     },
     "require-dev": {
         "behat/mink-selenium2-driver": "1.4.x-dev as 1.3.x-dev",
@@ -91,7 +95,7 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "https://if-satis.s3.us-east-2.amazonaws.com/"
+            "url": "https://if-satis.s3.us-east-2.amazonaws.com"
         },
         {
             "type": "composer",
@@ -151,6 +155,22 @@
             "Ultimate Cron -- dev version, no active development since February 2019"
         ],
         "drupal-scaffold": {
+            "file-mapping": {
+                "[web-root]/robots.txt": false,
+                "[web-root]/.htaccess": false,
+                "[web-root]/sites/default/default.services.yml": false,
+                "[web-root]/sites/default/default.settings.php": false
+            },
+            "excludes": [
+                "google123.html"
+            ],
+            "initial": {
+                "sites/default/default.services.yml": "docroot/sites/default/default.services.yml",
+                "sites/default/default.settings.php": "docroot/sites/default/default.settings.php",
+                "robots.txt": "docroot/robots.txt",
+                ".htaccess": "docroot/.htaccess"
+            },
+            "omit-defaults": true,
             "locations": {
                 "web-root": "docroot/"
             }
