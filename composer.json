@@ -9,58 +9,61 @@
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6",
         "drupal/admin_toolbar": "^2.0",
-        "drupal/adminimal_theme": "^1.4",
-        "drupal/advagg": "^3.0",
-        "drupal/allowed_formats": "^1.1",
+        "drupal/adminimal_theme": "1.x-dev",
+        "drupal/advagg": "4.x-dev",
+        "drupal/allowed_formats": "1.x-dev",
         "drupal/better_exposed_filters": "4.x-dev",
         "drupal/block_field": "1.x-dev",
-        "drupal/captcha": "^1.0",
+        "drupal/captcha": "1.x-dev",
         "drupal/cloudflare": "1.x-dev",
         "drupal/components": "^1.0",
-        "drupal/config_split": "^1.4",
+        "drupal/config_split": "1.x-dev",
         "drupal/console": "^1.0",
         "drupal/core-composer-scaffold": "^8.8",
         "drupal/core-project-message": "^8.8",
         "drupal/core-recommended": "^8.8",
-        "drupal/ctools": "^3.0",
-        "drupal/date_popup": "^1.0",
-        "drupal/easy_breadcrumb": "^1.8",
+        "drupal/ctools": "3.x-dev",
+        "drupal/date_popup": "1.x-dev",
+        "drupal/diff": "^1.0",
+        "drupal/easy_breadcrumb": "1.x-dev",
         "drupal/elasticsearch_connector": "6.x-dev",
-        "drupal/embed": "~1.0",
+        "drupal/embed": "1.x-dev",
         "drupal/entity": "^1.0",
-        "drupal/entity_browser": "^2.0",
-        "drupal/entity_embed": "^1.0",
-        "drupal/entity_reference_revisions": "^1.0",
-        "drupal/environment_indicator": "^3.6",
+        "drupal/entity_browser": "2.x-dev",
+        "drupal/entity_embed": "1.x-dev",
+        "drupal/entity_reference_revisions": "1.x-dev",
+        "drupal/environment_indicator": "3.x-dev",
         "drupal/field_group": "^3.0",
         "drupal/fulcrum_whitelist": "^1.1",
-        "drupal/google_analytics": "^2.1",
-        "drupal/inline_entity_form": "^1.0",
+        "drupal/google_analytics": "2.x-dev",
+        "drupal/inline_entity_form": "^1.0@RC",
         "drupal/libraries": "3.x-dev",
         "drupal/linkit": "5.x-dev",
-        "drupal/mailsystem": "^4.1",
+        "drupal/mailsystem": "4.x-dev",
         "drupal/masquerade": "2.x-dev",
         "drupal/menu_block": "^1.4",
-        "drupal/metatag": "^1.4",
-        "drupal/paragraphs": "^1.2",
-        "drupal/pathauto": "^1.0",
+        "drupal/metatag": "1.x-dev",
+        "drupal/paragraphs": "1.x-dev",
+        "drupal/pathauto": "1.x-dev",
         "drupal/plupload": "^1.0",
         "drupal/purge": "3.x-dev",
         "drupal/purge_queuer_url": "1.x-dev",
-        "drupal/recaptcha": "^2.2",
-        "drupal/redirect": "^1.0",
-        "drupal/redis": "^1.0",
-        "drupal/scheduler": "^1.0",
-        "drupal/search_api": "^1.12",
-        "drupal/simple_sitemap": "^3.0",
+        "drupal/recaptcha": "2.x-dev",
+        "drupal/redirect": "1.x-dev",
+        "drupal/redis": "1.x-dev",
+        "drupal/scheduler": "1.x-dev",
+        "drupal/search_api": "1.x-dev",
+        "drupal/search_api_autocomplete": "1.x-dev",
+        "drupal/simple_sitemap": "3.x-dev",
         "drupal/smtp": "^1.0",
         "drupal/social_media_links": "^2.6",
-        "drupal/token": "^1.0",
+        "drupal/token": "1.x-dev",
         "drupal/twig_tweak": "^2.0",
+        "drupal/typed_data": "1.x-dev",
         "drupal/ultimate_cron": "2.x-dev",
         "drupal/varnish_purge": "^1.0",
-        "drupal/viewsreference": "^1.2",
-        "drupal/webform": "^5.0",
+        "drupal/viewsreference": "^2.0",
+        "drupal/webform": "^5.9",
         "drupal/youtube": "^1.0",
         "drush/drush": "^9.0",
         "ifsight/if_admin": "^0.1",
@@ -124,34 +127,99 @@
     },
     "extra": {
         "_drupal_9_readiness_assessment": [
+            "Adminimal Theme: Drupal 9 Readiness patch applied",
+            "Advance CSS/JS Aggregation -- dev version 4.x is D9 ready",
+            "Allowed Formats: Dev version is D9 ready",
             "Better Exposed filters Drupal 9 Readiness outstanding issues: https://www.drupal.org/project/better_exposed_filters/issues/3114031",
             "Block field Drupal 9 readiness outstanding issues:  https://www.drupal.org/project/block_field/issues/3042702",
+            "CAPTCHA: Drupal 9 Readiness patch applied",
             "Cloudflare Drupal 9 Readiness outstanding issues (patch only partially addresses): https://www.drupal.org/files/issues/2019-04-22/drupal_9_deprecated_code-3042953-4.patch",
+            "Components:  Drupal 9 Readiness outstanding issue:  https://www.drupal.org/project/components/issues/3112929",
+            "CTools:  addressed on dev version",
+            "Easy Breadcrumb:  Drupal 9 ready for code, dev version plus patch addresses tests",
             "ElasticSearch Connector Drupal 9 Readiness -- no patch available, no work on version 6, which is the version we use",
-            "Inline entity Form Drupal 9 Readiness -- no assessment has been completed, no patch available",
+            "Embed:  Drupal 9 ready on dev version",
+            "Entity:  current 1.x version is Drupal 9 ready",
+            "Entity Browser:  current dev version is Drupal 9 ready",
+            "Entity Embed:  Drupal 9 readiness, one remaining issue that depends on outstanding issue for D8.9 https://www.drupal.org/project/entity_embed/issues/3087572",
+            "Entity Reference Revisions: Code is Drupal 9 ready, tests are not",
+            "Environment Indicator: current dev version, patched, is Drupal 9 ready",
+            "Google Analytics:  current dev version, patched, addresses most D9 issues, some are still outstanding",
+            "Inline Entity Form Drupal 9 Readiness -- Mostly ready, outstanding issues are on tests",
             "Libraries API Drupal 9 Readiness -- https://www.drupal.org/project/libraries/issues/3110305, support for third party libraries is being added to Drupal 8.9, this module will no lnger be needed.  https://www.drupal.org/project/libraries/issues/3110305",
             "Linkit Drupal 9 Readiness -- https://www.drupal.org/files/issues/2020-01-28/linkit-d9-3042631-11.patch, patch applied",
+            "MailSystem:  Current version D9 ready, running dev version with patch for coding standards",
             "Masquerade Drupal 9 Readiness -- running dev version, already D9 ready, https://www.drupal.org/project/masquerade/issues/3042713",
+            "Menu Block: Both 1.4 and 1.5 are Drupal 9 ready",
+            "Metatag:  dev version with patches mostly Drupal 9 ready, issues are on tests or submodules we don't use",
+            "Paragraphs Drupal 9 Readiness -- running dev version, patched is Drupal 9 ready for code, only tests remain to be remediated",
+            "Pathauto Drupal 9 Readiness -- running dev version, patched, is Drupal 9 ready",
             "Plupload Drupal 9 Readiness -- running beta version, patch applied for D9 readiness, https://www.drupal.org/project/plupload/issues/3093844",
             "Purge Drupal 9 Readiness -- running dev version, partially patched for D9 readiness, remaining issues are in issue queue",
+            "Recaptcha Drupal 9 Readiness -- running dev version, partially patched for D9 readiness, outstanding issues remain",
+            "Redirect Drupal 9 readiness -- running dev version, some D9 issues remain, under active development https://www.drupal.org/project/redirect/issues/3113720",
+            "Redis Drupal 9 readiness -- running dev version, mostly D9 ready, one outstanding https://www.drupal.org/project/redis/issues/3117429",
             "URLs queuer (purge_queuer_url) Drupal 9 Readiness, no active issue in issue queue to address",
+            "Scheduler -- running dev version, Drupal 9 ready, uner active development",
+            "Search API -- tested dev version, with patch, code is D9 ready, under active development",
+            "Search API Autocomplete -- tested dev version, code is D9 ready with exception of one issue which will be fixed after Search API 9.x-1.0 is released",
             "SMTP Drupal 9 Readiness -- running beta7 version, applied patch ",
-            "Ultimate Cron Drupal 9 Readiness -- open issue in issue queue, no work currently, https://www.drupal.org/project/ultimate_cron/issues/3110312"
+            "Social Media Links Drupal 9 Readiness -- tested 8x.-2.6 with patches, patched it is Drupal 9 ready",
+            "Token Drupal 9 Readiness -- running dev version, patched, is Drupal 9 ready",
+            "Twig Tweak Drupal 9 Readiness -- running 2.4 which is Drupal 9 ready",
+            "Typed Data API Drupal 9 Readiness -- outstanding issue https://www.drupal.org/project/typed_data/issues/3042684, under active development",
+            "Ultimate Cron Drupal 9 Readiness -- open issue in issue queue, no work currently, https://www.drupal.org/project/ultimate_cron/issues/3110312",
+            "Varnish Purge Drupal 9 Readiness -- version 1.12 is Drupal 9 Ready",
+            "Views Reference Field -- version 2.0-alpha6 is D9 ready, actively maintained",
+            "Webform Drupal 9 Readiness -- see https://www.jrockowitz.com/blog/webform-road-to-drupal-9",
+            "Youtube Drupal 9 Readiness -- version 1.0 is Drupal 9 Ready, actively maintained"
         ],
         "_modules_not_stable": [
+            "Adminimal Theme -- dev version for D9 readiniess patch, no active development since May 2019",
+            "Advanced CSS/JS Aggregation -- dev version is D9 ready, under active development",
+            "Allowed Format -- dev version is D9 ready, under active development",
             "Better Exposed Filters -- dev version, under active development",
             "Block field -- dev version, patched for D9 readiness, no active development since April 2019",
+            "CAPTCHA -- dev version, patched for D9 readiness, udner active development",
+            "Components -- 2.x beta version under development but not ready for use, no work on D9 readiness yet, under active development",
             "Cloudflare -- dev version, patched for D9 readiness (partial), no active development since March 2019",
+            "Ctools -- dev version is ready for D9, under active development",
+            "Date Popup -- dev version appears to be D9 ready, no active development since October 2018",
+            "Easy Breadcrumb -- dev version, patched for D9 readiness, under active development",
             "ElasticSearch Connector -- dev version, no active development since October 2019",
+            "Embed -- dev version, D9 ready, under active development, minimally maintained, last updated Jan 2020",
+            "Entity Browser -- dev version is Drupal 9 ready, under active development",
+            "Entity Embed -- dev version has most issues addressed for D9 readiness, under active development",
+            "Entity Reference Revisions -- dev version has most issues addressed for D9 readiness, under active development",
+            "Environment Indicator -- dev version is D9 ready, under active development",
+            "Google Analytics -- 2.x dev version is patched, outstanding issues, active development is spotty",
             "Inline Entity Form -- rc3 version, under active development",
             "Libraries API -- dev version, no active development since June 2019",
             "Linkit module -- dev version, patched for D9 readiness, under active development",
-            "Masquerade -- dev version, is D8 ready, under active development",
+            "Mail System:  dev version, patched for coding standards, D9 ready",
+            "Masquerade -- dev version, is D9 ready, under active development",
+            "Metatag -- dev version, patched, is D9 ready, under active development",
+            "Paragraphs -- dev version, patched, is mostly D9 ready, failures are on tests, under active development",
+            "Pathauto -- dev version, patched is D9 ready, under active development",
             "Plupload -- beta2 version, no active development since December 2018",
             "Purge -- dev version, under active development",
-            "URLs queuer (purge_queuer_url) -- rc1 version, no active development since September 2017",
+            "Recaptcha -- dev version, patched for D9 readiness, issues remain, ",
+            "Redirect -- dev version addresses some D9 issues, not yet D9 ready, under active development",
+            "Redis -- dev version mostly addresses D9 issues, one remaining, under active development",
+            "Scheduler -- dev version is Drupal 9 ready, under active development",
+            "Search API -- dev version, with patch, code is D9 ready, tests are still failing, under active development",
+            "Search API Autocomplete -- tested dev version, code is D9 ready with exception of one issue (see above), under active development",
             "SMTP -- beta version, under active development",
-            "Ultimate Cron -- dev version, no active development since February 2019"
+            "Social Media Links -- version 8.x-2.6 current, no activity since November 2017",
+            "Token -- dev version with patch applied is Drupal 9 ready, under active development",
+            "Twig Tweak -- version 2.4, Drupal 9 ready, no activity since July 2019",
+            "Typed Data API Drupal 9 Readiness -- outstanding issue https://www.drupal.org/project/typed_data/issues/3042684, under active development",
+            "URLs queuer (purge_queuer_url) -- rc1 version, no active development since September 2017",
+            "Ultimate Cron -- dev version, no active development since February 2019",
+            "Varnish Purger -- version 1.12 is Drupal 9 ready, under active development",
+            "Views Reference Field -- version 2.0-alpha6 is D9 ready, actively maintained",
+            "Webform Drupal 9 Readiness -- running 5.9@beta, see https://www.jrockowitz.com/blog/webform-road-to-drupal-9, under active development",
+            "Youtube Drupal 9 Readiness -- version 1.0 is Drupal 9 Ready, actively maintained"
         ],
         "drupal-scaffold": {
             "file-mapping": {
@@ -252,20 +320,103 @@
                 "SMTPMailSystem: use EmailValidatorInterface": "https://www.drupal.org/files/issues/2020-02-19/3114689-emailvalidatorinterface.patch"
             },
             "drupal/ultimate_cron": {
-                "To make the description of the module more informative": "https://www.drupal.org/files/issues/2019-04-11/ultimate_cron-update-module-description-1.patch",
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-03-05/drupal_9_deprecated_code-3042656-13.patch",
+                "Using a call-time pass-by-reference is deprecated since PHP 5.3 and prohibited since PHP 5.4": "https://www.drupal.org/files/issues/2018-09-25/3002247-2.patch",
                 "Drupal\\Component\\Plugin\\Exception\\PluginNotFoundException: The \"feeds_feed_refresh__test_node\"":"https://www.drupal.org/files/issues/2018-09-20/ultimate_cron-3001044-2.patch",
-                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2019-04-22/drupal_9_deprecated_code-3042656-2.patch",
                 "Disabled jobs are always running": "https://www.drupal.org/files/issues/2019-04-22/ultimate_cron-3049883.patch",
-                "Make global setting ui dynamic and use it": "https://www.drupal.org/files/issues/2019-05-14/2692781-46.patch",
                 "Readme document spelling error \"tu use\"": "https://www.drupal.org/files/issues/2019-05-22/modify-spelling-error.patch",
-                "port drush commands to drush 9.x": "https://www.drupal.org/files/issues/2018-07-16/2912724-17.patch",
+                "Port drush commands to drush 9.x": "https://www.drupal.org/files/issues/2018-07-16/2912724-17.patch",
                 "Node description Should be updated to reflect actual working of node_cron()": "https://www.drupal.org/files/issues/2018-06-06/node-description-update-2965733-2.patch",
                 "The \"ultimate_cron_job\" entity type does not exist.": "https://www.drupal.org/files/issues/ultimate_cron_job-2778357-06-8.x-2.x.patch",
                 "Allow overriding config entities": "https://www.drupal.org/files/issues/2019-11-12/ultimate_cron-override_entities.diff",
                 "I see this error when a cron task has status \"running\"": "https://www.drupal.org/files/issues/2019-08-22/2998106.patch",
-                "Using a call-time pass-by-reference is deprecated since PHP 5.3 and prohibited since PHP 5.4": "https://www.drupal.org/files/issues/2018-09-25/3002247-2.patch",
                 "Ability to unlock a cron job": "https://www.drupal.org/files/issues/2020-01-31/2977639-7.patch",
                 "Add command to run ultimate cron using drupal console": "https://www.drupal.org/files/issues/2019-01-03/ultimate_cron-drupal-console-cron-command-3023613-2-D8.patch"
+            },
+            "drupal/adminimal_theme": {
+                "Table is cropped in vertical tabs": "https://www.drupal.org/files/issues/2019-09-11/table_is_cropped_in_vertical_tabs-3080442-3.patch",
+                "Some hovered buttons text invisible": "https://www.drupal.org/files/issues/2019-10-15/invisible_button_text-3087937-2.patch",
+                "Error states of checkboxes": "https://www.drupal.org/files/issues/2020-01-06/3032036-5.patch",
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-01-21/adminimal_theme_drupal9.patch"
+            },
+            "drupal/allowed_formats": {
+                "Store as sequence": "https://www.drupal.org/files/issues/2020-01-20/2733331-10.patch"
+            },
+            "drupal/captcha": {
+                "Prepare the module for Drupal 9": "https://www.drupal.org/files/issues/2020-02-19/3102288-23.patch",
+                "captcha_cron() removes captcha_sessions that may still have open PHP sessions": "https://www.drupal.org/files/issues/2019-11-23/3032742-6.captcha.captchacron-removes-captchasessions-that-may-still-have-open-PHP-sessions.patch",
+                "Captcha Session ID broken with cacheable captcha backends": "https://www.drupal.org/files/issues/2019-12-11/3089263-24.captcha.Captcha-Session-ID-broken-with-cacheable-captcha-backends.patch"
+            },
+            "drupal/config_split": {
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2019-12-12/3042682-15-deprecated-code-report.patch"
+            },
+            "drupal/date_popup": {
+                "Missing README.txt": "https://www.drupal.org/files/issues/2019-03-23/date_popup-updated-readme-2952123-22.patch",
+                "Coding Standards": "https://www.drupal.org/files/issues/2018-09-21/3001407-coding-standard-2.patch",
+                "Notice: Undefined index: type in Drupal\\Core\\Render\\Element\\Date::processDate()":"https://www.drupal.org/files/issues/2019-07-14/date-attribute-is-missing-3042555-7.patch"
+            },
+            "drupal/easy_breadcrumb": {
+                "Drupal 9 deprecated code":"https://www.drupal.org/files/issues/2020-02-11/replace_method-3102112-4.patch",
+                "WIthout slash url in configuration form gives fatal error": "https://www.drupal.org/files/issues/2020-01-10/3105627-2.patch",
+                "Allow wildcards in path-based breadcrumb overrides": "https://www.drupal.org/files/issues/2020-01-23/easy_breadcrumb-regex_custom_paths-3051106-22.patch",
+                "Remove empty Custom Path overrides": "https://www.drupal.org/files/issues/2019-09-25/3083463-2-remove-empty-custom-path-overrides.patch",
+                "Allow usage of title of the site instead of homepage": "https://www.drupal.org/files/issues/2020-02-03/allow-site-title-3094402-4.patch",
+                "Unnecessary processing and logging of variable routes": "https://www.drupal.org/files/issues/2020-02-11/notice_on_edit_pages-3071782-4.patch"
+            },
+            "drupal/embed": {
+                "Updating README.md":"https://www.drupal.org/files/issues/2020-02-10/3039272-9.patch",
+                "Include dependency in composer.json": "https://www.drupal.org/files/issues/2020-02-18/3114221-1.patch"
+            },
+            "drupal/entity_embed": {
+                "Fix tests on Drupal 9 and drop support for 8.7":"https://www.drupal.org/files/issues/2020-02-25/3109693-28.patch",
+                "Form Validation in Format Config is Too Strict for \"data-\" Attributes": "https://www.drupal.org/files/issues/2019-08-16/3075245-2.patch"
+            },
+            "drupal/entity_reference_revisions": {
+                "Views doesn't recognize relationship to host": "https://www.drupal.org/files/issues/2019-12-10/2799479-108.patch"
+            },
+            "drupal/environment_indicator": {
+                "": "https://www.drupal.org/files/issues/2020-02-21/drupal_9_deprecated_code_report-3042790-12.patch"
+            },
+            "drupal/google_analytics": {
+                "Drupal 9 compatibility related issues should be fixed.": "https://www.drupal.org/files/issues/2020-01-03/3072207-26.patch"
+            },
+            "drupal/mailsystem": {
+                "Fix coding standards violations" : "https://www.drupal.org/files/issues/2020-01-30/2858676-16.patch"
+            },
+            "drupal/metatag": {
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-03-02/3042590-47.patch"
+            },
+            "drupal/paragraphs": {
+                "Remove own sortablejs library, remove remaining 8.8 deprecations": "https://www.drupal.org/files/issues/2020-02-11/3055618-19.patch"
+            },
+            "drupal/pathauto": {
+                "Drupal 9 Deprecated Code Report for Pathauto": "https://www.drupal.org/files/issues/2020-02-08/3042582-48.patch"
+            },
+            "drupal/recaptcha": {
+                "Prepare Recaptcha module for Drupal 9": "https://www.drupal.org/files/issues/2020-01-25/3108892-2.patch"
+            },
+            "drupal/search_api": {
+                "Test for compatibility with Drupal 9":"https://www.drupal.org/files/issues/2020-03-03/3023170-50--prepare_for_drupal_9.patch"
+            },
+            "drupal/social_media_links": {
+                "Drupal 9 Deprecated Code Report":"https://www.drupal.org/files/issues/2019-05-22/social-media-links-3042710-2.patch",
+                "Accessibility - Platform Name and Aria Label issue.": "https://www.drupal.org/files/issues/2019-03-28/accessibility-3044002-1.patch",
+                "Link Attributes on Field Submodule Missing on Output": "https://www.drupal.org/files/issues/2018-03-14/link_attributes_missing-2929647-2.patch",
+                "Allow rel noopener": "https://www.drupal.org/files/issues/2020-02-15/social_media_links-allow-rel-noopener-2953680-7.patch"
+            },
+            "drupal/token": {
+                "Drupal 9 Deprecated Code Report for Token": "https://www.drupal.org/files/issues/2020-01-18/token_deprecated-3042568-15.patch"
+            },
+            "drupal/twig_tweak": {
+                "image_style should take null path when a file field is optional": "https://www.drupal.org/files/issues/2019-09-26/image_style_accept_null-3083417-4.patch",
+                "Block attributes and contextual links are removed":"https://www.drupal.org/files/issues/2019-07-16/3068078-fix-block-attributes.patch"
+            },
+            "drupal/viewsreference": {
+                "Drupal 9 deprecated code report for Views Reference Field (really coding standards in patch)": "https://www.drupal.org/files/issues/2020-02-12/drupal_standard-3112944-3.patch",
+                "Drupal 9 compatibility": "https://www.drupal.org/files/issues/2020-02-18/viewsreference_drupal9.patch"
+            },
+            "drupal/youtube": {
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-02-25/3042827-2_0.patch"
             }
         }
     }
