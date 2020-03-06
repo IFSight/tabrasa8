@@ -321,7 +321,6 @@
             },
             "drupal/ultimate_cron": {
                 "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-03-05/drupal_9_deprecated_code-3042656-13.patch",
-                "Using a call-time pass-by-reference is deprecated since PHP 5.3 and prohibited since PHP 5.4": "https://www.drupal.org/files/issues/2018-09-25/3002247-2.patch",
                 "Drupal\\Component\\Plugin\\Exception\\PluginNotFoundException: The \"feeds_feed_refresh__test_node\"":"https://www.drupal.org/files/issues/2018-09-20/ultimate_cron-3001044-2.patch",
                 "Disabled jobs are always running": "https://www.drupal.org/files/issues/2019-04-22/ultimate_cron-3049883.patch",
                 "Readme document spelling error \"tu use\"": "https://www.drupal.org/files/issues/2019-05-22/modify-spelling-error.patch",
