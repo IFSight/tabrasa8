@@ -4,12 +4,25 @@
 
 # Copy the settings.php file to docroot/sites/default/settings.php
 if [ ! -f "docroot/sites/default/settings.php" ]; then
+	echo "Copying settings.php..."
 	cp ./drupal/settings.php ./docroot/sites/default/settings.php
 	chmod 0644 ./docroot/sites/default/settings.php
 fi
 
 # Copy the settings.local.php file to docroot/sites/default/settings.php
+
+if [ $TRAVIS ]; then
+  if [ ! -f "docroot/sites/default/settings.local.php " ]; then
+  	echo "Copying Travis settings.local.php..."
+  	chmod 0755 ./docroot/sites/default
+	cp ./drupal/settings.travis.php ./docroot/sites/default/settings.local.php
+	chmod 0644 ./docroot/sites/default/settings.local.php
+  fi
+fi
+
 if [ ! -f "docroot/sites/default/settings.local.php" ]; then
+	echo "Copying local dev build settings.local.php..."
+	chmod 0755 ./docroot/sites/default
 	cp ./drupal/settings.local.php ./docroot/sites/default/settings.local.php
 	chmod 0644 ./docroot/sites/default/settings.local.php
 fi
