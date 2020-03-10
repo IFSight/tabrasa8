@@ -16,3 +16,6 @@ $databases['default']['default'] = array (
   'prefix' => '',
   'collation' => 'utf8mb4_general_ci',
  );
+
+$settings['config_sync_directory'] = '../config/sync';
+
