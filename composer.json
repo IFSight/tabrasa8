@@ -35,6 +35,7 @@
         "drupal/entity_reference_revisions": "1.x-dev",
         "drupal/environment_indicator": "3.x-dev",
         "drupal/field_group": "^3.0",
+        "drupal/file_entity": "2.x-dev",
         "drupal/fulcrum_whitelist": "^1.1",
         "drupal/google_analytics": "2.x-dev",
         "drupal/inline_entity_form": "^1.0@RC",
@@ -146,6 +147,7 @@
             "Entity Embed:  Drupal 9 readiness, one remaining issue that depends on outstanding issue for D8.9 https://www.drupal.org/project/entity_embed/issues/3087572",
             "Entity Reference Revisions: Code is Drupal 9 ready, tests are not",
             "Environment Indicator: current dev version, patched, is Drupal 9 ready",
+            "File Entity:  current dev version is Drupal 9 ready",
             "Google Analytics:  current dev version, patched, addresses most D9 issues, some are still outstanding",
             "Inline Entity Form Drupal 9 Readiness -- Mostly ready, outstanding issues are on tests",
             "Libraries API Drupal 9 Readiness -- https://www.drupal.org/project/libraries/issues/3110305, support for third party libraries is being added to Drupal 8.9, this module will no lnger be needed.  https://www.drupal.org/project/libraries/issues/3110305",
@@ -170,7 +172,7 @@
             "Token Drupal 9 Readiness -- running dev version, is Drupal 9 ready",
             "Twig Tweak Drupal 9 Readiness -- running 2.4 which is Drupal 9 ready",
             "Typed Data API Drupal 9 Readiness -- outstanding issue https://www.drupal.org/project/typed_data/issues/3042684, under active development",
-            "Ultimate Cron Drupal 9 Readiness -- open issue in issue queue, no work currently, https://www.drupal.org/project/ultimate_cron/issues/3110312",
+            "Ultimate Cron Drupal 9 Readiness -- 8.x-2.x-dev is Drupal 9 ready",
             "Varnish Purge Drupal 9 Readiness -- version 1.12 is Drupal 9 Ready",
             "Views Reference Field -- version 2.0-alpha6 is D9 ready, actively maintained",
             "Webform Drupal 9 Readiness -- see https://www.jrockowitz.com/blog/webform-road-to-drupal-9",
@@ -195,6 +197,7 @@
             "Entity Embed -- dev version has most issues addressed for D9 readiness, under active development",
             "Entity Reference Revisions -- dev version has most issues addressed for D9 readiness, under active development",
             "Environment Indicator -- dev version is D9 ready, under active development",
+            "File Entity -- 2.x-dev version is Drupal 9 ready, under active development",
             "Google Analytics -- 2.x dev version is patched, outstanding issues, active development is spotty",
             "Inline Entity Form -- rc3 version, under active development",
             "Libraries API -- dev version, no active development since June 2019",
@@ -218,7 +221,7 @@
             "Twig Tweak -- version 2.4, Drupal 9 ready, no activity since July 2019",
             "Typed Data API Drupal 9 Readiness -- outstanding issue https://www.drupal.org/project/typed_data/issues/3042684, under active development",
             "URLs queuer (purge_queuer_url) -- rc1 version, no active development since September 2017",
-            "Ultimate Cron -- dev version, no active development since February 2019",
+            "Ultimate Cron -- 8.x-2.x-dev is Drupal 9 ready",
             "Varnish Purger -- version 1.12 is Drupal 9 ready, under active development",
             "Views Reference Field -- version 2.0-alpha6 is D9 ready, actively maintained",
             "Webform Drupal 9 Readiness -- running 5.9@beta, see https://www.jrockowitz.com/blog/webform-road-to-drupal-9, under active development",
@@ -323,11 +326,9 @@
                 "SMTPMailSystem: use EmailValidatorInterface": "https://www.drupal.org/files/issues/2020-02-19/3114689-emailvalidatorinterface.patch"
             },
             "drupal/ultimate_cron": {
-                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-03-05/drupal_9_deprecated_code-3042656-13.patch",
                 "Drupal\\Component\\Plugin\\Exception\\PluginNotFoundException: The \"feeds_feed_refresh__test_node\"":"https://www.drupal.org/files/issues/2018-09-20/ultimate_cron-3001044-2.patch",
                 "Disabled jobs are always running": "https://www.drupal.org/files/issues/2019-04-22/ultimate_cron-3049883.patch",
                 "Readme document spelling error \"tu use\"": "https://www.drupal.org/files/issues/2019-05-22/modify-spelling-error.patch",
-                "Port drush commands to drush 9.x": "https://www.drupal.org/files/issues/2018-07-16/2912724-17.patch",
                 "Node description Should be updated to reflect actual working of node_cron()": "https://www.drupal.org/files/issues/2018-06-06/node-description-update-2965733-2.patch",
                 "The \"ultimate_cron_job\" entity type does not exist.": "https://www.drupal.org/files/issues/ultimate_cron_job-2778357-06-8.x-2.x.patch",
                 "Allow overriding config entities": "https://www.drupal.org/files/issues/2019-11-12/ultimate_cron-override_entities.diff",
@@ -396,6 +397,9 @@
             },
             "drupal/recaptcha": {
                 "Prepare Recaptcha module for Drupal 9": "https://www.drupal.org/files/issues/2020-01-25/3108892-2.patch"
+            },
+            "drupal/redirect": {
+                "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-03-05/updated-3113720-12.patch"
             },
             "drupal/search_api": {
                 "Test for compatibility with Drupal 9":"https://www.drupal.org/files/issues/2020-03-03/3023170-50--prepare_for_drupal_9.patch"
