@@ -26,6 +26,7 @@
         "drupal/ctools": "3.x-dev",
         "drupal/date_popup": "1.x-dev",
         "drupal/diff": "^1.0",
+        "drupal/dynamic_entity_reference": "2.x-dev",
         "drupal/easy_breadcrumb": "1.x-dev",
         "drupal/elasticsearch_connector": "6.x-dev",
         "drupal/embed": "1.x-dev",
