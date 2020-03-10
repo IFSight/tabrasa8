@@ -131,7 +131,7 @@
             "Adminimal Theme: Drupal 9 Readiness patch applied",
             "Advance CSS/JS Aggregation -- dev version 4.x is D9 ready",
             "Allowed Formats: Dev version is D9 ready",
-            "Audit Files -- ver 2.x-dev, patched, ",
+            "Audit Files -- ver 8.x-2.0, patch for D9 readiness fails to apply, https://www.drupal.org/project/auditfiles/issues/3004280",
             "Better Exposed filters Drupal 9 Readiness outstanding issues: https://www.drupal.org/project/better_exposed_filters/issues/3114031",
             "Block field Drupal 9 readiness outstanding issues:  https://www.drupal.org/project/block_field/issues/3042702",
             "CAPTCHA: Drupal 9 Readiness patch applied",
@@ -167,7 +167,7 @@
             "Search API Autocomplete -- tested dev version, code is D9 ready with exception of one issue which will be fixed after Search API 9.x-1.0 is released",
             "SMTP Drupal 9 Readiness -- running beta7 version, applied patch ",
             "Social Media Links Drupal 9 Readiness -- tested 8x.-2.6 with patches, patched it is Drupal 9 ready",
-            "Token Drupal 9 Readiness -- running dev version, patched, is Drupal 9 ready",
+            "Token Drupal 9 Readiness -- running dev version, is Drupal 9 ready",
             "Twig Tweak Drupal 9 Readiness -- running 2.4 which is Drupal 9 ready",
             "Typed Data API Drupal 9 Readiness -- outstanding issue https://www.drupal.org/project/typed_data/issues/3042684, under active development",
             "Ultimate Cron Drupal 9 Readiness -- open issue in issue queue, no work currently, https://www.drupal.org/project/ultimate_cron/issues/3110312",
@@ -180,7 +180,7 @@
             "Adminimal Theme -- dev version for D9 readiniess patch, no active development since May 2019",
             "Advanced CSS/JS Aggregation -- dev version is D9 ready, under active development",
             "Allowed Format -- dev version is D9 ready, under active development",
-            "Audit Files -- ver 2x-dev, patched, no activity since August 2018",
+            "Audit Files -- ver 8.x-2.0, no activity since August 2018",
             "Better Exposed Filters -- dev version, under active development",
             "Block field -- dev version, patched for D9 readiness, no active development since April 2019",
             "CAPTCHA -- dev version, patched for D9 readiness, udner active development",
@@ -214,7 +214,7 @@
             "Search API Autocomplete -- tested dev version, code is D9 ready with exception of one issue (see above), under active development",
             "SMTP -- beta version, under active development",
             "Social Media Links -- version 8.x-2.6 current, no activity since November 2017",
-            "Token -- dev version with patch applied is Drupal 9 ready, under active development",
+            "Token -- dev version is Drupal 9 ready, under active development",
             "Twig Tweak -- version 2.4, Drupal 9 ready, no activity since July 2019",
             "Typed Data API Drupal 9 Readiness -- outstanding issue https://www.drupal.org/project/typed_data/issues/3042684, under active development",
             "URLs queuer (purge_queuer_url) -- rc1 version, no active development since September 2017",
@@ -344,9 +344,6 @@
             "drupal/allowed_formats": {
                 "Store as sequence": "https://www.drupal.org/files/issues/2020-01-20/2733331-10.patch"
             },
-            "drupal/auditfiles": {
-                "Deprecated Code Report":"https://www.drupal.org/files/issues/2019-10-03/deprecated-3004280-4.patch"
-            },
             "drupal/captcha": {
                 "Prepare the module for Drupal 9": "https://www.drupal.org/files/issues/2020-02-19/3102288-23.patch",
                 "captcha_cron() removes captcha_sessions that may still have open PHP sessions": "https://www.drupal.org/files/issues/2019-11-23/3032742-6.captcha.captchacron-removes-captchasessions-that-may-still-have-open-PHP-sessions.patch",
@@ -408,9 +405,6 @@
                 "Accessibility - Platform Name and Aria Label issue.": "https://www.drupal.org/files/issues/2019-03-28/accessibility-3044002-1.patch",
                 "Link Attributes on Field Submodule Missing on Output": "https://www.drupal.org/files/issues/2018-03-14/link_attributes_missing-2929647-2.patch",
                 "Allow rel noopener": "https://www.drupal.org/files/issues/2020-02-15/social_media_links-allow-rel-noopener-2953680-7.patch"
-            },
-            "drupal/token": {
-                "Drupal 9 Deprecated Code Report for Token": "https://www.drupal.org/files/issues/2020-01-18/token_deprecated-3042568-15.patch"
             },
             "drupal/twig_tweak": {
                 "image_style should take null path when a file field is optional": "https://www.drupal.org/files/issues/2019-09-26/image_style_accept_null-3083417-4.patch",
