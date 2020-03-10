@@ -33,6 +33,7 @@
         "drupal/entity_browser": "2.x-dev",
         "drupal/entity_embed": "1.x-dev",
         "drupal/entity_reference_revisions": "1.x-dev",
+        "drupal/entity_usage": "2.x-dev",
         "drupal/environment_indicator": "3.x-dev",
         "drupal/field_group": "^3.0",
         "drupal/file_entity": "2.x-dev",
