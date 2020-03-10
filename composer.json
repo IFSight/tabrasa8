@@ -12,6 +12,7 @@
         "drupal/adminimal_theme": "1.x-dev",
         "drupal/advagg": "4.x-dev",
         "drupal/allowed_formats": "1.x-dev",
+        "drupal/auditfiles": "^2.2",
         "drupal/better_exposed_filters": "4.x-dev",
         "drupal/block_field": "1.x-dev",
         "drupal/captcha": "1.x-dev",
@@ -65,7 +66,7 @@
         "drupal/viewsreference": "^2.0",
         "drupal/webform": "^5.9",
         "drupal/youtube": "^1.0",
-        "drush/drush": "^9.0",
+        "drush/drush": "^10.0",
         "ifsight/if_admin": "^0.1",
         "ifsight/if_helper": "^0.1",
         "ifsight/paladin": "^1.0",
@@ -130,6 +131,7 @@
             "Adminimal Theme: Drupal 9 Readiness patch applied",
             "Advance CSS/JS Aggregation -- dev version 4.x is D9 ready",
             "Allowed Formats: Dev version is D9 ready",
+            "Audit Files -- ver 2.x-dev, patched, ",
             "Better Exposed filters Drupal 9 Readiness outstanding issues: https://www.drupal.org/project/better_exposed_filters/issues/3114031",
             "Block field Drupal 9 readiness outstanding issues:  https://www.drupal.org/project/block_field/issues/3042702",
             "CAPTCHA: Drupal 9 Readiness patch applied",
@@ -178,6 +180,7 @@
             "Adminimal Theme -- dev version for D9 readiniess patch, no active development since May 2019",
             "Advanced CSS/JS Aggregation -- dev version is D9 ready, under active development",
             "Allowed Format -- dev version is D9 ready, under active development",
+            "Audit Files -- ver 2x-dev, patched, no activity since August 2018",
             "Better Exposed Filters -- dev version, under active development",
             "Block field -- dev version, patched for D9 readiness, no active development since April 2019",
             "CAPTCHA -- dev version, patched for D9 readiness, udner active development",
@@ -340,6 +343,9 @@
             },
             "drupal/allowed_formats": {
                 "Store as sequence": "https://www.drupal.org/files/issues/2020-01-20/2733331-10.patch"
+            },
+            "drupal/auditfiles": {
+                "Deprecated Code Report":"https://www.drupal.org/files/issues/2019-10-03/deprecated-3004280-4.patch"
             },
             "drupal/captcha": {
                 "Prepare the module for Drupal 9": "https://www.drupal.org/files/issues/2020-02-19/3102288-23.patch",
