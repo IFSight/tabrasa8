@@ -79,7 +79,6 @@
         "oomphinc/composer-installers-extender": "^1.1",
         "wikimedia/composer-merge-plugin": "~1.4",
         "drupal/config_ignore": "3.x-dev",
-        "drupal/embed": "1.x-dev",
         "drupal/extlink": "1.x-dev",
         "drupal/fontawesome": "2.x-dev",
         "drupal/geolocation": "3.x-dev",
