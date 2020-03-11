@@ -13,7 +13,6 @@
         "drupal/advagg": "4.x-dev",
         "drupal/allowed_formats": "1.x-dev",
         "drupal/auditfiles": "^2.2",
-        "drupal/better_exposed_filters": "4.x-dev",
         "drupal/block_field": "1.x-dev",
         "drupal/captcha": "1.x-dev",
         "drupal/cloudflare": "1.x-dev",
@@ -87,7 +86,7 @@
         "drupal/permissions_filter": "1.x-dev",
         "drupal/search_api_solr": "3.x-dev",
         "drupal/tac_lite": "1.x-dev",
-        "drupal/user_default_page": "2.x-dev",
+        "drupal/user_default_page": "2.0.0-rc1",
         "drupal/video_embed_field": "2.x-dev",
         "drupal/views_taxonomy_term_name_depth": "6.x-dev",
         "drupal/twig_field_value": "1.x-dev",
@@ -102,6 +101,7 @@
         "drupal/block_exclude_pages": "1.x-dev",
         "drupal/siteimprove": "1.x-dev",
         "drupal/scheduler_content_moderation_integration": "1.x-dev",
+        "drupal/better_exposed_filters": "3.x-dev",
         "drupal/selective_better_exposed_filters": "1.x-dev",
         "drupal/text_resize": "1.x-dev"
     },
@@ -302,9 +302,6 @@
             "drupal/core": "-p2"
         },
         "patches": {
-            "drupal/better_exposed_filters": {
-                "Support \"preserve URL Query Parameters\"":"https://www.drupal.org/files/issues/2020-02-27/3116411-2.patch"
-            },
             "drupal/block_field": {
                 "Drupal 9 Deprecated Code Report": "https://www.drupal.org/files/issues/2020-01-30/block-field-d9-3042702-3.patch",
                 "Allow negating the block selection": "https://www.drupal.org/files/issues/2019-04-24/allow_negating_the_block_selection-2898354-7.patch",
