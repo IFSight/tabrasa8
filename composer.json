@@ -102,6 +102,14 @@
     "conflict": {
         "drupal/drupal": "*"
     },
+    "scripts": {
+        "post-install-cmd": [
+            "./scripts/init.sh"
+        ],
+        "post-update-cmd": [
+            "./scripts/init.sh"
+        ]
+    },
     "extra": {
         "drupal-scaffold": {
             "locations": {
