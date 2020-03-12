@@ -12,14 +12,14 @@
 {%
   set classes = [
     'form-radios',
-    isNested ? 'bef_nested'
+    is_nested ? 'bef-nested'
   ]
 %}
 <div{{ attributes.addClass(classes) }}>
   {% set current_nesting_level = 0 %}
   {% for child in children %}
     {% set item = attribute(element, child) %}
-    {% if isNested %}
+    {% if is_nested %}
       {% set new_nesting_level = attribute(depth, child) %}
       {% include '@better_exposed_filters/bef-nested-elements.html.twig' %}
       {% set current_nesting_level = new_nesting_level %}

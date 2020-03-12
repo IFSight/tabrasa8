@@ -2,6 +2,7 @@
 
 namespace Drupal\webprofiler\DataCollector;
 
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\webprofiler\DrupalDataCollectorInterface;
 use Drupal\webprofiler\Form\FormBuilderWrapper;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -17,14 +18,14 @@ class FormsDataCollector extends DataCollector implements DrupalDataCollectorInt
   use StringTranslationTrait, DrupalDataCollectorTrait;
 
   /**
-   * @var \Drupal\webprofiler\Form\FormBuilderWrapper
+   * @var \Drupal\Core\Form\FormBuilderInterface
    */
   private $formBuilder;
 
   /**
-   * @param \Drupal\webprofiler\Form\FormBuilderWrapper $formBuilder
+   * @param \Drupal\Core\Form\FormBuilderInterface $formBuilder
    */
-  public function __construct(FormBuilderWrapper $formBuilder) {
+  public function __construct(FormBuilderInterface $formBuilder) {
     $this->formBuilder = $formBuilder;
 
     $this->data['forms'] = [];
@@ -34,7 +35,11 @@ class FormsDataCollector extends DataCollector implements DrupalDataCollectorInt
    * {@inheritdoc}
    */
   public function collect(Request $request, Response $response, \Exception $exception = NULL) {
-    $this->data['forms'] = $this->formBuilder->getBuildForm();
+    $this->data['forms'] = [];
+
+    if ($this->formBuilder instanceof FormBuilderWrapper) {
+      $this->data['forms'] = $this->formBuilder->getBuildForm();
+    }
   }
 
   /**

@@ -1,6 +1,6 @@
 id: d6_recaptcha_settings
 label: reCAPTCHA 6 configuration
-migration_groups:
+migration_tags:
   - Drupal 6
   - Configuration
 source:

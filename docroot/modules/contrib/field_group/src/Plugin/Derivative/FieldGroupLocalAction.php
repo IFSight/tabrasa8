@@ -63,7 +63,7 @@ class FieldGroupLocalAction extends DeriverBase implements ContainerDeriverInter
       if ($entity_type->get('field_ui_base_route')) {
 
         $default_options = [
-          'title' => $this->t('Add group'),
+          'title' => $this->t('Add field group'),
         ];
 
         $this->derivatives['field_group_add_' . $entity_type_id . '_form_display'] = [

@@ -22,7 +22,7 @@
         {% if new_nesting_level > current_nesting_level  %}
           <ul>
         {% else %}
-          </li></ul>
+          </ul>
         {% endif %}
       {% endfor %}
     {% endif %}
@@ -33,8 +33,7 @@
   {% if loop.last %}
     {# Close any remaining <li> tags #}
     {% for i in new_nesting_level..0 %}
-      </li>
+      </li></ul>
     {% endfor %}
-    </ul>
   {% endif %}
 {% endspaceless %}

@@ -1,0 +1,14 @@
+name: 'Allowed formats base fields test'
+type: module
+description: 'Support module for allowed formats testing on base fields.'
+package: Testing
+# version: VERSION
+core: 8.x
+dependencies:
+  drupal:taxonomy
+  drupal:allowed_formats
+
+# Information added by Drupal.org packaging script on 2019-11-14
+version: '8.x-1.2'
+project: 'allowed_formats'
+datestamp: 1573747389

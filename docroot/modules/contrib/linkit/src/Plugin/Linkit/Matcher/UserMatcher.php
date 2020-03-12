@@ -1,17 +1,19 @@
 <?php
 
-namespace Drupal\linkit\Plugin\Linkit\Matcher;
+/**
+ * @file
+ * Contains \Drupal\linkit\Plugin\Linkit\Matcher\UserMatcher.
+ */
 
+namespace Drupal\linkit\Plugin\Linkit\Matcher;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\RoleInterface;
 
 /**
- * Provides specific linkit matchers for the user entity type.
- *
  * @Matcher(
  *   id = "entity:user",
- *   label = @Translation("User"),
  *   target_entity = "user",
+ *   label = @Translation("User"),
  *   provider = "user"
  * )
  */
@@ -39,11 +41,12 @@ class UserMatcher extends EntityMatcher {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    return parent::defaultConfiguration() + [
       'roles' => [],
       'include_blocked' => FALSE,
-    ] + parent::defaultConfiguration();
+    ];
   }
+
 
   /**
    * {@inheritdoc}
@@ -60,33 +63,20 @@ class UserMatcher extends EntityMatcher {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
-    $form['role_restrictions'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Role restrictions'),
-      '#open' => TRUE,
-      '#weight' => -90,
-    ];
-
-    $form['role_restrictions']['roles'] = [
+    $form['roles'] = array(
       '#type' => 'checkboxes',
       '#title' => $this->t('Restrict to the selected roles'),
-      '#options' => array_diff_key(user_role_names(TRUE), [RoleInterface::AUTHENTICATED_ID => RoleInterface::AUTHENTICATED_ID]),
-      '#default_value' => $this->configuration['roles'],
-      '#description' => $this->t('If none of the checkboxes is checked, all roles are allowed.'),
+      '#options' => array_diff_key(user_role_names(TRUE), array(RoleInterface::AUTHENTICATED_ID => RoleInterface::AUTHENTICATED_ID)),
+      '#default_value' =>  $this->configuration['roles'],
+      '#description' => $this->t('If none of the checkboxes is checked, allow all roles.'),
       '#element_validate' => [[get_class($this), 'elementValidateFilter']],
-    ];
+    );
 
-    $form['blocked_users'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Blocked users'),
-      '#open' => TRUE,
-    ];
-
-    $form['blocked_users']['include_blocked'] = [
-      '#title' => $this->t('Include blocked user'),
+    $form['include_blocked'] = [
+      '#title' => t('Include blocked user'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['include_blocked'],
-      '#description' => $this->t('In order to see blocked users, users must have permissions to do so.'),
+      '#description' => t('In order to see blocked users, the requesting user must also have permissions to do so.'),
     ];
 
     return $form;
@@ -105,12 +95,12 @@ class UserMatcher extends EntityMatcher {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($search_string) {
-    $query = parent::buildEntityQuery($search_string);
+  protected function buildEntityQuery($match) {
+    $query = parent::buildEntityQuery($match);
 
-    $search_string = $this->database->escapeLike($search_string);
+    $match = $this->database->escapeLike($match);
     // The user entity don't specify a label key so we have to do it instead.
-    $query->condition('name', '%' . $search_string . '%', 'LIKE');
+    $query->condition('name', '%' . $match . '%', 'LIKE');
 
     // Filter by role.
     if (!empty($this->configuration['roles'])) {

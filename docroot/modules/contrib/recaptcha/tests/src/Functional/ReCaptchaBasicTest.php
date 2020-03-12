@@ -5,6 +5,7 @@ namespace Drupal\Tests\recaptcha\Functional;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Html;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Test basic functionality of reCAPTCHA module.
@@ -14,6 +15,8 @@ use Drupal\Tests\BrowserTestBase;
  * @dependencies captcha
  */
 class ReCaptchaBasicTest extends BrowserTestBase {
+
+  use StringTranslationTrait;
 
   /**
    * A normal user.
@@ -66,7 +69,7 @@ class ReCaptchaBasicTest extends BrowserTestBase {
   public function testReCaptchaAdminAccess() {
     $this->drupalLogin($this->adminUser);
     $this->drupalGet('admin/config/people/captcha/recaptcha');
-    $this->assertSession()->pageTextNotContains(t('Access denied'), 'Admin users should be able to access the reCAPTCHA admin page', 'reCAPTCHA');
+    $this->assertSession()->pageTextNotContains($this->t('Access denied'), 'Admin users should be able to access the reCAPTCHA admin page', 'reCAPTCHA');
     $this->drupalLogout();
   }
 
@@ -82,21 +85,21 @@ class ReCaptchaBasicTest extends BrowserTestBase {
     // Check form validation.
     $edit['recaptcha_site_key'] = '';
     $edit['recaptcha_secret_key'] = '';
-    $this->drupalPostForm('admin/config/people/captcha/recaptcha', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/people/captcha/recaptcha', $edit, $this->t('Save configuration'));
 
-    $this->assertSession()->responseContains(t('Site key field is required.'), '[testReCaptchaConfiguration]: Empty site key detected.');
-    $this->assertSession()->responseContains(t('Secret key field is required.'), '[testReCaptchaConfiguration]: Empty secret key detected.');
+    $this->assertSession()->responseContains($this->t('Site key field is required.'), '[testReCaptchaConfiguration]: Empty site key detected.');
+    $this->assertSession()->responseContains($this->t('Secret key field is required.'), '[testReCaptchaConfiguration]: Empty secret key detected.');
 
     // Save form with valid values.
     $edit['recaptcha_site_key'] = $site_key;
     $edit['recaptcha_secret_key'] = $secret_key;
     $edit['recaptcha_tabindex'] = 0;
-    $this->drupalPostForm('admin/config/people/captcha/recaptcha', $edit, t('Save configuration'));
-    $this->assertSession()->responseContains(t('The configuration options have been saved.'), '[testReCaptchaConfiguration]: The configuration options have been saved.');
+    $this->drupalPostForm('admin/config/people/captcha/recaptcha', $edit, $this->t('Save configuration'));
+    $this->assertSession()->responseContains($this->t('The configuration options have been saved.'), '[testReCaptchaConfiguration]: The configuration options have been saved.');
 
-    $this->assertSession()->responseNotContains(t('Site key field is required.'), '[testReCaptchaConfiguration]: Site key was not empty.');
-    $this->assertSession()->responseNotContains(t('Secret key field is required.'), '[testReCaptchaConfiguration]: Secret key was not empty.');
-    $this->assertSession()->responseNotContains(t('The tabindex must be an integer.'), '[testReCaptchaConfiguration]: Tab index had a valid input.');
+    $this->assertSession()->responseNotContains($this->t('Site key field is required.'), '[testReCaptchaConfiguration]: Site key was not empty.');
+    $this->assertSession()->responseNotContains($this->t('Secret key field is required.'), '[testReCaptchaConfiguration]: Secret key was not empty.');
+    $this->assertSession()->responseNotContains($this->t('The tabindex must be an integer.'), '[testReCaptchaConfiguration]: Tab index had a valid input.');
 
     $this->drupalLogout();
   }
@@ -132,7 +135,7 @@ class ReCaptchaBasicTest extends BrowserTestBase {
     // and security key have not yet configured for reCAPTCHA. The module need
     // to fall back to math captcha.
     $this->drupalGet('user/login');
-    $this->assertSession()->responseContains(t('Math question'), '[testReCaptchaOnLoginForm]: Math CAPTCHA is shown on form.');
+    $this->assertSession()->responseContains($this->t('Math question'), '[testReCaptchaOnLoginForm]: Math CAPTCHA is shown on form.');
 
     // Configure site key and security key to show reCAPTCHA and no fall back.
     $this->config('recaptcha.settings')->set('site_key', $site_key)->save();
@@ -196,9 +199,9 @@ class ReCaptchaBasicTest extends BrowserTestBase {
       ->hiddenFieldExists('captcha_response')
       ->setValue('?');
 
-    $this->drupalPostForm('user/login', $edit, t('Log in'));
+    $this->drupalPostForm('user/login', $edit, $this->t('Log in'));
     // Check for error message.
-    $this->assertSession()->pageTextContains(t('The answer you entered for the CAPTCHA was not correct.'), 'CAPTCHA should block user login form', 'reCAPTCHA');
+    $this->assertSession()->pageTextContains($this->t('The answer you entered for the CAPTCHA was not correct.'), 'CAPTCHA should block user login form', 'reCAPTCHA');
 
     // And make sure that user is not logged in: check for name and password
     // fields on "?q=user".

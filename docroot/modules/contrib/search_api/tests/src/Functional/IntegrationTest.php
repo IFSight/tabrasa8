@@ -299,6 +299,9 @@ class IntegrationTest extends SearchApiBrowserTestBase {
         ->get('search_api.plugin_helper')
         ->$method($dummy_index);
       foreach ($plugins as $plugin) {
+        if ($plugin->isHidden()) {
+          continue;
+        }
         $description = Utility::escapeHtml($plugin->getDescription());
         $this->assertSession()->responseContains($description);
       }
@@ -312,7 +315,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->submitForm($edit, 'Save');
     $this->assertSession()->pageTextContains('Index name field is required.');
     $this->assertSession()->pageTextContains('Machine-readable name field is required.');
-    $this->assertSession()->pageTextContains('Data sources field is required.');
+    $this->assertSession()->pageTextContains('Datasources field is required.');
 
     $edit = [
       'name' => $index_name,
@@ -477,7 +480,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
   }
 
   /**
-   * Tests that an entity without bundles can be used as a data source.
+   * Tests that an entity without bundles can be used as a datasource.
    */
   protected function checkUserIndexCreation() {
     $edit = [
@@ -1503,7 +1506,7 @@ class IntegrationTest extends SearchApiBrowserTestBase {
     $this->assertEquals($manipulated_items_count + 1, $this->countItemsOnServer());
 
     $this->drupalPostForm($this->getIndexPath('reindex'), [], 'Confirm');
-    $assert_session->pageTextContains("The search index $label was successfully reindexed.");
+    $assert_session->pageTextContains("The search index $label was successfully queued for reindexing.");
     $this->assertEquals(0, $tracker->getIndexedItemsCount());
     $this->assertEquals($manipulated_items_count, $tracker->getTotalItemsCount());
     $this->assertEquals($manipulated_items_count + 1, $this->countItemsOnServer());

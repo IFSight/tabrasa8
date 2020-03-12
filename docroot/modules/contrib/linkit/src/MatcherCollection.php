@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\MatcherCollection.
+ */
+
 namespace Drupal\linkit;
 
 use Drupal\Core\Plugin\DefaultLazyPluginCollection;
@@ -15,6 +20,15 @@ class MatcherCollection extends DefaultLazyPluginCollection {
    * @var array
    */
   protected $definitions;
+
+  /**
+   * {@inheritdoc}
+   *
+   * @return \Drupal\linkit\MatcherInterface
+   */
+  public function &get($instance_id) {
+    return parent::get($instance_id);
+  }
 
   /**
    * {@inheritdoc}

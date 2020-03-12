@@ -27,7 +27,7 @@ class Details extends FieldGroupFormatterBase {
 
     $element += [
       '#type' => 'details',
-      '#title' => Html::escape($this->t($this->getLabel())),
+      '#title' => $this->getLabel(),
       '#open' => $this->getSetting('open'),
       '#description' => $this->getSetting('description'),
     ];

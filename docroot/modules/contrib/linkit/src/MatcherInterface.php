@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\MatcherInterface.
+ */
+
 namespace Drupal\linkit;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Defines the interface for matchers.
@@ -58,14 +64,21 @@ interface MatcherInterface extends PluginInspectionInterface, ConfigurablePlugin
   public function setWeight($weight);
 
   /**
-   * Executes the matcher.
+   * Gets an array with search matches that will be presented in the autocomplete
+   * widget.
    *
-   * @param string $string
+   * @param $string
    *   The string that contains the text to search for.
    *
-   * @return \Drupal\linkit\Suggestion\SuggestionCollection
-   *   A suggestion collection.
+   * @return array
+   *   An array whose values are an associative array containing:
+   *   - title: A string to use as the search result label.
+   *   - description: (optional) A string with additional information about the
+   *     result item.
+   *   - path: The URL to the item.
+   *   - group: (optional) A string with the group name for the result item.
+   *     Best practice is to use the plugin name as group name.
    */
-  public function execute($string);
+  public function getMatches($string);
 
 }

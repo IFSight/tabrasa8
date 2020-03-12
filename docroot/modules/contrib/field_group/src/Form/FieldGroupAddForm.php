@@ -112,10 +112,10 @@ class FieldGroupAddForm extends FormBase {
     $this->context = $context;
 
     if ($context == 'form') {
-      $this->mode = \Drupal::request()->get('form_mode_name');
+      $this->mode = $this->getRequest()->get('form_mode_name');
     }
     else {
-      $this->mode = \Drupal::request()->get('view_mode_name');
+      $this->mode = $this->getRequest()->get('view_mode_name');
     }
 
     if (empty($this->mode)) {
@@ -153,7 +153,7 @@ class FieldGroupAddForm extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Add a new group'),
       '#options' => $formatter_options,
-      '#empty_option' => $this->t('- Select a group type -'),
+      '#empty_option' => $this->t('- Select a field group type -'),
       '#required' => TRUE,
     ];
 
@@ -272,6 +272,7 @@ class FieldGroupAddForm extends FormBase {
         'parent_name' => '',
         'weight' => 20,
         'format_type' => $form_state->get('group_formatter'),
+        'region' => 'hidden',
       ];
 
       $new_group->format_settings = $form_state->getValue('format_settings');

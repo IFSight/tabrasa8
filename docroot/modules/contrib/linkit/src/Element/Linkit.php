@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Element\Linkit.
+ */
+
 namespace Drupal\linkit\Element;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Render\Element\Textfield;
 use Drupal\Core\Url;
@@ -20,21 +26,20 @@ class Linkit extends FormElement {
    */
   public function getInfo() {
     $class = get_class($this);
-    return [
+    return array(
       '#input' => TRUE,
       '#size' => 60,
-      '#process' => [
-        [$class, 'processLinkitAutocomplete'],
-        [$class, 'processGroup'],
-        [$class, 'processAjaxForm'],
-      ],
-      '#pre_render' => [
-        [$class, 'preRenderLinkitElement'],
-        [$class, 'preRenderGroup'],
-      ],
+      '#process' => array(
+        array($class, 'processLinkitAutocomplete'),
+        array($class, 'processGroup'),
+      ),
+      '#pre_render' => array(
+        array($class, 'preRenderLinkitElement'),
+        array($class, 'preRenderGroup'),
+      ),
       '#theme' => 'input__textfield',
-      '#theme_wrappers' => ['form_element'],
-    ];
+      '#theme_wrappers' => array('form_element'),
+    );
   }
 
   /**
@@ -58,7 +63,7 @@ class Linkit extends FormElement {
     $access = FALSE;
 
     if (!empty($element['#autocomplete_route_name'])) {
-      $parameters = isset($element['#autocomplete_route_parameters']) ? $element['#autocomplete_route_parameters'] : [];
+      $parameters = isset($element['#autocomplete_route_parameters']) ? $element['#autocomplete_route_parameters'] : array();
       $url = Url::fromRoute($element['#autocomplete_route_name'], $parameters)->toString(TRUE);
       /** @var \Drupal\Core\Access\AccessManagerInterface $access_manager */
       $access_manager = \Drupal::service('access_manager');
@@ -83,10 +88,21 @@ class Linkit extends FormElement {
   }
 
   /**
-   * {@inheritdoc}
+   * Prepares a #type 'linkit' render element for input.html.twig.
+   *
+   * @param array $element
+   *   An associative array containing the properties of the element.
+   *   Properties used: #title, #value, #description, #size, #attributes.
+   *
+   * @return array
+   *   The $element with prepared variables ready for input.html.twig.
    */
   public static function preRenderLinkitElement($element) {
-    return Textfield::preRenderTextfield($element);
+    $element['#attributes']['type'] = 'text';
+    Element::setAttributes($element, array('id', 'name', 'value', 'size'));
+    static::setAttributes($element, array('form-text'));
+
+    return $element;
   }
 
 }

@@ -1,21 +1,35 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit_test\Plugin\Linkit\Matcher\ConfigurableDummyMatcher.
+ */
+
 namespace Drupal\linkit_test\Plugin\Linkit\Matcher;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\linkit\ConfigurableMatcherBase;
-use Drupal\linkit\Suggestion\DescriptionSuggestion;
-use Drupal\linkit\Suggestion\SuggestionCollection;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 
 /**
- * Provides test linkit matchers for the configurable_dummy_matcher entity type.
- *
  * @Matcher(
  *   id = "configurable_dummy_matcher",
  *   label = @Translation("Configurable Dummy Matcher"),
  * )
  */
 class ConfigurableDummyMatcher extends ConfigurableMatcherBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -55,17 +69,15 @@ class ConfigurableDummyMatcher extends ConfigurableMatcherBase {
   /**
    * {@inheritdoc}
    */
-  public function execute($string) {
-    $suggestions = new SuggestionCollection();
-    $suggestion = new DescriptionSuggestion();
-    $suggestion->setLabel('Configurable Dummy Matcher title')
-      ->setPath('http://example.com')
-      ->setGroup('Configurable Dummy Matcher')
-      ->setDescription('Configurable Dummy Matcher description');
+  public function getMatches($string) {
+    $matches[] = [
+      'title' => 'Configurable Dummy Matcher title',
+      'description' => 'Configurable Dummy Matcher description',
+      'path' => 'http://example.com',
+      'group' => 'Configurable Dummy Matcher',
+    ];
 
-    $suggestions->addSuggestion($suggestion);
-
-    return $suggestions;
+    return $matches;
   }
 
 }

@@ -1,18 +1,20 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Plugin\Linkit\Matcher\TermMatcher.
+ */
+
 namespace Drupal\linkit\Plugin\Linkit\Matcher;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\linkit\Utility\LinkitXss;
 
 /**
- * Provides specific linkit matchers for the taxonomy_term entity type.
- *
  * @Matcher(
  *   id = "entity:taxonomy_term",
- *   label = @Translation("Taxonomy term"),
  *   target_entity = "taxonomy_term",
+ *   label = @Translation("Taxonomy term"),
  *   provider = "taxonomy"
  * )
  */
@@ -39,8 +41,8 @@ class TermMatcher extends EntityMatcher {
   /**
    * {@inheritdoc}
    */
-  protected function buildDescription(EntityInterface $entity) {
-    $description = \Drupal::token()->replace($this->configuration['metadata'], ['term' => $entity], []);
+  protected function buildDescription($entity) {
+    $description = \Drupal::token()->replace($this->configuration['result_description'], ['term' => $entity], []);
     return LinkitXss::descriptionFilter($description);
   }
 

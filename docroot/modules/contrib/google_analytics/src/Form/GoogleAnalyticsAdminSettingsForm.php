@@ -3,14 +3,32 @@
 namespace Drupal\google_analytics\Form;
 
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\google_analytics\GoogleAnalitycsInterface;
 
 /**
  * Configure Google_Analytics settings for this site.
  */
 class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
+
+  protected $moduleHandler;
+
+  protected $currentUser;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, AccountInterface $currentUser, ModuleHandler $moduleHandler) {
+    parent::__construct($config_factory);
+    $this->currentUser = $currentUser;
+    $this->moduleHandler = $moduleHandler;
+  }
 
   /**
    * {@inheritdoc}
@@ -40,7 +58,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
 
     $form['general']['google_analytics_account'] = [
       '#default_value' => $config->get('account'),
-      '#description' => $this->t('This ID is unique to each site you want to track separately, and is in the form of UA-xxxxxxx-yy. To get a Web Property ID, <a href=":analytics">register your site with Google Analytics</a>, or if you already have registered your site, go to your Google Analytics Settings page to see the ID next to every site profile. <a href=":webpropertyid">Find more information in the documentation</a>.', [':analytics' => 'http://www.google.com/analytics/', ':webpropertyid' => Url::fromUri('https://developers.google.com/analytics/resources/concepts/gaConceptsAccounts', ['fragment' => 'webProperty'])->toString()]),
+      '#description' => $this->t('This ID is unique to each site you want to track separately, and is in the form of UA-xxxxxxx-yy. To get a Web Property ID, <a href=":analytics">register your site with Google Analytics</a>, or if you already have registered your site, go to your Google Analytics Settings page to see the ID next to every site profile. <a href=":webpropertyid">Find more information in the documentation</a>.', [':analytics' => 'https://marketingplatform.google.com/about/analytics/', ':webpropertyid' => Url::fromUri('https://developers.google.com/analytics/resources/concepts/gaConceptsAccounts', ['fragment' => 'webProperty'])->toString()]),
       '#maxlength' => 20,
       '#placeholder' => 'UA-',
       '#required' => TRUE,
@@ -133,7 +151,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     ];
 
     // Page specific visibility configurations.
-    $account = \Drupal::currentUser();
+    $account = $this->currentUser;
     $php_access = $account->hasPermission('use PHP for google analytics tracking visibility');
     $visibility_request_path_pages = $config->get('visibility.request_path_pages');
 
@@ -155,7 +173,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       ];
       $description = $this->t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", ['%blog' => '/blog', '%blog-wildcard' => '/blog/*', '%front' => '<front>']);
 
-      if (\Drupal::moduleHandler()->moduleExists('php') && $php_access) {
+      if ($this->moduleHandler->moduleExists('php') && $php_access) {
         $options[] = $this->t('Pages on which this PHP code returns <code>TRUE</code> (experts only)');
         $title = $this->t('Pages or PHP code');
         $description .= ' ' . $this->t('If the PHP option is chosen, enter PHP code between %php. Note that executing incorrect PHP code can break your Drupal site.', ['%php' => '<?php ?>']);
@@ -257,7 +275,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#title_display' => 'invisible',
       '#type' => 'textfield',
       '#default_value' => $config->get('track.files_extensions'),
-      '#description' => $this->t('A file extension list separated by the | character that will be tracked as download when clicked. Regular expressions are supported. For example: @extensions', ['@extensions' => GOOGLE_ANALYTICS_TRACKFILES_EXTENSIONS]),
+      '#description' => $this->t('A file extension list separated by the | character that will be tracked as download when clicked. Regular expressions are supported. For example: @extensions', ['@extensions' => GoogleAnalitycsInterface::GOOGLE_ANALYTICS_TRACKFILES_EXTENSIONS]),
       '#maxlength' => 500,
       '#states' => [
         'enabled' => [
@@ -271,7 +289,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     ];
 
     $colorbox_dependencies = '<div class="admin-requirements">';
-    $colorbox_dependencies .= $this->t('Requires: @module-list', ['@module-list' => (\Drupal::moduleHandler()->moduleExists('colorbox') ? $this->t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Colorbox']) : $this->t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Colorbox']))]);
+    $colorbox_dependencies .= $this->t('Requires: @module-list', ['@module-list' => ($this->moduleHandler->moduleExists('colorbox') ? $this->t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Colorbox']) : $this->t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Colorbox']))]);
     $colorbox_dependencies .= '</div>';
 
     $form['tracking']['linktracking']['google_analytics_trackcolorbox'] = [
@@ -279,7 +297,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Track content in colorbox modal dialogs'),
       '#description' => $this->t('Enable to track the content shown in colorbox modal windows.') . $colorbox_dependencies,
       '#default_value' => $config->get('track.colorbox'),
-      '#disabled' => (\Drupal::moduleHandler()->moduleExists('colorbox') ? FALSE : TRUE),
+      '#disabled' => ($this->moduleHandler->moduleExists('colorbox') ? FALSE : TRUE),
     ];
 
     $form['tracking']['linktracking']['google_analytics_tracklinkid'] = [
@@ -321,7 +339,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     ];
 
     $site_search_dependencies = '<div class="admin-requirements">';
-    $site_search_dependencies .= $this->t('Requires: @module-list', ['@module-list' => (\Drupal::moduleHandler()->moduleExists('search') ? $this->t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Search']) : $this->t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Search']))]);
+    $site_search_dependencies .= $this->t('Requires: @module-list', ['@module-list' => ($this->moduleHandler->moduleExists('search') ? $this->t('@module (<span class="admin-enabled">enabled</span>)', ['@module' => 'Search']) : $this->t('@module (<span class="admin-missing">disabled</span>)', ['@module' => 'Search']))]);
     $site_search_dependencies .= '</div>';
 
     $form['tracking']['search_and_advertising']['google_analytics_site_search'] = [
@@ -329,7 +347,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Track internal search'),
       '#description' => $this->t('If checked, internal search keywords are tracked. You must configure your Google account to use the internal query parameter <strong>search</strong>. For more information see <a href=":url">Setting Up Site Search for a Profile</a>.', [':url' => 'https://support.google.com/analytics/answer/1012264']) . $site_search_dependencies,
       '#default_value' => $config->get('track.site_search'),
-      '#disabled' => (\Drupal::moduleHandler()->moduleExists('search') ? FALSE : TRUE),
+      '#disabled' => ($this->moduleHandler->moduleExists('search') ? FALSE : TRUE),
     ];
     $form['tracking']['search_and_advertising']['google_analytics_trackadsense'] = [
       '#type' => 'checkbox',
@@ -369,6 +387,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#type' => 'table',
       '#header' => [
         ['data' => $this->t('Index')],
+        ['data' => $this->t('Name')],
         ['data' => $this->t('Value')],
       ],
     ];
@@ -388,6 +407,14 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
         '#title_display' => 'invisible',
         '#type' => 'textfield',
       ];
+      $form['google_analytics_custom_dimension']['indexes'][$i]['name'] = [
+        '#default_value' => isset($google_analytics_custom_dimension[$i]['name']) ? $google_analytics_custom_dimension[$i]['name'] : '',
+        '#description' => $this->t('The custom dimension name.'),
+        '#maxlength' => 255,
+        '#title' => $this->t('Custom dimension name #@index', ['@index' => $i]),
+        '#title_display' => 'invisible',
+        '#type' => 'textfield',
+      ];
       $form['google_analytics_custom_dimension']['indexes'][$i]['value'] = [
         '#default_value' => isset($google_analytics_custom_dimension[$i]['value']) ? $google_analytics_custom_dimension[$i]['value'] : '',
         '#description' => $this->t('The custom dimension value.'),
@@ -398,16 +425,16 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
         '#element_validate' => [[get_class($this), 'tokenElementValidate']],
         '#token_types' => ['node'],
       ];
-      if (\Drupal::moduleHandler()->moduleExists('token')) {
+      if ($this->moduleHandler->moduleExists('token')) {
         $form['google_analytics_custom_dimension']['indexes'][$i]['value']['#element_validate'][] = 'token_element_validate';
       }
     }
 
     $form['google_analytics_custom_dimension']['google_analytics_description'] = [
       '#type' => 'item',
-      '#description' => $this->t('You can supplement Google Analytics\' basic IP address tracking of visitors by segmenting users based on custom dimensions. Section 7 of the <a href=":ga_tos">Google Analytics terms of service</a> requires that You will not (and will not allow any third party to) use the Service to track, collect or upload any data that personally identifies an individual (such as a name, userid, email address or billing information), or other data which can be reasonably linked to such information by Google. You will have and abide by an appropriate Privacy Policy and will comply with all applicable laws and regulations relating to the collection of information from Visitors. You must post a Privacy Policy and that Privacy Policy must provide notice of Your use of cookies that are used to collect traffic data, and You must not circumvent any privacy features (e.g., an opt-out) that are part of the Service.', [':ga_tos' => 'http://www.google.com/analytics/terms/gb.html']),
+      '#description' => $this->t('You can supplement Google Analytics\' basic IP address tracking of visitors by segmenting users based on custom dimensions. Section 7 of the <a href=":ga_tos">Google Analytics terms of service</a> requires that You will not (and will not allow any third party to) use the Service to track, collect or upload any data that personally identifies an individual (such as a name, userid, email address or billing information), or other data which can be reasonably linked to such information by Google. You will have and abide by an appropriate Privacy Policy and will comply with all applicable laws and regulations relating to the collection of information from Visitors. You must post a Privacy Policy and that Privacy Policy must provide notice of Your use of cookies that are used to collect traffic data, and You must not circumvent any privacy features (e.g., an opt-out) that are part of the Service.', [':ga_tos' => 'https://www.google.com/analytics/terms/gb.html']),
     ];
-    if (\Drupal::moduleHandler()->moduleExists('token')) {
+    if ($this->moduleHandler->moduleExists('token')) {
       $form['google_analytics_custom_dimension']['google_analytics_token_tree'] = [
         '#theme' => 'token_tree_link',
         '#token_types' => ['node'],
@@ -426,6 +453,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#type' => 'table',
       '#header' => [
         ['data' => $this->t('Index')],
+        ['data' => $this->t('Name')],
         ['data' => $this->t('Value')],
       ],
     ];
@@ -444,6 +472,14 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
         '#title_display' => 'invisible',
         '#type' => 'textfield',
       ];
+      $form['google_analytics_custom_metric']['indexes'][$i]['name'] = [
+        '#default_value' => isset($google_analytics_custom_metric[$i]['name']) ? $google_analytics_custom_metric[$i]['name'] : '',
+        '#description' => $this->t('The custom metric name.'),
+        '#maxlength' => 255,
+        '#title' => $this->t('Custom metric name #@index', ['@index' => $i]),
+        '#title_display' => 'invisible',
+        '#type' => 'textfield',
+      ];
       $form['google_analytics_custom_metric']['indexes'][$i]['value'] = [
         '#default_value' => isset($google_analytics_custom_metric[$i]['value']) ? $google_analytics_custom_metric[$i]['value'] : '',
         '#description' => $this->t('The custom metric value.'),
@@ -454,16 +490,16 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
         '#element_validate' => [[get_class($this), 'tokenElementValidate']],
         '#token_types' => ['node'],
       ];
-      if (\Drupal::moduleHandler()->moduleExists('token')) {
+      if ($this->moduleHandler->moduleExists('token')) {
         $form['google_analytics_custom_metric']['indexes'][$i]['value']['#element_validate'][] = 'token_element_validate';
       }
     }
 
     $form['google_analytics_custom_metric']['google_analytics_description'] = [
       '#type' => 'item',
-      '#description' => $this->t('You can supplement Google Analytics\' basic IP address tracking of visitors by segmenting users based on custom metrics. Section 7 of the <a href=":ga_tos">Google Analytics terms of service</a> requires that You will not (and will not allow any third party to) use the Service to track, collect or upload any data that personally identifies an individual (such as a name, userid, email address or billing information), or other data which can be reasonably linked to such information by Google. You will have and abide by an appropriate Privacy Policy and will comply with all applicable laws and regulations relating to the collection of information from Visitors. You must post a Privacy Policy and that Privacy Policy must provide notice of Your use of cookies that are used to collect traffic data, and You must not circumvent any privacy features (e.g., an opt-out) that are part of the Service.', [':ga_tos' => 'http://www.google.com/analytics/terms/gb.html']),
+      '#description' => $this->t('You can supplement Google Analytics\' basic IP address tracking of visitors by segmenting users based on custom metrics. Section 7 of the <a href=":ga_tos">Google Analytics terms of service</a> requires that You will not (and will not allow any third party to) use the Service to track, collect or upload any data that personally identifies an individual (such as a name, userid, email address or billing information), or other data which can be reasonably linked to such information by Google. You will have and abide by an appropriate Privacy Policy and will comply with all applicable laws and regulations relating to the collection of information from Visitors. You must post a Privacy Policy and that Privacy Policy must provide notice of Your use of cookies that are used to collect traffic data, and You must not circumvent any privacy features (e.g., an opt-out) that are part of the Service.', [':ga_tos' => 'https://www.google.com/analytics/terms/gb.html']),
     ];
-    if (\Drupal::moduleHandler()->moduleExists('token')) {
+    if ($this->moduleHandler->moduleExists('token')) {
       $form['google_analytics_custom_metric']['google_analytics_token_tree'] = [
         '#theme' => 'token_tree_link',
         '#token_types' => ['node'],
@@ -485,7 +521,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     ];
 
     // Allow for tracking of the originating node when viewing translation sets.
-    if (\Drupal::moduleHandler()->moduleExists('content_translation')) {
+    if ($this->moduleHandler->moduleExists('content_translation')) {
       $form['advanced']['google_analytics_translation_set'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Track translation sets as one unit'),
@@ -500,15 +536,15 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Custom JavaScript code'),
       '#open' => TRUE,
-      '#description' => $this->t('You can add custom Google Analytics <a href=":snippets">code snippets</a> here. These will be added every time tracking is in effect. Before you add your custom code, you should read the <a href=":ga_concepts_overview">Google Analytics Tracking Code - Functional Overview</a> and the <a href=":ga_js_api">Google Analytics Tracking API</a> documentation. <strong>Do not include the &lt;script&gt; tags</strong>, and always end your code with a semicolon (;).', [':snippets' => 'http://drupal.org/node/248699', ':ga_concepts_overview' => 'https://developers.google.com/analytics/resources/concepts/gaConceptsTrackingOverview', ':ga_js_api' => 'https://developers.google.com/analytics/devguides/collection/analyticsjs/method-reference']),
+      '#description' => $this->t('You can add custom Google Analytics <a href=":snippets">code snippets</a> here. These will be added every time tracking is in effect. Before you add your custom code, you should read the <a href=":ga_concepts_overview">Google Analytics Tracking Code - Functional Overview</a> and the <a href=":ga_js_api">Google Analytics Tracking API</a> documentation. <strong>Do not include the &lt;script&gt; tags</strong>, and always end your code with a semicolon (;).', [':snippets' => 'https://drupal.org/node/248699', ':ga_concepts_overview' => 'https://developers.google.com/analytics/resources/concepts/gaConceptsTrackingOverview', ':ga_js_api' => 'https://developers.google.com/analytics/devguides/collection/analyticsjs/method-reference']),
     ];
     $form['advanced']['codesnippet']['google_analytics_codesnippet_create'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Create only fields'),
+      '#title' => $this->t('Parameters'),
       '#default_value' => $this->getNameValueString($config->get('codesnippet.create')),
       '#rows' => 5,
-      '#description' => $this->t('Enter one value per line, in the format name|value. Settings in this textarea will be added to <code>ga("create", "UA-XXXX-Y", {"name":"value"});</code>. For more information, read <a href=":url">create only fields</a> documentation in the Analytics.js field reference.', [':url' => 'https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#create']),
-      '#element_validate' => [[get_class($this), 'validateCreateFieldValues']],
+      '#description' => $this->t('Enter one value per line, in the format name|value. Settings in this textarea will be added to <code>gtag("config", "UA-XXXX-Y", {"name":"value"});</code>. For more information, read <a href=":url">documentation</a> in the gtag.js reference.', [':url' => 'https://developers.google.com/analytics/devguides/collection/gtagjs/']),
+      '#element_validate' => [[get_class($this), 'validateParameterValues']],
     ];
     $form['advanced']['codesnippet']['google_analytics_codesnippet_before'] = [
       '#type' => 'textarea',
@@ -516,7 +552,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('codesnippet.before'),
       '#disabled' => $user_access_add_js_snippets,
       '#rows' => 5,
-      '#description' => $this->t('Code in this textarea will be added <strong>before</strong> <code>ga("send", "pageview");</code>.') . $user_access_add_js_snippets_permission_warning,
+      '#description' => $this->t('Code in this textarea will be added <strong>before</strong> <code>gtag("config", "UA-XXXX-Y");</code>.') . $user_access_add_js_snippets_permission_warning,
     ];
     $form['advanced']['codesnippet']['google_analytics_codesnippet_after'] = [
       '#type' => 'textarea',
@@ -524,7 +560,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('codesnippet.after'),
       '#disabled' => $user_access_add_js_snippets,
       '#rows' => 5,
-      '#description' => $this->t('Code in this textarea will be added <strong>after</strong> <code>ga("send", "pageview");</code>. This is useful if you\'d like to track a site in two accounts.') . $user_access_add_js_snippets_permission_warning,
+      '#description' => $this->t('Code in this textarea will be added <strong>after</strong> <code>gtag("config", "UA-XXXX-Y");</code>. This is useful if you\'d like to track a site in two accounts.') . $user_access_add_js_snippets_permission_warning,
     ];
 
     $form['advanced']['google_analytics_debug'] = [
@@ -786,7 +822,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * The #element_validate callback for create only fields.
+   * The #element_validate callback for parameters.
    *
    * @param array $element
    *   An associative array containing the properties and children of the
@@ -796,8 +832,8 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
    *
    * @see form_process_pattern()
    */
-  public static function validateCreateFieldValues(array $element, FormStateInterface $form_state) {
-    $values = static::extractCreateFieldValues($element['#value']);
+  public static function validateParameterValues(array $element, FormStateInterface $form_state) {
+    $values = static::extractParameterValues($element['#value']);
 
     if (!is_array($values)) {
       $form_state->setError($element, t('The %element-title field contains invalid input.', ['%element-title' => $element['#title']]));
@@ -805,11 +841,11 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     else {
       // Check that name and value are valid for the field type.
       foreach ($values as $name => $value) {
-        if ($error = static::validateCreateFieldName($name)) {
+        if ($error = static::validateParameterName($name)) {
           $form_state->setError($element, $error);
           break;
         }
-        if ($error = static::validateCreateFieldValue($value)) {
+        if ($error = static::validateParameterValue($value)) {
           $form_state->setError($element, $error);
           break;
         }
@@ -830,7 +866,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
    *
    * @see \Drupal\options\Plugin\Field\FieldType\ListTextItem::allowedValuesString()
    */
-  protected static function extractCreateFieldValues($string) {
+  protected static function extractParameterValues($string) {
     $values = [];
 
     $list = explode("\n", $string);
@@ -856,7 +892,7 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Checks whether a field name is valid.
+   * Checks whether a parameter name is valid.
    *
    * @param string $name
    *   The option value entered by the user.
@@ -864,33 +900,39 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
    * @return string|null
    *   The error message if the specified value is invalid, NULL otherwise.
    */
-  protected static function validateCreateFieldName($name) {
+  protected static function validateParameterName($name) {
     // List of supported field names:
     // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#create
-    $create_only_fields = [
-      'allowAnchor',
-      'alwaysSendReferrer',
-      'clientId',
-      'cookieName',
-      'cookieDomain',
-      'cookieExpires',
-      'legacyCookieDomain',
-      'legacyHistoryImport',
-      'sampleRate',
-      'siteSpeedSampleRate',
-      'storage',
-      'useAmpClientId',
-      'userId',
+    $allowed_parameters = [
+      'client_id',
+      'currency',
+      'country',
+      'cookie_name',
+      'cookie_domain',
+      'cookie_expires',
+      'sample_rate',
+      'send_page_view',
+      'site_speed_sample_rate',
+      'use_amp_client_id',
     ];
 
-    if ($name == 'name') {
-      return t('Create only field name %name is a disallowed field name. Changing the <em>Tracker Name</em> is currently not supported.', ['%name' => $name]);
+    if ($name == 'allow_ad_personalization_signals') {
+      return t('Parameter name %name is disallowed. Please configure <em>Track display features</em> under <em>Tracking scope > Search and Advertising</em>.', ['%name' => $name]);
     }
-    if ($name == 'allowLinker') {
-      return t('Create only field name %name is a disallowed field name. Please select <em>Multiple top-level domains</em> under <em>What are you tracking</em> to enable cross domain tracking.', ['%name' => $name]);
+    if ($name == 'anonymize_ip') {
+      return t('Parameter name %name is disallowed. Please configure <em>Anonymize visitors IP address</em> under <em>Tracking scope > Privacy</em>.', ['%name' => $name]);
     }
-    if (!in_array($name, $create_only_fields)) {
-      return t('Create only field name %name is an unknown field name. Field names are case sensitive. Please see <a href=":url">create only fields</a> documentation for supported field names.', ['%name' => $name, ':url' => 'https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#create']);
+    if ($name == 'link_attribution') {
+      return t('Parameter name %name is disallowed. Please configure <em>Track enhanced link attribution</em> under <em>Tracking scope > Links and downloads</em>.', ['%name' => $name]);
+    }
+    if ($name == 'linker') {
+      return t('Parameter name %name is disallowed. Please configure <em>Multiple top-level domains</em> under <em>Tracking scope > Domains</em> to enable cross domain tracking.', ['%name' => $name]);
+    }
+    if ($name == 'user_id') {
+      return t('Parameter name %name is disallowed. Please configure <em>Track User ID</em> under <em>Tracking scope > Users</em>.', ['%name' => $name]);
+    }
+    if (!in_array($name, $allowed_parameters)) {
+      return t('Parameter name %name is unknown. Parameters are case sensitive. Please see <a href=":url">documentation</a> for supported parameters.', ['%name' => $name, ':url' => 'https://developers.google.com/analytics/devguides/collection/gtagjs/']);
     }
   }
 
@@ -903,12 +945,12 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
    * @return string|null
    *   The error message if the specified value is invalid, NULL otherwise.
    */
-  protected static function validateCreateFieldValue($value) {
+  protected static function validateParameterValue($value) {
     if (!is_bool($value) && !Unicode::strlen($value)) {
-      return t('A create only field requires a value.');
+      return t('A parameter requires a value.');
     }
     if (Unicode::strlen($value) > 255) {
-      return t('The value of a create only field must be a string at most 255 characters long.');
+      return t('The value of a parameter must be a string at most 255 characters long.');
     }
   }
 
@@ -962,13 +1004,12 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
 
       // Convert other known fields.
       switch ($name) {
-        case 'sampleRate':
+        case 'sample_rate':
           // Float types.
           settype($value, 'float');
           break;
 
-        case 'siteSpeedSampleRate':
-        case 'cookieExpires':
+        case 'cookie_expires':
           // Integer types.
           settype($value, 'integer');
           break;
@@ -978,6 +1019,18 @@ class GoogleAnalyticsAdminSettingsForm extends ConfigFormBase {
     }
 
     return $values;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      // Load the service required to construct this class.
+      $container->get('config.factory'),
+      $container->get('current_user'),
+      $container->get('module_handler')
+    );
   }
 
 }

@@ -45,16 +45,16 @@ class GoogleAnalyticsUninstallTest extends WebTestBase {
     // Show tracker in pages.
     $this->config('google_analytics.settings')->set('account', $ua_code)->save();
 
-    // Enable local caching of analytics.js.
+    // Enable local caching of gtag.js.
     $this->config('google_analytics.settings')->set('cache', 1)->save();
 
-    // Load page to get the analytics.js downloaded into local cache.
+    // Load page to get the gtag.js downloaded into local cache.
     $this->drupalGet('');
 
-    // Test if the directory and analytics.js exists.
+    // Test if the directory and gtag.js exists.
     $this->assertTrue(file_prepare_directory($cache_path), 'Cache directory "public://google_analytics" has been found.');
-    $this->assertTrue(file_exists($cache_path . '/analytics.js'), 'Cached analytics.js tracking file has been found.');
-    $this->assertTrue(file_exists($cache_path . '/analytics.js.gz'), 'Cached analytics.js.gz tracking file has been found.');
+    $this->assertTrue(file_exists($cache_path . '/gtag.js'), 'Cached analytics.js tracking file has been found.');
+    $this->assertTrue(file_exists($cache_path . '/gtag.js.gz'), 'Cached analytics.js.gz tracking file has been found.');
 
     // Uninstall the module.
     $edit = [];

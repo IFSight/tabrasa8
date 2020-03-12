@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Form\Profile\FormBase.
+ */
+
 namespace Drupal\linkit\Form\Profile;
 
 use Drupal\Core\Entity\EntityForm;
@@ -34,7 +39,7 @@ abstract class FormBase extends EntityForm {
       '#type' => 'machine_name',
       '#default_value' => $this->entity->id(),
       '#machine_name' => [
-        'exists' => ['\Drupal\linkit\Entity\Profile', 'load'],
+        'exists' => ['\Drupal\linkit\Entity\Profile', 'load']
       ],
       '#disabled' => !$this->entity->isNew(),
     ];
@@ -46,10 +51,10 @@ abstract class FormBase extends EntityForm {
       '#description' => $this->t('The text will be displayed on the <em>profile collection</em> page.'),
     ];
 
-    $form['additional_settings'] = [
+    $form['additional_settings'] = array(
       '#type' => 'vertical_tabs',
       '#weight' => 99,
-    ];
+    );
 
     return parent::form($form, $form_state);
   }
@@ -64,10 +69,10 @@ abstract class FormBase extends EntityForm {
     $linkit_profile->set('label', trim($linkit_profile->label()));
 
     $status = $linkit_profile->save();
-    $edit_link = $this->entity->toLink($this->t('Edit'), 'edit-form')->toString();
+    $edit_link = $this->entity->link($this->t('Edit'));
     switch ($status) {
       case SAVED_NEW:
-        $this->messenger()->addMessage($this->t('Created new profile %label.', ['%label' => $linkit_profile->label()]));
+        drupal_set_message($this->t('Created new profile %label.', ['%label' => $linkit_profile->label()]));
         $this->logger('linkit')->notice('Created new profile %label.', ['%label' => $linkit_profile->label(), 'link' => $edit_link]);
         $form_state->setRedirect('linkit.matchers', [
           'linkit_profile' => $linkit_profile->id(),
@@ -75,9 +80,9 @@ abstract class FormBase extends EntityForm {
         break;
 
       case SAVED_UPDATED:
-        $this->messenger()->addMessage($this->t('Updated profile %label.', ['%label' => $linkit_profile->label()]));
+        drupal_set_message($this->t('Updated profile %label.', ['%label' => $linkit_profile->label()]));
         $this->logger('linkit')->notice('Updated profile %label.', ['%label' => $linkit_profile->label(), 'link' => $edit_link]);
-        $form_state->setRedirectUrl($linkit_profile->toUrl('edit-form'));
+        $form_state->setRedirectUrl($linkit_profile->urlInfo('edit-form'));
         break;
     }
   }

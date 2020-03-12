@@ -34,7 +34,7 @@ class Tab extends FieldGroupFormatterBase {
 
     $add = [
       '#type' => 'details',
-      '#title' => Html::escape($this->t($this->getLabel())),
+      '#title' => $this->getLabel(),
       '#description' => $this->getSetting('description'),
       '#group' => $this->group->parent_name,
     ];

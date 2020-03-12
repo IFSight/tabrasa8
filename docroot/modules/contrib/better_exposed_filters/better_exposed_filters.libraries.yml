@@ -30,11 +30,16 @@ sliders:
   dependencies:
     - core/drupal
     - core/jquery
+    - core/jquery.ui.mouse
+    - core/jquery.ui.touch-punch
+    - core/jquery.ui.slider
 datepickers:
   version: 3.x
   js:
     js/bef_datepickers.js: {}
   dependencies:
     - core/drupal
-    - core/jquery
-    - core/jquery.ui.slider
+    - core/jquer
+    - core/jquery.ui.mouse
+    - core/jquery.ui.touch-punch
+    - core/jquery.ui.datepicker

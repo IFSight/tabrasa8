@@ -1,14 +1,17 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit_test\Plugin\Linkit\Matcher\DummyMatcher.
+ */
+
 namespace Drupal\linkit_test\Plugin\Linkit\Matcher;
 
 use Drupal\linkit\MatcherBase;
-use Drupal\linkit\Suggestion\SimpleSuggestion;
-use Drupal\linkit\Suggestion\SuggestionCollection;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 
 /**
- * Provides test linkit matchers for the dummy_matcher entity type.
- *
  * @Matcher(
  *   id = "dummy_matcher",
  *   label = @Translation("Dummy Matcher"),
@@ -19,16 +22,26 @@ class DummyMatcher extends MatcherBase {
   /**
    * {@inheritdoc}
    */
-  public function execute($string) {
-    $suggestions = new SuggestionCollection();
-    $suggestion = new SimpleSuggestion();
-    $suggestion->setLabel('Dummy Matcher title')
-      ->setPath('http://example.com')
-      ->setGroup('Dummy Matcher');
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition
+    );
+  }
 
-    $suggestions->addSuggestion($suggestion);
+  /**
+   * {@inheritdoc}
+   */
+  public function getMatches($string) {
+    $matches[] = [
+      'title' => 'DummyMatcher title',
+      'description' => 'DummyMatcher description',
+      'path' => 'http://example.com',
+      'group' => 'DummyMatcher',
+    ];
 
-    return $suggestions;
+    return $matches;
   }
 
 }

@@ -44,24 +44,28 @@ class GoogleAnalyticsStatusMessagesTest extends WebTestBase {
     $this->config('google_analytics.settings')->set('track.messages', ['error' => 'error'])->save();
 
     $this->drupalPostForm('user/login', [], t('Log in'));
-    $this->assertRaw('ga("send", "event", "Messages", "Error message", "Username field is required.");', '[testGoogleAnalyticsStatusMessages]: Event message "Username field is required." is shown.');
-    $this->assertRaw('ga("send", "event", "Messages", "Error message", "Password field is required.");', '[testGoogleAnalyticsStatusMessages]: Event message "Password field is required." is shown.');
+    $this->assertRaw('gtag("event", "Error message", {"event_category":"Messages","event_label":"Username field is required."});', '[testGoogleAnalyticsStatusMessages]: Event message "Username field is required." is shown.');
+    $this->assertRaw('gtag("event", "Error message", {"event_category":"Messages","event_label":"Password field is required."});', '[testGoogleAnalyticsStatusMessages]: Event message "Password field is required." is shown.');
 
     // Testing this drupal_set_message() requires an extra test module.
-    $this->drupalGet('google-analytics-test/drupal-set-message');
-    $this->assertNoRaw('ga("send", "event", "Messages", "Status message", "Example status message.");', '[testGoogleAnalyticsStatusMessages]: Example status message is not enabled for tracking.');
-    $this->assertNoRaw('ga("send", "event", "Messages", "Warning message", "Example warning message.");', '[testGoogleAnalyticsStatusMessages]: Example warning message is not enabled for tracking.');
-    $this->assertRaw('ga("send", "event", "Messages", "Error message", "Example error message.");', '[testGoogleAnalyticsStatusMessages]: Example error message is shown.');
-    $this->assertRaw('ga("send", "event", "Messages", "Error message", "Example error message with html tags and link.");', '[testGoogleAnalyticsStatusMessages]: HTML has been stripped successful from Example error message with html tags and link.');
+    $this->drupalGet('google-analytics-test/drupal-messenger-add-message');
+    $this->assertNoRaw('gtag("event", "Status message", {"event_category":"Messages","event_label":"Example status message."});', '[testGoogleAnalyticsStatusMessages]: Example status message is not enabled for tracking.');
+    $this->assertNoRaw('gtag("event", "Warning message", {"event_category":"Messages","event_label":"Example warning message."});', '[testGoogleAnalyticsStatusMessages]: Example warning message is not enabled for tracking.');
+    $this->assertRaw('gtag("event", "Error message", {"event_category":"Messages","event_label":"Example error message."});', '[testGoogleAnalyticsStatusMessages]: Example error message is shown.');
+    $this->assertRaw('gtag("event", "Error message", {"event_category":"Messages","event_label":"Example error message with html tags and link."});', '[testGoogleAnalyticsStatusMessages]: HTML has been stripped successful from Example error message with html tags and link.');
 
     // Enable logging of status, warnings and errors.
-    $this->config('google_analytics.settings')->set('track.messages', ['status' => 'status', 'warning' => 'warning', 'error' => 'error'])->save();
+    $this->config('google_analytics.settings')->set('track.messages', [
+      'status' => 'status',
+      'warning' => 'warning',
+      'error' => 'error',
+    ])->save();
 
-    $this->drupalGet('google-analytics-test/drupal-set-message');
-    $this->assertRaw('ga("send", "event", "Messages", "Status message", "Example status message.");', '[testGoogleAnalyticsStatusMessages]: Example status message is enabled for tracking.');
-    $this->assertRaw('ga("send", "event", "Messages", "Warning message", "Example warning message.");', '[testGoogleAnalyticsStatusMessages]: Example warning message is enabled for tracking.');
-    $this->assertRaw('ga("send", "event", "Messages", "Error message", "Example error message.");', '[testGoogleAnalyticsStatusMessages]: Example error message is shown.');
-    $this->assertRaw('ga("send", "event", "Messages", "Error message", "Example error message with html tags and link.");', '[testGoogleAnalyticsStatusMessages]: HTML has been stripped successful from Example error message with html tags and link.');
+    $this->drupalGet('google-analytics-test/drupal-messenger-add-message');
+    $this->assertRaw('gtag("event", "Status message", {"event_category":"Messages","event_label":"Example status message."});', '[testGoogleAnalyticsStatusMessages]: Example status message is enabled for tracking.');
+    $this->assertRaw('gtag("event", "Warning message", {"event_category":"Messages","event_label":"Example warning message."});', '[testGoogleAnalyticsStatusMessages]: Example warning message is enabled for tracking.');
+    $this->assertRaw('gtag("event", "Error message", {"event_category":"Messages","event_label":"Example error message."});', '[testGoogleAnalyticsStatusMessages]: Example error message is shown.');
+    $this->assertRaw('gtag("event", "Error message", {"event_category":"Messages","event_label":"Example error message with html tags and link."});', '[testGoogleAnalyticsStatusMessages]: HTML has been stripped successful from Example error message with html tags and link.');
   }
 
 }

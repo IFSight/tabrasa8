@@ -1,19 +1,21 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Plugin\Linkit\Matcher\FileMatcher.
+ */
+
 namespace Drupal\linkit\Plugin\Linkit\Matcher;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\linkit\Utility\LinkitXss;
 
 /**
- * Provides specific linkit matchers for the file entity type.
- *
  * @Matcher(
  *   id = "entity:file",
- *   label = @Translation("File"),
  *   target_entity = "file",
+ *   label = @Translation("File"),
  *   provider = "file"
  * )
  */
@@ -23,48 +25,39 @@ class FileMatcher extends EntityMatcher {
    * {@inheritdoc}
    */
   public function getSummary() {
-    $summary = parent::getSummary();
+    $summery = parent::getSummary();
 
-    if (!empty($this->configuration['file_extensions'])) {
-      $summary[] = $this->t('Limit matches to the following file extensions: @file_extensions', [
-        '@file_extensions' => str_replace(' ', ', ', $this->configuration['file_extensions']),
-      ]);
-    }
-
-    $summary[] = $this->t('Show image dimensions: @show_image_dimensions', [
+    $summery[] = $this->t('Show image dimensions: @show_image_dimensions', [
       '@show_image_dimensions' => $this->configuration['images']['show_dimensions'] ? $this->t('Yes') : $this->t('No'),
     ]);
 
-    $summary[] = $this->t('Show image thumbnail: @show_image_thumbnail', [
+    $summery[] = $this->t('Show image thumbnail: @show_image_thumbnail', [
       '@show_image_thumbnail' => $this->configuration['images']['show_thumbnail'] ? $this->t('Yes') : $this->t('No'),
     ]);
 
     if ($this->moduleHandler->moduleExists('image') && $this->configuration['images']['show_thumbnail']) {
       $image_style = ImageStyle::load($this->configuration['images']['thumbnail_image_style']);
-      if (!is_null($image_style)) {
-        $summary[] = $this->t('Thumbnail style: @thumbnail_style', [
-          '@thumbnail_style' => $image_style->label(),
+        if (!is_null($image_style)) {
+          $summery[] = $this->t('Thumbnail style: @thumbnail_style', [
+          '@thumbnail_style' =>  $image_style->label(),
         ]);
       }
     }
 
-    return $summary;
+    return $summery;
   }
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
-      'file_extensions' => '',
-      'file_status' => FILE_STATUS_PERMANENT,
+    return parent::defaultConfiguration() + [
       'images' => [
         'show_dimensions' => FALSE,
         'show_thumbnail' => FALSE,
         'thumbnail_image_style' => 'linkit_result_thumbnail',
       ],
-      'substitution_type' => 'file',
-    ] + parent::defaultConfiguration();
+    ];
   }
 
   /**
@@ -89,46 +82,28 @@ class FileMatcher extends EntityMatcher {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
-    $form['extensions'] = [
+    $form['images'] = array(
       '#type' => 'details',
-      '#title' => $this->t('File extensions'),
-      '#open' => TRUE,
-      '#weight' => -100,
-    ];
-
-    $file_extensions = str_replace(' ', ', ', $this->configuration['file_extensions']);
-    $form['extensions']['file_extensions'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Allowed file extensions'),
-      '#default_value' => $file_extensions,
-      '#description' => $this->t('Separate extensions with a space or comma and do not include the leading dot.'),
-      '#element_validate' => [['\Drupal\file\Plugin\Field\FieldType\FileItem', 'validateExtensions']],
-      '#maxlength' => 256,
-    ];
-
-    $form['images'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Image file settings'),
-      '#description' => $this->t('Extra settings for image files in the result.'),
-      '#open' => TRUE,
+      '#title' => t('Image file settings'),
+      '#description' => t('Extra settings for image files in the result.'),
       '#tree' => TRUE,
-    ];
+    );
 
     $form['images']['show_dimensions'] = [
-      '#title' => $this->t('Show pixel dimensions'),
+      '#title' => t('Show pixel dimensions'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['images']['show_dimensions'],
     ];
 
     if ($this->moduleHandler->moduleExists('image')) {
       $form['images']['show_thumbnail'] = [
-        '#title' => $this->t('Show thumbnail'),
+        '#title' => t('Show thumbnail'),
         '#type' => 'checkbox',
         '#default_value' => $this->configuration['images']['show_thumbnail'],
       ];
 
       $form['images']['thumbnail_image_style'] = [
-        '#title' => $this->t('Thumbnail image style'),
+        '#title' => t('Thumbnail image style'),
         '#type' => 'select',
         '#default_value' => $this->configuration['images']['thumbnail_image_style'],
         '#options' => image_style_options(FALSE),
@@ -149,8 +124,6 @@ class FileMatcher extends EntityMatcher {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
 
-    $this->configuration['file_extensions'] = $form_state->getValue('file_extensions');
-
     $values = $form_state->getValue('images');
     if (!$values['show_thumbnail']) {
       $values['thumbnail_image_style'] = NULL;
@@ -162,19 +135,9 @@ class FileMatcher extends EntityMatcher {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($search_string) {
-    $query = parent::buildEntityQuery($search_string);
-
-    $query->condition('status', $this->configuration['file_status']);
-
-    if (!empty($this->configuration['file_extensions'])) {
-      $file_extensions = explode(' ', $this->configuration['file_extensions']);
-      $group = $query->orConditionGroup();
-      foreach ($file_extensions as $file_extension) {
-        $group->condition('filename', '%\.' . $this->database->escapeLike($file_extension), 'LIKE');
-      }
-      $query->condition($group);
-    }
+  protected function buildEntityQuery($match) {
+    $query = parent::buildEntityQuery($match);
+    $query->condition('status', FILE_STATUS_PERMANENT);
 
     return $query;
   }
@@ -182,51 +145,45 @@ class FileMatcher extends EntityMatcher {
   /**
    * {@inheritdoc}
    */
-  protected function buildDescription(EntityInterface $entity) {
-    $description_array = [];
+  protected function buildDescription($entity) {
+    $description_array = array();
 
     $description_array[] = parent::buildDescription($entity);
 
     /** @var \Drupal\file\FileInterface $entity */
     $file = $entity->getFileUri();
 
-    if ($this->configuration['images']['show_dimensions'] || $this->configuration['images']['show_thumbnail']) {
-      $image_factory = \Drupal::service('image.factory');
-      $supported_extensions = $image_factory->getSupportedExtensions();
+    /** @var \Drupal\Core\Image\ImageInterface $image */
+    $image = \Drupal::service('image.factory')->get($file);
+    if ($image->isValid()) {
+      if ($this->configuration['images']['show_dimensions']) {
+        $description_array[] = $image->getWidth() . 'x' . $image->getHeight() . 'px';
+      }
 
-      // Check if the file extension is supported by the image toolkit.
-      if (empty(file_validate_extensions($entity, implode(' ', $supported_extensions)))) {
-        /** @var \Drupal\Core\Image\ImageInterface $image */
-        $image = $image_factory->get($file);
-        if ($image->isValid()) {
-          if ($this->configuration['images']['show_dimensions']) {
-            $description_array[] = $image->getWidth() . 'x' . $image->getHeight() . 'px';
-          }
+      if ($this->configuration['images']['show_thumbnail'] && $this->moduleHandler->moduleExists('image')) {
+        $image_element = array(
+          '#weight' => -10,
+          '#theme' => 'image_style',
+          '#style_name' => $this->configuration['images']['thumbnail_image_style'],
+          '#uri' => $entity->getFileUri(),
+        );
 
-          if ($this->configuration['images']['show_thumbnail'] && $this->moduleHandler->moduleExists('image')) {
-            $image_element = [
-              '#weight' => -10,
-              '#theme' => 'image_style',
-              '#style_name' => $this->configuration['images']['thumbnail_image_style'],
-              '#uri' => $entity->getFileUri(),
-            ];
-
-            $description_array[] = (string) \Drupal::service('renderer')->render($image_element);
-          }
-        }
+        $description_array[] = (string) \Drupal::service('renderer')->render($image_element);
       }
     }
 
-    $description = implode('<br />', $description_array);
+    $description = implode('<br />' , $description_array);
     return LinkitXss::descriptionFilter($description);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * The file entity still uses url() even though it's deprecated in the
+   * entity interface.
    */
-  protected function buildPath(EntityInterface $entity) {
+  protected function buildPath($entity) {
     /** @var \Drupal\file\FileInterface $entity */
     return file_url_transform_relative(file_create_url($entity->getFileUri()));
   }
-
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\google_analytics\Tests;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -38,19 +39,33 @@ class GoogleAnalyticsCustomUrls extends WebTestBase {
   /**
    * Tests if user password page urls are overridden.
    */
-  public function testGoogleAnalyticsUserPasswordPage() {
+  public function testGoogleAnalyticsCustomUrls() {
     $base_path = base_path();
     $ua_code = 'UA-123456-1';
-    $this->config('google_analytics.settings')->set('account', $ua_code)->save();
+    $this->config('google_analytics.settings')
+      ->set('account', $ua_code)
+      ->set('privacy.anonymizeip', 0)
+      ->set('track.displayfeatures', 1)
+      ->save();
 
     $this->drupalGet('user/password', ['query' => ['name' => 'foo']]);
-    $this->assertRaw('ga("set", "page", "' . $base_path . 'user/password"');
+    $this->assertRaw('gtag("config", ' . Json::encode($ua_code) . ', {"groups":"default","page_path":"' . $base_path . 'user/password"});');
 
     $this->drupalGet('user/password', ['query' => ['name' => 'foo@example.com']]);
-    $this->assertRaw('ga("set", "page", "' . $base_path . 'user/password"');
+    $this->assertRaw('gtag("config", ' . Json::encode($ua_code) . ', {"groups":"default","page_path":"' . $base_path . 'user/password"});');
 
     $this->drupalGet('user/password');
-    $this->assertNoRaw('ga("set", "page",', '[testGoogleAnalyticsCustomUrls]: Custom url not set.');
+    $this->assertNoRaw('"page_path":"' . $base_path . 'user/password"});', '[testGoogleAnalyticsCustomUrls]: Custom url not set.');
+
+    // Test whether 403 forbidden tracking code is shown if user has no access.
+    $this->drupalGet('admin');
+    $this->assertResponse(403);
+    $this->assertRaw($base_path . '403.html', '[testGoogleAnalyticsCustomUrls]: 403 Forbidden tracking code shown if user has no access.');
+
+    // Test whether 404 not found tracking code is shown on non-existent pages.
+    $this->drupalGet($this->randomMachineName(64));
+    $this->assertResponse(404);
+    $this->assertRaw($base_path . '404.html', '[testGoogleAnalyticsCustomUrls]: 404 Not Found tracking code shown on non-existent page.');
   }
 
 }

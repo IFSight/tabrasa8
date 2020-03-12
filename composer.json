@@ -35,11 +35,8 @@
         }
     ],
     "require": {
-        "composer/installers": "^1.2",
-        "drupal/core-composer-scaffold": "^8.8",
-        "drupal/core-recommended": "^8.8",
-        "oomphinc/composer-installers-extender": "^1.1",
         "bower-asset/plupload": "^3.1",
+        "composer/installers": "^1.7",
         "drupal/admin_toolbar": "^2.0",
         "drupal/adminimal_theme": "^1.5",
         "drupal/allowed_formats": "^1.2",
@@ -48,6 +45,8 @@
         "drupal/captcha": "^1.0",
         "drupal/cloudflare": "^1.0@alpha",
         "drupal/components": "^1.1",
+        "drupal/core-composer-scaffold": "^8.8",
+        "drupal/core-recommended": "^8.8",
         "drupal/ctools": "^3.2",
         "drupal/date_popup": "^1.0",
         "drupal/easy_breadcrumb": "^1.12",
@@ -90,7 +89,8 @@
         "ifsight/if_admin": "^0.1.0",
         "ifsight/if_helper": "^0.1.0",
         "ifsight/paladin": "^1.1",
-        "ifsight/varnish_purge_tags": "^0.2.0"
+        "ifsight/varnish_purge_tags": "^0.2.0",
+        "oomphinc/composer-installers-extender": "^1.1"
     },
     "require-dev": {
         "drupal/core-dev": "^8.8",

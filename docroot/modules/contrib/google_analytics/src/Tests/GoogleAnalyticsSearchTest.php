@@ -2,6 +2,7 @@
 
 namespace Drupal\google_analytics\Tests;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -44,14 +45,18 @@ class GoogleAnalyticsSearchTest extends WebTestBase {
    */
   public function testGoogleAnalyticsSearchTracking() {
     $ua_code = 'UA-123456-1';
-    $this->config('google_analytics.settings')->set('account', $ua_code)->save();
+    $this->config('google_analytics.settings')
+      ->set('account', $ua_code)
+      ->set('privacy.anonymizeip', 0)
+      ->set('track.displayfeatures', 1)
+      ->save();
 
     // Check tracking code visibility.
     $this->drupalGet('');
     $this->assertRaw($ua_code, '[testGoogleAnalyticsSearch]: Tracking code is displayed for authenticated users.');
 
     $this->drupalGet('search/node');
-    $this->assertNoRaw('ga("set", "page",', '[testGoogleAnalyticsSearch]: Custom url not set.');
+    $this->assertNoRaw('gtag("config", ' . Json::encode($ua_code) . ', {"groups":"default","page_path":"', '[testGoogleAnalyticsSearch]: Custom url not set.');
 
     // Enable site search support.
     $this->config('google_analytics.settings')->set('track.site_search', 1)->save();
@@ -61,14 +66,13 @@ class GoogleAnalyticsSearchTest extends WebTestBase {
     $search['keys'] = $this->randomMachineName(8);
 
     // Create a node to search for.
-    // Create a node.
     $edit = [];
     $edit['title[0][value]'] = 'This is a test title';
     $edit['body[0][value]'] = 'This test content contains ' . $search['keys'] . ' string.';
 
     // Fire a search, it's expected to get 0 results.
     $this->drupalPostForm('search/node', $search, t('Search'));
-    $this->assertRaw('ga("set", "page", (window.google_analytics_search_results) ?', '[testGoogleAnalyticsSearch]: Search results tracker is displayed.');
+    $this->assertRaw('gtag("config", ' . Json::encode($ua_code) . ', {"groups":"default","page_path":(window.google_analytics_search_results) ?', '[testGoogleAnalyticsSearch]: Search results tracker is displayed.');
     $this->assertRaw('window.google_analytics_search_results = 0;', '[testGoogleAnalyticsSearch]: Search yielded no results.');
 
     // Save the node.
@@ -79,7 +83,7 @@ class GoogleAnalyticsSearchTest extends WebTestBase {
     $this->cronRun();
 
     $this->drupalPostForm('search/node', $search, t('Search'));
-    $this->assertRaw('ga("set", "page", (window.google_analytics_search_results) ?', '[testGoogleAnalyticsSearch]: Search results tracker is displayed.');
+    $this->assertRaw('gtag("config", ' . Json::encode($ua_code) . ', {"groups":"default","page_path":(window.google_analytics_search_results) ?', '[testGoogleAnalyticsSearch]: Search results tracker is displayed.');
     $this->assertRaw('window.google_analytics_search_results = 1;', '[testGoogleAnalyticsSearch]: One search result found.');
 
     $this->drupalPostForm('node/add/page', $edit, t('Save'));
@@ -89,7 +93,7 @@ class GoogleAnalyticsSearchTest extends WebTestBase {
     $this->cronRun();
 
     $this->drupalPostForm('search/node', $search, t('Search'));
-    $this->assertRaw('ga("set", "page", (window.google_analytics_search_results) ?', '[testGoogleAnalyticsSearch]: Search results tracker is displayed.');
+    $this->assertRaw('gtag("config", ' . Json::encode($ua_code) . ', {"groups":"default","page_path":(window.google_analytics_search_results) ?', '[testGoogleAnalyticsSearch]: Search results tracker is displayed.');
     $this->assertRaw('window.google_analytics_search_results = 2;', '[testGoogleAnalyticsSearch]: Two search results found.');
   }
 

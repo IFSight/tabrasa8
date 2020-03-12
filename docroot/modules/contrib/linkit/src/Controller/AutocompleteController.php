@@ -1,17 +1,20 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Controller\AutocompleteController.
+ */
+
 namespace Drupal\linkit\Controller;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\linkit\SuggestionManager;
+use Drupal\linkit\ResultManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Returns responses for linkit autocomplete routes.
- */
 class AutocompleteController implements ContainerInjectionInterface {
 
   /**
@@ -22,11 +25,11 @@ class AutocompleteController implements ContainerInjectionInterface {
   protected $linkitProfileStorage;
 
   /**
-   * The suggestion manager.
+   * The result manager.
    *
-   * @var \Drupal\linkit\SuggestionManager
+   * @var \Drupal\linkit\ResultManager
    */
-  protected $suggestionManager;
+  protected $resultManager;
 
   /**
    * The linkit profile.
@@ -38,14 +41,14 @@ class AutocompleteController implements ContainerInjectionInterface {
   /**
    * Constructs a EntityAutocompleteController object.
    *
+   * @param ResultManager $resultManager
+   *   The result service.
    * @param \Drupal\Core\Entity\EntityStorageInterface $linkit_profile_storage
    *   The linkit profile storage service.
-   * @param \Drupal\linkit\SuggestionManager $suggestionManager
-   *   The suggestion service.
    */
-  public function __construct(EntityStorageInterface $linkit_profile_storage, SuggestionManager $suggestionManager) {
+  public function __construct(EntityStorageInterface $linkit_profile_storage, ResultManager $resultManager) {
     $this->linkitProfileStorage = $linkit_profile_storage;
-    $this->suggestionManager = $suggestionManager;
+    $this->resultManager = $resultManager;
   }
 
   /**
@@ -54,7 +57,7 @@ class AutocompleteController implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('linkit_profile'),
-      $container->get('linkit.suggestion_manager')
+      $container->get('linkit.result_manager')
     );
   }
 
@@ -64,31 +67,23 @@ class AutocompleteController implements ContainerInjectionInterface {
    * Like other autocomplete functions, this function inspects the 'q' query
    * parameter for the string to use to search for suggestions.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
+   * @param Request $request
    *   The request.
-   * @param string $linkit_profile_id
+   * @param $linkit_profile_id
    *   The linkit profile id.
-   *
-   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   * @return JsonResponse
    *   A JSON response containing the autocomplete suggestions.
    */
   public function autocomplete(Request $request, $linkit_profile_id) {
     $this->linkitProfile = $this->linkitProfileStorage->load($linkit_profile_id);
-    $string = $request->query->get('q');
+    $string = Unicode::strtolower($request->query->get('q'));
 
-    $suggestionCollection = $this->suggestionManager->getSuggestions($this->linkitProfile, mb_strtolower($string));
+    $matches = $this->resultManager->getResults($this->linkitProfile, $string);
 
-    /*
-     * If there are no suggestions from the matcher plugins, we have to add a
-     * special suggestion that have the same path as the given string so users
-     * can select it and use it anyway. This is a common use case with external
-     * links.
-     */
-    if (!count($suggestionCollection->getSuggestions()) && !empty($string)) {
-      $suggestionCollection = $this->suggestionManager->addUnscathedSuggestion($suggestionCollection, $string);
-    }
+    $json_object = new \stdClass();
+    $json_object->matches = $matches;
 
-    return new JsonResponse($suggestionCollection);
+    return new JsonResponse($json_object);
   }
 
 }

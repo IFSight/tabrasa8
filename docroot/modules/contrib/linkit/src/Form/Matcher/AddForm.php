@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Form\Matcher\AddForm.
+ */
+
 namespace Drupal\linkit\Form\Matcher;
 
 use Drupal\Core\Form\FormBase;
@@ -83,6 +88,11 @@ class AddForm extends FormBase {
       '#button_type' => 'primary',
     ];
 
+    $options = [];
+    foreach ($this->manager->getDefinitions() as $id => $plugin) {
+      $options[$id] = $plugin['label'];
+    }
+
     return $form;
   }
 
@@ -120,7 +130,7 @@ class AddForm extends FormBase {
       ]);
     }
     else {
-      $this->messenger()->addMessage($this->t('Added %label matcher.', ['%label' => $plugin->getLabel()]));
+      drupal_set_message($this->t('Added %label matcher.', ['%label' => $plugin->getLabel()]));
 
       $form_state->setRedirect('linkit.matchers', [
         'linkit_profile' => $this->linkitProfile->id(),

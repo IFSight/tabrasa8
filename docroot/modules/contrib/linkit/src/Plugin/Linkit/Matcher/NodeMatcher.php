@@ -1,17 +1,19 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Plugin\Linkit\Matcher\NodeMatcher.
+ */
+
 namespace Drupal\linkit\Plugin\Linkit\Matcher;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\NodeInterface;
 
 /**
- * Provides specific linkit matchers for the node entity type.
- *
  * @Matcher(
  *   id = "entity:node",
- *   label = @Translation("Content"),
  *   target_entity = "node",
+ *   label = @Translation("Content"),
  *   provider = "node"
  * )
  */
@@ -34,9 +36,9 @@ class NodeMatcher extends EntityMatcher {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    return parent::defaultConfiguration() + [
       'include_unpublished' => FALSE,
-    ] + parent::defaultConfiguration();
+    ];
   }
 
   /**
@@ -54,17 +56,11 @@ class NodeMatcher extends EntityMatcher {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
-    $form['unpublished_nodes'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Unpublished nodes'),
-      '#open' => TRUE,
-    ];
-
-    $form['unpublished_nodes']['include_unpublished'] = [
-      '#title' => $this->t('Include unpublished nodes'),
+    $form['include_unpublished'] = [
+      '#title' => t('Include unpublished nodes'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['include_unpublished'],
-      '#description' => $this->t('In order to see unpublished nodes, users must also have permissions to do so.'),
+      '#description' => t('In order to see unpublished nodes, the requesting user must also have permissions to do so.'),
     ];
 
     return $form;
@@ -82,30 +78,12 @@ class NodeMatcher extends EntityMatcher {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($search_string) {
-    $query = parent::buildEntityQuery($search_string);
+  protected function buildEntityQuery($match) {
+    $query = parent::buildEntityQuery($match);
 
-    if ($this->configuration['include_unpublished'] == FALSE) {
-      $query->condition('status', NodeInterface::PUBLISHED);
-    }
-    elseif (count($this->moduleHandler->getImplementations('node_grants')) === 0) {
-      if (($this->currentUser->hasPermission('bypass node access') || $this->currentUser->hasPermission('view any unpublished content'))) {
-        // User can see all content, no check necessary.
-      }
-      elseif ($this->currentUser->hasPermission('view own unpublished content')) {
-        // Users with "view own unpublished content" can see only their own.
-        if ($this->configuration['include_unpublished'] == TRUE) {
-          $or_condition = $query
-            ->orConditionGroup()
-            ->condition('status', NodeInterface::PUBLISHED)
-            ->condition('uid', $this->currentUser->id());
-          $query->condition($or_condition);
-        }
-      }
-    }
-    else {
-      // All other users should only get published results.
-      $query->condition('status', NodeInterface::PUBLISHED);
+    $no_access = !$this->currentUser->hasPermission('bypass node access') && !count($this->moduleHandler->getImplementations('node_grants'));
+    if ($this->configuration['include_unpublished'] !== TRUE || $no_access) {
+      $query->condition('status', NODE_PUBLISHED);
     }
 
     return $query;

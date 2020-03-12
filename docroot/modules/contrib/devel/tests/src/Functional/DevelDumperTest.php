@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\devel\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -111,7 +110,7 @@ class DevelDumperTest extends BrowserTestBase {
   /**
    * Test variable is dumped in page.
    */
-  function testDumpersOutput() {
+  public function testDumpersOutput() {
     $edit = [
       'dumper' => 'available_test_dumper',
     ];

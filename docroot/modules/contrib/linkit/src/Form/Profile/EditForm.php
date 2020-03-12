@@ -1,13 +1,18 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\linkit\Form\Profile\EditForm.
+ */
+
 namespace Drupal\linkit\Form\Profile;
 
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Provides an edit form for profile.
+ *  Provides an edit form for profile.
  *
- * @see \Drupal\linkit\Form\Profile\FormBase
+ * @see \Drupal\linkit\Profile\FormBase
  */
 class EditForm extends FormBase {
 
