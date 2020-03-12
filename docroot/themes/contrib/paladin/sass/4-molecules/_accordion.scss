@@ -1,0 +1,90 @@
+/* ============================================================
+  Styles for accordions.
+  ============================================================ */
+.accordion-container {
+
+  .accordion-item {
+
+    // Offset the anchor to fix sticky header issues.
+    .anchor {
+      visibility: hidden;
+      position: relative;
+      display: block;
+      top: -120px;
+    }
+  }
+
+  // accordion-specific resets
+  .ui-state-default,
+  .ui-accordion-content {
+    border: 0;
+    background: transparent;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    font-family: $headline;
+    padding: .5em 0;
+    border-bottom: 2px solid $light-gray;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    position: relative;
+    font-weight: 600;
+
+    span {
+      display: block;
+      max-width: 90%;
+    }
+
+    svg {
+      font-size: 2rem;
+      position: absolute;
+      right: 0;
+      top: .3em;
+    }
+
+    .fa-minus {
+      display: none;
+    }
+
+    &.ui-state-active {
+      .fa-plus {
+        display: none;
+      }
+
+      .fa-minus {
+        display: block;
+      }
+    }
+  }
+
+  .body {
+    font-family: $body-copy;
+    padding: 1em 0;
+    font-size: 1.125rem;
+    line-height: 1.7;
+
+    .img {
+      float: left;
+      width: 33%;
+      img {
+        max-width: 215px;
+        max-height: 215px;
+        @include respond-to('xxxs') {
+          padding-right: 1em;
+        }
+      }  
+    }
+
+    .txt {
+      overflow: hidden;
+      ul,
+      ol {
+        margin: 1em;
+      }
+    }
+
+  }
+}

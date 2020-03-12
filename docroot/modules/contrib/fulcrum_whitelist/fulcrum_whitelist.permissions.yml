@@ -1,0 +1,24 @@
+add fulcrum whitelist entity entities:
+  title: 'Create new Fulcrum Whitelist Entity entities'
+
+administer fulcrum whitelist entity entities:
+  title: 'Administer Fulcrum Whitelist Entity entities'
+  description: 'Allow to access the administration form to configure Fulcrum Whitelist Entity entities.'
+  restrict access: true
+
+administer fulcrum whitelist configuration:
+  title: 'Administer Fulcrum Whitelist Configuration'
+  description: 'Allow access to the FSW configuration form.'
+  restrict access: true
+
+delete fulcrum whitelist entity entities:
+  title: 'Delete Fulcrum Whitelist Entity entities'
+
+edit fulcrum whitelist entity entities:
+  title: 'Edit Fulcrum Whitelist Entity entities'
+
+view published fulcrum whitelist entity entities:
+  title: 'View published Fulcrum Whitelist Entity entities'
+
+view unpublished fulcrum whitelist entity entities:
+  title: 'View unpublished Fulcrum Whitelist Entity entities'

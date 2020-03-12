@@ -1,0 +1,6 @@
+name: I.F. Helper
+description: Helper functions for I.F. Sites
+package: Custom
+type: module
+version: 1.0
+core: 8.x

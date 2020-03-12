@@ -1,0 +1,61 @@
+/* ============================================================
+  Styles for background colors/gradients, opacity, and type color.
+  ============================================================ */
+
+/* Background color/gradient styles */
+.dark-blue-bg {
+  background: $dark-blue;
+  color: #fff;
+}
+
+.blue-bg {
+  background: $brand-blue;
+}
+
+.gray-bg {
+  background: $gray;
+}
+
+.light-gray-bg {
+  background: $light-gray;
+}
+
+.white-bg {
+  background: $white;
+}
+
+.red-bg {
+  background: $brand-red;
+}
+
+/* Opacity styles in an opacity-%% format */
+
+.opacity-90 {
+  opacity: .9;
+}
+
+.opacity-50 {
+  opacity: .5;
+}
+
+.opacity-20 {
+  opacity: .2;
+}
+
+/* Type color styles */
+
+.white {
+  color: #fff;
+}
+
+.black {
+  color: #000;
+}
+
+.dark-blue {
+  color: $dark-blue;
+}
+
+.blue {
+  color: $brand-blue;
+}

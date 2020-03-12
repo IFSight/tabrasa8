@@ -1,0 +1,52 @@
+/* ============================================================
+  Styles for tables
+  ============================================= */
+
+table {
+  width: 100%;
+  font-size: 1rem !important;
+
+  p {
+    font-size: 1rem !important;
+    margin: 0;
+  }
+
+  tr {
+    td,
+    th {
+      height: 40px;
+      padding: .5em;
+    }
+  }
+  
+  thead {
+    th {
+      text-align: left;
+      background: $dark-blue;
+      color: #fff;
+
+      a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      &:nth-child(even) {
+        background: $light-gray;
+      }
+    }
+  }
+}
+
+.tablesort--asc {
+  background-image:url('/themes/custom/paladin/images/twistie-down.svg');
+}
+
+.tablesort--desc {
+  background-image:url('/themes/custom/paladin/images/twistie-up.svg');
+}

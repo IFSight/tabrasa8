@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.fulcrum_whitelist_entity.field_user
+  module:
+    - fulcrum_whitelist
+id: fulcrum_whitelist_entity.fulcrum_whitelist_entity.field_user
+field_name: field_user
+entity_type: fulcrum_whitelist_entity
+bundle: fulcrum_whitelist_entity
+label: User
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: false
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

@@ -1,0 +1,16 @@
+{
+  "name": "ifsight/varnish_purge_tags",
+  "type": "drupal-module",
+  "description": "IF Varnish Purge Tags",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://git.ifsight.net/proj/contrib/if-varnish-purge-tags/if_varnish_purge_tags_drupal_8/issues",
+    "source": "https://git.ifsight.net/proj/contrib/if-varnish-purge-tags/if_varnish_purge_tags_drupal_8"
+  },
+  "require": {
+    "drupal/varnish_purger":"*"
+  }
+}

@@ -1,0 +1,18 @@
+{#
+/**
+ *
+ * NOTE:
+ *  - This file is only for convenience
+ *  - Contents are taken from values in /admin/config/fulcrum_whitelist
+ *  - You probably want to change the default install values:
+ *      ./config/install/fulcrum_whitelist.fulcrumwhitelistconfig.yml
+ *
+ */
+#}
+<p>This document is intended for current clients using Interpersonal Frequency (I.F.) Fulcrum Drupal-as-a-Service websites and provides an overview for use and administration of controlled access to restricted areas of client sites.</p>
+
+<p>For security reasons, more sensitive areas of I.F.’s Fulcrum system are inaccessible to the general public including the development, testing and training environments, and production access screens such as <a href="/user">/user</a> and <a href="/admin">/admin</a>. Preventing general public access to these locations reduces security threats such as (distributed) denial of service issues, whether malicious (e.g., botnet attack) or mistakes (e.g., misconfigured search crawlers).</p>
+
+<p>Our Fulcrum Streamlined Whitelist (FSW) feature allows controlled access to these areas. The FSW URL contains a token that will whitelist your location and redirect you to the correct login page, such as <a href="/user">/user</a>.</p>
+
+<p>Your organization’s designated site administrator(s) will provide you with an individual FSW URL for your site. </p>

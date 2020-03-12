@@ -1,0 +1,49 @@
+/* ============================================================
+  Styles for the pager.
+  ============================================================ */
+.pager {
+  margin: 1.5em 0;
+
+  &__items {
+    display: flex;
+    justify-content: space-between;
+
+    @include respond-to('ml') {
+      width: 80%;
+      margin: 0 auto;
+    }
+
+     .pager__item {
+      padding: .25em .5em !important;
+      border-radius: 3px;
+      border: 1px solid $dark-blue;
+
+      &--first,
+      &--last {
+        display: none;
+
+        @include respond-to('m') {
+          display: inline;
+        }
+      }
+
+      &.is-active {
+        background: $dark-blue;
+        > a {
+          color: #fff;
+        }
+      }
+      
+      a {
+        color: $dark-blue;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      &--ellipsis {
+        color: $dark-blue;
+        border: 0;
+      }
+    }
+  }
+}

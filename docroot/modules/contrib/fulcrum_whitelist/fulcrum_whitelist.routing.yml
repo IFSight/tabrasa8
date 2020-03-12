@@ -1,0 +1,26 @@
+
+fulcrum_whitelist.fulcrum_whitelist_controller_whitelist:
+  path: '/fulcrum/whitelist/{authtoken}'
+  defaults:
+    _controller: '\Drupal\fulcrum_whitelist\Controller\FulcrumWhitelistController::whitelist'
+    _title: 'Whitelist Request'
+  requirements:
+    _permission: 'access content'
+
+fulcrum_whitelist.fulcrum_whitelist_controller_docs:
+  path: '/fulcrum/whitelist_docs'
+  defaults:
+    _controller: '\Drupal\fulcrum_whitelist\Controller\FulcrumWhitelistController::docs'
+    _title: 'Fulcrum Streamlined Whitelist (FSW)'
+  requirements:
+    _role: 'authenticated'
+
+fulcrum_whitelist.fulcrum_whitelist_config:
+  path: '/admin/config/fulcrum_whitelist'
+  defaults:
+    _form: '\Drupal\fulcrum_whitelist\Form\FulcrumWhitelistConfig'
+    _title: 'Fulcrum Whitelist Config'
+  requirements:
+    _permission: 'administer fulcrum whitelist configuration'
+  options:
+    _admin_route: TRUE

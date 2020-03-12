@@ -1,0 +1,17 @@
+<div{{ attributes.addClass('fulcrum_whitelist_docs') }}>
+  {% if docs_intro %}
+  <div class="doc_intro">
+    {{- docs_intro | raw -}}
+  </div>
+  {% endif %}
+  {% if docs_user %}
+  <div class="doc_user">
+    {{- docs_user | raw -}}
+  </div>
+  {% endif %}
+  {% if docs_admin %}
+  <div class="doc_admin">
+    {{- docs_admin | raw -}}
+  </div>
+  {% endif %}
+</div>

@@ -1,0 +1,14 @@
+{
+  "name": "ifsight/paladin",
+  "type": "drupal-theme",
+  "description": "Paladin is a Drupal base theme",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "http://git.ifsight.com/proj/contrib/if-paladin-theme",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://git.ifsight.net/proj/contrib/if-paladin-theme/issues",
+    "source": "http://git.ifsight.com/proj/contrib/if-paladin-theme"
+  },
+  "require": { }
+}

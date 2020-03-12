@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.fulcrum_whitelist_entity.fulcrum_whitelist_entity.field_user
+  module:
+    - fulcrum_whitelist
+_core:
+  default_config_hash: bb9316wRuIu3tFaZb2GrARYPLniptQ4bNujzya2SMVY
+id: fulcrum_whitelist_entity.fulcrum_whitelist_entity.default
+targetEntityType: fulcrum_whitelist_entity
+bundle: fulcrum_whitelist_entity
+mode: default
+content:
+  field_user:
+    weight: 0
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  name:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  user_id: true

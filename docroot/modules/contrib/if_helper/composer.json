@@ -1,0 +1,14 @@
+{
+    "name": "ifsight/if_helper",
+    "description": "Helper functions for I.F. Sites",
+    "type": "drupal-module",
+    "keywords": ["Drupal"],
+    "license": "GPL-2.0+",
+    "homepage": "https://git.ifsight.net/proj/contrib/if_helper",
+    "minimum-stability": "dev",
+    "support": {
+      "issues": "https://git.ifsight.net/proj/contrib/if_helper/issues",
+      "source": "https://git.ifsight.net/proj/contrib/if_helper.git"
+    },
+    "require": {}
+}

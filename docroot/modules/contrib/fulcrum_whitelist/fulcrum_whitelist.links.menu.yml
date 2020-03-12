@@ -1,0 +1,22 @@
+
+# Fulcrum Whitelist Entity menu items definition
+entity.fulcrum_whitelist_entity.collection:
+  title: 'Whitelistings'
+  route_name: entity.fulcrum_whitelist_entity.collection
+  description: 'List Fulcrum Whitelist Entity entities'
+  parent: system.admin_structure
+  weight: 100
+
+# fulcrum_whitelist_entity.admin.structure.settings:
+#   title: 'Whitelist Settings'
+#   description: 'Configure Fulcrum Whitelist Entity entities'
+#   route_name: fulcrum_whitelist_entity.settings
+#   parent: system.admin_structure
+#   weight: 101
+#
+fulcrum_whitelist.fulcrum_whitelist_config:
+  title: 'Fulcrum Whitelist'
+  route_name: fulcrum_whitelist.fulcrum_whitelist_config
+  description: 'Fulcrum Whitelist Config'
+  parent: system.admin_config_system
+  weight: 99

@@ -1,10 +1,13 @@
 {
-    "name": "ifsight/drupal-recommended-project",
-    "description": "I.F. version of drupal/recommended-project, a project template for Drupal projects with a relocated document root",
+    "name": "ifsight/drupal-project",
+    "description": "IF Project template for Drupal 8 projects with a relocated document root",
     "type": "project",
     "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    },
     "repositories": [
         {
             "type": "composer",
@@ -32,8 +35,11 @@
         }
     ],
     "require": {
-        "bower-asset/plupload": "^3.1",
         "composer/installers": "^1.2",
+        "drupal/core-composer-scaffold": "^8.8",
+        "drupal/core-recommended": "^8.8",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "bower-asset/plupload": "^3.1",
         "drupal/admin_toolbar": "^2.0",
         "drupal/adminimal_theme": "^1.5",
         "drupal/allowed_formats": "^1.2",
@@ -42,8 +48,6 @@
         "drupal/captcha": "^1.0",
         "drupal/cloudflare": "^1.0@alpha",
         "drupal/components": "^1.1",
-        "drupal/core-composer-scaffold": "^8.8",
-        "drupal/core-recommended": "^8.8",
         "drupal/ctools": "^3.2",
         "drupal/date_popup": "^1.0",
         "drupal/easy_breadcrumb": "^1.12",
@@ -86,8 +90,7 @@
         "ifsight/if_admin": "^0.1.0",
         "ifsight/if_helper": "^0.1.0",
         "ifsight/paladin": "^1.1",
-        "ifsight/varnish_purge_tags": "^0.2.0",
-        "oomphinc/composer-installers-extender": "^1.1"
+        "ifsight/varnish_purge_tags": "^0.2.0"
     },
     "require-dev": {
         "drupal/core-dev": "^8.8",
@@ -96,14 +99,34 @@
     "conflict": {
         "drupal/drupal": "*"
     },
-    "config": {
-        "sort-packages": true
-    },
     "extra": {
         "drupal-scaffold": {
             "locations": {
-                "web-root": "web/"
-            }
+                "web-root": "docroot/"
+            },
+            "file-mapping": {
+                "[web-root]/robots.txt": false,
+                "[web-root]/README.txt": false,
+                "[web-root]/.ht.router.php": false,
+                "[web-root]/INSTALL.txt": false,
+                "[web-root]/example.gitignore": false,
+                "[web-root]/web.config": false,
+                "[web-root]/.htaccess": false,
+                "[web-root]/.eslintignore": false,
+                "[web-root]/sites/default/default.services.yml": false,
+                "[web-root]/sites/default/default.settings.php": false,
+                "[web-root]/sites/development.services.yml": false,
+                "[web-root]/sites/example.settings.local.php": false,
+                "[web-root]/sites/example.sites.php": false
+            },
+            "omit-defaults": true,
+            "excludes": [
+                "docroot/README.txt",
+                "docroot/robots.txt",
+                "docroot/.ht.router.php",
+                "docroot/INSTALL.txt",
+                "docroot/example.gitignore"
+            ]
         },
         "installer-types": [
             "component",
@@ -111,14 +134,14 @@
             "npm-asset"
         ],
         "installer-paths": {
-            "web/core": ["type:drupal-core"],
-            "web/libraries/{$name}": ["type:drupal-library", "type:npm-asset", "type:bower-asset", "type:component"],
-            "web/modules/contrib/{$name}": ["type:drupal-module"],
-            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "web/themes/contrib/{$name}": ["type:drupal-theme"],
+            "docroot/core": ["type:drupal-core"],
+            "docroot/libraries/{$name}": ["type:drupal-library", "type:npm-asset", "type:bower-asset", "type:component"],
+            "docroot/modules/contrib/{$name}": ["type:drupal-module"],
+            "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
             "drush/Commands/contrib/{$name}": ["type:drupal-drush"],
-            "web/modules/custom/{$name}": ["type:drupal-custom-module"],
-            "web/themes/custom/{$name}": ["type:drupal-custom-theme"]
+            "docroot/modules/custom/{$name}": ["type:drupal-custom-module"],
+            "docroot/themes/custom/{$name}": ["type:drupal-custom-theme"]
         },
         "patchLevel": {
             "drupal/core": "-p2"
