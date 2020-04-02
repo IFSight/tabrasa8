@@ -1,1 +1,8 @@
 .DS_Store
+Thumbs.db
+.idea/
+*~
+log/
+*.log
+*.rej
+*.orig
