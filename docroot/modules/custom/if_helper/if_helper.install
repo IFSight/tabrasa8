@@ -50,3 +50,13 @@ function if_helper_update_8003() {
 function if_helper_update_8004() {
   \Drupal::service('module_installer')->uninstall(['file_entity']);
 }
+
+/**
+ * Clean up dirty registry left by youtube module.
+ */
+function if_helper_update_8005() {
+  \Drupal::database()->delete('key_value')
+    ->condition('collection', 'system.schema')
+    ->condition('name', 'youtube')
+    ->execute();
+}
