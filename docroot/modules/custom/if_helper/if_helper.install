@@ -43,3 +43,10 @@ function if_helper_update_8002() {
 function if_helper_update_8003() {
   \Drupal::service('module_installer')->uninstall(['admin_toolbar_search']);
 }
+
+/**
+ * Uninstall file_entity module.
+ */
+function if_helper_update_8004() {
+  \Drupal::service('module_installer')->uninstall(['file_entity']);
+}
