@@ -4,26 +4,31 @@
     "type": "ifsight-docroot",
     "license": "GPL-2.0+",
     "require": {
-        "composer/installers": "^1.0.24",
-        "wikimedia/composer-merge-plugin": "~1.4",
+        "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6",
-        "drupal/core": "^8.8",
         "drupal/admin_toolbar": "^2.0",
+        "drupal/adminimal_theme": "^1.4",
         "drupal/advagg": "^3.0",
         "drupal/allowed_formats": "^1.1",
         "drupal/better_exposed_filters": "^3.0@alpha",
         "drupal/block_field": "^1.0@alpha",
         "drupal/captcha": "^1.0@beta",
+        "drupal/cloudflare": "^1.0@alpha",
         "drupal/components": "^1.0",
+        "drupal/config_split": "^1.4",
+        "drupal/console": "~1.0",
+        "drupal/core": "^8.8",
         "drupal/ctools": "^3.0",
         "drupal/date_popup": "^1.0",
         "drupal/devel": "^2.0",
         "drupal/easy_breadcrumb": "^1.8",
+        "drupal/elasticsearch_connector": "^6.0@alpha",
         "drupal/embed": "~1.0",
         "drupal/entity": "^1.0@beta",
         "drupal/entity_browser": "^2.0@alpha",
         "drupal/entity_embed": "^1.0@beta",
         "drupal/entity_reference_revisions": "^1.0",
+        "drupal/environment_indicator": "^3.6",
         "drupal/field_group": "^3.0",
         "drupal/file_entity": "^2.0@beta",
         "drupal/geolocation": "^1.0",
@@ -35,14 +40,17 @@
         "drupal/masquerade": "^2.0@beta",
         "drupal/menu_block": "^1.4",
         "drupal/metatag": "^1.4",
+        "drupal/paladin": "^1.0",
         "drupal/paragraphs": "^1.2",
         "drupal/pathauto": "^1.0",
         "drupal/plupload": "^1.0@beta",
+        "drupal/purge": "^3.0@beta",
         "drupal/purge_queuer_url": "^1.0@beta",
         "drupal/recaptcha": "^2.2",
         "drupal/redirect": "^1.0@alpha",
         "drupal/redis": "^1.0",
         "drupal/scheduler": "^1.0",
+        "drupal/search_api": "^1.12",
         "drupal/simple_sitemap": "^3.0",
         "drupal/smtp": "^1.0@beta",
         "drupal/social_media_links": "^2.6",
@@ -52,39 +60,65 @@
         "drupal/varnish_purge": "^1.0",
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
-        "drupal/console": "~1.0",
+        "drupal/youtube": "^1.0",
         "moxiecode/plupload": "^3.1",
-        "drupal/cloudflare": "^1.0@alpha",
-        "drupal/elasticsearch_connector": "^6.0@alpha",
-        "drupal/search_api": "^1.12",
-        "drupal/adminimal_theme": "^1.4",
-        "drupal/paladin": "^1.0",
-        "drupal/config_split": "^1.4",
-        "drupal/environment_indicator": "^3.6",
-        "drupal/purge": "^3.0@beta"
+        "oomphinc/composer-installers-extender": "^1.1",
+        "wikimedia/composer-merge-plugin": "~1.4"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
         "preferred-install": "dist",
-        "autoloader-suffix": "Drupal8"
+        "vendor-dir": "./docroot/vendor",
+        "sort-packages": true
     },
     "extra": {
-        "_readme": [
-            "By default Drupal loads the autoloader from ./vendor/autoload.php.",
-            "To change the autoloader you can edit ./autoload.php.",
-            "This file specifies the packages.drupal.org repository.",
-            "You can read more about this composer repository at:",
-            "https://www.drupal.org/node/2718229"
+        "enable-patching": true,
+        "drupal-scaffold": {
+            "file-mapping": {
+                "[web-root]/robots.txt": false,
+                "[web-root]/sites/default/default.services.yml": false,
+                "[web-root]/sites/default/default.settings.php": false,
+                "[web-root]/.ht.router.php": false,
+                "[web-root]/example.gitignore": false,
+                "[web-root]/.htaccess": false,
+                "[web-root]/INSTALL.txt": false,
+                "[web-root]/LICENSE.txt": false,
+                "[web-root]/README.txt": false,
+                "[web-root]/web.config": false
+            },
+            "excludes": [
+                "google123.html"
+            ],
+            "initial": {
+                "sites/default/default.services.yml": "docroot/sites/default/default.services.yml",
+                "sites/default/default.settings.php": "docroot/sites/default/default.settings.php",
+                "robots.txt": "docroot/robots.txt",
+                ".htaccess": "docroot/.htaccess"
+            },
+            "omit-defaults": true,
+            "locations": {
+                "web-root": "docroot/"
+            }
+        },
+        "installer-types": [
+            "component",
+            "bower-asset",
+            "npm-asset"
         ],
         "installer-paths": {
-            "core": ["type:drupal-core"],
-            "modules/contrib/{$name}": ["type:drupal-module"],
-            "profiles/contrib/{$name}": ["type:drupal-profile"],
-            "themes/contrib/{$name}": ["type:drupal-theme"],
-            "drush/contrib/{$name}": ["type:drupal-drush"],
-            "modules/custom/{$name}": ["type:drupal-custom-module"],
-            "themes/custom/{$name}": ["type:drupal-custom-theme"]
+            "docroot/core": ["type:drupal-core"],
+            "docroot/modules/contrib/{$name}": ["type:drupal-module"],
+            "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
+            "drush/Commands/contrib/{$name}": ["type:drupal-drush"],
+            "docroot/modules/custom/{$name}": ["type:drupal-custom-module"],
+            "docroot/themes/custom/{$name}": ["type:drupal-custom-theme"],
+            "docroot/libraries/{$name}": [
+                "type:drupal-library",
+                "type:npm-asset",
+                "type:bower-asset"
+            ]
         }
     },
     "autoload": {
@@ -104,6 +138,10 @@
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
         },
         {
             "type": "package",
