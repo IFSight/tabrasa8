@@ -46,21 +46,13 @@ class Tabs extends FieldGroupFormatterBase {
 
     // By default tabs don't have titles but you can override it in the theme.
     if ($this->getLabel()) {
-      $element['#title'] = Html::escape($this->getLabel());
+      $element['#title'] = $this->getLabel();
     }
 
     $element += [
       '#type' => $this->getSetting('direction') . '_tabs',
       '#theme_wrappers' => [$this->getSetting('direction') . '_tabs'],
     ];
-
-    // Search for a tab that was marked as open. First one wins.
-    foreach (Element::children($element) as $tab_name) {
-      if (!empty($element[$tab_name]['#open'])) {
-        $element[$this->group->group_name . '__active_tab']['#default_value'] = $tab_name;
-        break;
-      }
-    }
 
   }
 

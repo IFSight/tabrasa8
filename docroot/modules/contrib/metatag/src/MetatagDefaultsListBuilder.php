@@ -107,8 +107,8 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
     }
     if (strpos($entity->id(), '__') !== FALSE) {
       $prefix .= '<div class="indentation"></div>';
-      list($entity_label, $bundle_label) = explode(': ', $entity->get('label'));
-      $inherits .= ', ' . $entity_label;
+      $entity_label = explode(': ', $entity->get('label'));
+      $inherits .= ', ' . $entity_label[0];
     }
 
     if (!empty($inherits)) {
@@ -138,6 +138,16 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
         ],
       ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function render() {
+    if (\Drupal::state()->get('system.maintenance_mode')) {
+      \Drupal::messenger()->addMessage($this->t('Please note that while the site is in maintenance mode none of the usual meta tags will be output.'));
+    }
+    return parent::render();
   }
 
 }

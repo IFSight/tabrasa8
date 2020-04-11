@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\Utility\Crypt;
 
 /**
  * Defines the CAPTCHA form element with default properties.
@@ -114,7 +115,7 @@ class Captcha extends FormElement implements ContainerFactoryPluginInterface {
       // Generate a new CAPTCHA session if we could
       // not reuse one from a posted form.
       $captcha_sid = _captcha_generate_captcha_session($this_form_id, CAPTCHA_STATUS_UNSOLVED);
-      $captcha_token = md5(mt_rand());
+      $captcha_token = Crypt::randomBytesBase64();
       \Drupal::database()->update('captcha_sessions')
         ->fields(['token' => $captcha_token])
         ->condition('csid', $captcha_sid)

@@ -183,6 +183,8 @@ class Simplesitemap {
    *  true: All existing variants will be set.
    *
    * @return $this
+   *
+   * @todo Check if variants exist and throw exception.
    */
   public function setVariants($variants = NULL) {
     if (NULL === $variants) {
@@ -240,18 +242,16 @@ class Simplesitemap {
         return $this->fetchSitemapChunk($chunk_info[SitemapGeneratorBase::INDEX_DELTA]->id)
           ->sitemap_string;
       }
-      else {
-        // Return sitemap chunk if there is only one chunk.
-        return isset($chunk_info[SitemapGeneratorBase::FIRST_CHUNK_DELTA])
-          ? $this->fetchSitemapChunk($chunk_info[SitemapGeneratorBase::FIRST_CHUNK_DELTA]->id)
-            ->sitemap_string
-          : FALSE;
-      }
+
+      // Return sitemap chunk if there is only one chunk.
+      return isset($chunk_info[SitemapGeneratorBase::FIRST_CHUNK_DELTA])
+        ? $this->fetchSitemapChunk($chunk_info[SitemapGeneratorBase::FIRST_CHUNK_DELTA]->id)
+          ->sitemap_string
+        : FALSE;
     }
-    else {
-      // Return specific sitemap chunk.
-      return $this->fetchSitemapChunk($chunk_info[$delta]->id)->sitemap_string;
-    }
+
+    // Return specific sitemap chunk.
+    return $this->fetchSitemapChunk($chunk_info[$delta]->id)->sitemap_string;
   }
 
   /**
@@ -274,9 +274,8 @@ class Simplesitemap {
         ? $result->fetchAllAssoc('type')
         : $result->fetchAllAssoc('delta');
     }
-    else {
-      return [];
-    }
+
+    return [];
   }
 
   /**
@@ -315,18 +314,17 @@ class Simplesitemap {
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    *
-   * @todo Respect $this->variants and generate for specific variants.
    * @todo Implement lock functionality.
    */
-  public function generateSitemap($from = 'form') {
+  public function generateSitemap($from = QueueWorker::GENERATE_TYPE_FORM) {
     switch($from) {
-      case 'form':
-      case 'drush':
+      case QueueWorker::GENERATE_TYPE_FORM:
+      case QueueWorker::GENERATE_TYPE_DRUSH;
         $this->queueWorker->batchGenerateSitemap($from);
         break;
 
-      case 'cron':
-      case 'backend':
+      case QueueWorker::GENERATE_TYPE_CRON:
+      case QueueWorker::GENERATE_TYPE_BACKEND:
         $this->queueWorker->generateSitemap($from);
         break;
     }
@@ -335,7 +333,19 @@ class Simplesitemap {
   }
 
   /**
-   * Rebuilds the queue for the currently set variants.
+   * Queues links from currently set variants.
+   *
+   * @return $this
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  public function queue() {
+    $this->queueWorker->queue($this->getVariants());
+
+    return $this;
+  }
+
+  /**
+   * Deletes the queue and queues links from currently set variants.
    *
    * @return $this
    * @throws \Drupal\Component\Plugin\Exception\PluginException
@@ -585,11 +595,8 @@ class Simplesitemap {
           ->getEditable("simple_sitemap.bundle_settings.$variant.$entity_type_id.$bundle_name")->delete();
       }
 
-      $this->removeEntityInstanceSettings($entity_type_id, (
-        empty($ids)
-          ? NULL
-          : $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name)
-      ));
+      $entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name);
+      $this->removeEntityInstanceSettings($entity_type_id, (empty($entity_ids) ? NULL : $entity_ids));
     }
     else {
       foreach ($variants as $variant) {
@@ -597,8 +604,8 @@ class Simplesitemap {
         foreach ($config_names as $config_name) {
           $this->configFactory->getEditable($config_name)->delete();
         }
-        $this->removeEntityInstanceSettings();
       }
+      $this->removeEntityInstanceSettings();
     }
 
     return $this;
@@ -723,16 +730,15 @@ class Simplesitemap {
     if (!empty($results)) {
       return unserialize($results);
     }
-    else {
-      if (empty($entity = $this->entityTypeManager->getStorage($entity_type_id)->load($id))) {
-        return FALSE;
-      }
 
-      return $this->getBundleSettings(
-        $entity_type_id,
-        $this->entityHelper->getEntityInstanceBundleName($entity)
-      );
+    if (empty($entity = $this->entityTypeManager->getStorage($entity_type_id)->load($id))) {
+      return FALSE;
     }
+
+    return $this->getBundleSettings(
+      $entity_type_id,
+      $this->entityHelper->getEntityInstanceBundleName($entity)
+    );
   }
 
   /**

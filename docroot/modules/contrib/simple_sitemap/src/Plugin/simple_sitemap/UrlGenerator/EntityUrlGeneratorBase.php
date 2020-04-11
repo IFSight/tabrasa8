@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Url;
@@ -46,6 +47,11 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   protected $entityHelper;
 
   /**
+   * @var bool
+   */
+  protected $isMultilingualSitemap;
+
+  /**
    * UrlGeneratorBase constructor.
    * @param array $configuration
    * @param $plugin_id
@@ -72,6 +78,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     $this->entityTypeManager = $entity_type_manager;
     $this->anonUser = new AnonymousUserSession();
     $this->entityHelper = $entityHelper;
+    $this->isMultilingualSitemap = SitemapGeneratorBase::isMultilingualSitemap();
   }
 
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -97,8 +104,9 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   protected function getUrlVariants(array $path_data, Url $url_object) {
     $url_variants = [];
 
-    if (!$url_object->isRouted()) {
-      // Not a routed URL, including only default variant.
+    if (!$this->isMultilingualSitemap || !$url_object->isRouted()) {
+
+      // Not a routed URL or URL language negotiation disabled: Including only default variant.
       $alternate_urls = $this->getAlternateUrlsForDefaultLanguage($url_object);
     }
     elseif ($this->settings['skip_untranslated']
@@ -109,7 +117,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       if (isset($translation_languages[Language::LANGCODE_NOT_SPECIFIED])
         || isset($translation_languages[Language::LANGCODE_NOT_APPLICABLE])) {
 
-        // Content entity's language is unknown, including only default variant.
+        // Content entity's language is unknown: Including only default variant.
         $alternate_urls = $this->getAlternateUrlsForDefaultLanguage($url_object);
       }
       else {
@@ -144,6 +152,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
         ->setOption('language', $this->languages[$this->defaultLanguageId])->toString()
       );
     }
+
     return $alternate_urls;
   }
 
@@ -165,6 +174,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
         }
       }
     }
+
     return $alternate_urls;
   }
 
@@ -183,6 +193,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
         }
       }
     }
+
     return $alternate_urls;
   }
 
@@ -199,9 +210,8 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       unset($path_data['url']);
       return $this->getUrlVariants($path_data, $url_object);
     }
-    else {
-      return FALSE !== $path_data ? [$path_data] : [];
-    }
+
+    return FALSE !== $path_data ? [$path_data] : [];
   }
 
   /**
@@ -229,4 +239,5 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
 
     return $image_data;
   }
+
 }

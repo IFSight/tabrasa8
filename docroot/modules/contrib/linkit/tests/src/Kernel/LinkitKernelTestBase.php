@@ -30,7 +30,6 @@ abstract class LinkitKernelTestBase extends KernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->installSchema('system', 'router');
     $this->installSchema('system', 'sequences');
     $this->installEntitySchema('user');
     $this->installConfig(['filter']);

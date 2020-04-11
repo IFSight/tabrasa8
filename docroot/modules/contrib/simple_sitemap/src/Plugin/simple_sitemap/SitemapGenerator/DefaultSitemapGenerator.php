@@ -3,10 +3,6 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Extension\ModuleHandler;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Component\Datetime\Time;
 
 /**
  * Class DefaultSitemapGenerator
@@ -36,57 +32,6 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
     'xmlns:xhtml' => self::XMLNS_XHTML,
     'xmlns:image' => self::XMLNS_IMAGE,
   ];
-
-  /**
-   * DefaultSitemapGenerator constructor.
-   *
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\Core\Database\Connection $database
-   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   * @param \Drupal\Component\Datetime\Time $time
-   * @param \Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter $sitemapWriter
-   */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    Connection $database,
-    ModuleHandler $module_handler,
-    LanguageManagerInterface $language_manager,
-    Time $time,
-    SitemapWriter $sitemapWriter
-  ) {
-    parent::__construct(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $database,
-      $module_handler,
-      $language_manager,
-      $time,
-      $sitemapWriter
-    );
-  }
-
-  public static function create(
-    ContainerInterface $container,
-    array $configuration,
-    $plugin_id,
-    $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('database'),
-      $container->get('module_handler'),
-      $container->get('language_manager'),
-      $container->get('datetime.time'),
-      $container->get('simple_sitemap.sitemap_writer')
-    );
-  }
 
   /**
    * Generates and returns a sitemap chunk.
@@ -225,13 +170,8 @@ class DefaultSitemapGenerator extends SitemapGeneratorBase {
    * @return bool
    */
   protected function isHreflangSitemap() {
-    if (NULL === $this->isHreflangSitemap) {
-      $this->isHreflangSitemap = count(
-        array_diff_key($this->languageManager->getLanguages(),
-          $this->settings['excluded_languages'])
-        ) > 1;
-    }
-    return $this->isHreflangSitemap;
+    return NULL !== $this->isHreflangSitemap
+      ? $this->isHreflangSitemap
+      : self::isMultilingualSitemap();
   }
-
 }

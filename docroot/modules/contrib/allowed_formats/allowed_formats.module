@@ -1,7 +1,14 @@
 <?php
 
+/**
+ * @file
+ * This is the allowed_formats module.
+ *
+ * It enables limiting which text formats are available for each fields.
+ */
+
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Field\FieldConfigBase;
 use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 
@@ -24,7 +31,7 @@ function allowed_formats_form_field_config_edit_form_alter(array &$form, FormSta
       '#title' => t('Allowed formats'),
       '#options' => $options,
       '#default_value' => $field->getThirdPartySettings('allowed_formats'),
-      '#description' => t('Restrict which text formats are allowed, given the user has the required permissions. If no text formats are selected, then all the ones the user has access to will be available.')
+      '#description' => t('Restrict which text formats are allowed, given the user has the required permissions. If no text formats are selected, then all the ones the user has access to will be available.'),
     ];
   }
 }
@@ -34,7 +41,7 @@ function allowed_formats_form_field_config_edit_form_alter(array &$form, FormSta
  */
 function allowed_formats_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
   if (in_array($field_definition->getType(), _allowed_formats_field_types())) {
-    $element = array();
+    $element = [];
     $element['hide_help'] = [
       '#type' => 'checkbox',
       '#title' => t('Hide the help link <em>About text formats</em>.'),
@@ -57,26 +64,31 @@ function allowed_formats_field_widget_form_alter(&$element, FormStateInterface $
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
-  // Base fields are not configurable.
-  if (!$field_definition instanceof FieldConfig) {
-    return;
-  }
-
   // We can't use the protected isDefaultValueWidget() method.
   $is_default_value_widget = (bool) $form_state->get('default_value_widget');
 
   if (in_array($field_definition->getType(), _allowed_formats_field_types()) && !$is_default_value_widget) {
-    $field_configuration = $field_definition->getConfig($field_definition->getTargetBundle());
-    $allowed_formats_setting = $field_configuration->getThirdPartySettings('allowed_formats');
+    if ($field_definition instanceof FieldConfigBase) {
+      // Read configuration if available.  This is possible for bundle fields or
+      // base fields overridden using a BaseFieldOverride.
+      $field_configuration = $field_definition->getConfig($field_definition->getTargetBundle());
+      $allowed_formats_setting = $field_configuration->getThirdPartySettings('allowed_formats');
+    }
+    else {
+      // Base fields don't support third party settings so use an ordinary
+      // setting.  That's the way it would work anyway if allowed formats gets
+      // into core.
+      $allowed_formats_setting = $field_definition->getSetting('allowed_formats');
+    }
 
-    if (is_array($allowed_formats_setting)) {
+    if (isset($allowed_formats_setting) && is_array($allowed_formats_setting)) {
       $allowed_formats = array_filter($allowed_formats_setting);
       if (!empty($allowed_formats)) {
         $element['#allowed_formats'] = $allowed_formats;
       }
     }
 
-    /** @var WidgetInterface $widget */
+    /** @var \Drupal\Core\Field\WidgetInterface $widget */
     $widget = $context['widget'];
     $element['#allowed_format_hide_settings'] = $widget->getThirdPartySettings('allowed_formats');
 
@@ -87,7 +99,7 @@ function allowed_formats_field_widget_form_alter(&$element, FormStateInterface $
 }
 
 /**
- * #after_build callback.
+ * The #after_build callback for text widgets.
  */
 function _allowed_formats_remove_textarea_help($form_element, FormStateInterface $form_state) {
   if (isset($form_element['format'])) {

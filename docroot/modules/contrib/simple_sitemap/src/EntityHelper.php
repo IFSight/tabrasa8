@@ -102,6 +102,7 @@ class EntityHelper {
   /**
    * Determines if an entity type is supported or not.
    *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    * @return bool
    *   TRUE if entity type supported by Simple Sitemap, FALSE if not.
    */

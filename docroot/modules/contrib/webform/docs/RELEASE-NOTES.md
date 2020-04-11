@@ -7,7 +7,7 @@ Steps for creating a new release
   4. Run tests
   5. Generate release notes
   6. Tag and create a new release
-
+  7. Tag and create a hotfix release
 
 1. Review code
 --------------
@@ -39,6 +39,14 @@ Steps for creating a new release
     core/node_modules/.bin/eslint --no-eslintrc -c=core/.eslintrc.legacy.json --ext=.js modules/sandbox/webform > ~/webform-javascript-coding-standards.txt
     cat ~/webform-javascript-coding-standards.txt
           
+[CSS](https://www.drupal.org/node/3041002)
+
+    # Install Eslint. (One-time)
+    cd /var/www/sites/d8_webform/web/core
+    yarn install
+
+    cd /var/www/sites/d8_webform/web/core
+    yarn run lint:css ../modules/sandbox/webform/css --fix
 
 [File Permissions](https://www.drupal.org/comment/reply/2690335#comment-form)
 
@@ -189,3 +197,30 @@ References
     git push origin tag 8.x-5.0-VERSION
 
 [Create new release](https://www.drupal.org/node/add/project-release/2640714)
+
+
+7. Tag and create a hotfix release
+----------------------------------
+
+    # Creete hotfix branch
+    git checkout 8.x-5.LATEST-VERSION
+    git checkout -b 8.x-5.NEXT-VERSION-hotfix
+    git push -u origin 8.x-5.NEXT-VERSION-hotfix
+
+    # Apply and commit remote patch
+    curl https://www.drupal.org/files/issues/[project_name]-[issue-description]-[issue-number]-00.patch | git apply -
+    git commit -am 'Issue #[issue-number]: [issue-description]'
+    git push
+
+    # Tag hotfix release.
+    git tag 8.x-5.NEXT-VERSION
+    git push --tags
+    git push origin tag 8.x-5.NEXT-VERSION
+      
+    # Merge hotfix release with HEAD.
+    git checkout 8.x-5.x
+    git merge 8.x-5.NEXT-VERSION-hotfix
+    
+    # Delete hotfix release.
+    git branch -D 8.x-5.NEXT-VERSION-hotfix
+    git push origin :8.x-5.NEXT-VERSION-hotfix

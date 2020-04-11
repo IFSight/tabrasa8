@@ -2,14 +2,14 @@ name: 'Webform node module translation test'
 type: module
 description: 'Support module for webform node that enabled translations for webform content type.'
 package: Testing
-core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 dependencies:
   - 'webform:webform'
   - 'webform:webform_node'
   - 'webform:webform_test_translation'
   - 'drupal:content_translation'
 
-# Information added by Drupal.org packaging script on 2019-10-29
-version: '8.x-5.5'
+# Information added by Drupal.org packaging script on 2020-03-18
+version: '8.x-5.9'
 project: 'webform'
-datestamp: 1572377290
+datestamp: 1584560018

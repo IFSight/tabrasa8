@@ -5,7 +5,7 @@ namespace Drupal\Tests\search_api\Functional;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
+use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Item\Field;
@@ -98,7 +98,12 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
    */
   public function testProcessorIntegration() {
     // Some processors are always enabled.
-    $enabled = ['add_url', 'aggregated_field', 'rendered_item'];
+    $enabled = [
+      'add_url',
+      'aggregated_field',
+      'language_with_fallback',
+      'rendered_item'
+    ];
     $actual_processors = array_keys($this->loadIndex()->getProcessors());
     sort($actual_processors);
     $this->assertEquals($enabled, $actual_processors);
@@ -109,6 +114,8 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
     foreach ($hidden as $processor_id) {
       $this->assertSession()->responseNotContains(Html::escape($processor_id));
     }
+
+    $this->checkLanguageWithFallbackIntegration();
 
     $this->checkAggregatedFieldsIntegration();
 
@@ -304,13 +311,36 @@ class ProcessorIntegrationTest extends SearchApiBrowserTestBase {
     $this->drupalGet($settings_path);
     $this->submitForm(['server' => 'webtest_server'], 'Save');
 
-    // Load the processors again and check that they are not shown anymore.
+    // Load the processors again and check that they are disabled now.
     $this->loadProcessorsTab();
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->pageTextNotContains('Highlight');
-    $this->assertSession()->pageTextNotContains('Ignore character');
-    $this->assertSession()->pageTextNotContains('Tokenizer');
-    $this->assertSession()->pageTextNotContains('Stopwords');
+    $this->assertSession()->pageTextContains('It is recommended not to use this processor with the selected server.');
+    $this->assertSession()->elementExists('css', 'input[name="status[highlight]"][disabled="disabled"]');
+    $this->assertSession()->elementExists('css', 'input[name="status[ignore_character]"][disabled="disabled"]');
+    $this->assertSession()->elementExists('css', 'input[name="status[tokenizer]"][disabled="disabled"]');
+    $this->assertSession()->elementExists('css', 'input[name="status[stopwords]"][disabled="disabled"]');
+  }
+
+  /**
+   * Tests the integration of the "Language (with fallback)" processor.
+   */
+  protected function checkLanguageWithFallbackIntegration() {
+    // Test that the processor is locked.
+    $index = $this->loadIndex();
+    $index->removeProcessor('language_with_fallback');
+    $index->save();
+
+    $this->assertTrue($this->loadIndex()->isValidProcessor('language_with_fallback'), 'The "Language (with fallback)" processor cannot be disabled.');
+
+    // Add a language_with_fallback field.
+    $options['query']['datasource'] = '';
+    $this->drupalGet($this->getIndexPath('fields/add/nojs'), $options);
+    // See \Drupal\search_api\Tests\IntegrationTest::addField().
+    $this->assertSession()->responseContains('name="language_with_fallback"');
+    $this->submitForm([], 'language_with_fallback');
+
+    $args['%label'] = 'Language (with fallback)';
+    $this->assertSession()->responseContains(new FormattableMarkup('Field %label was added to the index.', $args));
   }
 
   /**
@@ -451,6 +481,7 @@ TAGS
     $this->checkValidationError($configuration, 'html_filter', $errors);
 
     $configuration = $form_values = [
+      'all_fields' => TRUE,
       'title' => FALSE,
       'alt' => FALSE,
       'tags' => [
@@ -465,7 +496,9 @@ TAGS
    * Tests the UI for the "Ignore case" processor.
    */
   public function checkIgnoreCaseIntegration() {
-    $this->editSettingsForm([], 'ignorecase');
+    $this->editSettingsForm([
+      'all_fields' => TRUE,
+    ], 'ignorecase');
   }
 
   /**
@@ -477,34 +510,32 @@ TAGS
     ];
     $this->checkValidationError($configuration, 'ignore_character', 'The entered text is no valid regular expression.');
 
-    $form_values = [
+    $configuration = $form_values = [
+      'all_fields' => TRUE,
       'ignorable' => '[¿¡!?,.]',
-      'strip' => [
-        'character_sets' => [
-          'Pc' => 'Pc',
-          'Pd' => 'Pd',
-          'Pe' => 'Pe',
-          'Pf' => 'Pf',
-          'Pi' => 'Pi',
-          'Po' => 'Po',
-          'Ps' => 'Ps',
-          'Cc' => 'Cc',
-          'Cf' => FALSE,
-          'Co' => FALSE,
-          'Mc' => FALSE,
-          'Me' => FALSE,
-          'Mn' => FALSE,
-          'Sc' => FALSE,
-          'Sk' => FALSE,
-          'Sm' => FALSE,
-          'So' => FALSE,
-          'Zl' => FALSE,
-          'Zp' => FALSE,
-          'Zs' => FALSE,
-        ],
-      ],
     ];
-    $configuration['ignorable'] = $form_values['ignorable'];
+    $form_values['strip']['character_sets'] = [
+      'Pc' => 'Pc',
+      'Pd' => 'Pd',
+      'Pe' => 'Pe',
+      'Pf' => 'Pf',
+      'Pi' => 'Pi',
+      'Po' => 'Po',
+      'Ps' => 'Ps',
+      'Cc' => 'Cc',
+      'Cf' => FALSE,
+      'Co' => FALSE,
+      'Mc' => FALSE,
+      'Me' => FALSE,
+      'Mn' => FALSE,
+      'Sc' => FALSE,
+      'Sk' => FALSE,
+      'Sm' => FALSE,
+      'So' => FALSE,
+      'Zl' => FALSE,
+      'Zp' => FALSE,
+      'Zs' => FALSE,
+    ];
     $configuration['ignorable_classes'] = array_filter($form_values['strip']['character_sets']);
     sort($configuration['ignorable_classes']);
     $this->editSettingsForm($configuration, 'ignore_character', $form_values);
@@ -582,9 +613,11 @@ TAGS
    */
   public function checkStopWordsIntegration() {
     $configuration = [
+      'all_fields' => TRUE,
       'stopwords' => ['the'],
     ];
     $form_values = [
+      'all_fields' => TRUE,
       'stopwords' => 'the',
     ];
     $this->editSettingsForm($configuration, 'stopwords', $form_values);
@@ -600,6 +633,7 @@ TAGS
     $this->checkValidationError($configuration, 'tokenizer', 'The entered text is no valid PCRE character class.');
 
     $configuration = [
+      'all_fields' => TRUE,
       'spaces' => '',
       'overlap_cjk' => FALSE,
       'minimum_word_size' => 2,
@@ -611,7 +645,9 @@ TAGS
    * Tests the UI for the "Transliteration" processor.
    */
   public function checkTransliterationIntegration() {
-    $this->editSettingsForm([], 'transliteration');
+    $this->editSettingsForm([
+      'all_fields' => TRUE,
+    ], 'transliteration');
   }
 
   /**
@@ -639,9 +675,11 @@ TAGS
   public function checkStemmerIntegration() {
     $this->enableProcessor('stemmer');
     $configuration = [
+      'all_fields' => TRUE,
       'exceptions' => ['indian' => 'india'],
     ];
     $form_values = [
+      'all_fields' => TRUE,
       'exceptions' => 'indian=india',
     ];
     $this->editSettingsForm($configuration, 'stemmer', $form_values);
@@ -694,20 +732,16 @@ TAGS
    *   actual configuration prior to comparing with the given configuration.
    */
   protected function editSettingsForm(array $configuration, $processor_id, array $form_values = NULL, $enable = TRUE, $unset_fields = TRUE) {
-    if (!isset($form_values)) {
-      $form_values = $configuration;
-    }
-
     $this->loadProcessorsTab();
 
-    $edit = $this->getFormValues($form_values, "processors[$processor_id][settings]");
+    $edit = $this->getFormValues($form_values ?? $configuration, "processors[$processor_id][settings]");
     if ($enable) {
       $edit["status[$processor_id]"] = 1;
     }
     $this->submitForm($edit, 'Save');
 
     $processor = $this->loadIndex()->getProcessor($processor_id);
-    $this->assertTrue($processor, "Successfully enabled the '$processor_id' processor.'");
+    $this->assertInstanceOf(ProcessorInterface::class, $processor, "Successfully enabled the '$processor_id' processor.'");
     if ($processor) {
       $actual_configuration = $processor->getConfiguration();
       unset($actual_configuration['weights']);

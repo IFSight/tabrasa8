@@ -14,7 +14,7 @@
  * Alter the information provided in \Drupal\webform\Annotation\WebformElement.
  *
  * @param array $definitions
- *   The array of webform handlers, keyed on the machine-readable element name.
+ *   The array of webform elements, keyed on the machine-readable element name.
  */
 function hook_webform_element_info_alter(array &$definitions) {
 
@@ -31,6 +31,16 @@ function hook_webform_handler_info_alter(array &$handlers) {
 }
 
 /**
+ * Alter the information provided in \Drupal\webform\Annotation\WebformVariant.
+ *
+ * @param array $variants
+ *   The array of webform variants, keyed on the machine-readable handler name.
+ */
+function hook_webform_variant_info_alter(array &$variants) {
+
+}
+
+/**
  * Alter definition of WebformSourceEntity plugins.
  *
  * @param array $definitions
@@ -43,10 +53,104 @@ function hook_webform_source_entity_info_alter(array &$definitions) {
 }
 
 /**
+ * Alter a webform element's default properties.
+ *
+ * @param array &$properties
+ *   An associative array containing an element's default properties.
+ * @param array $definition
+ *   The webform element's definition.
+ *
+ * @see webform_example_element_properties.module
+ */
+function hook_webform_element_default_properties_alter(array &$properties, array &$definition) {
+  // Add custom data property to all webform elements.
+  // Setting the custom property to an empty string makes the corresponding
+  // element defined via hook_webform_element_configuration_form_alter()
+  // automatically visible.
+  $properties['custom_data'] = '';
+}
+
+/**
+ * Alter a webform element's translatable properties.
+ *
+ * @param array &$properties
+ *   An indexed array containing an element's translatable properties.
+ * @param array $definition
+ *   The webform element's definition.
+ *
+ * @see webform_example_element_properties.module
+ */
+function hook_webform_element_translatable_properties_alter(array &$properties, array &$definition) {
+  // Make the custom data property translatable.
+  $properties[] = 'custom_data';
+}
+
+/**
+ * Perform alterations before a webform element configuration form is populated.
+ *
+ * @param array $form
+ *   Nested array of form elements that comprise the webform element properties.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ *
+ * @see webform_example_element_properties.module
+ * @ingroup form_api
+ */
+function hook_webform_element_configuration_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  /** @var Drupal\webform_ui\Form\WebformUiElementEditForm $form_object */
+  $form_object = $form_state->getFormObject();
+  $element_plugin = $form_object->getWebformElementPlugin();
+
+  // Make sure the element has the 'custom_data' property.
+  if (!$element_plugin->hasProperty('custom_data')) {
+    return;
+  }
+
+  $form['custom_properties'] = [
+    '#type' => 'details',
+    '#title' => t('Custom properties'),
+    '#description' => t('The below custom properties are provided and managed by the webform_test_custom_properties.module.'),
+    '#open' => TRUE,
+    // Add custom properties after all fieldset elements, which have a
+    // weight of -20.
+    // @see \Drupal\webform\Plugin\WebformElementBase::buildConfigurationForm
+    '#weight' => -10,
+  ];
+  $form['custom_properties']['custom_data'] = [
+    '#type' => 'textfield',
+    '#title' => t('Custom data'),
+    '#description' => t("The custom data value will be added to the \$element's render array attributes."),
+  ];
+}
+
+/**
  * Alter webform elements.
  *
  * @param array $element
- *   The webform element.
+ *   Webform specific element properties include:
+ *   - #webform: The element's parent webform ID.
+ *   - #webform_submission: The element's related webform submission ID.
+ *   - #webform_id: The element's unique webform key.
+ *   - #webform_key: The element's webform key/name.
+ *   - #webform_parent_key: The element's parent key/name.
+ *   - #webform_parent_flexbox: TRUE if the element's parent is a
+ *     flexbox container.
+ *   - #webform_depth: The depth level of the element in the form's
+ *     tree hierarchy.
+ *   - #webform_children: An array of child element keys/names.
+ *   - #webform_multiple: TRUE if element stores multiple values.
+ *   - #webform_composite: TRUE if element stores composite values.
+ *   - #webform_parents: An array containing the element's parent keys/names.
+ *
+ *   Webform specific composite sub-element properties include:
+ *   - #webform_composite_id: The composite sub-element's ID.
+ *   - #webform_composite_key: The composite sub-element's parent key and
+ *     element key.
+ *   - #webform_composite_parent_key: The composite sub-element's parent key.
+ *
+ *   Sub-element's can have properties defined using #SUB_ELEMENT__PROPERTY.
+ *   For example, an other element's placeholder can be defined using
+ *   the #other__placeholder property.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The current state of the form.
  * @param array $context
@@ -77,7 +181,30 @@ function hook_webform_element_alter(array &$element, \Drupal\Core\Form\FormState
  * hook_webform_element_alter() and checking the element type.
  *
  * @param array $element
- *   The webform element.
+ *   Webform specific element properties include:
+ *   - #webform: The element's parent webform ID.
+ *   - #webform_submission: The element's related webform submission ID.
+ *   - #webform_id: The element's unique webform key.
+ *   - #webform_key: The element's webform key/name.
+ *   - #webform_parent_key: The element's parent key/name.
+ *   - #webform_parent_flexbox: TRUE if the element's parent is a
+ *     flexbox container.
+ *   - #webform_depth: The depth level of the element in the form's
+ *     tree hierarchy.
+ *   - #webform_children: An array of child element keys/names.
+ *   - #webform_multiple: TRUE if element stores multiple values.
+ *   - #webform_composite: TRUE if element stores composite values.
+ *   - #webform_parents: An array containing the element's parent keys/names.
+ *
+ *   Webform specific composite sub-element properties include:
+ *   - #webform_composite_id: The composite sub-element's ID.
+ *   - #webform_composite_key: The composite sub-element's parent key and
+ *     element key.
+ *   - #webform_composite_parent_key: The composite sub-element's parent key.
+ *
+ *   Sub-element's can have properties defined using #SUB_ELEMENT__PROPERTY.
+ *   For example, an other element's placeholder can be defined using
+ *   the #other__placeholder property.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The current state of the form.
  * @param array $context
@@ -93,6 +220,89 @@ function hook_webform_element_ELEMENT_TYPE_alter(array &$element, \Drupal\Core\F
 
   // Attach a custom library to the element type.
   $element['#attached']['library'][] = 'MODULE/MODULE.element.ELEMENT_TYPE';
+}
+
+/**
+ * Check and set an element's #access property and/or return access.
+ *
+ * @param string $operation
+ *   An element create, view, or update operation.
+ * @param array $element
+ *   Webform specific element properties include:
+ *   - #webform: The element's parent webform ID.
+ *   - #webform_submission: The element's related webform submission ID.
+ *   - #webform_id: The element's unique webform key.
+ *   - #webform_key: The element's webform key/name.
+ *   - #webform_parent_key: The element's parent key/name.
+ *   - #webform_parent_flexbox: TRUE if the element's parent is a
+ *     flexbox container.
+ *   - #webform_depth: The depth level of the element in the form's
+ *     tree hierarchy.
+ *   - #webform_children: An array of child element keys/names.
+ *   - #webform_multiple: TRUE if element stores multiple values.
+ *   - #webform_composite: TRUE if element stores composite values.
+ *   - #webform_parents: An array containing the element's parent keys/names.
+ *
+ *   Webform specific composite sub-element properties include:
+ *   - #webform_composite_id: The composite sub-element's ID.
+ *   - #webform_composite_key: The composite sub-element's parent key and
+ *     element key.
+ *   - #webform_composite_parent_key: The composite sub-element's parent key.
+ *
+ *   Sub-element's can have properties defined using #SUB_ELEMENT__PROPERTY.
+ *   For example, an other element's placeholder can be defined using
+ *   the #other__placeholder property.
+ * @param \Drupal\Core\Session\AccountInterface|null $account
+ *   (optional) If provided, only those formats that are allowed for this user
+ *   account will be returned. All enabled formats will be returned otherwise.
+ *   Defaults to NULL.
+ * @param array $context
+ *   The element's current context which include the webform and
+ *   webform submission entity.
+ *
+ * @return \Drupal\Core\Access\AccessResult
+ *   The access provided. Return neutral if no change.
+ */
+function hook_webform_element_access($operation, array &$element, \Drupal\Core\Session\AccountInterface $account = NULL, array $context = []) {
+  // Load the current webform and submission for element's context.
+  $webform = $context['webform'];
+  $webform_submission = $context['webform_submission'];
+
+  return !empty($element['#confidential']) ? \Drupal\Core\Access\AccessResult::forbidden() : \Drupal\Core\Access\AccessResult::neutral();
+}
+
+/**
+ * Return information about input masks for text based webform elements.
+ *
+ * @return array
+ *   Return an array of input masks for text based webform elements.
+ *
+ * @see \Drupal\webform\Plugin\WebformElement\TextBase::getInputMasks
+ */
+function hook_webform_element_input_masks() {
+  $input_masks = [];
+  $input_masks["'alias': 'date'"] = [
+    'title' => t('Date'),
+    'example' => '01/01/2000',
+    'mask' => 'dd/mm/yyyy',
+  ];
+  return $input_masks;
+}
+
+/**
+ * Return information about input masks for text based webform elements.
+ *
+ * @param array $input_masks
+ *   An array of input masks for text based webform elements.
+ *
+ * @see \Drupal\webform\Plugin\WebformElement\TextBase::getInputMasks
+ */
+function hook_webform_element_input_masks_alter(array &$input_masks) {
+  $input_masks["'alias': 'date'"] = [
+    'title' => t('My Custom Date'),
+    'example' => '01/01/2000',
+    'mask' => 'dd/mm/yyyy',
+  ];
 }
 
 /**
@@ -487,6 +697,24 @@ function hook_webform_message_custom($operation, $id) {
         \Drupal::state()->delete($id);
         return NULL;
     }
+  }
+}
+
+/**
+ * Alter webform submission query access.
+ *
+ * @param \Drupal\Core\Database\Query\AlterableInterface $query
+ *   An Query object describing the composite parts of a SQL query.
+ * @param array $webform_submission_tables
+ *   An array webform submission tables that contains the table's alias and
+ *   OR conditions which are used to build the alter query.
+ *
+ * @see webform_query_webform_submission_access_alter()
+ */
+function hook_webform_submission_query_access_alter(\Drupal\Core\Database\Query\AlterableInterface $query, array $webform_submission_tables) {
+  // Always allow the current user access to their submissions.
+  foreach ($webform_submission_tables as $table) {
+    $table['condition']->condition($table['alias'] . '.uid', \Drupal::currentUser()->id());
   }
 }
 

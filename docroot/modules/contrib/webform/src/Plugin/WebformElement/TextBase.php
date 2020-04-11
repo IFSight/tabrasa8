@@ -5,6 +5,7 @@ namespace Drupal\webform\Plugin\WebformElement;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformHtmlHelper;
 use Drupal\webform\Utility\WebformTextHelper;
 use Drupal\webform\WebformSubmissionInterface;
 
@@ -18,25 +19,27 @@ abstract class TextBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       'readonly' => FALSE,
-      'size' => '',
-      'minlength' => '',
-      'maxlength' => '',
+      'size' => NULL,
+      'minlength' => NULL,
+      'maxlength' => NULL,
       'placeholder' => '',
       'autocomplete' => 'on',
       'pattern' => '',
       'pattern_error' => '',
-    ] + parent::getDefaultProperties();
+    ] + parent::defineDefaultProperties();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getTranslatableProperties() {
-    return array_merge(parent::getTranslatableProperties(), ['counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
+  protected function defineTranslatableProperties() {
+    return array_merge(parent::defineTranslatableProperties(), ['counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -121,7 +124,7 @@ abstract class TextBase extends WebformElementBase {
       // @see Drupal.behaviors.webformRequiredError
       // @see webform.form.js
       if (!empty($element['#pattern_error'])) {
-        $element['#attributes']['data-webform-pattern-error'] = $element['#pattern_error'];
+        $element['#attributes']['data-webform-pattern-error'] = WebformHtmlHelper::toPlainText($element['#pattern_error']);
       }
     }
   }
@@ -161,7 +164,7 @@ abstract class TextBase extends WebformElementBase {
       '#title' => $this->t('Pattern'),
       '#description' => $this->t('A <a href=":href">regular expression</a> that the element\'s value is checked against.', [':href' => 'http://www.w3schools.com/js/js_regexp.asp']),
       '#value__title' => $this->t('Pattern regular expression'),
-      '#value__maxlength' => 255,
+      '#value__maxlength' => NULL,
     ];
     $form['validation']['pattern_error'] = [
       '#type' => 'textfield',
@@ -284,7 +287,7 @@ abstract class TextBase extends WebformElementBase {
       $pattern = '{^(?:' . $pcre_pattern . ')$}u';
       if (!preg_match($pattern, $element['#value'])) {
         if (!empty($element['#pattern_error'])) {
-          $form_state->setError($element, $element['#pattern_error']);
+          $form_state->setError($element, WebformHtmlHelper::toHtmlMarkup($element['#pattern_error']));
         }
         else {
           $form_state->setError($element, t('%name field is not in the right format.', ['%name' => $element['#title']]));
@@ -337,7 +340,7 @@ abstract class TextBase extends WebformElementBase {
    *   example, and patterh.
    */
   protected function getInputMasks() {
-    return [
+    $input_masks = [
       "'alias': 'currency'" => [
         'title' => $this->t('Currency'),
         'example' => '$ 9.99',
@@ -403,6 +406,17 @@ abstract class TextBase extends WebformElementBase {
         'example' => 'lowercase',
       ],
     ];
+
+    // Get input masks.
+    $modules = \Drupal::moduleHandler()->getImplementations('webform_element_input_masks');
+    foreach ($modules as $module) {
+      $input_masks += \Drupal::moduleHandler()->invoke($module, 'webform_element_input_masks');
+    }
+
+    // Alter input masks.
+    \Drupal::moduleHandler()->alter('webform_element_input_masks', $input_masks);
+
+    return $input_masks;
   }
 
   /**

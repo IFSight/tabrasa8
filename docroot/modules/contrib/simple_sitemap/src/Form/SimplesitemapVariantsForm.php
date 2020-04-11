@@ -127,6 +127,7 @@ class SimplesitemapVariantsForm extends SimplesitemapFormBase {
       $variants[$name]['type'] = !empty($variant_settings[1]) ? trim($variant_settings[1]) : SimplesitemapManager::DEFAULT_SITEMAP_TYPE;
       $variants[$name]['label'] = !empty($variant_settings[2]) ? trim($variant_settings[2]) : $name;
     }
+
     return $variants;
   }
 
@@ -142,6 +143,7 @@ class SimplesitemapVariantsForm extends SimplesitemapFormBase {
         . ' | ' . $variant_definition['label']
         . "\r\n";
     }
+
     return $variants_string;
   }
 }

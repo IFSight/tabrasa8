@@ -115,6 +115,11 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
               $query->condition($keys['status'], 1);
             }
 
+            // Shift access check to EntityUrlGeneratorBase for language
+            // specific access.
+            // See https://www.drupal.org/project/simple_sitemap/issues/3102450.
+            $query->accessCheck(FALSE);
+
             foreach ($query->execute() as $entity_id) {
               $data_sets[] = [
                 'entity_type' => $entity_type_name,

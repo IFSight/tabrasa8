@@ -396,7 +396,7 @@ function _captcha_get_posted_captcha_info(array $element, FormStateInterface $fo
       (int) $input['captcha_sid']
       : NULL;
     $posted_captcha_token = isset($input['captcha_token']) ?
-      preg_replace("/[^a-zA-Z0-9]/", "", (string) $input['captcha_token'])
+      preg_replace("/[^a-zA-Z0-9-_]/", "", (string) $input['captcha_token'])
       : NULL;
 
     if ($posted_form_id == $this_form_id) {
@@ -498,8 +498,22 @@ function captcha_validate($element, FormStateInterface &$form_state) {
     // we also provide the CAPTCHA $element and $form_state
     // arrays for more advanced use cases.
     if ($captcha_validate($solution, $captcha_response, $element, $form_state)) {
-      // Correct answer.
-      $_SESSION['captcha_success_form_ids'][$form_id] = $form_id;
+
+      // Get the CAPTCHA persistence setting.
+      $captcha_persistence = \Drupal::config('captcha.settings')
+        ->get('persistence');
+
+      if (in_array($captcha_persistence,
+        [
+          CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL,
+          CAPTCHA_PERSISTENCE_SKIP_ONCE_SUCCESSFUL_PER_FORM_TYPE,
+        ])) {
+        // Only save the success in $_SESSION if it is actually needed for
+        // further validation in _captcha_required_for_user(). Setting
+        // this kills the page cache so let's not be cavalier about it.
+        $_SESSION['captcha_success_form_ids'][$form_id] = $form_id;
+      }
+
       // Record success.
       \Drupal::database()->update('captcha_sessions')
         ->condition('csid', $csid)

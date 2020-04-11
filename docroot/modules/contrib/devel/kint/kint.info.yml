@@ -1,6 +1,6 @@
 name: 'Devel Kint'
 type: module
-description: 'Wrapper for Kint debugging tool'
+description: 'Wrapper for Kint debugging tool.'
 package: Development
 core: 8.x
 tags:

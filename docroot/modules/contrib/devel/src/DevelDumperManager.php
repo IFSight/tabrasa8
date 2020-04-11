@@ -4,6 +4,7 @@ namespace Drupal\devel;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerTrait;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -90,10 +91,10 @@ class DevelDumperManager implements DevelDumperManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function message($input, $name = NULL, $type = 'status', $plugin_id = NULL) {
+  public function message($input, $name = NULL, $type = MessengerInterface::TYPE_STATUS, $plugin_id = NULL) {
     if ($this->hasAccessToDevelInformation()) {
       $output = $this->export($input, $name, $plugin_id);
-      $this->messenger()->addStatus($output);
+      $this->messenger()->addMessage($output, $type, TRUE);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Drupal\Core\Url;
+use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationUrl;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Database\Connection;
@@ -95,8 +96,6 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
     $this->languageManager = $language_manager;
     $this->time = $time;
     $this->writer = $sitemap_writer;
-    $this->sitemapVariant = $this->settings['default_variant'];
-
   }
 
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -118,6 +117,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
    */
   public function setSitemapVariant($sitemap_variant) {
     $this->sitemapVariant = $sitemap_variant;
+
     return $this;
   }
 
@@ -343,6 +343,19 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
       );
 
     return $url->toString();
+  }
+
+  /**
+   * @return bool
+   */
+  public static function isMultilingualSitemap() {
+    $has_multiple_indexable_languages = count(
+        array_diff_key(\Drupal::languageManager()->getLanguages(),
+          \Drupal::service('simple_sitemap.generator')->getSetting('excluded_languages'))
+      ) > 1;
+
+    return $has_multiple_indexable_languages
+      && \Drupal::service('language_negotiator')->isNegotiationMethodEnabled(LanguageNegotiationUrl::METHOD_ID);
   }
 
 }

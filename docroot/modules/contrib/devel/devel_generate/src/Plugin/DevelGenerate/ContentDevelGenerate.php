@@ -3,6 +3,7 @@
 namespace Drupal\devel_generate\Plugin\DevelGenerate;
 
 use Drupal\comment\CommentManagerInterface;
+use Drupal\Component\Datetime\Time;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -93,11 +94,21 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
   protected $drushBatch;
 
   /**
+   * Provides system time.
+   *
+   * @var \Drupal\Core\Datetime\Time
+   */
+  protected $time;
+
+  /**
+   * The construct.
+   *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin ID for the plugin instance.
    * @param array $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityStorageInterface $node_storage
    *   The node storage.
    * @param \Drupal\Core\Entity\EntityStorageInterface $node_type_storage
@@ -112,8 +123,10 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
    *   The url generator service.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
+   * @param \Drupal\Core\Datetime\Time $time
+   *   Provides system time.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityStorageInterface $node_storage, EntityStorageInterface $node_type_storage, ModuleHandlerInterface $module_handler, CommentManagerInterface $comment_manager = NULL, LanguageManagerInterface $language_manager, UrlGeneratorInterface $url_generator, DateFormatterInterface $date_formatter) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityStorageInterface $node_storage, EntityStorageInterface $node_type_storage, ModuleHandlerInterface $module_handler, CommentManagerInterface $comment_manager = NULL, LanguageManagerInterface $language_manager, UrlGeneratorInterface $url_generator, DateFormatterInterface $date_formatter, Time $time) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->moduleHandler = $module_handler;
@@ -123,6 +136,7 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
     $this->languageManager = $language_manager;
     $this->urlGenerator = $url_generator;
     $this->dateFormatter = $date_formatter;
+    $this->time = $time;
   }
 
   /**
@@ -138,7 +152,8 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
       $container->has('comment.manager') ? $container->get('comment.manager') : NULL,
       $container->get('language_manager'),
       $container->get('url_generator'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('datetime.time')
     );
   }
 
@@ -380,7 +395,7 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
       $this->develGenerateContentAddNode($vars);
     }
     else {
-      $this->develGenerateContentAddNode($context['results']);
+      $this->develGenerateContentAddNode($vars);
       $context['results']['num']++;
     }
   }
@@ -479,7 +494,7 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
     }
     $users = $results['users'];
 
-    $node_type = array_rand(array_filter($results['node_types']));
+    $node_type = array_rand($results['node_types']);
     $uid = $users[array_rand($users)];
 
     $node = $this->nodeStorage->create(array(
@@ -490,7 +505,7 @@ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactory
       'revision' => mt_rand(0, 1),
       'status' => TRUE,
       'promote' => mt_rand(0, 1),
-      'created' => REQUEST_TIME - mt_rand(0, $results['time_range']),
+      'created' => $this->time->getRequestTime() - mt_rand(0, $results['time_range']),
       'langcode' => $this->getLangcode($results),
     ));
 

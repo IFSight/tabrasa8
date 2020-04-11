@@ -27,7 +27,7 @@ class Fieldset extends FieldGroupFormatterBase {
 
     $element += [
       '#type' => 'fieldset',
-      '#title' => Html::escape($this->t($this->getLabel())),
+      '#title' => $this->getLabel(),
       '#attributes' => [],
       '#description' => $this->getSetting('description'),
     ];

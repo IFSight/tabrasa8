@@ -2823,12 +2823,13 @@ function webform_update_8153() {
   $webform = Webform::loadMultiple();
 
   if (\Drupal::entityTypeManager()->hasDefinition('path_alias')) {
-    $ids = \Drupal::entityTypeManager()->getStorage('path_alias')->getQuery()
+    $storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+    $ids = $storage->getQuery()
       ->condition('path', '/webform/', 'STARTS_WITH')
       ->execute();
 
-    /** @var \Drupal\Core\Path\PathAliasInterface $path_alias */
-    foreach (PathAlias::loadMultiple($ids) as $path_alias) {
+    /** @var \Drupal\path_alias\PathAliasInterface $path_alias */
+    foreach ($storage->loadMultiple($ids) as $path_alias) {
       if (preg_match('#^/webform/([^/]+)/(?:drafts|submissions)$#', $path_alias->getPath(), $match)) {
         // Check if the webform still exists.
         $webform_id = $match[1];
@@ -2994,7 +2995,7 @@ function webform_update_8157() {
  * Issue #3023863: Typo in State/Province codes options.
  */
 function webform_update_8158() {
-  /** \Drupal\webform\WebformOptionsInterface $webform_options */
+  /** @var \Drupal\webform\WebformOptionsInterface $webform_options */
   $webform_options = WebformOptions::load('state_province_codes');
   if (!$webform_options) {
     return;
@@ -3250,7 +3251,7 @@ function _webform_update_8173(array &$element) {
 }
 
 /**
- * Issue #3084531: Allow Email handler add additional parameters
+ * Issue #3084531: Allow Email handler add additional parameters.
  */
 function webform_update_8174() {
   _webform_update_webform_handler_settings();
@@ -3282,8 +3283,253 @@ function webform_update_8175() {
 }
 
 /**
-  * Issue #3086507: Allow wizard pages / bar to be updated based on states API.
-  */
+ * Issue #3086507: Allow wizard pages / bar to be updated based on states API.
+ */
 function webform_update_8176() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3082822: Anonymous role view submission via secure token.
+ */
+function webform_update_8177() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3095275: Allow webform management filter by default category and states to be customized
+ */
+function webform_update_8178() {
+  _webform_update_admin_settings();
+}
+
+/**
+ * Issue #3101300: Allow 'Save' (update) action label to be customized.
+ */
+function webform_update_8179() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $elements = $webform_config->get('elements');
+
+    // Try to decode elements.
+    try {
+      $elements = Yaml::decode($elements);
+    }
+    catch (\Exception $exception) {
+      continue;
+    }
+
+    // Make sure elements is an array.
+    if (!is_array($elements)) {
+      continue;
+    }
+
+    // Copy submit attributes to update attributes to prevent any
+    // unexpected regressions.
+    $has_actions_element = FALSE;
+    $flattened_elements =& WebformFormHelper::flattenElements($elements);
+    foreach ($flattened_elements as &$element) {
+      if (!isset($element['#type']) || $element['#type'] !== 'webform_actions') {
+        continue;
+      }
+
+      if (!empty($element['#submit__attributes']) && empty($element['#update__attributes'])) {
+        $element['#update__attributes'] = $element['#submit__attributes'];
+        $has_actions_element = TRUE;
+      }
+    }
+    if ($has_actions_element) {
+      $webform_config->set('elements', Yaml::encode($elements));
+      $webform_config->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Issue #3103171: Move deprecated jQuery UI buttons element into a sub-module.
+ */
+function webform_update_8180() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->get($webform_config_name);
+    $elements = $webform_config->get('elements');
+    if (strpos($elements, 'webform_buttons') !== FALSE) {
+      // Enable the webform_jqueryui_buttons.module.
+      \Drupal::service('module_installer')
+        ->install(['webform_jqueryui_buttons']);
+      return;
+    }
+  }
+}
+
+/**
+ * Issue #3103032: Move deprecated location geocomplete element into a sub-module
+ */
+function webform_update_8181() {
+  $config_factory = \Drupal::configFactory();
+  $install_webform_location_geocomplete = FALSE;
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->get($webform_config_name);
+    $elements = $webform_config->get('elements');
+    if (strpos($elements, 'webform_location_geocomplete') !== FALSE) {
+      $install_webform_location_geocomplete = TRUE;
+      break;
+    }
+  }
+
+  // Install and configure the webform_location_geocomplete.module.
+  $config = \Drupal::configFactory()->getEditable('webform.settings');
+  if ($install_webform_location_geocomplete) {
+    // Install the webform_location_geocomplete.module.
+    \Drupal::service('module_installer')
+      ->install(['webform_location_geocomplete']);
+
+    // Move the default Google maps API key.
+    $api_key = $config->get('element.default_google_maps_api_key');
+    if ($api_key) {
+      $config->clear('element.default_google_maps_api_key');
+      $config->set('third_party_settings.webform_location_geocomplete.default_google_maps_api_key', $api_key);
+      $config->save();
+    }
+  }
+
+  // Remove 'webform_location_geocomplete' from excluded elements.
+  $config->clear('element.excluded_elements.webform_location_geocomplete');
+}
+
+/**
+ * Issue #3102996: Move deprecated toggles elements into a sub-module.
+ */
+function webform_update_8182() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->get($webform_config_name);
+    $elements = $webform_config->get('elements');
+    if (strpos($elements, 'webform_toggle') !== FALSE) {
+      // Enable the webform_toggles.module.
+      \Drupal::service('module_installer')
+        ->install(['webform_toggles']);
+      return;
+    }
+  }
+}
+
+/**
+ * Issue #3103571: Move deprecated icheck support into a dedicated sub-module.
+ */
+function webform_update_8183() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->get($webform_config_name);
+    $elements = $webform_config->get('elements');
+    if (strpos($elements, 'icheck') !== FALSE) {
+      // Enable the webform_icheck.module.
+      \Drupal::service('module_installer')
+        ->install(['webform_icheck']);
+      return;
+    }
+  }
+}
+
+/**
+ * Issue #3094270: Add webform variants support.
+ */
+function webform_update_8184() {
+  _webform_update_admin_settings();
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3104049: Exclude attached files from email submission values.
+ */
+function webform_update_8185() {
+  _webform_update_webform_handler_settings();
+}
+
+/**
+ * Issue #3108150: Save numeric properties as numbers instead of strings.
+ */
+function webform_update_8186() {
+  /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
+  $element_manager = \Drupal::service('plugin.manager.webform.element');
+
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+    $elements = $webform_config->get('elements');
+
+    // Try to decode elements.
+    try {
+      $elements = Yaml::decode($elements);
+    }
+    catch (\Exception $exception) {
+      continue;
+    }
+
+    // Make sure elements is an array.
+    if (!is_array($elements)) {
+      continue;
+    }
+
+    $has_numeric_element_property = FALSE;
+    $flattened_elements =& WebformFormHelper::flattenElements($elements);
+    foreach ($flattened_elements as &$element) {
+      $webform_element = $element_manager->getElementInstance($element);
+      $default_properties = WebformArrayHelper::addPrefix($webform_element->getDefaultProperties());
+      foreach ($element as $property_name => $property_value) {
+        // Make sure the default properties exists.
+        if (!array_key_exists($property_name, $default_properties)) {
+          continue;
+        }
+
+        // See if the default is NULL or numeric.
+        $default_value = $default_properties[$property_name];
+        if (!is_null($default_value) && !is_numeric($default_value)) {
+          continue;
+        }
+
+        $cast_value = ($property_value == (int) $property_value) ? (int) $property_value : (float) $property_value;
+        if ($property_value == $cast_value) {
+          $element[$property_name] = $cast_value;
+          $has_numeric_element_property = TRUE;
+        }
+      }
+    }
+
+    if ($has_numeric_element_property) {
+      $webform_config->set('elements', Yaml::encode($elements));
+      $webform_config->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Issue #3108266: Update external libraries. Display warning about InputMask.
+ */
+function webform_update_8187() {
+  if (!file_exists(\Drupal::root() . '/libraries/jquery.inputmask/dist/jquery.inputmask.min.js')) {
+    /** @var \Drupal\webform\WebformHelpManagerInterface $help_manager */
+    $help_manager = \Drupal::service('webform.help_manager');
+    $help_manager->addNotification('webform_update_8187',
+      t('<strong>ATTENTION DEVELOPERS!!!</strong> Please make sure to download and update the <a href=":href">Input Mask</a> library to version 5.0.x', [':href' => 'https://github.com/RobinHerbots/Inputmask']) .
+      ' ' . t('<a href=":href">Learn more about updating the Webform module\'s external libraries</a>', [':href' => 'https://www.drupal.org/docs/8/modules/webform/webform-libraries']),
+      'warning'
+    );
+  }
+}
+
+/**
+ * Issue #3097101: Remote Post cast boolean and numer values.
+ */
+function webform_update_8188() {
+  _webform_update_webform_handler_settings();
+}
+
+/**
+ * Issue #3108433: Allow users to personalize the submission list.
+ */
+function webform_update_8189() {
+  _webform_update_admin_settings();
   _webform_update_webform_settings();
 }

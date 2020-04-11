@@ -33,6 +33,11 @@ class FieldGroupUiTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -62,15 +67,19 @@ class FieldGroupUiTest extends WebDriverTestBase {
    */
   public function testCreateAndEdit() {
     foreach (['test_1', 'test_2'] as $name) {
-      $group = [
-        'group_formatter' => 'details',
-        'label' => 'Test 1',
-        'group_name' => $name,
-      ];
+      $this->drupalGet('admin/structure/types/manage/' . $this->nodeType . '/form-display/add-group');
+      $page = $this->getSession()->getPage();
 
-      // Add new group on the 'Manage form display' page.
-      $this->drupalPostForm('admin/structure/types/manage/' . $this->nodeType . '/form-display/add-group', $group, 'Save and continue');
-      $this->drupalPostForm(NULL, [], 'Create group');
+      // Type the label to activate the machine name field and the edit button.
+      $page->fillField('group_formatter', 'details');
+      $page->fillField('label', 'Test 1');
+      // Wait for the machine name widget to be activated.
+      $this->assertSession()->waitForElementVisible('css', 'button[type=button].link:contains(Edit)');
+      // Activate the machine name text field.
+      $page->pressButton('Edit');
+      $page->fillField('Machine-readable name', $name);
+      $page->pressButton('Save and continue');
+      $page->pressButton('Create group');
     }
 
     // Update title in group 1.
@@ -100,10 +109,7 @@ class FieldGroupUiTest extends WebDriverTestBase {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
     $display = EntityFormDisplay::load("node.{$this->nodeType}.default");
     $this->assertSame('Test 1 - Update', $display->getThirdPartySetting('field_group', 'group_test_1')['label']);
-    $this->assertSame('Test 1 - Update', $display->getThirdPartySetting('field_group', 'group_test_1')['format_settings']['label']);
-
     $this->assertSame('Test 2 - Update', $display->getThirdPartySetting('field_group', 'group_test_2')['label']);
-    $this->assertSame('Test 2 - Update', $display->getThirdPartySetting('field_group', 'group_test_2')['format_settings']['label']);
   }
 
 }

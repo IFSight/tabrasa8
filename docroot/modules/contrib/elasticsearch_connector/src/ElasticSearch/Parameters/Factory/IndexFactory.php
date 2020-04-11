@@ -5,6 +5,7 @@ namespace Drupal\elasticsearch_connector\ElasticSearch\Parameters\Factory;
 use Drupal\search_api\IndexInterface;
 use Drupal\elasticsearch_connector\Event\PrepareIndexEvent;
 use Drupal\elasticsearch_connector\Event\PrepareIndexMappingEvent;
+use Drupal\elasticsearch_connector\Event\BuildIndexParamsEvent;
 use Drupal\search_api_autocomplete\Suggester\SuggesterInterface;
 
 /**
@@ -36,7 +37,7 @@ class IndexFactory {
    */
   public static function index(IndexInterface $index, $with_type = FALSE) {
     $params = [];
-    $params['index'] = IndexFactory::getIndexName($index);
+    $params['index'] = static::getIndexName($index);
 
     if ($with_type) {
       $params['type'] = $index->id();
@@ -54,7 +55,7 @@ class IndexFactory {
    * @return array
    */
    public static function create(IndexInterface $index) {
-     $indexName = IndexFactory::getIndexName($index);
+     $indexName = static::getIndexName($index);
      $indexConfig =  [
        'index' => $indexName,
        'body' => [
@@ -110,7 +111,7 @@ class IndexFactory {
    *   index.
    */
   public static function bulkIndex(IndexInterface $index, array $items) {
-    $params = IndexFactory::index($index, TRUE);
+    $params = static::index($index, TRUE);
 
     foreach ($items as $id => $item) {
       $data = [
@@ -131,6 +132,10 @@ class IndexFactory {
                 $values[] = $value->toText();
                 break;
 
+              case 'boolean':
+                $values[] = (boolean) $value;
+                break;
+
               default:
                 $values[] = $value;
             }
@@ -141,6 +146,13 @@ class IndexFactory {
       $params['body'][] = ['index' => ['_id' => $id]];
       $params['body'][] = $data;
     }
+
+    // Allow other modules to alter index params before we send them.
+    $indexName = IndexFactory::getIndexName($index);
+    $dispatcher = \Drupal::service('event_dispatcher');
+    $buildIndexParamsEvent = new BuildIndexParamsEvent($params, $indexName);
+    $event = $dispatcher->dispatch(BuildIndexParamsEvent::BUILD_PARAMS, $buildIndexParamsEvent);
+    $params = $event->getElasticIndexParams();
 
     return $params;
   }
@@ -160,7 +172,7 @@ class IndexFactory {
    *   Parameters required to create an index mapping.
    */
   public static function mapping(IndexInterface $index) {
-    $params = IndexFactory::index($index, TRUE);
+    $params = static::index($index, TRUE);
 
     $properties = [
       'id' => [

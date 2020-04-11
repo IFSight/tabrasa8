@@ -4,6 +4,7 @@ namespace Drupal\webform\Commands;
 
 use Drupal\Component\Utility\Variable;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Controller\WebformResultsExportController;
@@ -97,6 +98,7 @@ class WebformCliService implements WebformCliServiceInterface {
         'multiple-delimiter' => 'Delimiter between an element with multiple values (defaults to site-wide setting).',
         // Document and managed file export options.
         'file-name' => 'File name used to export submission and uploaded filed. You may use tokens.',
+        'archive-type' => 'Archive file type for submission file uploadeds and generated records. (tar or zip)',
         // Tabular export options.
         'header-format' => 'Set to "label" (default) or "key"',
         'options-item-format' => 'Set to "label" (default) or "key". Set to "key" to print select list values by their keys instead of labels.',
@@ -361,7 +363,7 @@ class WebformCliService implements WebformCliServiceInterface {
     $file_path = ($submission_exporter->isArchive()) ? $submission_exporter->getArchiveFilePath() : $submission_exporter->getExportFilePath();
     if (isset($export_options['destination'])) {
       $this->drush_print($this->dt('Created @destination', ['@destination' => $export_options['destination']]));
-      file_unmanaged_copy($file_path, $export_options['destination'], FILE_EXISTS_REPLACE);
+      \Drupal::service('file_system')->copy($file_path, $export_options['destination'], FileSystemInterface::EXISTS_REPLACE);
     }
     else {
       $this->drush_print(file_get_contents($file_path));

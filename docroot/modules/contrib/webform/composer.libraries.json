@@ -28,13 +28,13 @@
             "type": "package",
             "package": {
                 "name": "algolia/places",
-                "version": "1.16.4",
+                "version": "1.17.1",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "algolia.places"
                 },
                 "dist": {
-                    "url": "https://registry.npmjs.org/places.js/-/places.js-1.16.4.tgz",
+                    "url": "https://registry.npmjs.org/places.js/-/places.js-1.17.1.tgz",
                     "type": "tar"
                 },
                 "require": {
@@ -46,13 +46,13 @@
             "type": "package",
             "package": {
                 "name": "choices/choices",
-                "version": "7.0.0",
+                "version": "9.0.1",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "choices"
                 },
                 "dist": {
-                    "url": "https://github.com/jshjohnson/Choices/archive/v7.0.0.zip",
+                    "url": "https://github.com/jshjohnson/Choices/archive/v9.0.1.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -154,13 +154,13 @@
             "type": "package",
             "package": {
                 "name": "codemirror/codemirror",
-                "version": "5.48.2",
+                "version": "5.51.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "codemirror"
                 },
                 "dist": {
-                    "url": "https://github.com/components/codemirror/archive/5.48.2.zip",
+                    "url": "https://github.com/components/codemirror/archive/5.51.0.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -262,13 +262,13 @@
             "type": "package",
             "package": {
                 "name": "jquery/inputmask",
-                "version": "4.0.8",
+                "version": "5.0.3",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "jquery.inputmask"
                 },
                 "dist": {
-                    "url": "https://github.com/RobinHerbots/jquery.inputmask/archive/4.0.8.zip",
+                    "url": "https://github.com/RobinHerbots/jquery.inputmask/archive/5.0.3.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -280,13 +280,13 @@
             "type": "package",
             "package": {
                 "name": "jquery/intl-tel-input",
-                "version": "15.1.0",
+                "version": "16.0.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "jquery.intl-tel-input"
                 },
                 "dist": {
-                    "url": "https://github.com/jackocnr/intl-tel-input/archive/v15.1.0.zip",
+                    "url": "https://github.com/jackocnr/intl-tel-input/archive/v16.0.0.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -298,13 +298,13 @@
             "type": "package",
             "package": {
                 "name": "jquery/rateit",
-                "version": "1.1.2",
+                "version": "1.1.3",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "jquery.rateit"
                 },
                 "dist": {
-                    "url": "https://github.com/gjunge/rateit.js/archive/1.1.2.zip",
+                    "url": "https://github.com/gjunge/rateit.js/archive/1.1.3.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -316,13 +316,13 @@
             "type": "package",
             "package": {
                 "name": "jquery/select2",
-                "version": "4.0.8",
+                "version": "4.0.12",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "jquery.select2"
                 },
                 "dist": {
-                    "url": "https://github.com/select2/select2/archive/4.0.8.zip",
+                    "url": "https://github.com/select2/select2/archive/4.0.12.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -352,13 +352,13 @@
             "type": "package",
             "package": {
                 "name": "jquery/timepicker",
-                "version": "1.11.15",
+                "version": "1.13.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "jquery.timepicker"
                 },
                 "dist": {
-                    "url": "https://github.com/jonthornton/jquery-timepicker/archive/1.11.15.zip",
+                    "url": "https://github.com/jonthornton/jquery-timepicker/archive/1.13.0.zip",
                     "type": "zip"
                 },
                 "require": {

@@ -19,7 +19,7 @@ function entity_browser_requirements($phase) {
     $incompatible = TRUE;
   }
   elseif (\Drupal::moduleHandler()->moduleExists('media_entity')) {
-    $info = system_get_info('module', 'media_entity');
+    $info = \Drupal::service('extension.list.module')->getExtensionInfo('media_entity');
     if (empty($info['version'])) {
       // If the version being used is -dev, $info['version'] will be empty. Try
       // an alternative method to detect if we are using the 2.x branch in that

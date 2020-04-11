@@ -1,5 +1,4 @@
-reCAPTCHA for Drupal
-====================
+# reCAPTCHA for Drupal
 
 The reCAPTCHA module uses the reCAPTCHA web service to
 improve the CAPTCHA system and protect email addresses. For
@@ -8,15 +7,13 @@ more information on what reCAPTCHA is, please visit:
 
 This version of the module uses the new Google No CAPTCHA reCAPTCHA API.
 
-DEPENDENCIES
-------------
+## DEPENDENCIES
 
 * reCAPTCHA module depends on the CAPTCHA module.
   https://drupal.org/project/captcha
 
 
-CONFIGURATION
--------------
+## CONFIGURATION
 
 1. Enable reCAPTCHA and CAPTCHA modules in:
        admin/modules
@@ -34,17 +31,15 @@ CONFIGURATION
    want the reCAPTCHA form to be presented:
        admin/config/people/captcha
 
-KNOWN ISSUES
-------------
+## KNOWN ISSUES
 
 - cURL requests fail because of outdated root certificate. The reCAPTCHA module
   may not able to connect to Google servers and fails to verify the answer.
-  
+
   See https://www.drupal.org/node/2481341 for more information.
 
 
-THANK YOU
----------
+## THANK YOU
 
  * Thank you goes to the reCAPTCHA team for all their
    help, support and their amazing Captcha solution

@@ -8,11 +8,11 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
  */
 interface UrlGeneratorInterface {
 
-  function setSettings(array $settings);
+  public function setSettings(array $settings);
 
-  function setSitemapVariant($sitemap_variant);
+  public function setSitemapVariant($sitemap_variant);
 
-  function getDataSets();
+  public function getDataSets();
 
-  function generate($data_set);
+  public function generate($data_set);
 }

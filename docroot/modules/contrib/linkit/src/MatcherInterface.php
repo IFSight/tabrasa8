@@ -2,7 +2,8 @@
 
 namespace Drupal\linkit;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Component\Plugin\DependentPluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
@@ -13,7 +14,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  * @see \Drupal\linkit\MatcherManager
  * @see plugin_api
  */
-interface MatcherInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface MatcherInterface extends PluginInspectionInterface, ConfigurableInterface, DependentPluginInterface {
 
   /**
    * Returns the unique ID representing the matcher.
