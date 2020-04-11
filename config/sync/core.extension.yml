@@ -1,6 +1,7 @@
 module:
   action: 0
   admin_toolbar: 0
+  admin_toolbar_search: 0
   admin_toolbar_tools: 0
   allowed_formats: 0
   automated_cron: 0
@@ -37,7 +38,6 @@ module:
   field_group: 0
   field_ui: 0
   file: 0
-  file_entity: 0
   filter: 0
   fulcrum_whitelist: 0
   geolocation: 0
