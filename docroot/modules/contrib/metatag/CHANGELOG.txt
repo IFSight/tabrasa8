@@ -1,3 +1,109 @@
+Metatag 8.x-1.12, 2020-03-30
+-------------------------------
+#3102937 by yasmeensalah, Berdir: Plugin AlternateHandheld is misnamed.
+#3103725 by thalles: Create kernel test to Form\MetatagSettingsForm.
+#3105837 by Berdir: Remove metatag_install().
+#3105343 by Kionn, DenisCi: Maintenance mode message shown on settings forms
+  when site is not in maintenance mode.
+#3102582 by DamienMcKenna, dbourrion: Change uses of http:// to https://.
+#3101532 by DamienMcKenna, heddn, slv_: Only attach Metatag migration field
+  logic on 'Drupal 7' migrations, e.g. core upgrades.
+#3102602 by jedihe, Gnanagowthaman sankar, thalles, DamienMcKenna, Berdir: Use
+  DI to add services to the settings form.
+#3106609 by bygeoffthompson, Daniel Korte, DamienMcKenna, Maya Slatinek,
+  mrshowerman, BryanDeNijs: The Basic Description field has a maxlength of 255
+  but recommends 320 or less.
+#2841737 by DamienMcKenna, andyg5000, harold20, jmolivas, jim22: DrupalConsole
+  commands not working.
+#3111878 by Hardik_Patel_12: Remove unused GenerateTagCommand::
+  validateGroupExist().
+#3111875 by Hardik_Patel_12: Replace \Drupal calls with dependency injection in
+  MetatagFirehose.php.
+#3111900 by Hardik_Patel_12: Replace \Drupal calls with dependency injection in
+  MetatagViewsTranslationController.
+#3109835 by phenaproxima: Declare compatibility with Drupal 9.
+#3113481 by thalles: Fix subclassing and stop overriding constructors in
+  metatag_views\Plugin\views\display_extender\MetatagDisplayExtender.
+By DamienMcKenna: Minor code readability tweak.
+#3045641 by DamienMcKenna, heddn, mikelutz: Migrations: Nodewords-D6 per-entity
+  data.
+#3112784 by thalles: Missing doc comment into Create method to $instance
+  metatag\Form\MetatagSettingsForm.
+#2844696 by DamienMcKenna, Michelle: Allow the field to control whether it is
+  displayed in the sidebar or not.
+#2993991 by DamienMcKenna, jcnventura, raphaeltbm, Geolim4, SteffenR, xurubo93,
+  GuillaumeDuveau, joehuggans, mmaldonado: Metatag_hreflang - duplicate
+  alternate hreflang meta.
+#3110152 by DamienMcKenna, antongp: testTagsArePresent() and
+  testTagsInputOutput() methods of the MetatagTagsTestBase class do not loop
+  through child classes $tags property; updated all tests as necessary.
+#3114120 by felribeiro, DamienMcKenna: Recommend "description" tag be less than
+  ~160 characters.
+#3115634 by DamienMcKenna: Refactor MetatagManager::generateRawElements() to
+  create token arguments once per call.
+#3001282 by maximpodorov, DamienMcKenna: Support hasAffectingChanges method of
+  FieldItemList.
+#3106870 by DamienMcKenna: Improve UX around OG "secure" meta tags.
+#3120981 by DamienMcKenna: NodewordsFieldInstanceTest uses the wrong source
+  plugin.
+#3120331 by thalles: Add directive docs into support section of composer file.
+#3121289 by Dave Reid, DamienMcKenna: Normalize token types using the Token
+  module mapper service.
+#3120947 by DamienMcKenna, quietone: Expand FieldInstanceTest classes to handle
+  multiple bundles per entity type.
+#3122683 by Neslee Canil Pinto: Capitalize the name of the module in .info file.
+#3110152 by DamienMcKenna, antongp, Lendude: testTagsArePresent() and
+  testTagsInputOutput() methods of the MetatagTagsTestBase class do not loop
+  through child classes $tags property.
+
+
+Metatag 8.x-1.11, 2019-12-20
+----------------------------
+#3074603 by jrockowitz, thejimbirch, cindytwilliams, DamienMcKenna: Add
+  og:video:duration tag.
+#3084547 by baikho, DamienMcKenna, SerShevchyk: Move submodule tests in
+  /tests/Functional folder.
+#3082119 by thejimbirch, cindytwilliams, DamienMcKenna: Add option name in
+  ROBOTS selector.
+#3052628 by Neslee Canil Pinto, cindytwilliams, DamienMcKenna: Capitalize the
+  name of the favicons submodule.
+#3077780 by thejimbirch, volkswagenchick, DamienMcKenna: Add new meta tag:
+  Google's new "handheld" link alternate URL.
+#3077773 by gueguerreiro, cindytwilliams, DamienMcKenna: Add new meta tags:
+  rel=prev / rel=next.
+#3077774 by thejimbirch, cindytwilliams, DamienMcKenna: Add new meta tag:
+  Refresh.
+#3077776 by DamienMcKenna, thejimbirch, cindytwilliams: Add new meta tag:
+  Revisit-After.
+#3077772 by DamienMcKenna, thejimbirch, volkswagenchick, cindytwilliams: Add new
+  meta tags: pragma, cache-control, expires.
+#3001387 by mbovan, Berdir, kell.mcnaughton, DamienMcKenna: Extend meta tag
+  definition to allow some tags to use a textarea instead of text field, e.g.
+  og:description.
+#2908527 by lapek, DamienMcKenna, christian.rolf, DrColossos: Views overwritten
+  title in contextual filter.
+#3087329 by Martijn de Wit, DamienMcKenna: Use HTTPS links instead of HTTP to
+  external sites in metatag_open_graph.module.
+#3057582 by jrearick, DamienMcKenna, Dave Reid, sunset_bill, dspachos:
+  SchemaWebPageTest not found.
+#3080314 by matteodem, DamienMcKenna: Load metatag defaults based on entity
+  language.
+#3072165 by vuil, DamienMcKenna: Coding standards improvements.
+#3074350 by jrockowitz, DamienMcKenna: Create Meta plugin report.
+#3074350 by DamienMcKenna: Follow-up to fix some API mismatches.
+#3096936 by DamienMcKenna, thejimbirch, rubyji: Add new tag: Zoom domain
+  verification.
+#3101288 by chr.fritsch: Fix namespace and imports.
+#3090002 by DamienMcKenna: Rename migrate plugins to follow naming conventions.
+#3099168 by jedihe, DamienMcKenna, docans: Remove "title" meta tag, leave the
+  regular title tag.
+#3101567 by DamienMcKenna: Update migrations/state/metatag.migrate_drupal.yml
+  for recent changes.
+#3080665 by DamienMcKenna, Chris Matthews: Add status message when site is in
+  maintenance mode that no meta data will be output.
+#3087677 by DamienMcKenna: Update MetatagD7Entities for new meta tags in 7.x.
+
+
 Metatag 8.x-1.10, 2019-08-29
 ----------------------------
 #2971271 by subson, idebr, nkoporec, DamienMcKenna, Michelle: Replace

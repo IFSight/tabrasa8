@@ -41,6 +41,7 @@ class SimplesitemapSettings {
     $setting = $this->configFactory
       ->get('simple_sitemap.settings')
       ->get($name);
+
     return NULL !== $setting ? $setting : $default;
   }
 
@@ -63,6 +64,7 @@ class SimplesitemapSettings {
   public function saveSetting($name, $setting) {
     $this->configFactory->getEditable('simple_sitemap.settings')
       ->set($name, $setting)->save();
+
     return $this;
   }
 }

@@ -90,6 +90,7 @@ class SimpleSitemapViews {
   public function isEnabled() {
     // Support enabled when views display extender is enabled.
     $enabled = Views::getEnabledDisplayExtenders();
+
     return isset($enabled[self::PLUGIN_ID]);
   }
 
@@ -148,6 +149,7 @@ class SimpleSitemapViews {
     if ($extender instanceof SimpleSitemapDisplayExtender && $extender->hasSitemapSettings() && $extender->isIndexingEnabled()) {
       return $extender->getSitemapSettings();
     }
+
     return NULL;
   }
 
@@ -175,6 +177,7 @@ class SimpleSitemapViews {
         $indexable_arguments[] = $argument_id;
       }
     }
+
     return $indexable_arguments;
   }
 
@@ -241,6 +244,7 @@ class SimpleSitemapViews {
       'arguments_ids' => $args_ids,
       'arguments_values' => $args_values,
     ]);
+
     return (bool) $query->execute();
   }
 
@@ -284,6 +288,7 @@ class SimpleSitemapViews {
         'arguments' => $convert ? $this->convertArgumentsStringToArray($row->arguments) : $row->arguments,
       ];
     }
+
     return $arguments;
   }
 
@@ -302,6 +307,7 @@ class SimpleSitemapViews {
     if (!empty($condition)) {
       $query->condition($condition);
     }
+
     // Get the number of rows from the index table.
     return $query->countQuery()->execute()->fetchField();
   }
@@ -326,6 +332,7 @@ class SimpleSitemapViews {
     }
     $query->orderBy('id', 'ASC');
     $query->range($position - 1, 1);
+
     return $query->execute()->fetchField();
   }
 
@@ -363,6 +370,7 @@ class SimpleSitemapViews {
       return !empty($display['display_plugin']) && in_array($display['display_plugin'], $display_plugins);
     };
     $displays = array_filter($view_entity->get('display'), $filter_callback);
+
     return array_keys($displays);
   }
 
@@ -404,6 +412,7 @@ class SimpleSitemapViews {
         }
       }
     }
+
     return $indexable_views;
   }
 
@@ -443,6 +452,7 @@ class SimpleSitemapViews {
       $args_slice = array_slice($args, 0, $length);
       $variations[] = $this->convertArgumentsArrayToString($args_slice);
     }
+
     return $variations;
   }
 
@@ -489,6 +499,7 @@ class SimpleSitemapViews {
         }
       }
     }
+
     return $plugin_ids;
   }
 

@@ -25,6 +25,11 @@ class TwigTweakTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $defaultTheme = 'classy';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = [
     'twig_tweak',
     'twig_tweak_test',
@@ -176,7 +181,9 @@ class TwigTweakTest extends BrowserTestBase {
 
     // Grant require permissions and test the forms again.
     $permissions = ['create page content', 'edit any page content'];
-    $this->grantPermissions(Role::load(Role::ANONYMOUS_ID), $permissions);
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = Role::load(Role::ANONYMOUS_ID);
+    $this->grantPermissions($role, $permissions);
     $this->drupalGet('/node/2');
 
     // -- Test entity add form.
@@ -290,7 +297,9 @@ class TwigTweakTest extends BrowserTestBase {
     $xpath = '//div[@class="tt-contextual-links" and not(div[@data-contextual-id])]';
     $this->assertByXpath($xpath);
 
-    $this->grantPermissions(Role::load(Role::ANONYMOUS_ID), ['access contextual links']);
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = Role::load(Role::ANONYMOUS_ID);
+    $this->grantPermissions($role, ['access contextual links']);
     $this->drupalGet($this->getUrl());
     $xpath = '//div[@class="tt-contextual-links" and div[@data-contextual-id]]';
     $this->assertByXpath($xpath);

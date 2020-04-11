@@ -1,4 +1,4 @@
-core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 type: theme
 base theme: bootstrap
 
@@ -22,7 +22,7 @@ regions:
 libraries:
   - 'webform_bootstrap_test_theme/global-styling'
 
-# Information added by Drupal.org packaging script on 2019-10-29
-version: '8.x-5.5'
+# Information added by Drupal.org packaging script on 2020-03-18
+version: '8.x-5.9'
 project: 'webform'
-datestamp: 1572377290
+datestamp: 1584560018

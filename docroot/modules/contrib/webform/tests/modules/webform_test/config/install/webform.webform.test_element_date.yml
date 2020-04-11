@@ -77,7 +77,11 @@ elements: |
     '#date_days':
       - '0'
       - '6'
-  
+  date_datepicker_placeholder:
+    '#type': date
+    '#title': date_datepicker_placeholder
+    '#datepicker': true
+    '#placeholder': '{date}'
 css: ''
 javascript: ''
 settings:
@@ -191,6 +195,7 @@ settings:
   purge_days: null
   results_disabled: false
   results_disabled_ignore: false
+  token_view: false
   token_update: false
 access:
   create:

@@ -346,6 +346,9 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
       // Determine if the element is required.
       $is_required = $this->validateConditions($conditions, $webform_submission);
       $is_required = ($state == 'optional') ? !$is_required : $is_required;
+      if (!$is_required) {
+        continue;
+      }
 
       // Determine if the element is empty (but not zero).
       if (isset($element['#webform_key'])) {
@@ -355,12 +358,19 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         $value = $element['#value'];
       }
 
-      $is_empty = (empty($value) && $value !== '0');
-      $is_default_input_mask = (TextBase::isDefaultInputMask($element, $value));
+      // Perform required validation. Use element's method if available.
+      $element_definition = $element_plugin->getFormElementClassDefinition();
+      if (method_exists($element_definition, 'setRequiredError')) {
+        $element_definition::setRequiredError($element, $form_state);
+      }
+      else {
+        $is_empty = (empty($value) && $value !== '0');
+        $is_default_input_mask = (TextBase::isDefaultInputMask($element, $value));
 
-      // If required and empty then set required error.
-      if ($is_required && ($is_empty || $is_default_input_mask)) {
-        WebformElementHelper::setRequiredError($element, $form_state);
+        // If required and empty then set required error.
+        if ($is_empty || $is_default_input_mask) {
+          WebformElementHelper::setRequiredError($element, $form_state);
+        }
       }
     }
   }
@@ -713,7 +723,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
     // @see http://drupalsun.com/julia-evans/2012/03/09/extending-form-api-states-regular-expressions
     if ($trigger_state == 'value' && is_array($trigger_value)) {
       $trigger_substate = key($trigger_value);
-      if (in_array($trigger_substate, ['pattern', '!pattern', 'less', 'greater'])) {
+      if (in_array($trigger_substate, ['pattern', '!pattern', 'less', 'greater', 'between'])) {
         $trigger_state = $trigger_substate;
         $trigger_value = reset($trigger_value);
       }
@@ -761,6 +771,23 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
         $result = ($element_value !== '' && floatval($trigger_value) < floatval($element_value));
         break;
 
+      case 'between':
+        $result = FALSE;
+        if ($element_value !== '') {
+          $greater = NULL;
+          $less = NULL;
+          if (strpos($trigger_value, ':') === FALSE) {
+            $greater = $trigger_value;
+          }
+          else {
+            list($greater, $less) = explode(':', $trigger_value);
+          }
+          $is_greater_than = ($greater === NULL || $greater === '' || floatval($element_value) >= floatval($greater));
+          $is_less_than = ($less === NULL || $less === '' || floatval($element_value) <= floatval($less));
+          $result = ($is_greater_than && $is_less_than);
+        }
+        break;
+
       default:
         return NULL;
     }
@@ -789,7 +816,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
 
     // Set negate.
     $negate = FALSE;
-    if ($state[0] === '!') {
+    if (strpos($state, '!') === 0) {
       $negate = TRUE;
       $state = ltrim($state, '!');
     }

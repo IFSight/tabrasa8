@@ -20,7 +20,7 @@ trait BatchTrait {
    * @param array|null $variants
    * @return bool
    */
-  public function batchGenerateSitemap($from = 'form', $variants = NULL) {
+  public function batchGenerateSitemap($from = self::GENERATE_TYPE_FORM, $variants = NULL) {
     $this->batch = [
       'title' => $this->t('Generating XML sitemaps'),
       'init_message' => $this->t('Initializing...'),
@@ -32,12 +32,12 @@ trait BatchTrait {
 
     switch ($from) {
 
-      case 'form':
+      case self::GENERATE_TYPE_FORM:
         // Start batch process.
         batch_set($this->batch);
         return TRUE;
 
-      case 'drush':
+      case self::GENERATE_TYPE_DRUSH:
         // Start drush batch process.
         batch_set($this->batch);
 

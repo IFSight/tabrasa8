@@ -2,18 +2,8 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the metatag module.
+ * Requirements and update functions for the Metatag module.
  */
-
-/**
- * Implements hook_install().
- */
-function metatag_install() {
-  // Don't display the message during site installation, it looks funny.
-  if (!drupal_installation_attempted()) {
-    \Drupal::messenger()->addMessage(t("To adjust global defaults, go to admin/config/search/metatag. If you need to set meta tags for a specific entity, edit its bundle and add the Metatag field."));
-  }
-}
 
 /**
  * Implements hook_requirements().
@@ -22,6 +12,17 @@ function metatag_requirements($phase) {
   $requirements = [];
 
   if ($phase == 'runtime') {
+    // Note that no meta tags will be output while the site is in maintenance
+    // mode.
+    if (\Drupal::state()->get('system.maintenance_mode')) {
+      $requirements['metatag_maintenance_mode'] = [
+        'severity' => REQUIREMENT_WARNING,
+        'title' => 'Metatag',
+        'value' => t('Not enabled while in maintenance mode'),
+        'description' => t('Please note that while the site is in maintenance mode none of the usual meta tags will be output.'),
+      ];
+    }
+
     // Recommend the Schema.org Metatag module.
     if (!\Drupal::moduleHandler()->moduleExists('schema_metatag')) {
       $requirements['metatag_schema'] = [
@@ -31,7 +32,7 @@ function metatag_requirements($phase) {
         'description' => t('The <a href="@module">Schema.org Metatag</a> module is highly recommended to add <a href="@jsonld">JSON-LD</a> -formatted <a href="@schema">schema.org</a> compatible data structures to the site.', [
           '@module' => 'https://www.drupal.org/project/schema_metatag',
           '@jsonld' => 'https://json-ld.org',
-          '@schema' => 'http://schema.org',
+          '@schema' => 'https://schema.org',
         ]),
       ];
     }
@@ -274,7 +275,7 @@ function metatag_update_8103() {
   $config_installer->installDefaultConfig('module', 'metatag');
 
   // Apply all entity definition changes.
-  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+  \Drupal::entityDefinitionUpdateManager()->getChangeList();
 
   // 2. Extract Metatag field defaults.
   $entity_info = $entity_manager->getDefinitions();
@@ -364,7 +365,7 @@ function metatag_update_8105() {
  * Add the metatag_defaults config entity to the site.
  */
 function metatag_update_8106() {
-  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+  \Drupal::entityDefinitionUpdateManager()->getChangeList();
 }
 
 /**

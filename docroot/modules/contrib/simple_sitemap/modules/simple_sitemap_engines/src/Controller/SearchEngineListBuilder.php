@@ -82,6 +82,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
       '#title' => $this->t('Submission status'),
       '#type' => 'fieldset',
       'table' => parent::render(),
+      '#description' => $this->t('Submission settings can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/engines/settings']),
     ]];
   }
 

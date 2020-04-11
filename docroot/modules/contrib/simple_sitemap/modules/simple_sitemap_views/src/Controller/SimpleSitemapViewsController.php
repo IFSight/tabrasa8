@@ -87,6 +87,7 @@ class SimpleSitemapViewsController extends ControllerBase {
       '#type' => 'fieldset',
       'table' => $table,
     ];
+
     return $build;
   }
 

@@ -16,7 +16,7 @@ linkit.base:
 linkit.autocomplete:
   version: VERSION
   js:
-    js/autocomplete.js: {}
+    js/linkit.autocomplete.js: {}
   css:
     component:
       css/linkit.autocomplete.css: {}

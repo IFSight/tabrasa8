@@ -31,7 +31,7 @@ class ThemeInfoRebuildSubscriber implements EventSubscriberInterface {
   /**
    * The devel config.
    *
-   * @var \Drupal\Core\Config\Config;
+   * @var \Drupal\Core\Config\Config
    */
   protected $config;
 

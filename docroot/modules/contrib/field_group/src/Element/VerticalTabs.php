@@ -47,6 +47,18 @@ class VerticalTabs {
       }
     }
 
+    // Search for the correct default active tab.
+    $group_identifier = implode('][', $element['#parents']);
+    if (!empty($element['#groups'][$group_identifier])) {
+      $children = Element::children($element['#groups'][$group_identifier], TRUE);
+      foreach ($children as $key) {
+        if (!empty($element['#groups'][$group_identifier][$key]['#open'])) {
+          $element['#default_tab'] = $element['#groups'][$group_identifier][$key]['#id'];
+          $element[str_replace('][', '__', $group_identifier) . '__active_tab']['#value'] = $element['#default_tab'];
+        }
+      }
+    }
+
     return $element;
   }
 

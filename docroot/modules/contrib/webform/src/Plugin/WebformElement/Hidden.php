@@ -22,14 +22,24 @@ class Hidden extends TextBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
+    // Include only the access-view-related base properties.
+    $access_properties = $this->defineDefaultBaseProperties();
+    $access_properties = array_filter($access_properties, function ($access_default, $access_key) {
+      return strpos($access_key, 'access_') === 0;
+    }, ARRAY_FILTER_USE_BOTH);
+
     return [
       // Element settings.
       'title' => '',
       'default_value' => '',
+      // Administration.
       'prepopulate' => FALSE,
-    ];
+      'private' => FALSE,
+    ] + $access_properties;
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}

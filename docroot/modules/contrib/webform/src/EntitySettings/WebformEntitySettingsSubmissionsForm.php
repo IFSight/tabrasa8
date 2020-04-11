@@ -201,6 +201,11 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
         'title' => $this->t('Show the notification about previous submissions'),
         'form_description' => $this->t('Show the previous submissions notification that appears when users have previously submitted this form.'),
       ],
+      'token_view' => [
+        'title' => $this->t('Allow users to view a submission using a secure token'),
+        'form_description' => $this->t("If checked users will be able to view a submission using the webform submission's URL appended with the submission's (secure) token.") . ' ' .
+          $this->t("The 'tokenized' URL to view a submission will be available when viewing a submission's information and can be inserted into an email using the [webform_submission:view-url] token."),
+      ],
       'token_update' => [
         'title' => $this->t('Allow users to update a submission using a secure token'),
         'form_description' => $this->t("If checked users will be able to update a submission using the webform's URL appended with the submission's (secure) token.") . ' ' .
@@ -214,6 +219,11 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
         'all_description' => $this->t('All submission event are being logged for all webforms'),
         'form_description' => $this->t('If checked, events will be logged for submissions to this webform.'),
       ],
+      'results_customize' => [
+        'title' => $this->t('Allow users to customize the submission results table'),
+        'all_description' => $this->t('Users can customize the submission results table for all webforms'),
+        'form_description' => $this->t('If checked, users can customize the submission results table for this webform.'),
+      ],
     ];
     $this->appendBehaviors($form['submission_behaviors'], $behavior_elements, $settings, $default_settings);
     $form['submission_behaviors']['token_update_warning'] = [
@@ -222,7 +232,9 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       '#message_message' => $this->t("Submissions accessed using the (secure) token will by-pass all webform submission access rules."),
       '#states' => [
         'visible' => [
-          ':input[name="token_update"]' => ['checked' => TRUE],
+          [':input[name="token_view"]' => ['checked' => TRUE]],
+          'or',
+          [':input[name="token_update"]' => ['checked' => TRUE]],
         ],
       ],
       '#weight' => $form['submission_behaviors']['token_update']['#weight'] + 1,
@@ -645,8 +657,8 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
     ];
     $form['draft_settings']['draft_container']['draft_auto_save'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Automatically save as draft when paging, previewing, and when there are validation errors.'),
-      "#description" => $this->t('Automatically save partial submissions when users click the "Preview" button or when validation errors prevent a webform from being submitted.'),
+      '#title' => $this->t('Automatically save as draft when paging, previewing, and when there are validation errors'),
+      "#description" => $this->t('Automatically save partial submissions when users click the "Next Page", "Previous Page", or "Preview" buttons or when validation errors prevent a webform from being submitted.'),
       '#return_value' => TRUE,
       '#default_value' => $settings['draft_auto_save'],
     ];

@@ -14,6 +14,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Utility\TableSort;
 use Drupal\views\Views;
 use Drupal\webform\Controller\WebformSubmissionController;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
@@ -373,12 +374,15 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
       // @see /node/{node}/webform/results/submissions
       case "$base_route_name.webform.results_submissions":
         $this->columns = $webform_submission_storage->getCustomColumns($this->webform, $this->sourceEntity, $this->account, TRUE);
-        $this->sort = $webform_submission_storage->getCustomSetting('sort', 'created', $this->webform, $this->sourceEntity);
-        $this->direction = $webform_submission_storage->getCustomSetting('direction', 'desc', $this->webform, $this->sourceEntity);
-        $this->limit = $webform_submission_storage->getCustomSetting('limit', 20, $this->webform, $this->sourceEntity);
-        $this->format = $webform_submission_storage->getCustomSetting('format', $this->format, $this->webform, $this->sourceEntity);
-        $this->linkType = $webform_submission_storage->getCustomSetting('link_type', $this->linkType, $this->webform, $this->sourceEntity);
-        $this->customize = $this->webform->access('update');
+        $this->sort = $this->getCustomSetting('sort', 'created');
+        $this->direction = $this->getCustomSetting('direction', 'desc');
+        $this->limit = $this->getCustomSetting('limit', 20);
+        $this->format = $this->getCustomSetting('format', $this->format);
+        $this->linkType = $this->getCustomSetting('link_type', $this->linkType);
+
+        $this->customize = $this->webform->access('update')
+          || $this->webform->getSetting('results_customize', TRUE);
+
         if ($this->format['element_format'] == 'raw') {
           foreach ($this->columns as &$column) {
             $column['format'] = 'raw';
@@ -690,11 +694,26 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
    *   A render array representing the customize button.
    */
   protected function buildCustomizeButton() {
-    $route_name = $this->requestHandler->getRouteName($this->webform, $this->sourceEntity, 'webform.results_submissions.custom');
-    $route_parameters = $this->requestHandler->getRouteParameters($this->webform, $this->sourceEntity, $route_name) + ['webform' => $this->webform->id()];
+    $results_customize = $this->webform->getSetting('results_customize', TRUE);
+
+    $title = ($results_customize)
+      ? $this->t('Customize my table')
+      : $this->t('Customize');
+
+    $route_name = $this->requestHandler->getRouteName(
+      $this->webform,
+      $this->sourceEntity,
+      'webform.results_submissions.custom' . ($results_customize ? '.user' : '')
+    );
+
+    $route_parameters = $this->requestHandler->getRouteParameters(
+      $this->webform,
+      $this->sourceEntity
+    );
+
     return [
       '#type' => 'link',
-      '#title' => $this->t('Customize'),
+      '#title' => $title,
       '#url' => $this->ensureDestination(Url::fromRoute($route_name, $route_parameters)),
       '#attributes' => WebformDialogHelper::getModalDialogAttributes(WebformDialogHelper::DIALOG_NORMAL, ['button', 'button-action', 'button--small', 'button-webform-table-setting']),
     ];
@@ -839,7 +858,7 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
    *   Throw exception if table row column is not found.
    */
   public function buildRowColumn(array $column, EntityInterface $entity) {
-    /** @var $entity \Drupal\webform\WebformSubmissionInterface */
+    /** @var \Drupal\webform\WebformSubmissionInterface $entity */
 
     $is_raw = ($column['format'] == 'raw');
     $name = $column['name'];
@@ -1027,7 +1046,7 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
         ];
       }
 
-      if ($entity->access('create') && $webform->getSetting('submission_user_duplicate')) {
+      if ($entity->access('duplicate') && $webform->getSetting('submission_user_duplicate')) {
         $operations['duplicate'] = [
           'title' => $this->t('Duplicate'),
           'weight' => 23,
@@ -1069,14 +1088,14 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
         ];
       }
 
-      if ($webform->access('submission_update_any') && $webform->hasMessageHandler()) {
+      if ($entity->access('resend') && $webform->hasMessageHandler()) {
         $operations['resend'] = [
           'title' => $this->t('Resend'),
           'weight' => 22,
           'url' => $this->requestHandler->getUrl($entity, $this->sourceEntity, 'webform_submission.resend_form'),
         ];
       }
-      if ($webform->access('submission_update_any')) {
+      if ($entity->access('duplicate')) {
         $operations['duplicate'] = [
           'title' => $this->t('Duplicate'),
           'weight' => 23,
@@ -1273,8 +1292,8 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
     $query->pager($this->limit);
 
     $header = $this->buildHeader();
-    $order = tablesort_get_order($header);
-    $direction = tablesort_get_sort($header);
+    $order = TableSort::getOrder($header, $this->request);
+    $direction = TableSort::getSort($header, $this->request);
 
     // If query is order(ed) by 'element__*' we need to build a custom table
     // sort using hook_query_TAG_alter().
@@ -1416,6 +1435,23 @@ class WebformSubmissionListBuilder extends EntityListBuilder {
     }
 
     return $query;
+  }
+
+  /**
+   * Get custom setting.
+   *
+   * @param string $name
+   *   The custom setting name.
+   * @param mixed $default
+   *   Default custom setting value.
+   *
+   * @return mixed
+   *   The custom setting value.
+   */
+  protected function getCustomSetting($name, $default = NULL) {
+    /** @var WebformSubmissionStorageInterface $webform_submission_storage */
+    $webform_submission_storage = $this->getStorage();
+    return $webform_submission_storage->getCustomSetting($name, $default, $this->webform, $this->sourceEntity);
   }
 
 }

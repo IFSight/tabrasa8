@@ -20,6 +20,7 @@ class MasqueradeCacheTest extends MasqueradeWebTestBase {
     'block',
     'node',
     'dynamic_page_cache',
+    'toolbar',
   ];
 
   /**
@@ -55,6 +56,33 @@ class MasqueradeCacheTest extends MasqueradeWebTestBase {
     $this->drupalLogin($nelle);
     $this->drupalGet('<front>');
     $this->assertBlockAppears($masquerade_block);
+  }
+
+  /**
+   * Tests caching for the Unmasquerade link in the admin toolbar.
+   */
+  public function testMasqueradeToolbarLinkCaching() {
+    // Create a test user with toolbar access.
+    $test_user = $this->drupalCreateUser([
+      'access content',
+      'access toolbar',
+    ]);
+
+    // Login as admin and masquerade as the test user to have the page cached
+    // as the test user.
+    $this->drupalLogin($this->admin_user);
+    $this->masqueradeAs($test_user);
+    $this->assertSession()->linkExists('Unmasquerade');
+    // We only check here for the session cache context, because it is present
+    // alongside with session.is_masquerading and the latter is optimized away.
+    // So only the session cache context remains.
+    $this->assertCacheContext('session');
+
+    // Login as the test user and make sure the Unmasquerade link is not visible
+    // and the cache context is correctly set.
+    $this->drupalLogin($test_user);
+    $this->assertSession()->linkNotExists('Unmasquerade');
+    $this->assertCacheContext('session.is_masquerading');
   }
 
 }

@@ -2,6 +2,7 @@ name: Metatag
 type: module
 description: Manage meta tags for all entities.
 core: 8.x
+core_version_requirement: '^8 || ^9'
 package: SEO
 configure: entity.metatag_defaults.collection
 dependencies:
@@ -13,7 +14,7 @@ test_dependencies:
   - restui:restui
   - schema_metatag:schema_web_page
 
-# Information added by Drupal.org packaging script on 2019-08-29
-version: '8.x-1.10'
+# Information added by Drupal.org packaging script on 2020-03-30
+version: '8.x-1.12'
 project: 'metatag'
-datestamp: 1567099988
+datestamp: 1585576515

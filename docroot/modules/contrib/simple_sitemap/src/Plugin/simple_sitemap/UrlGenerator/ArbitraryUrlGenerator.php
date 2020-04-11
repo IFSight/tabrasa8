@@ -53,6 +53,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     array $configuration,
     $plugin_id,
     $plugin_definition) {
+
     return new static(
       $configuration,
       $plugin_id,
@@ -70,6 +71,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     $arbitrary_links = [];
     $sitemap_variant = $this->sitemapVariant;
     $this->moduleHandler->alter('simple_sitemap_arbitrary_links', $arbitrary_links, $sitemap_variant);
+
     return array_values($arbitrary_links);
   }
 

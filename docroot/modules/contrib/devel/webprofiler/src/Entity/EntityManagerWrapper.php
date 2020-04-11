@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityViewBuilderInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\webprofiler\Entity\Decorators\Config\ConfigEntityStorageDecorator;
 use Drupal\webprofiler\Entity\Decorators\Config\ImageStyleStorageDecorator;
+use Drupal\webprofiler\Entity\Decorators\Config\DomainStorageDecorator;
 use Drupal\webprofiler\Entity\Decorators\Config\RoleStorageDecorator;
 use Drupal\webprofiler\Entity\Decorators\Config\ShortcutSetStorageDecorator;
 use Drupal\webprofiler\Entity\Decorators\Config\VocabularyStorageDecorator;
@@ -102,6 +103,9 @@ class EntityManagerWrapper extends DefaultPluginManager implements EntityTypeMan
         case 'image_style':
           return new ImageStyleStorageDecorator($handler);
           break;
+        case 'domain':
+          return new DomainStorageDecorator($handler);
+          break;
         default:
           return new ConfigEntityStorageDecorator($handler);
           break;
@@ -155,6 +159,8 @@ class EntityManagerWrapper extends DefaultPluginManager implements EntityTypeMan
    */
   public function clearCachedDefinitions() {
     $this->entityManager->clearCachedDefinitions();
+    $this->loaded = NULL;
+    $this->rendered = NULL;
   }
 
   /**

@@ -39,27 +39,12 @@ abstract class OptionsBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
-    $properties = parent::getDefaultProperties();
-
-    // Wrapper attributes are not supported by table elements.
-    if (preg_match('/(tableselect|tableselect_sort|table_sort)$/', $this->getPluginId())) {
-      unset($properties['wrapper_attributes']);
-    }
-
-    if (preg_match('/(tableselect|tableselect_sort|table_sort)$/', $this->getPluginId())) {
-      unset($properties['title_display']);
-      unset($properties['help']);
-      unset($properties['help_display']);
-      unset($properties['description']);
-      unset($properties['description_display']);
-    }
-
-    $properties += [
+  protected function defineDefaultProperties() {
+    $properties = [
       // Options settings.
       'options' => [],
       'options_randomize' => FALSE,
-    ];
+    ] + parent::defineDefaultProperties();
 
     // Add other properties to elements that include the other text field.
     if ($this->isOptionsOther()) {
@@ -93,6 +78,8 @@ abstract class OptionsBase extends WebformElementBase {
 
     return $properties;
   }
+
+  /****************************************************************************/
 
   /**
    * Determine if the element plugin type includes an other option text field.
@@ -128,9 +115,9 @@ abstract class OptionsBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getTranslatableProperties() {
+  protected function defineTranslatableProperties() {
     return array_merge(
-      parent::getTranslatableProperties(),
+      parent::defineTranslatableProperties(),
       ['options', 'empty_option', 'option_label']
     );
   }

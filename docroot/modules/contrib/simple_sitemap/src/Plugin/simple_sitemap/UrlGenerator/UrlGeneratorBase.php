@@ -69,6 +69,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    */
   public function setSettings(array $settings) {
     $this->settings = $settings;
+
     return $this;
   }
 
@@ -78,6 +79,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    */
   public function setSitemapVariant($sitemap_variant) {
     $this->sitemapVariant = $sitemap_variant;
+
     return $this;
   }
 
@@ -108,6 +110,7 @@ abstract class UrlGeneratorBase extends SimplesitemapPluginBase implements UrlGe
    */
   public function generate($data_set) {
     $path_data = $this->processDataSet($data_set);
+
     return FALSE !== $path_data ? [$path_data] : [];
   }
 }

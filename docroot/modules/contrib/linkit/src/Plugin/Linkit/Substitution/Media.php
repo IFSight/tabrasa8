@@ -50,6 +50,7 @@ class Media extends PluginBase implements SubstitutionInterface, ContainerFactor
       $file = $entity->get($source_field->getName())->entity;
       $url->setGeneratedUrl(file_create_url($file->getFileUri()));
       $url->addCacheableDependency($entity);
+      return $url;
     }
 
     // If available, fall back to the canonical URL if the bundle doesn't have

@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\system\MenuInterface;
 use Drupal\language\ConfigurableLanguageInterface;
 
@@ -159,7 +160,7 @@ function simple_sitemap_cron() {
         $state->set('simple_sitemap.last_cron_generate', $request_time);
       }
 
-      $generator->generateSitemap('cron');
+      $generator->generateSitemap(QueueWorker::GENERATE_TYPE_CRON);
     }
   }
 }
@@ -229,4 +230,30 @@ function simple_sitemap_menu_delete(MenuInterface $menu) {
   /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
   $generator = \Drupal::service('simple_sitemap.generator');
   $generator->setVariants(TRUE)->removeBundleSettings('menu_link_content', $menu->id());
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function simple_sitemap_page_attachments_alter(array &$attachments) {
+  if (!empty($attachments['#attached']['html_head_link'])) {
+
+    /** @var \Drupal\simple_sitemap\Simplesitemap $generator */
+    $generator = \Drupal::service('simple_sitemap.generator');
+
+    if ($generator->getSetting('disable_language_hreflang')) {
+      // @fixme https://www.drupal.org/project/drupal/issues/1255092
+      // Content Translation module normally adds identical hreflang tags, so
+      // executing its hook_page_attachments() implementation would be harmless,
+      // but if an entity page is configured as the front page, it attaches
+      // extraneous hreflang tags using the entity URL.
+      foreach ($attachments['#attached']['html_head_link'] as $key => $list) {
+        foreach ($list as $k => $element) {
+          if (!empty($element['hreflang']) && !empty($element['rel'])) {
+            unset($attachments['#attached']['html_head_link'][$key]);
+          }
+        }
+      }
+    }
+  }
 }

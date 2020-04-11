@@ -15,6 +15,7 @@ use Drupal\Component\Annotation\Plugin;
  * @see plugin_api
  */
 class DevelDumper extends Plugin {
+
   /**
    * The human-readable name of the DevelDumper type.
    *

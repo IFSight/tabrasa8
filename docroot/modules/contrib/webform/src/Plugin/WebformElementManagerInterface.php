@@ -6,12 +6,13 @@ use Drupal\Component\Plugin\CategorizingPluginManagerInterface;
 use Drupal\Component\Plugin\FallbackPluginManagerInterface;
 use Drupal\Component\Plugin\Discovery\CachedDiscoveryInterface;
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Collects available webform elements.
  */
-interface WebformElementManagerInterface extends PluginManagerInterface, CachedDiscoveryInterface, FallbackPluginManagerInterface, CategorizingPluginManagerInterface {
+interface WebformElementManagerInterface extends PluginManagerInterface, CachedDiscoveryInterface, FallbackPluginManagerInterface, CategorizingPluginManagerInterface, WebformPluginManagerExcludedInterface {
 
   /**
    * Get all available webform element plugin instances.
@@ -61,6 +62,21 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
   public function processElement(array &$element);
 
   /**
+   * Process form elements and apply webform element specific enhancements.
+   *
+   * This method allows any form API elements to be enhanced using webform
+   * specific features include custom validation, external libraries,
+   * accessibility improvements, etc…
+   *
+   * @param array $elements
+   *   An associative array containing form elements.
+   *
+   * @return array
+   *   The processed form elements with webform element specific enhancements.
+   */
+  public function processElements(array &$elements);
+
+  /**
    * Invoke a method for a Webform element.
    *
    * @param string $method
@@ -99,11 +115,16 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
    *
    * @param array $element
    *   An associative array containing an element with a #type property.
+   * @param \Drupal\webform\WebformInterface|\Drupal\webform\WebformSubmissionInterface $entity
+   *   A webform or webform submission entity.
    *
    * @return \Drupal\webform\Plugin\WebformElementInterface
    *   A webform element plugin instance
+   *
+   * @throws \Exception
+   *   Throw exception if entity type is not a webform or webform submission.
    */
-  public function getElementInstance(array $element);
+  public function getElementInstance(array $element, EntityInterface $entity = NULL);
 
   /**
    * Gets sorted plugin definitions.
@@ -119,17 +140,6 @@ interface WebformElementManagerInterface extends PluginManagerInterface, CachedD
    *   An array of plugin definitions, sorted by category and label.
    */
   public function getSortedDefinitions(array $definitions = NULL, $sort_by = 'label');
-
-  /**
-   * Remove excluded plugin definitions.
-   *
-   * @param array $definitions
-   *   The plugin definitions to filter.
-   *
-   * @return array
-   *   An array of plugin definitions with excluded plugins removed.
-   */
-  public function removeExcludeDefinitions(array $definitions);
 
   /**
    * Get all translatable properties from all elements.

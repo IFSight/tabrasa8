@@ -170,7 +170,13 @@ class SubstitutionPluginTest extends LinkitKernelTestBase {
     $media->save();
 
     $media_substitution = $this->substitutionManager->createInstance('media');
-    $this->assertEquals($GLOBALS['base_url'] . '/' . $this->siteDirectory . '/files/druplicon.txt', $media_substitution->getUrl($media)->getGeneratedUrl());
+    $expected = $GLOBALS['base_url'] . '/' . $this->siteDirectory . '/files/druplicon.txt';
+    $this->assertEquals($expected, $media_substitution->getUrl($media)->getGeneratedUrl());
+
+    // Ensure the url is identical when media entities have a standalone URL
+    // enabled.
+    \Drupal::configFactory()->getEditable('media.settings')->set('standalone_url', TRUE)->save();
+    $this->assertEquals($expected, $media_substitution->getUrl($media)->getGeneratedUrl());
 
     $entity_type = $this->entityTypeManager->getDefinition('media');
     $this->assertTrue(MediaSubstitutionPlugin::isApplicable($entity_type), 'The entity type Media is applicable the media substitution.');

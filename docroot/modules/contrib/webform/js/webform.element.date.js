@@ -42,7 +42,7 @@
         }, Drupal.webform.datePicker.options);
 
         // Add datepicker button.
-        if ($input.hasData('datepicker-button')) {
+        if ($input.hasData && $input.hasData('datepicker-button')) {
           options = $.extend({
             showOn: 'both',
             buttonImage: settings.webform.datePicker.buttonImage,
@@ -99,9 +99,7 @@
         }
 
         // Disable autocomplete.
-        // @see https://gist.github.com/niksumeiko/360164708c3b326bd1c8
-        var isChrome = (/chrom(e|ium)/.test(window.navigator.userAgent.toLowerCase()));
-        $input.attr('autocomplete', (isChrome) ? 'chrome-off' : 'off');
+        $input.attr('autocomplete', 'off');
 
         $input.datepicker(options);
       });

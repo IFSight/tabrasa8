@@ -96,6 +96,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    */
   public function getDataSets() {
     $this->includeImages = $this->generator->getSetting('custom_links_include_images', FALSE);
+
     return array_values($this->generator->setVariants($this->sitemapVariant)->getCustomLinks());
   }
 
@@ -108,6 +109,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
         ['@path' => $data_set['path'], '@custom_paths_url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/custom'])
         ->display('warning', 'administer sitemap settings')
         ->log('warning');
+
       return FALSE;
     }
 

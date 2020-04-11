@@ -27,6 +27,9 @@
     attach: function (context, settings) {
       $('input.webform-form-filter-text', context).once('webform-form-filter-text').each(function () {
         var $input = $(this);
+        $input.wrap('<div class="webform-form-filter"></div>');
+        var $reset = $('<input class="webform-form-filter-reset" type="reset" title="Clear the search query." value="✕" style="display: none" />');
+        $reset.insertAfter($input);
         var $table = $($input.data('element'));
         var $summary = $($input.data('summary'));
         var $noResults = $($input.data('no-results'));
@@ -47,17 +50,30 @@
         };
 
         if ($table.length) {
-          var isChrome = (/chrom(e|ium)/.test(window.navigator.userAgent.toLowerCase()));
           $filterRows = $table.find(sourceSelector);
           $input
-            .attr('autocomplete', (isChrome) ? 'chrome-off' : 'off')
+            .attr('autocomplete', 'off')
             .on('keyup', debounce(filterElementList, 200))
             .keyup();
+
+          $reset.on('click', resetFilter);
 
           // Make sure the filter input is always focused.
           if (focusInput === 'true') {
             setTimeout(function () {$input.focus();});
           }
+        }
+
+
+        /**
+         * Reset the filtering
+         *
+         * @param {jQuery.Event} e
+         *   The jQuery event for the keyup event that triggered the filter.
+         */
+        function resetFilter(e) {
+          $input.val('').keyup();
+          $input.focus();
         }
 
         /**
@@ -102,6 +118,9 @@
 
           // Hide/show no results.
           $noResults[totalItems ? 'hide' : 'show']();
+
+          // Hide/show reset.
+          $reset[query.length ? 'show' : 'hide']();
 
           // Update summary.
           if ($summary.length) {

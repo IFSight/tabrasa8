@@ -56,6 +56,7 @@ class ArgumentCollector implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     $events[KernelEvents::TERMINATE] = 'onTerminate';
+
     return $events;
   }
 
@@ -106,6 +107,7 @@ class ArgumentCollector implements EventSubscriberInterface {
         $args[] = $arg;
       }
     }
+
     return $args;
   }
 
