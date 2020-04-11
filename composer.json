@@ -56,7 +56,6 @@
         "drupal/varnish_purge": "^1.0",
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
-        "drupal/youtube": "^1.0",
         "moxiecode/plupload": "^3.1",
         "oomphinc/composer-installers-extender": "^1.1",
         "wikimedia/composer-merge-plugin": "~1.4"
