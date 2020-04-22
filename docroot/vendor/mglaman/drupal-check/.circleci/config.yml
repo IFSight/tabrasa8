@@ -1,0 +1,270 @@
+version: 2.1
+defaults: &defaults
+  docker:
+    - image: circleci/php:7.2-cli
+      environment:
+        BOX_VERSION: 3.8.4
+  working_directory: ~/repo
+aliases:
+  - &composer-cache
+      v4-composer-cache
+commands:
+  setup-job:
+    steps:
+      - checkout
+      - run: sudo apt-get update && sudo apt-get install -y libpng-dev libjpeg62-turbo-dev
+      - run: sudo docker-php-ext-install gd
+      - run:
+          name: Disable PHP memory limit
+          command: echo 'memory_limit=-1' | sudo tee -a /usr/local/etc/php/php.ini
+      - run:
+          name: Disable xdebug PHP extension
+          command: sudo rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - restore_cache:
+          keys:
+            - *composer-cache
+      - run: composer global require "hirak/prestissimo:^0.3"
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: *composer-cache
+          paths:
+            - ~/.composer/cache
+  build-phar:
+    steps:
+      - run: echo "Downloading box.phar version $BOX_VERSION"
+      - run: curl -O -L https://github.com/humbug/box/releases/download/$BOX_VERSION/box.phar
+      - run: php box.phar compile
+  create-drupal-project:
+    parameters:
+      project:
+        type: string
+        default: 'drupal/recommended-project:^8.8@alpha'
+      require_dev:
+        type: boolean
+        default: true
+    steps:
+      - run: COMPOSER_MEMORY_LIMIT=-1 composer create-project << parameters.project >> /tmp/drupal --no-interaction --prefer-dist --ignore-platform-reqs
+      - when:
+          condition: << parameters.require_dev >>
+          steps:
+            - run: COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev --dev --working-dir /tmp/drupal --no-interaction
+  require-contrib:
+    parameters:
+      project:
+        type: string
+    steps:
+      - run: composer require << parameters.project >> --working-dir /tmp/drupal
+  global-require:
+    steps:
+      - run:
+          name: Remove existing vendor dir
+          command: |
+            rm -rf ~/repo/vendor
+      - run:
+          name: Add project as a global dependency
+          command: |
+            composer global config minimum-stability dev
+            composer global config prefer-stable true
+            composer global config repositories.0 '{"type": "path", "url": "'$CIRCLE_WORKING_DIRECTORY'", "options": { "symlink": false }}'
+            composer global require mglaman/drupal-check "*"
+      - run:
+          name: Add Composer global path
+          command: |
+            echo 'export PATH="$HOME/.composer/vendor/bin:$PATH"' >> $BASH_ENV
+            echo $BASH_ENV
+      - run:
+          name: Check drupal-check can be executed
+          command: |
+            drupal-check --version
+jobs:
+  lint:
+    <<: *defaults
+    steps:
+      - setup-job
+      - run:
+          name: Composer Validate
+          command: |
+            composer validate
+      - run:
+          name: PHPCS
+          command: |
+            ./vendor/bin/phpcs src
+  build:
+    <<: *defaults
+    steps:
+      - setup-job
+      - build-phar
+      - run: php box.phar info drupal-check.phar
+  test_drupal:
+    <<: *defaults
+    steps:
+      - setup-job
+      - build-phar
+      - create-drupal-project:
+          project: 'drupal/legacy-project:^8@alpha'
+      - run:
+          name: Phar - Run against a file
+          command: |
+            php drupal-check.phar /tmp/drupal/core/install.php -vvv
+      - run:
+          name: Phar - Run against a module
+          command: |
+            php drupal-check.phar /tmp/drupal/core/modules/dynamic_page_cache -vvv
+      - run:
+          name: Phar - Run against multiple paths
+          command: |
+            php drupal-check.phar /tmp/drupal/core/install.php /tmp/drupal/core/modules/dynamic_page_cache -vvv
+      - global-require
+      - run:
+          name: Global - Run against a file
+          command: |
+            drupal-check /tmp/drupal/core/install.php
+      - run:
+          name: Global - Run against a module
+          command: |
+             drupal-check /tmp/drupal/core/modules/dynamic_page_cache
+  test_drupal_project:
+    <<: *defaults
+    steps:
+      - setup-job
+      - build-phar
+      - create-drupal-project
+      - run:
+          name: Phar - Run against a file
+          command: |
+            php drupal-check.phar /tmp/drupal/web/core/install.php
+      - run:
+          name: Phar - Run against a module
+          command: |
+            php drupal-check.phar /tmp/drupal/web/core/modules/dynamic_page_cache
+      - global-require
+      - run:
+          name: Global - Run against a file
+          command: |
+            drupal-check /tmp/drupal/web/core/install.php
+      - run:
+          name: Global - Run against a module
+          command: |
+             drupal-check /tmp/drupal/web/core/modules/dynamic_page_cache
+  test_drupal_local_require:
+    <<: *defaults
+    steps:
+      - setup-job
+      - run:
+          name: Remove vendor directory
+          command: rm -rf vendor/mglaman/drupal-check/vendor
+      - create-drupal-project
+      - run:
+          name: Add as a local dependency
+          command: |
+            cd /tmp/drupal
+            composer config repositories.0 '{"type": "path", "url": "'$CIRCLE_WORKING_DIRECTORY'", "options": { "symlink": false }}'
+            composer require mglaman/drupal-check "*"
+            ./vendor/bin/drupal-check --version
+      - run:
+          name: Local - Run against a file
+          command: |
+            cd /tmp/drupal
+            ./vendor/bin/drupal-check -vvv web/core/install.php
+      - run:
+          name: Local - Run against a module
+          command: |
+            cd /tmp/drupal
+            ./vendor/bin/drupal-check -vvv web/core/modules/dynamic_page_cache
+  test_lightning:
+    <<: *defaults
+    steps:
+      - setup-job
+      - build-phar
+      # acquia/lightning-project does not require-dev Drupal's require-dev.
+      # see PR https://github.com/acquia/lightning-project/pull/101
+      - create-drupal-project:
+          project: 'acquia/lightning-project'
+          require_dev: false
+      - run:
+          name: Phar - Run against a file
+          command: |
+            php drupal-check.phar /tmp/drupal/docroot/core/install.php
+      # - run:
+      #     name: Phar - Run against a module
+      #     command: |
+      #       php drupal-check.phar /tmp/drupal/docroot/core/modules/dynamic_page_cache
+      - global-require
+      - run:
+          name: Global - Run against a file
+          command: |
+            drupal-check /tmp/drupal/docroot/core/install.php
+      # - run:
+      #     name: Global - Run against a module
+      #     command: |
+      #       drupal-check /tmp/drupal/docroot/core/modules/dynamic_page_cache
+  test_contrib:
+    <<: *defaults
+    steps:
+      - setup-job
+      - build-phar
+      - create-drupal-project
+      - require-contrib:
+          project: drupal/ctools:3.x-dev
+      - run:
+          name: Phar - Run against a module
+          command: |
+            php -d memory_limit=-1 drupal-check.phar /tmp/drupal/web/modules/contrib/ctools || if (($? == 255)); then false; else true; fi
+  test_global_require_with_drush:
+    <<: *defaults
+    steps:
+      - setup-job
+      - run:
+          name: Install Drush globally (which is not recommended by Drush team)
+          command: |
+            composer global require drush/drush
+      - global-require
+      - create-drupal-project
+      - run:
+          name: Run against a file
+          command: |
+            drupal-check /tmp/drupal/web/core/install.php
+      - run:
+          name: Run against a module
+          command: |
+            drupal-check /tmp/drupal/web/core/modules/dynamic_page_cache
+  test_symfony_console_conflict:
+    <<: *defaults
+    steps:
+      - setup-job
+      - run: mkdir -p /tmp/example
+      - run: composer require behat/behat:^3.0 drush/drush:^9 --working-dir /tmp/example
+      - run: |
+          composer config repositories.0 '{"type": "path", "url": "~/repo", "options": { "symlink": false }}' --working-dir /tmp/example
+      - run: |
+          composer require mglaman/drupal-check *@dev --working-dir /tmp/example
+      - run: |
+          /tmp/example/vendor/bin/drupal-check --version
+  test_contained_not_initialized:
+    <<: *defaults
+    steps:
+      - setup-job
+      - build-phar
+      - create-drupal-project
+      - run:
+          name: Copy test fixture
+          command: |
+            cp -r ~/repo/tests/fixtures/contained_not_initialized /tmp/drupal/web/modules
+      - run:
+          name: Phar - Run against a file
+          command: |
+            php drupal-check.phar /tmp/drupal/web/modules/contained_not_initialized -vvv
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - lint
+      - test_drupal
+      - test_drupal_project
+      - test_lightning
+      - test_global_require_with_drush
+      - test_symfony_console_conflict
+      - test_contrib
+      - test_contained_not_initialized
+      - test_drupal_local_require
+      - build

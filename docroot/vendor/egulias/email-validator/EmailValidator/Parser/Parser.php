@@ -21,19 +21,8 @@ use Egulias\EmailValidator\Warning\QuotedString;
 
 abstract class Parser
 {
-    /**
-     * @var \Egulias\EmailValidator\Warning\Warning[]
-     */
     protected $warnings = [];
-
-    /**
-     * @var EmailLexer
-     */
     protected $lexer;
-
-    /**
-     * @var int
-     */
     protected $openedParenthesis = 0;
 
     public function __construct(EmailLexer $lexer)
@@ -41,17 +30,11 @@ abstract class Parser
         $this->lexer = $lexer;
     }
 
-    /**
-     * @return \Egulias\EmailValidator\Warning\Warning[]
-     */
     public function getWarnings()
     {
         return $this->warnings;
     }
 
-    /**
-     * @param string $str
-     */
     abstract public function parse($str);
 
     /** @return int */
@@ -97,9 +80,6 @@ abstract class Parser
         }
     }
 
-    /**
-     * @return bool
-     */
     protected function isUnclosedComment()
     {
         try {
@@ -142,9 +122,6 @@ abstract class Parser
         }
     }
 
-    /**
-     * @return bool
-     */
     protected function isFWS()
     {
         if ($this->escaped()) {
@@ -163,14 +140,11 @@ abstract class Parser
         return false;
     }
 
-    /**
-     * @return bool
-     */
     protected function escaped()
     {
         $previous = $this->lexer->getPrevious();
 
-        if ($previous && $previous['type'] === EmailLexer::S_BACKSLASH
+        if ($previous['type'] === EmailLexer::S_BACKSLASH
             &&
             $this->lexer->token['type'] !== EmailLexer::GENERIC
         ) {
@@ -180,9 +154,6 @@ abstract class Parser
         return false;
     }
 
-    /**
-     * @return bool
-     */
     protected function warnEscaping()
     {
         if ($this->lexer->token['type'] !== EmailLexer::S_BACKSLASH) {
@@ -203,11 +174,6 @@ abstract class Parser
 
     }
 
-    /**
-     * @param bool $hasClosingQuote
-     *
-     * @return bool
-     */
     protected function checkDQUOTE($hasClosingQuote)
     {
         if ($this->lexer->token['type'] !== EmailLexer::S_DQUOTE) {

@@ -21,7 +21,9 @@
         "php": ">=4.4.0"
     },
     "autoload": {
-        "classmap": ["PEAR/"]
+        "psr-0": {
+            "PEAR": ""
+        }
     },
     "extra": {
         "branch-alias": {

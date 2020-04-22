@@ -36,7 +36,7 @@ interface ConstraintViolationInterface
     /**
      * Returns the violation message.
      *
-     * @return string|\Stringable The violation message as a string or a stringable object
+     * @return string The violation message
      */
     public function getMessage();
 

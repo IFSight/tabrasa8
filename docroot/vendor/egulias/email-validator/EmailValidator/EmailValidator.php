@@ -13,12 +13,12 @@ class EmailValidator
     private $lexer;
 
     /**
-     * @var Warning\Warning[]
+     * @var array
      */
-    protected $warnings = [];
+    protected $warnings;
 
     /**
-     * @var InvalidEmail|null
+     * @var InvalidEmail
      */
     protected $error;
 
@@ -58,7 +58,7 @@ class EmailValidator
     }
 
     /**
-     * @return InvalidEmail|null
+     * @return InvalidEmail
      */
     public function getError()
     {

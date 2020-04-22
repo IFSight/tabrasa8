@@ -198,34 +198,20 @@ class QuestionHelper extends Helper
         $message = $question->getQuestion();
 
         if ($question instanceof ChoiceQuestion) {
-            $output->writeln(array_merge([
-                $question->getQuestion(),
-            ], $this->formatChoiceQuestionChoices($question, 'info')));
+            $maxWidth = max(array_map([$this, 'strlen'], array_keys($question->getChoices())));
+
+            $messages = (array) $question->getQuestion();
+            foreach ($question->getChoices() as $key => $value) {
+                $width = $maxWidth - $this->strlen($key);
+                $messages[] = '  [<info>'.$key.str_repeat(' ', $width).'</info>] '.$value;
+            }
+
+            $output->writeln($messages);
 
             $message = $question->getPrompt();
         }
 
         $output->write($message);
-    }
-
-    /**
-     * @param string $tag
-     *
-     * @return string[]
-     */
-    protected function formatChoiceQuestionChoices(ChoiceQuestion $question, $tag)
-    {
-        $messages = [];
-
-        $maxWidth = max(array_map('self::strlen', array_keys($choices = $question->getChoices())));
-
-        foreach ($choices as $key => $value) {
-            $padding = str_repeat(' ', $maxWidth - self::strlen($key));
-
-            $messages[] = sprintf("  [<$tag>%s$padding</$tag>] %s", $key, $value);
-        }
-
-        return $messages;
     }
 
     /**
@@ -278,7 +264,7 @@ class QuestionHelper extends Helper
             } elseif ("\177" === $c) { // Backspace Character
                 if (0 === $numMatches && 0 !== $i) {
                     --$i;
-                    $fullChoice = self::substr($fullChoice, 0, $i);
+                    $fullChoice = substr($fullChoice, 0, -1);
                     // Move cursor backwards
                     $output->write("\033[1D");
                 }
@@ -292,7 +278,7 @@ class QuestionHelper extends Helper
                 }
 
                 // Pop the last character off the end of our string
-                $ret = self::substr($ret, 0, $i);
+                $ret = substr($ret, 0, $i);
             } elseif ("\033" === $c) {
                 // Did we read an escape sequence?
                 $c .= fread($inputStream, 2);
@@ -318,7 +304,7 @@ class QuestionHelper extends Helper
                         $remainingCharacters = substr($ret, \strlen(trim($this->mostRecentlyEnteredValue($fullChoice))));
                         $output->write($remainingCharacters);
                         $fullChoice .= $remainingCharacters;
-                        $i = self::strlen($fullChoice);
+                        $i = \strlen($fullChoice);
                     }
 
                     if ("\n" === $c) {

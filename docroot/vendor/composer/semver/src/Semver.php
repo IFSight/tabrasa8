@@ -37,9 +37,9 @@ class Semver
 
         $versionParser = self::$versionParser;
         $provider = new Constraint('==', $versionParser->normalize($version));
-        $parsedConstraints = $versionParser->parseConstraints($constraints);
+        $constraints = $versionParser->parseConstraints($constraints);
 
-        return $parsedConstraints->matches($provider);
+        return $constraints->matches($provider);
     }
 
     /**
