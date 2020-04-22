@@ -24,12 +24,10 @@ class ResolveParameterPlaceHoldersPass extends AbstractRecursivePass
 {
     private $bag;
     private $resolveArrays;
-    private $throwOnResolveException;
 
-    public function __construct($resolveArrays = true, $throwOnResolveException = true)
+    public function __construct($resolveArrays = true)
     {
         $this->resolveArrays = $resolveArrays;
-        $this->throwOnResolveException = $throwOnResolveException;
     }
 
     /**
@@ -63,16 +61,7 @@ class ResolveParameterPlaceHoldersPass extends AbstractRecursivePass
     protected function processValue($value, $isRoot = false)
     {
         if (\is_string($value)) {
-            try {
-                $v = $this->bag->resolveValue($value);
-            } catch (ParameterNotFoundException $e) {
-                if ($this->throwOnResolveException) {
-                    throw $e;
-                }
-
-                $v = null;
-                $this->container->getDefinition($this->currentId)->addError($e->getMessage());
-            }
+            $v = $this->bag->resolveValue($value);
 
             return $this->resolveArrays || !$v || !\is_array($v) ? $v : $value;
         }

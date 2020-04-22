@@ -81,7 +81,7 @@ class TestListenerForV7 extends TestSuite implements TestListenerInterface
 
     public static function warning($message): WarningTestCase
     {
-        return new WarningTestCase($message);
+        return parent::warning($message);
     }
 
     protected function setUp(): void

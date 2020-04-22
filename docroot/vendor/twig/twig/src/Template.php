@@ -628,7 +628,7 @@ abstract class Template implements \Twig_TemplateInterface
 
                 foreach ($ref->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
                     // Accessing the environment from templates is forbidden to prevent untrusted changes to the environment
-                    if ('getenvironment' !== strtr($refMethod->name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')) {
+                    if ('getenvironment' !== strtolower($refMethod->name)) {
                         $methods[] = $refMethod->name;
                     }
                 }
@@ -642,7 +642,7 @@ abstract class Template implements \Twig_TemplateInterface
 
             foreach ($methods as $method) {
                 $cache[$method] = $method;
-                $cache[$lcName = strtr($method, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')] = $method;
+                $cache[$lcName = strtolower($method)] = $method;
 
                 if ('g' === $lcName[0] && 0 === strpos($lcName, 'get')) {
                     $name = substr($method, 3);
@@ -670,7 +670,7 @@ abstract class Template implements \Twig_TemplateInterface
         $call = false;
         if (isset(self::$cache[$class][$item])) {
             $method = self::$cache[$class][$item];
-        } elseif (isset(self::$cache[$class][$lcItem = strtr($item, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')])) {
+        } elseif (isset(self::$cache[$class][$lcItem = strtolower($item)])) {
             $method = self::$cache[$class][$lcItem];
         } elseif (isset(self::$cache[$class]['__call'])) {
             $method = $item;

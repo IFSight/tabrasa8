@@ -44,7 +44,7 @@ class DateValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof Date) {
-            throw new UnexpectedTypeException($constraint, Date::class);
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Date');
         }
 
         if (null === $value || '' === $value || $value instanceof \DateTimeInterface) {

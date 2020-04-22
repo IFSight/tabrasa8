@@ -30,12 +30,12 @@ class MultipleValidationWithAnd implements EmailValidation
     private $warnings = [];
 
     /**
-     * @var MultipleErrors|null
+     * @var MultipleErrors
      */
     private $error;
 
     /**
-     * @var int
+     * @var bool
      */
     private $mode;
 
@@ -79,12 +79,6 @@ class MultipleValidationWithAnd implements EmailValidation
         return $result;
     }
 
-    /**
-     * @param \Egulias\EmailValidator\Exception\InvalidEmail|null $possibleError
-     * @param \Egulias\EmailValidator\Exception\InvalidEmail[] $errors
-     *
-     * @return \Egulias\EmailValidator\Exception\InvalidEmail[]
-     */
     private function addNewError($possibleError, array $errors)
     {
         if (null !== $possibleError) {
@@ -94,20 +88,13 @@ class MultipleValidationWithAnd implements EmailValidation
         return $errors;
     }
 
-    /**
-     * @param bool $result
-     *
-     * @return bool
-     */
     private function shouldStop($result)
     {
         return !$result && $this->mode === self::STOP_ON_ERROR;
     }
 
     /**
-     * Returns the validation errors.
-     *
-     * @return MultipleErrors|null
+     * {@inheritdoc}
      */
     public function getError()
     {

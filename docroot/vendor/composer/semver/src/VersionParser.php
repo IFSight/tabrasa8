@@ -52,12 +52,11 @@ class VersionParser
     {
         $version = preg_replace('{#.+$}i', '', $version);
 
-        if (strpos($version, 'dev-') === 0 || '-dev' === substr($version, -4)) {
+        if ('dev-' === substr($version, 0, 4) || '-dev' === substr($version, -4)) {
             return 'dev';
         }
 
         preg_match('{' . self::$modifierRegex . '(?:\+.*)?$}i', strtolower($version), $match);
-
         if (!empty($match[3])) {
             return 'dev';
         }
@@ -108,9 +107,6 @@ class VersionParser
 
         // strip off aliasing
         if (preg_match('{^([^,\s]++) ++as ++([^,\s]++)$}', $version, $match)) {
-            // verify that the alias is a version without constraint
-            $this->normalize($match[2]);
-
             $version = $match[1];
         }
 
@@ -120,7 +116,7 @@ class VersionParser
         }
 
         // if requirement is branch-like, use full name
-        if (stripos($version, 'dev-') === 0) {
+        if ('dev-' === strtolower(substr($version, 0, 4))) {
             return 'dev-' . substr($version, 4);
         }
 
@@ -240,7 +236,6 @@ class VersionParser
 
         $orConstraints = preg_split('{\s*\|\|?\s*}', trim($constraints));
         $orGroups = array();
-
         foreach ($orConstraints as $constraints) {
             $andConstraints = preg_split('{(?<!^|as|[=>< ,]) *(?<!-)[, ](?!-) *(?!,|as|$)}', $constraints);
             if (count($andConstraints) > 1) {
@@ -273,9 +268,9 @@ class VersionParser
             && 2 === count($orGroups[0]->getConstraints())
             && 2 === count($orGroups[1]->getConstraints())
             && ($a = (string) $orGroups[0])
-            && strpos($a, '[>=') === 0 && (false !== ($posA = strpos($a, '<', 4)))
+            && substr($a, 0, 3) === '[>=' && (false !== ($posA = strpos($a, '<', 4)))
             && ($b = (string) $orGroups[1])
-            && strpos($b, '[>=') === 0 && (false !== ($posB = strpos($b, '<', 4)))
+            && substr($b, 0, 3) === '[>=' && (false !== ($posB = strpos($b, '<', 4)))
             && substr($a, $posA + 2, -1) === substr($b, 4, $posB - 5)
         ) {
             $constraint = new MultiConstraint(array(
@@ -319,7 +314,7 @@ class VersionParser
         // version, to ensure that unstable instances of the current version are allowed. However, if a stability
         // suffix is added to the constraint, then a >= match on the current version is used instead.
         if (preg_match('{^~>?' . $versionRegex . '$}i', $constraint, $matches)) {
-            if (strpos($constraint, '~>') === 0) {
+            if (substr($constraint, 0, 2) === '~>') {
                 throw new \UnexpectedValueException(
                     'Could not parse version constraint ' . $constraint . ': ' .
                     'Invalid operator "~>", you probably meant to use the "~" operator'
@@ -459,11 +454,11 @@ class VersionParser
             try {
                 $version = $this->normalize($matches[2]);
 
-                if (!empty($stabilityModifier) && self::parseStability($version) === 'stable') {
+                if (!empty($stabilityModifier) && $this->parseStability($version) === 'stable') {
                     $version .= '-' . $stabilityModifier;
                 } elseif ('<' === $matches[1] || '>=' === $matches[1]) {
                     if (!preg_match('/-' . self::$modifierRegex . '$/', strtolower($matches[2]))) {
-                        if (strpos($matches[2], 'dev-') !== 0) {
+                        if (substr($matches[2], 0, 4) !== 'dev-') {
                             $version .= '-dev';
                         }
                     }
@@ -508,7 +503,7 @@ class VersionParser
 
                     // Return null on a carry overflow
                     if ($i === 1) {
-                        return null;
+                        return;
                     }
                 }
             }
