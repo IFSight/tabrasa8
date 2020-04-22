@@ -5,6 +5,7 @@ namespace Drupal\Tests\metatag\Functional;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\BrowserTestBase;
 use Symfony\Component\DependencyInjection\Container;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Base class to test all of the meta tags that are in a specific module.
@@ -12,6 +13,7 @@ use Symfony\Component\DependencyInjection\Container;
 abstract class MetatagTagsTestBase extends BrowserTestBase {
 
   use MetatagHelperTrait;
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -30,6 +32,11 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
     // global defaults, without loading values from other configs.
     'metatag_test_custom_route',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * All of the meta tags defined by this module which will be tested.
@@ -84,7 +91,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
   public function testTagsArePresent() {
     // Load the global config.
     $this->drupalGet('admin/config/search/metatag/global');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Confirm the various meta tags are available.
     foreach ($this->tags as $tag) {
@@ -120,7 +127,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
     // Create a content type to test with.
     $this->createContentType(['type' => 'page']);
     $this->drupalCreateNode([
-      'title' => t('Hello, world!'),
+      'title' => $this->t('Hello, world!'),
       'type' => 'page',
     ]);
 
@@ -144,7 +151,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
 
       // Load the global config.
       $this->drupalGet($path1);
-      $this->assertResponse(200);
+      $this->assertSession()->statusCodeEquals(200);
 
       // Update the Global defaults and test them.
       $all_values = $values = [];
@@ -179,7 +186,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
 
       // Load the test page.
       $this->drupalGet($path2);
-      $this->assertResponse(200);
+      $this->assertSession()->statusCodeEquals(200);
 
       // Look for the values.
       // Look for a custom method named "{$tag_name}TestOutputXpath", if
@@ -251,7 +258,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
       // Run various tests on the output variables.
       // Most meta tags have an attribute, but some don't.
       if (!empty($xpath_value_attribute)) {
-        $this->assertTrue($xpath_value_attribute);
+        $this->assertNotEmpty($xpath_value_attribute);
         $this->assertTrue($xpath[0]->hasAttribute($xpath_value_attribute));
         // Help with debugging.
         if (!$xpath[0]->hasAttribute($xpath_value_attribute)) {
@@ -261,7 +268,7 @@ abstract class MetatagTagsTestBase extends BrowserTestBase {
           if ((string) $xpath[0]->getAttribute($xpath_value_attribute) != $all_values[$tag_name]) {
             $this->verbose($xpath, $tag_name . ': ' . $xpath_string);
           }
-          $this->assertTrue($xpath[0]->getAttribute($xpath_value_attribute));
+          $this->assertNotEmpty($xpath[0]->getAttribute($xpath_value_attribute));
           $this->assertEqual($xpath[0]->getAttribute($xpath_value_attribute), $all_values[$tag_name], "The '{$tag_name}' tag was found with the expected value.");
         }
       }
