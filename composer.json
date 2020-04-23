@@ -81,7 +81,7 @@
     "prefer-stable": true,
     "config": {
         "preferred-install": "dist",
-        "vendor-dir": "./docroot/vendor",
+        "vendor-dir": "./vendor",
         "sort-packages": true
     },
     "extra": {

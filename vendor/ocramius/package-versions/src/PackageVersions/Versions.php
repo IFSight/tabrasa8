@@ -186,7 +186,6 @@ final class Versions
   'mglaman/drupal-check' => '1.1.1@3ec4b60f86caa6fabd8067726908afd66ee3ec01',
   'mglaman/phpstan-drupal' => '0.12.3@c72367d12498c9f5d3738852d4089b4570690a55',
   'mikey179/vfsstream' => 'v1.6.8@231c73783ebb7dd9ec77916c10037eff5a2b6efe',
-  'moxiecode/plupload' => '3.1.2@',
   'myclabs/deep-copy' => '1.9.5@b2c28789e80a97badd14145fda39b545d83ca3ef',
   'nette/finder' => 'v2.5.2@4ad2c298eb8c687dd0e74ae84206a4186eeaed50',
   'nette/neon' => 'v3.1.2@3c3dcbc6bf6c80dc97b1fc4ba9a22ae67930fc0e',
@@ -206,7 +205,7 @@ final class Versions
   'phpunit/php-timer' => '2.1.2@1038454804406b0b5f5f520358e78c1c2f71501e',
   'phpunit/php-token-stream' => '3.1.1@995192df77f63a59e47f025390d2d1fdf8f425ff',
   'phpunit/phpunit' => '7.5.20@9467db479d1b0487c99733bb1e7944d32deded2c',
-  'roave/security-advisories' => 'dev-master@2bdae3cc8428d637d5c86c8c33d0a3354ce93f7f',
+  'roave/security-advisories' => 'dev-master@81541a731da2f245a08666de73169cb5da7ac573',
   'sebastian/code-unit-reverse-lookup' => '1.0.1@4419fcdb5eabb9caa61a27c7a1db532a6b55dd18',
   'sebastian/comparator' => '3.0.2@5de4fc177adf9bce8df98d8d141a7559d7ccf6da',
   'sebastian/diff' => '3.0.2@720fcc7e9b5cf384ea68d9d930d480907a0c1a29',
@@ -226,7 +225,7 @@ final class Versions
   'symfony/phpunit-bridge' => 'v3.4.39@c02893ae43532b46a4f0e0f207d088b939f278d9',
   'theseer/tokenizer' => '1.1.3@11336f6f84e16a720dae9d8e6ed5019efa85a0f9',
   'vanare/behat-cucumber-json-formatter' => 'v1.1.3@b28ae403404be4c74c740a3948d9338fc51443a3',
-  'drupal/drupal' => 'dev-adding-packages-from-gitlab@18810303dbb7a89449d9e80fdbd21a6bebbc540e',
+  'drupal/drupal' => 'dev-adding-packages-from-gitlab@b99a3d6cb3e4470c3d75176a99936c90ff337986',
 );
 
     private function __construct()

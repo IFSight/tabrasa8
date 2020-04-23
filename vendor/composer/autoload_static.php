@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5db6933e4df369cb1eed1f329b163a17
+class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -533,15 +533,15 @@ class ComposerStaticInit5db6933e4df369cb1eed1f329b163a17
         ),
         'Drupal\\redis\\' => 
         array (
-            0 => __DIR__ . '/../../..' . '/docroot/modules/contrib/redis/src',
+            0 => __DIR__ . '/../..' . '/docroot/modules/contrib/redis/src',
         ),
         'Drupal\\Driver\\' => 
         array (
-            0 => __DIR__ . '/../../..' . '/docroot/drivers/lib/Drupal/Driver',
+            0 => __DIR__ . '/../..' . '/docroot/drivers/lib/Drupal/Driver',
         ),
         'Drupal\\Core\\' => 
         array (
-            0 => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Core',
+            0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core',
         ),
         'Drupal\\Console\\Core\\' => 
         array (
@@ -561,7 +561,7 @@ class ComposerStaticInit5db6933e4df369cb1eed1f329b163a17
         ),
         'Drupal\\Component\\' => 
         array (
-            0 => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Component',
+            0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component',
         ),
         'Drupal\\' => 
         array (
@@ -784,14 +784,14 @@ class ComposerStaticInit5db6933e4df369cb1eed1f329b163a17
         'ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
         'AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
         'DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
-        'Drupal' => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal.php',
+        'Drupal' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal.php',
         'DrupalFinder\\DrupalFinder' => __DIR__ . '/..' . '/webflo/drupal-finder/src/DrupalFinder.php',
-        'Drupal\\Component\\Utility\\Timer' => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Component/Utility/Timer.php',
-        'Drupal\\Component\\Utility\\Unicode' => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Component/Utility/Unicode.php',
-        'Drupal\\Core\\Database\\Database' => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Core/Database/Database.php',
-        'Drupal\\Core\\DrupalKernel' => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Core/DrupalKernel.php',
-        'Drupal\\Core\\DrupalKernelInterface' => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Core/DrupalKernelInterface.php',
-        'Drupal\\Core\\Site\\Settings' => __DIR__ . '/../../..' . '/docroot/core/lib/Drupal/Core/Site/Settings.php',
+        'Drupal\\Component\\Utility\\Timer' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Utility/Timer.php',
+        'Drupal\\Component\\Utility\\Unicode' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component/Utility/Unicode.php',
+        'Drupal\\Core\\Database\\Database' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Database/Database.php',
+        'Drupal\\Core\\DrupalKernel' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/DrupalKernel.php',
+        'Drupal\\Core\\DrupalKernelInterface' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/DrupalKernelInterface.php',
+        'Drupal\\Core\\Site\\Settings' => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core/Site/Settings.php',
         'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
         'Nette\\ArgumentOutOfRangeException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\DeprecatedException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
@@ -1395,11 +1395,11 @@ class ComposerStaticInit5db6933e4df369cb1eed1f329b163a17
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5db6933e4df369cb1eed1f329b163a17::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5db6933e4df369cb1eed1f329b163a17::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit5db6933e4df369cb1eed1f329b163a17::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit5db6933e4df369cb1eed1f329b163a17::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit5db6933e4df369cb1eed1f329b163a17::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$classMap;
 
         }, null, ClassLoader::class);
     }
