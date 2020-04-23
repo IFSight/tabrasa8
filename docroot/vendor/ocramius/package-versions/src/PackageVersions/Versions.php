@@ -16,6 +16,7 @@ final class Versions
     public const VERSIONS          = array (
   'alchemy/zippy' => '0.4.9@59fbeefb9a249122867ef25e53addfcce31850d7',
   'asm89/stack-cors' => '1.2.0@c163e2b614550aedcf71165db2473d936abbced6',
+  'bower-asset/plupload' => 'v3.1.2@d1aee329d3ed75491a9c8d1e9eecd96464fc8b76',
   'composer/installers' => 'v1.7.0@141b272484481432cda342727a427dc1e206bfa0',
   'composer/semver' => '1.5.0@46d9139568ccb8d9e7cdd4539cab7347568a5e2e',
   'cweagans/composer-patches' => '1.6.7@2e6f72a2ad8d59cd7e2b729f218bf42adb14f590',
@@ -94,6 +95,10 @@ final class Versions
   'guzzlehttp/psr7' => '1.6.1@239400de7a173fe9901b9ac7c06497751f00727a',
   'guzzlehttp/ringphp' => '1.1.1@5e2a174052995663dd68e6b5ad838afd47dd615b',
   'guzzlehttp/streams' => '3.0.0@47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5',
+  'ifsight/fulcrum_whitelist' => '1.1.0@1.1.0',
+  'ifsight/if_admin' => '0.1@v0.1',
+  'ifsight/if_helper' => '0.1@v0.1',
+  'ifsight/if_varnish_purge_tags' => '0.2@0.2',
   'laminas/laminas-diactoros' => '1.8.7@1c2dce9d2822030d5dcfd50b709708830429c89a',
   'laminas/laminas-escaper' => '2.6.1@25f2a053eadfa92ddacb609dcbbc39362610da70',
   'laminas/laminas-feed' => '2.12.0@64d25e18a6ea3db90c27fe2d6b95630daa1bf602',
@@ -101,7 +106,6 @@ final class Versions
   'laminas/laminas-zendframework-bridge' => '1.0.1@0fb9675b84a1666ab45182b6c5b29956921e818d',
   'makinacorpus/php-lucene' => '1.0.2@31ecc79dd750a1f82c0aacacd79117ee94d2bfb0',
   'masterminds/html5' => '2.3.0@2c37c6c520b995b761674de3be8455a381679067',
-  'moxiecode/plupload' => '3.1.2@',
   'nikic/php-parser' => 'v4.4.0@bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120',
   'nodespark/des-connector' => '6.x-dev@abdbfc805ce296354988b5869888dc44a52d5da7',
   'oomphinc/composer-installers-extender' => 'v1.1.2@ca1c4b16b0905c81d1e77e608f36a2eff1a56f56',
@@ -182,6 +186,7 @@ final class Versions
   'mglaman/drupal-check' => '1.1.1@3ec4b60f86caa6fabd8067726908afd66ee3ec01',
   'mglaman/phpstan-drupal' => '0.12.3@c72367d12498c9f5d3738852d4089b4570690a55',
   'mikey179/vfsstream' => 'v1.6.8@231c73783ebb7dd9ec77916c10037eff5a2b6efe',
+  'moxiecode/plupload' => '3.1.2@',
   'myclabs/deep-copy' => '1.9.5@b2c28789e80a97badd14145fda39b545d83ca3ef',
   'nette/finder' => 'v2.5.2@4ad2c298eb8c687dd0e74ae84206a4186eeaed50',
   'nette/neon' => 'v3.1.2@3c3dcbc6bf6c80dc97b1fc4ba9a22ae67930fc0e',
@@ -221,7 +226,7 @@ final class Versions
   'symfony/phpunit-bridge' => 'v3.4.39@c02893ae43532b46a4f0e0f207d088b939f278d9',
   'theseer/tokenizer' => '1.1.3@11336f6f84e16a720dae9d8e6ed5019efa85a0f9',
   'vanare/behat-cucumber-json-formatter' => 'v1.1.3@b28ae403404be4c74c740a3948d9338fc51443a3',
-  'drupal/drupal' => 'dev-master@6aa70cff6a9685df513e0add14a5a733b7fca3b5',
+  'drupal/drupal' => 'dev-adding-packages-from-gitlab@18810303dbb7a89449d9e80fdbd21a6bebbc540e',
 );
 
     private function __construct()

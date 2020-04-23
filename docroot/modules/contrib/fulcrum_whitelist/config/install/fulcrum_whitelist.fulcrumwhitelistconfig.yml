@@ -1,7 +1,8 @@
 whitelist_host: 'whitelist'
 port: 18888
 token_process_limit: 50
-delay: 3
+delay: 20
+redirect: '/user'
 whitelist_abbr: 'unkn'
 wait_text: 'Please wait while we authorize this whitelisting'
 fail_text: 'Your whitelist authorization failed, this has been logged. Please reach out to the sites technical contact'

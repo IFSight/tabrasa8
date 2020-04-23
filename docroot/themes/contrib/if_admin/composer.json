@@ -1,0 +1,15 @@
+{
+  "name": "ifsight/if_admin",
+  "type": "drupal-theme",
+  "description": "IF Admin is an enhanced Drupal admin theme",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "http://git.ifsight.com/proj/contrib/if-admin-theme",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://git.ifsight.net/proj/contrib/if-admin-theme/issues",
+    "source": "http://git.ifsight.com/proj/contrib/if-admin-theme"
+  },
+  "require": { }
+}
+

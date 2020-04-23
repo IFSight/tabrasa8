@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Installation and update functionality for fulcrum_whitelist module.
+ */
+
+/**
+ * Update the default delay seconds to 20.
+ */
+function fulcrum_whitelist_update_8001() {
+  \Drupal::configFactory()->getEditable('fulcrum_whitelist.fulcrumwhitelistconfig')
+    ->set('delay', 20)
+    ->save();
+}

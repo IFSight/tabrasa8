@@ -50,7 +50,8 @@ function fulcrum_whitelist_theme() {
     ],
     'javascript' => [
       'variables' => [
-        'delay' => NULL
+        'delay' => NULL,
+        'redirect' => NULL,
       ],
     ],
     'docs' => [

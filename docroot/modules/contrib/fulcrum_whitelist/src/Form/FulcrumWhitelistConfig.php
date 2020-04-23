@@ -53,11 +53,17 @@ class FulcrumWhitelistConfig extends ConfigFormBase {
       '#title' => $this->t('Delay seconds for servers to all whitelist'),
       '#default_value' => $config->get('delay'),
     ];
+    $form['redirect'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('The URI to redirect to after whitelisting'),
+      '#description' => $this->t('Include the preceeding slash with the path. For example /user'),
+      '#default_value' => $config->get('redirect'),
+    ];
     $form['whitelist_abbr'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Whitelist Abbreviation'),
-      '#maxlength' => 4,
-      '#size' => 6,
+      '#maxlength' => 8,
+      '#size' => 10,
       '#default_value' => $config->get('whitelist_abbr'),
     ];
     $form['wait_text'] = [
@@ -118,6 +124,7 @@ class FulcrumWhitelistConfig extends ConfigFormBase {
       ->set('port', $form_state->getValue('port'))
       ->set('token_process_limit', $form_state->getValue('token_process_limit'))
       ->set('delay', $form_state->getValue('delay'))
+      ->set('redirect', $form_state->getValue('redirect'))
       ->set('whitelist_abbr', $form_state->getValue('whitelist_abbr'))
       ->set('wait_text', $form_state->getValue('wait_text'))
       ->set('fail_text', $form_state->getValue('fail_text'))

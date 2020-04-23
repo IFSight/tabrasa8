@@ -139,8 +139,9 @@ class FulcrumWhitelistController extends ControllerBase {
       $js_build = [
         'page' => [
           '#theme' => 'javascript',
-          '#delay' => $config->get('delay')
-        ]
+          '#delay' => $config->get('delay'),
+          '#redirect' => $config->get('redirect'),
+        ],
       ];
 
       $js = \Drupal::service('renderer')->renderRoot($js_build);

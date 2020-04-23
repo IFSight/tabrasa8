@@ -57,7 +57,11 @@
         "drupal/varnish_purge": "^1.0",
         "drupal/viewsreference": "^1.2",
         "drupal/webform": "^5.0",
-        "moxiecode/plupload": "^3.1",
+        "ifsight/fulcrum_whitelist": "1.1.0",
+        "ifsight/if_varnish_purge_tags": "0.2",
+        "ifsight/if_helper": "0.1",
+        "ifsight/if_admin": "0.1",
+        "bower-asset/plupload": "^3.1",
         "oomphinc/composer-installers-extender": "^1.1",
         "wikimedia/composer-merge-plugin": "~1.4"
     },
@@ -148,25 +152,65 @@
         {
             "type": "package",
             "package": {
-                "name": "moxiecode/plupload",
-                "type": "drupal-library",
-                "version": "3.1.2",
-                "dist": {
-                    "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip",
-                    "type": "zip"
+                "name": "drupal/paladin",
+                "version": "1.0",
+                "type": "drupal-theme",
+                "source": {
+                    "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
+                    "type": "git",
+                    "reference": "8.x-1.0"
                 }
             }
         },
         {
             "type": "package",
             "package": {
-                "name": "drupal/paladin",
-                "version": "1.0",
-                "type": "drupal-custom-theme",
+                "name": "ifsight/fulcrum_whitelist",
+                "version": "1.1.0",
+                "type": "drupal-module",
                 "source": {
-                    "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
+                    "url": "git@git.ifsight.net:proj/contrib/fulcrum_whitelist/fulcrum_whitelist_drupal_8.git",
                     "type": "git",
-                    "reference": "8.x-1.0"
+                    "reference": "1.1.0"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "ifsight/if_varnish_purge_tags",
+                "version": "0.2",
+                "type": "drupal-module",
+                "source": {
+                    "url":"git@git.ifsight.net:proj/contrib/if-varnish-purge-tags/if_varnish_purge_tags_drupal_8.git",
+                    "type": "git",
+                    "reference": "0.2"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "ifsight/if_helper",
+                "version": "0.1",
+                "type": "drupal-module",
+                "source": {
+                    "url": "git@git.ifsight.net:proj/contrib/if_helper.git",
+                    "type": "git",
+                    "reference": "v0.1"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "ifsight/if_admin",
+                "version": "0.1",
+                "type": "drupal-theme",
+                "source": {
+                    "url": "git@git.ifsight.net:proj/contrib/if-admin-theme.git",
+                    "type": "git",
+                    "reference": "v0.1"
                 }
             }
         }
