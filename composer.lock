@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "80580e2cd4025c6db77d8343085d7a1e",
+    "content-hash": "f7f93ff29ed8544bd587fa483cb034dd",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -3520,7 +3520,7 @@
                 "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
                 "reference": "8.x-1.0"
             },
-            "type": "drupal-custom-theme"
+            "type": "drupal-theme"
         },
         {
             "name": "drupal/paragraphs",
@@ -5245,6 +5245,46 @@
             ],
             "abandoned": true,
             "time": "2014-10-12T19:18:40+00:00"
+        },
+        {
+            "name": "ifsight/fulcrum_whitelist",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@git.ifsight.net:proj/contrib/fulcrum_whitelist/fulcrum_whitelist_drupal_8.git",
+                "reference": "1.1.0"
+            },
+            "type": "drupal-module"
+        },
+        {
+            "name": "ifsight/if_admin",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "git@git.ifsight.net:proj/contrib/if-admin-theme.git",
+                "reference": "v0.1"
+            },
+            "type": "drupal-theme"
+        },
+        {
+            "name": "ifsight/if_helper",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "git@git.ifsight.net:proj/contrib/if_helper.git",
+                "reference": "v0.1"
+            },
+            "type": "drupal-module"
+        },
+        {
+            "name": "ifsight/if_varnish_purge_tags",
+            "version": "0.2",
+            "source": {
+                "type": "git",
+                "url": "git@git.ifsight.net:proj/contrib/if-varnish-purge-tags/if_varnish_purge_tags_drupal_8.git",
+                "reference": "0.2"
+            },
+            "type": "drupal-module"
         },
         {
             "name": "laminas/laminas-diactoros",

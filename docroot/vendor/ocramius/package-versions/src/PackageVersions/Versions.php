@@ -94,6 +94,10 @@ final class Versions
   'guzzlehttp/psr7' => '1.6.1@239400de7a173fe9901b9ac7c06497751f00727a',
   'guzzlehttp/ringphp' => '1.1.1@5e2a174052995663dd68e6b5ad838afd47dd615b',
   'guzzlehttp/streams' => '3.0.0@47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5',
+  'ifsight/fulcrum_whitelist' => '1.1.0@1.1.0',
+  'ifsight/if_admin' => '0.1@v0.1',
+  'ifsight/if_helper' => '0.1@v0.1',
+  'ifsight/if_varnish_purge_tags' => '0.2@0.2',
   'laminas/laminas-diactoros' => '1.8.7@1c2dce9d2822030d5dcfd50b709708830429c89a',
   'laminas/laminas-escaper' => '2.6.1@25f2a053eadfa92ddacb609dcbbc39362610da70',
   'laminas/laminas-feed' => '2.12.0@64d25e18a6ea3db90c27fe2d6b95630daa1bf602',
@@ -221,7 +225,7 @@ final class Versions
   'symfony/phpunit-bridge' => 'v3.4.39@c02893ae43532b46a4f0e0f207d088b939f278d9',
   'theseer/tokenizer' => '1.1.3@11336f6f84e16a720dae9d8e6ed5019efa85a0f9',
   'vanare/behat-cucumber-json-formatter' => 'v1.1.3@b28ae403404be4c74c740a3948d9338fc51443a3',
-  'drupal/drupal' => 'dev-master@6aa70cff6a9685df513e0add14a5a733b7fca3b5',
+  'drupal/drupal' => 'dev-adding-packages-from-gitlab@bc82898ac2ddd0b01b23f1a47c0317c490c0e7ad',
 );
 
     private function __construct()

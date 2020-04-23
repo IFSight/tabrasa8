@@ -4769,7 +4769,7 @@
             "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
             "reference": "8.x-1.0"
         },
-        "type": "drupal-custom-theme",
+        "type": "drupal-theme",
         "installation-source": "source"
     },
     {
@@ -6666,6 +6666,54 @@
             "stream"
         ],
         "abandoned": true
+    },
+    {
+        "name": "ifsight/fulcrum_whitelist",
+        "version": "1.1.0",
+        "version_normalized": "1.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "git@git.ifsight.net:proj/contrib/fulcrum_whitelist/fulcrum_whitelist_drupal_8.git",
+            "reference": "1.1.0"
+        },
+        "type": "drupal-module",
+        "installation-source": "source"
+    },
+    {
+        "name": "ifsight/if_admin",
+        "version": "0.1",
+        "version_normalized": "0.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "git@git.ifsight.net:proj/contrib/if-admin-theme.git",
+            "reference": "v0.1"
+        },
+        "type": "drupal-theme",
+        "installation-source": "source"
+    },
+    {
+        "name": "ifsight/if_helper",
+        "version": "0.1",
+        "version_normalized": "0.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "git@git.ifsight.net:proj/contrib/if_helper.git",
+            "reference": "v0.1"
+        },
+        "type": "drupal-module",
+        "installation-source": "source"
+    },
+    {
+        "name": "ifsight/if_varnish_purge_tags",
+        "version": "0.2",
+        "version_normalized": "0.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "git@git.ifsight.net:proj/contrib/if-varnish-purge-tags/if_varnish_purge_tags_drupal_8.git",
+            "reference": "0.2"
+        },
+        "type": "drupal-module",
+        "installation-source": "source"
     },
     {
         "name": "instaclick/php-webdriver",
