@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7f93ff29ed8544bd587fa483cb034dd",
+    "content-hash": "d1c7afc98344e4c17179f2f4cadc06ef",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -121,6 +121,24 @@
                 "stack"
             ],
             "time": "2017-12-20T14:37:45+00:00"
+        },
+        {
+            "name": "bower-asset/plupload",
+            "version": "v3.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/moxiecode/plupload.git",
+                "reference": "d1aee329d3ed75491a9c8d1e9eecd96464fc8b76"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/moxiecode/plupload/zipball/d1aee329d3ed75491a9c8d1e9eecd96464fc8b76",
+                "reference": "d1aee329d3ed75491a9c8d1e9eecd96464fc8b76"
+            },
+            "type": "bower-asset",
+            "license": [
+                "AGPLv3"
+            ]
         },
         {
             "name": "composer/installers",
@@ -5689,15 +5707,6 @@
             "time": "2017-09-04T12:26:28+00:00"
         },
         {
-            "name": "moxiecode/plupload",
-            "version": "3.1.2",
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip"
-            },
-            "type": "drupal-library"
-        },
-        {
             "name": "nikic/php-parser",
             "version": "v4.4.0",
             "source": {
@@ -10363,6 +10372,15 @@
             "description": "Virtual file system to mock the real file system in unit tests.",
             "homepage": "http://vfs.bovigo.org/",
             "time": "2019-10-30T15:31:00+00:00"
+        },
+        {
+            "name": "moxiecode/plupload",
+            "version": "3.1.2",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip"
+            },
+            "type": "drupal-library"
         },
         {
             "name": "myclabs/deep-copy",

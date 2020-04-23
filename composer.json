@@ -61,7 +61,7 @@
         "ifsight/if_varnish_purge_tags": "0.2",
         "ifsight/if_helper": "0.1",
         "ifsight/if_admin": "0.1",
-        "moxiecode/plupload": "^3.1",
+        "bower-asset/plupload": "^3.1",
         "oomphinc/composer-installers-extender": "^1.1",
         "wikimedia/composer-merge-plugin": "~1.4"
     },
@@ -148,18 +148,6 @@
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "moxiecode/plupload",
-                "type": "drupal-library",
-                "version": "3.1.2",
-                "dist": {
-                    "url": "https://github.com/moxiecode/plupload/archive/v3.1.2.zip",
-                    "type": "zip"
-                }
-            }
         },
         {
             "type": "package",
