@@ -225,7 +225,7 @@ final class Versions
   'symfony/phpunit-bridge' => 'v3.4.39@c02893ae43532b46a4f0e0f207d088b939f278d9',
   'theseer/tokenizer' => '1.1.3@11336f6f84e16a720dae9d8e6ed5019efa85a0f9',
   'vanare/behat-cucumber-json-formatter' => 'v1.1.3@b28ae403404be4c74c740a3948d9338fc51443a3',
-  'drupal/drupal' => 'dev-adding-packages-from-gitlab@b99a3d6cb3e4470c3d75176a99936c90ff337986',
+  'drupal/drupal' => 'dev-master@d6c7b8df6457ae6e0545944c633df71f001da2b9',
 );
 
     private function __construct()

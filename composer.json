@@ -134,10 +134,15 @@
         }
     },
     "scripts": {
-        "post-update-cmd": [
+        "post-install-cmd": [
             "if [ -d \"docroot/libraries/plupload\" ]; then rm -Rf docroot/libraries/plupload/examples; fi",
             "if [ -n $TRAVIS ]; then find ./docroot -name .git -type d | xargs rm -rf; fi",
-            "if [[ -n $TRAVIS  &&  -d ./vendor ]]; then find ./vendor -name .git -type d | xargs rm -rf; fi"
+            "if [ -n $TRAVIS ]; then find ./vendor -name .git -type d | xargs rm -rf; fi"
+	],
+	"post-update-cmd": [
+            "if [ -d \"docroot/libraries/plupload\" ]; then rm -Rf docroot/libraries/plupload/examples; fi",
+            "if [ -n $TRAVIS ]; then find ./docroot -name .git -type d | xargs rm -rf; fi",
+            "if [ -n $TRAVIS ]; then find ./vendor -name .git -type d | xargs rm -rf; fi"
         ]
     },
     "repositories": [
