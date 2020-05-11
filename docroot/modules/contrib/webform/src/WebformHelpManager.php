@@ -1290,6 +1290,12 @@ class WebformHelpManager implements WebformHelpManagerInterface {
           ],
         ],
       ],
+      'composites_vs_tables' => [
+        'title' => $this->t('Webform Composites vs. Tables'),
+        'content' => $this->t('This screencast walks through when to use a webform composite element and when to use a webform table.'),
+        'youtube_id' => '7cVIqySy5fs',
+        'presentation_id' => '1R13ZGkNgTkxjlN-BT05zrwW2JKhOcvGiByNYl7qtywg',
+      ],
 
       'webform' => [
         'title' => $this->t('Webform: There is this for that'),

@@ -252,7 +252,7 @@ class ImageFieldTest extends EntityBrowserWebDriverTestBase {
     /** @var \Drupal\file\Entity\File $file */
     $fid = explode(':', $entity_id)[1];
     $file = File::load($fid);
-    $this->assertContains('entity-browser-test', $file->getFileUri());
+    $this->assertStringContainsString('entity-browser-test', $file->getFileUri());
   }
 
 }

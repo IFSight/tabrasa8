@@ -16,6 +16,7 @@ use Drupal\webform\Element\WebformEntityTrait;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Plugin\WebformElement\BooleanBase;
 use Drupal\webform\Plugin\WebformElement\OptionsBase;
+use Drupal\webform\Plugin\WebformElement\TableSelect;
 use Drupal\webform\Plugin\WebformElementEntityOptionsInterface;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Plugin\WebformHandlerBase;
@@ -209,6 +210,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
       'option_unlimited_message' => '[Unlimited]',
       'option_none_message' => '[@remaining remaining]',
       'option_error_message' => '@name: @label is unavailable.',
+      'tableselect_header' => '',
     ];
   }
 
@@ -387,7 +389,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
         'visible' => [
           ':input[name="settings[limit_user]"]' => ['checked' => TRUE],
         ]
-      ]
+      ],
     ];
     // Option settings.
     $form['option_settings'] = [
@@ -461,6 +463,27 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
       '#default_value' => $this->configuration['option_error_message'],
       '#required' => TRUE,
     ];
+    if ($tableselect_elements = $this->getTableSelectElements()) {
+      $tableselect_states = [];
+      foreach ($tableselect_elements as $tableselect_element_key) {
+        if ($tableselect_states) {
+          $tableselect_states[] = 'or';
+        }
+        $tableselect_states[] = [':input[name="settings[element_key]"]' => ['value' => $tableselect_element_key]];
+      }
+      $form['option_settings']['tableselect_header'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Table select description header'),
+        '#description' => $this->t("The label is displayed in the header for the table select's option limit column."),
+        '#default_value' => $this->configuration['tableselect_header'],
+        '#states' => [
+          'visible' => [
+            ':input[name="settings[option_message_display]"]' => ['value' => static::MESSAGE_DISPLAY_DESCRIPTION],
+            $tableselect_states,
+          ],
+        ],
+      ];
+    }
 
     // Placeholder help.
     $form['placeholder_help'] = [
@@ -528,6 +551,14 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
       // Get options limits, reached, and (form) operation.
       $limits = $this->getOptionsLimits();
       $reached = $this->getOptionsReached($limits);
+
+      // Set table select description in header.
+      if ($this->isTableSelectElement()) {
+        $message_display = $this->configuration['option_message_display'];
+        if ($message_display === static::MESSAGE_DISPLAY_DESCRIPTION) {
+          $element['#header']['webform_options_limit'] = $this->configuration['tableselect_header'] ?: '';
+        }
+      }
 
       // Cleanup options element default value.
       $this->setOptionsElementDefaultValue($element, $limits, $reached, $operation);
@@ -632,7 +663,12 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     elseif (!empty($element['#default_value'])) {
       $default_value = $element['#default_value'];
       if ($has_multiple_values) {
-        $element['#default_value'] = array_values(array_diff($default_value, $reached));
+        if ($this->isTableSelectElement()) {
+          $element['#default_value'] = array_diff($default_value, $reached);
+        }
+        else {
+          $element['#default_value'] = array_values(array_diff($default_value, $reached));
+        }
       }
       else {
         if (isset($reached[$default_value])) {
@@ -679,14 +715,36 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
   /**
    * Alter an options element's option labels recursively.
    *
-   * @param array $element
+   * @param array $options
    *   An options element with limits.
    * @param array $limits
    *   An options element's option limits.
    */
   protected function alterOptionsElementLabels(array &$options, array $limits) {
+    $message_display = $this->configuration['option_message_display'];
     foreach ($options as $option_value => $option_text) {
-      if (is_array($option_text)) {
+      if ($this->isTableSelectElement()) {
+        if (isset($limits[$option_value])) {
+          $label = $this->getOptionsLimitLabel(
+            $option_text[0]['value'],
+            $limits[$option_value]
+          );
+          $message_display = $this->configuration['option_message_display'];
+          $option =& $options[$option_value][0];
+          switch ($message_display) {
+            case static::MESSAGE_DISPLAY_DESCRIPTION:
+              list(
+                $option['value'],
+                $option['webform_options_limit']) = explode(' --', $label);
+              break;
+
+            case static::MESSAGE_DISPLAY_LABEL:
+              $option['value'] = $label;
+              break;
+          }
+        }
+      }
+      elseif (is_array($option_text)) {
         $this->alterOptionsElementLabels($option_text, $limits);
       }
       elseif (isset($limits[$option_value])) {
@@ -708,7 +766,13 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
    */
   protected function disableOptionsElement(array &$element, array $reached) {
     $webform_element = $this->getWebformElement();
-    if ($webform_element->hasProperty('options__properties')) {
+    if ($this->isTableSelectElement()) {
+      // Hide disabled table select checkbox or radio.
+      foreach ($reached as $reached_option) {
+        $element[$reached_option]['#access'] = FALSE;
+      }
+    }
+    elseif ($webform_element->hasProperty('options__properties')) {
       // Set element options disabled properties.
       foreach ($reached as $reached_option) {
         $element['#options__properties'][$reached_option] = [
@@ -848,7 +912,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
           case static::MESSAGE_DISPLAY_LABEL:
             $t_args = [
               '@label' => $element['#title'],
-              '@message' => $message
+              '@message' => $message,
             ];
             $element['#title'] = $this->t('@label @message', $t_args);
             break;
@@ -1056,6 +1120,17 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
   }
 
   /**
+   * Determine if table select  element.
+   *
+   * @return string
+   *   TRUE if table select element.
+   */
+  protected function isTableSelectElement() {
+    $webform_element = $this->getWebformElement();
+    return ($webform_element instanceof TableSelect);
+  }
+
+  /**
    * Get selected webform element label.
    *
    * @return string
@@ -1080,8 +1155,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     $options = [];
     foreach ($elements as $element) {
       $webform_element = $this->elementManager->getElementInstance($element);
-      $is_options_element = ($webform_element->hasProperty('options')
-        && strpos($webform_element->getPluginLabel(), 'tableselect') === FALSE);
+      $is_options_element = $webform_element->hasProperty('options');
       $is_entity_options_element = ($webform_element instanceof WebformElementEntityOptionsInterface);
       $is_boolean_element = ($webform_element instanceof BooleanBase);
       if ($is_options_element || $is_entity_options_element || $is_boolean_element) {
@@ -1105,6 +1179,27 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     }
 
     return $options;
+  }
+
+  /**
+   * Get table select elements.
+   *
+   * @return array
+   *   An array containing table select elements.
+   */
+  protected function getTableSelectElements() {
+    $webform = $this->getWebform();
+    $elements = $webform->getElementsInitializedAndFlattened();
+
+    $tableselect_elements = [];
+    foreach ($elements as $element_key => $element) {
+      $webform_element = $this->elementManager->getElementInstance($element);
+      if ($webform_element instanceof TableSelect) {
+        $tableselect_elements[$element_key] = $element_key;
+      }
+    }
+
+    return $tableselect_elements;
   }
 
   /**
@@ -1189,7 +1284,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
    * @param int $limit
    *   The limit.
    * @param int $total
-   *   The total
+   *   The total.
    *
    * @return array
    *   The limit information including label, limit, total,
@@ -1269,7 +1364,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     return $query->execute()->fetchAllKeyed();
   }
 
- /**
+  /**
    * Get boolean submission total for the current webform and source entity.
    *
    * @return int

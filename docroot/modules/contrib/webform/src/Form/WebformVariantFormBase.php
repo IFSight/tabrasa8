@@ -154,7 +154,7 @@ abstract class WebformVariantFormBase extends FormBase {
     if (count($variant_options) === 1) {
       $form['general']['element_key'] = [
         '#type' => 'value',
-        '#value' => array_key_first($variant_options),
+        '#value' => key($variant_options),
       ];
       $form['general']['element_key_item'] = [
         '#title' => $this->t('Element'),

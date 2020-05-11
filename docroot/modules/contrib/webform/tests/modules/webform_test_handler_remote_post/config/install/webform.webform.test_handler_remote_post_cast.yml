@@ -38,6 +38,7 @@ elements: |
       number:
         '#type': number
         '#title': number
+  
 css: ''
 javascript: ''
 settings:
@@ -130,7 +131,7 @@ settings:
   confirmation_title: ''
   confirmation_message: |
     <p>Your confirmation number is [webform_submission:values:confirmation_number].</p>
-
+    
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
@@ -155,6 +156,7 @@ settings:
   purge_days: null
   results_disabled: false
   results_disabled_ignore: false
+  results_customize: false
   token_view: false
   token_update: false
 access:

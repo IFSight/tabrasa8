@@ -290,6 +290,7 @@ class WebformEntitySettingsGeneralForm extends WebformEntitySettingsBaseForm {
         'page' => $this->t('Page'),
       ],
       '#default_value' => $settings['ajax_scroll_top'],
+      '#attributes' => ['data-webform-states-no-clear' => TRUE],
     ];
     $form['ajax_settings']['ajax_container']['ajax_progress_type'] = [
       '#type' => 'select',

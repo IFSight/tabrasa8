@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Menu Block module.
+ */
+
+/**
+ * Issue #2932048: Config schema mismatch for expand(ed).
+ */
+function menu_block_update_8101() {
+  $config_factory = \Drupal::configFactory();
+  $config_factory->rename('expanded', 'expand');
+}

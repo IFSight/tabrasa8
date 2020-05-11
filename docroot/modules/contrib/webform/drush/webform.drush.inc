@@ -3,7 +3,7 @@
 // @codingStandardsIgnoreFile
 
 /**
- * This is file was generated using Drush. DO NOT EDIT.
+ * This is file was generated using Drush. DO NOT EDIT. 
  *
  * @see drush webform-generate-commands
  * @see \Drupal\webform\Commands\DrushCliServiceBase::generate_commands_drush8
@@ -225,6 +225,20 @@ function webform_drush_command() {
         'webform:repair',
       ),
     ),
+    'webform-remove-orphans' => array(
+      'description' => "Removes orphaned submissions where the submission's webform was deleted.",
+      'core' => array(
+        '8+',
+      ),
+      'bootstrap' => 1,
+      'examples' => array(
+        'webform-remove-orphans' => "Removes orphaned submissions where the submission's webform was deleted.",
+      ),
+      'aliases' => array(
+        'wfro',
+        'webform:remove:orphans',
+      ),
+    ),
     'webform-docs' => array(
       'description' => 'Generates HTML documentation.',
       'core' => array(
@@ -427,6 +441,17 @@ function drush_webform_generate() {
  */
 function drush_webform_repair() {
   return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_repair'], func_get_args());
+}
+
+/******************************************************************************/
+// drush webform-remove-orphans. DO NOT EDIT.
+/******************************************************************************/
+
+/**
+ * Implements drush_hook_COMMAND().
+ */
+function drush_webform_remove_orphans() {
+  return call_user_func_array([\Drupal::service('webform.cli_service'), 'drush_webform_remove_orphans'], func_get_args());
 }
 
 /******************************************************************************/

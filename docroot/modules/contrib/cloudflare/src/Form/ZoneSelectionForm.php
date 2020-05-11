@@ -110,7 +110,7 @@ class ZoneSelectionForm extends FormBase implements ContainerInjectionInterface 
         $this->hasMultipleZones = count($this->zones) > 1;
       }
       catch (CloudFlareTimeoutException $e) {
-        drupal_set_message($this->t('Unable to connect to CloudFlare. You will not be able to change the selected Zone.'), 'error');
+        $this->messenger()->addError($this->t('Unable to connect to CloudFlare. You will not be able to change the selected Zone.'));
       }
     }
   }

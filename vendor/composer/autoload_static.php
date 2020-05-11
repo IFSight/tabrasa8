@@ -131,6 +131,7 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
             'PhpParser\\' => 10,
             'PackageVersions\\' => 16,
             'PHPStan\\' => 8,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
         array (
@@ -187,8 +188,6 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
             'Drupal\\Console\\' => 15,
             'Drupal\\Composer\\Plugin\\Scaffold\\' => 32,
             'Drupal\\Component\\' => 17,
-            'Drupal\\' => 7,
-            'DrupalPractice\\' => 15,
             'DrupalCheck\\' => 12,
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
@@ -447,6 +446,10 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
             0 => __DIR__ . '/..' . '/mglaman/phpstan-drupal/src',
             1 => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src',
         ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
         'OomphInc\\ComposerInstallersExtender\\' => 
         array (
             0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
@@ -562,14 +565,6 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
         'Drupal\\Component\\' => 
         array (
             0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component',
-        ),
-        'Drupal\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal',
-        ),
-        'DrupalPractice\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice',
         ),
         'DrupalCheck\\' => 
         array (

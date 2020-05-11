@@ -81,6 +81,20 @@ class RemotePostWebformHandler extends WebformHandlerBase {
   protected $elementManager;
 
   /**
+   * The current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
+   * The DrupalKernel instance used in the test.
+   *
+   * @var \Drupal\Core\DrupalKernel
+   */
+  protected $kernel;
+
+  /**
    * List of unsupported webform submission properties.
    *
    * The below properties will not being included in a remote post.
@@ -107,7 +121,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
+    $instance = new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
@@ -121,6 +135,11 @@ class RemotePostWebformHandler extends WebformHandlerBase {
       $container->get('webform.message_manager'),
       $container->get('plugin.manager.webform.element')
     );
+
+    $instance->request = $container->get('request_stack')->getCurrentRequest();
+    $instance->kernel = $container->get('kernel');
+
+    return $instance;
   }
 
   /**
@@ -979,6 +998,11 @@ class RemotePostWebformHandler extends WebformHandlerBase {
         $error_url = $base_url . preg_replace('#^' . $base_path . '#', '/', $error_url);
       }
       $response = new TrustedRedirectResponse($error_url);
+      // Save the session so things like messages get saved.
+      $this->request->getSession()->save();
+      $response->prepare($this->request);
+      // Make sure to trigger kernel events.
+      $this->kernel->terminate($this->request, $response);
       $response->send();
     }
   }

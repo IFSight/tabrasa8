@@ -193,7 +193,7 @@ options:
 
     // Check 404 Not Found with custom error uri.
     $this->postSubmission($webform, ['response_type' => '404']);
-    $this->assertNoRaw('This is a custom 404 not found message.');
+    $this->assertRaw('This is a custom 404 not found message.');
     $this->assertUrl($webform->toUrl('canonical', ['query' => ['error' => '1']])->setAbsolute()->toString());
 
     /**************************************************************************/

@@ -33,7 +33,7 @@ class ClientIpRestoreTest extends UnitTestCase {
     $this->container = new ContainerBuilder();
     $this->container->set('string_translation', $this->getStringTranslationStub());
 
-    $this->urlGenerator = $this->getMock('Drupal\Core\Routing\UrlGeneratorInterface');
+    $this->urlGenerator = $this->createMock('Drupal\Core\Routing\UrlGeneratorInterface');
     $this->urlGenerator->expects($this->any())
       ->method('getPathFromRoute')
       ->with('cloudflare.admin_settings_form', [])
@@ -64,7 +64,7 @@ class ClientIpRestoreTest extends UnitTestCase {
    * @dataProvider requestProvider
    */
   public function testEnabledClientIpRestoreProvider($client_ip_restore_enabled, $host_header, $remote_header_ip, $cf_header, $bypass_host, $expected_message, $expected_client_ip) {
-    $logger = $this->getMock(LoggerInterface::class);
+    $logger = $this->createMock(LoggerInterface::class);
 
     if (empty($expected_message)) {
       $logger->expects($this->never())
@@ -77,7 +77,7 @@ class ClientIpRestoreTest extends UnitTestCase {
         ->with((string) $expected_message);
     }
 
-    $config_factory = $this->getMock('\Drupal\Core\Config\ConfigFactoryInterface');
+    $config_factory = $this->createMock('\Drupal\Core\Config\ConfigFactoryInterface');
     $config = $this->getMockBuilder('Drupal\Core\Config\Config')
       ->disableOriginalConstructor()
       ->getMock();
@@ -119,12 +119,12 @@ class ClientIpRestoreTest extends UnitTestCase {
     $client_ip_restore = new ClientIpRestore(
       $config_factory,
       $cache_backend,
-      $this->getMock(ClientInterface::class),
+      $this->createMock(ClientInterface::class),
       $logger
     );
 
     $request = Request::create('/test', 'get');
-    $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+    $kernel = $this->createMock('Symfony\Component\HttpKernel\HttpKernelInterface');
 
     if (!empty($cf_header)) {
       $request->server->set('HTTP_CF_CONNECTING_IP', $cf_header);

@@ -17,6 +17,9 @@ smtp.settings:
     smtp_protocol:
       type: string
       label: 'Use encrypted protocol'
+    smtp_autotls:
+      type: boolean
+      label: 'Enable TLS encryption automatically when supported by the remote host'
     smtp_username:
       type: string
       label: 'Username'

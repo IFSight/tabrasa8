@@ -15,6 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url as UrlGenerator;
 use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -899,6 +900,19 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
    * Form API callback. Consolidate the array of fids for this field into a single fids.
    */
   public static function validateManagedFile(array &$element, FormStateInterface $form_state, &$complete_form) {
+    // Issue #3130448: Add custom #required_message support to
+    // ManagedFile elements.
+    // @see https://www.drupal.org/project/drupal/issues/3130448
+    if (!empty($element['#required_error'])) {
+      $errors = $form_state->getErrors();
+      $key = $element['#webform_key'];
+      if (isset($errors[$key])
+        && $errors[$key] instanceof TranslatableMarkup
+        && $errors[$key]->getUntranslatedString() === '@name field is required.') {
+        $errors[$key]->__construct($element['#required_error']);
+      }
+    }
+
     if (!empty($element['#files'])) {
       $fids = array_keys($element['#files']);
       if (empty($element['#multiple'])) {

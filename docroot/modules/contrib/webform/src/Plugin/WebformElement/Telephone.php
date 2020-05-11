@@ -31,7 +31,7 @@ class Telephone extends TextBase {
         'international' => FALSE,
         'international_initial_country' => '',
         'international_preferred_countries' => [],
-      ] + parent::defineDefaultProperties();
+      ] + parent::defineDefaultProperties() + $this->defineDefaultMultipleProperties();
     // Add support for telephone_validation.module.
     if (\Drupal::moduleHandler()->moduleExists('telephone_validation')) {
       $properties += [

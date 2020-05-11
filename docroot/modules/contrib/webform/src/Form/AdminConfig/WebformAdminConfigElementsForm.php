@@ -113,7 +113,7 @@ class WebformAdminConfigElementsForm extends WebformAdminConfigBaseForm {
       '#options' => [
         'a-z0-9_' => $this->t('Lowercase letters, numbers, and underscores. (i.e. element_key)'),
         'a-zA-Z0-9_' => $this->t('Letters, numbers, and underscores. (i.e. element_KEY)'),
-        'a-z0-9_-' => $this->t('Lowercase letters, numbers, and underscores. (i.e. element-key)'),
+        'a-z0-9_-' => $this->t('Lowercase letters, numbers, underscores, and dashes. (i.e. element-key)'),
         'a-zA-Z0-9_-' => $this->t('Letters, numbers, underscores, and dashes. (i.e. element-KEY)'),
       ],
       '#required' => TRUE,

@@ -1,12 +1,12 @@
 name: Menu Block
 description: Provides configurable blocks of menu links.
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 type: module
 dependencies:
-  - menu_ui
+  - drupal:menu_ui
 
-# Information added by Drupal.org packaging script on 2018-05-01
-version: '8.x-1.5'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-04-24
+version: '8.x-1.6'
 project: 'menu_block'
-datestamp: 1525200191
+datestamp: 1587721602

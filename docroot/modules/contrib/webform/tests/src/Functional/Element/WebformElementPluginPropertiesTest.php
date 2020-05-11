@@ -49,6 +49,9 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
     $actual_elements = $this->getActualElementDefaultProperties();
     $this->htmlOutput('<pre>' . htmlentities(Yaml::encode($actual_elements)) . '</pre>');
     foreach ($actual_elements as $element_key => $actual_element) {
+      if ($expected_elements[$element_key] != $actual_element) {
+        $this->htmlOutput('<pre>' . Yaml::encode([$element_key => $actual_element]) . '</pre>');
+      }
       $this->assertEquals($expected_elements[$element_key], $actual_element, "Expected and actual '$element_key' element properties match.");
     }
   }
@@ -979,7 +982,7 @@ managed_file:
   disabled: false
   field_prefix: ''
   field_suffix: ''
-  file_extensions: 'gif jpg jpeg png bmp eps tif pict psd txt rtf html odf pdf doc docx ppt pptx xls xlsx xml avi mov mp3 ogg wav bz2 dmg gz jar rar sit svg tar zip'
+  file_extensions: 'gif jpg jpeg png bmp eps tif pict psd txt rtf html odf pdf doc docx ppt pptx xls xlsx xml avi mov mp3 mp4 ogg wav bz2 dmg gz jar rar sit svg tar zip'
   file_help: ''
   file_name: ''
   file_placeholder: ''
@@ -1437,11 +1440,22 @@ tel:
   international_initial_country: ''
   international_preferred_countries: {  }
   label_attributes: {  }
-  maxlength: ''
-  minlength: ''
+  maxlength: null
+  minlength: null
   more: ''
   more_title: ''
   multiple: false
+  multiple__add_more: true
+  multiple__add_more_button_label: Add
+  multiple__add_more_input: true
+  multiple__add_more_input_label: 'more items'
+  multiple__add_more_items: 1
+  multiple__empty_items: 1
+  multiple__header_label: ''
+  multiple__min_items: null
+  multiple__no_items_message: 'No items entered. Please add items below.'
+  multiple__operations: true
+  multiple__sorting: true
   pattern: ''
   pattern_error: ''
   placeholder: ''
@@ -1450,7 +1464,7 @@ tel:
   readonly: false
   required: false
   required_error: ''
-  size: ''
+  size: null
   states: {  }
   states_clear: true
   title: ''
@@ -4711,10 +4725,6 @@ webform_toggle:
     - authenticated
   access_view_users: {  }
   access_view_permissions: {  }
-
-
-
-
 webform_toggles:
   toggle_theme: light
   toggle_size: medium
@@ -4771,6 +4781,132 @@ webform_toggles:
     - authenticated
   access_view_users: {  }
   access_view_permissions: {  }
+webform_table:
+  access_create_permissions: {  }
+  access_create_roles:
+    - anonymous
+    - authenticated
+  access_create_users: {  }
+  access_update_permissions: {  }
+  access_update_roles:
+    - anonymous
+    - authenticated
+  access_update_users: {  }
+  access_view_permissions: {  }
+  access_view_roles:
+    - anonymous
+    - authenticated
+  access_view_users: {  }
+  admin_title: ''
+  attributes: {  }
+  caption: ''
+  default_value: ''
+  description: ''
+  description_display: ''
+  field_prefix: ''
+  field_suffix: ''
+  flex: 1
+  format: table
+  format_attributes: {  }
+  format_html: ''
+  format_text: ''
+  header: {  }
+  help: ''
+  help_display: ''
+  help_title: ''
+  label_attributes: {  }
+  more: ''
+  more_title: ''
+  prefix_children: true
+  private: false
+  required: false
+  required_error: ''
+  states: {  }
+  states_clear: true
+  sticky: false
+  title: ''
+  title_display: ''
+  wrapper_attributes: {  }
+webform_table_row:
+  access_create_permissions: {  }
+  access_create_roles:
+    - anonymous
+    - authenticated
+  access_create_users: {  }
+  access_update_permissions: {  }
+  access_update_roles:
+    - anonymous
+    - authenticated
+  access_update_users: {  }
+  access_view_permissions: {  }
+  access_view_roles:
+    - anonymous
+    - authenticated
+  access_view_users: {  }
+  admin_title: ''
+  attributes: {  }
+  flex: 1
+  private: false
+  states: {  }
+  states_clear: true
+  title: ''
+webform_scale:
+  access_create_permissions: {  }
+  access_create_roles:
+    - anonymous
+    - authenticated
+  access_create_users: {  }
+  access_update_permissions: {  }
+  access_update_roles:
+    - anonymous
+    - authenticated
+  access_update_users: {  }
+  access_view_permissions: {  }
+  access_view_roles:
+    - anonymous
+    - authenticated
+  access_view_users: {  }
+  admin_title: ''
+  attributes: {  }
+  default_value: ''
+  description: ''
+  description_display: ''
+  disabled: false
+  field_prefix: ''
+  field_suffix: ''
+  flex: 1
+  format: value
+  format_attributes: {  }
+  format_html: ''
+  format_text: ''
+  help: ''
+  help_display: ''
+  help_title: ''
+  label_attributes: {  }
+  max: 5
+  max_text: ''
+  min: 1
+  min_text: ''
+  more: ''
+  more_title: ''
+  prepopulate: false
+  private: false
+  readonly: false
+  required: false
+  required_error: ''
+  scale_size: medium
+  scale_text: below
+  scale_type: circle
+  states: {  }
+  states_clear: true
+  title: ''
+  title_display: ''
+  unique: false
+  unique_entity: false
+  unique_error: ''
+  unique_user: false
+  wrapper_attributes: {  }
+  wrapper_type: fieldset
 YAML;
     return Yaml::decode($yaml);
   }

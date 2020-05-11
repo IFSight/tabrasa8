@@ -141,7 +141,7 @@ abstract class WebformDevelEntityFormApiBaseForm extends EntityForm {
             $element_children[$property] = $value;
           }
           elseif ($this->isPropertyTranslatable($property)) {
-            $element_export[$property] = '<T>' . $value . '</T>';
+            $element_export[$property] = $this->wrapTranslatableValue($value);
           }
           else {
             $element_export[$property] = $value;
@@ -160,6 +160,27 @@ abstract class WebformDevelEntityFormApiBaseForm extends EntityForm {
     $output = str_replace("'<T>", "\$this->t('", $output);
     $output = str_replace("</T>'", "')", $output);
     return $output;
+  }
+
+  /**
+   * Wrap translatable value in <T> tags.
+   *
+   * @param mixed $value
+   *   A translatable value.
+   *
+   * @return array|string
+   *   A translatable value in <T> tags.
+   */
+  protected function wrapTranslatableValue($value) {
+    if (is_array($value)) {
+      foreach ($value as $key => $item) {
+        $value[$key] = $this->wrapTranslatableValue($item);
+      }
+      return $value;
+    }
+    else {
+       return '<T>' . $value . '</T>';
+    }
   }
 
   /**

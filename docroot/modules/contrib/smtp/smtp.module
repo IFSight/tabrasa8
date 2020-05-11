@@ -38,7 +38,7 @@ function smtp_mail($key, &$message, $params) {
 }
 
 /**
- * Implementation of hook_queue_info().
+ * Implements hook_queue_info().
  */
 function smtp_queue_info() {
   $queues['smtp_send_queue'] = [
@@ -51,18 +51,33 @@ function smtp_queue_info() {
 }
 
 /**
- * smtp_send_queue queuer.
+ * Smtp_send_queue queuer.
  */
 function smtp_send_queue($mailerObj) {
   $queue = Drupal::queue('smtp_send_queue');
   $queue->createItem($mailerObj);
 }
 
-function smtp_send_queue_runner($variables) {
+/**
+ * SMTP queue runner function.
+ *
+ * @param array $variables
+ *   Variables to send trought runner.
+ */
+function smtp_send_queue_runner(array $variables) {
   _smtp_mailer_send($variables);
 }
 
-function _smtp_mailer_send($variables) {
+/**
+ * Helper function to send mails.
+ *
+ * @param array $variables
+ *   Variables to send email.
+ *
+ * @return bool
+ *   True if email was sent. False otherwise.
+ */
+function _smtp_mailer_send(array $variables) {
   $mailer = $variables['mailer'];
   $to = $variables['to'];
   $from = $variables['from'];

@@ -2,6 +2,8 @@
 
 namespace Drupal\cloudflare\Form;
 
+use Drupal\Component\Utility\EmailValidator;
+use Egulias\EmailValidator\EmailValidator as EguliasEmailValidator;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -86,10 +88,10 @@ class SettingsForm extends FormBase implements ContainerInjectionInterface {
     // condition here for backward combatilibilty.
     // @see https://www.drupal.org/i/3038799
     if (class_exists('\Drupal\Component\Utility\EmailValidator')) {
-      $email_validator = new \Drupal\Component\Utility\EmailValidator();
+      $email_validator = new EmailValidator();
     }
     else {
-      $email_validator = new \Egulias\EmailValidator\EmailValidator();
+      $email_validator = new EguliasEmailValidator();
     }
 
     return new static(
@@ -158,7 +160,7 @@ class SettingsForm extends FormBase implements ContainerInjectionInterface {
     // 1: parent::buildForm creates the submit button
     // 2: we want to disable the submit button since dependencies unmet.
     if (!$this->cloudFlareComposerDependenciesMet) {
-      drupal_set_message((CloudFlareComposerDependenciesCheckInterface::ERROR_MESSAGE), 'error');
+      $this->messenger()->addError((CloudFlareComposerDependenciesCheckInterface::ERROR_MESSAGE));
 
       $form['api_credentials_fieldset']['apikey']['#disabled'] = TRUE;
       $form['api_credentials_fieldset']['email']['#disabled'] = TRUE;
@@ -230,7 +232,7 @@ class SettingsForm extends FormBase implements ContainerInjectionInterface {
           $zones = $this->zoneApi->listZones();
         }
         catch (CloudFlareTimeoutException $e) {
-          drupal_set_message($this->t('Unable to connect to CloudFlare in order to validate credentials. Connection timed out. Please try again later.'), 'error');
+          $this->messenger()->addError($this->t('Unable to connect to CloudFlare in order to validate credentials. Connection timed out. Please try again later.'));
         }
       }
 
