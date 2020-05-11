@@ -45,7 +45,7 @@ class ComposerDependencyTest extends BrowserTestBase {
   public function testDependenciesUnmet() {
     ComposerDependenciesCheckMock::mockComposerDependenciesMet(FALSE);
     $this->drupalGet($this->route);
-    $this->assertRaw('Missing Composer dependencies for CloudFlare');
+    $this->assertSession()->responseContains('Missing Composer dependencies for CloudFlare');
   }
 
   /**
@@ -54,7 +54,7 @@ class ComposerDependencyTest extends BrowserTestBase {
   public function testDependenciesMet() {
     ComposerDependenciesCheckMock::mockComposerDependenciesMet(TRUE);
     $this->drupalGet($this->route);
-    $this->assertNoRaw('Missing Composer dependencies for CloudFlare');
+    $this->assertSession()->responseNotContains('Missing Composer dependencies for CloudFlare');
   }
 
 }

@@ -99,7 +99,9 @@
         }
 
         // Disable autocomplete.
-        $input.attr('autocomplete', 'off');
+        // @see https://gist.github.com/niksumeiko/360164708c3b326bd1c8
+        var isChrome = (/chrom(e|ium)/.test(window.navigator.userAgent.toLowerCase()));
+        $input.attr('autocomplete', (isChrome) ? 'chrome-off-' + Math.floor(Math.random() * 100000000) : 'off');
 
         $input.datepicker(options);
       });

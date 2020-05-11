@@ -25,7 +25,7 @@ class CredentialTestCheckTest extends DiagnosticCheckTestBase {
    * @covers \Drupal\cloudflarepurger\Plugin\Purge\DiagnosticCheck\CredentialCheck
    */
   public function testCredentialTestCheck($cred_status, $expected_severity) {
-    $config_factory = $this->getMock('\Drupal\Core\Config\ConfigFactoryInterface');
+    $config_factory = $this->createMock('\Drupal\Core\Config\ConfigFactoryInterface');
     $config = $this->getMockBuilder('Drupal\Core\Config\Config')
       ->disableOriginalConstructor()
       ->getMock();

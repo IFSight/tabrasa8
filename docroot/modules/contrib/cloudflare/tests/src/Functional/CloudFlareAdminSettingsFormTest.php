@@ -52,11 +52,11 @@ class CloudFlareAdminSettingsFormTest extends BrowserTestBase {
     ];
     ComposerDependenciesCheckMock::mockComposerDependenciesMet(TRUE);
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertUrl('/admin/config/services/cloudflare/two?js=nojs');
+    $this->assertSession()->addressEquals('/admin/config/services/cloudflare/two?js=nojs');
     $this->drupalPostForm(NULL, [], t('Finish'));
-    $this->assertRaw('68ow48650j63zfzx1w9jd29cr367u0ezb6a4g');
-    $this->assertRaw('test@test.com');
-    $this->assertRaw('testdomain.com');
+    $this->assertSession()->responseContains('68ow48650j63zfzx1w9jd29cr367u0ezb6a4g');
+    $this->assertSession()->responseContains('test@test.com');
+    $this->assertSession()->responseContains('testdomain.com');
   }
 
   /**
@@ -71,10 +71,10 @@ class CloudFlareAdminSettingsFormTest extends BrowserTestBase {
     ComposerDependenciesCheckMock::mockComposerDependenciesMet(TRUE);
     ZoneMock::mockMultiZoneAccount(TRUE);
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertUrl('/admin/config/services/cloudflare/two?js=nojs');
+    $this->assertSession()->addressEquals('/admin/config/services/cloudflare/two?js=nojs');
     $this->drupalPostForm(NULL, ['zone_selection' => "123456789999"], t('Finish'));
-    $this->assertRaw('68ow48650j63zfzx1w9jd29cr367u0ezb6a4g');
-    $this->assertRaw('testdomain2.com');
+    $this->assertSession()->responseContains('68ow48650j63zfzx1w9jd29cr367u0ezb6a4g');
+    $this->assertSession()->responseContains('testdomain2.com');
   }
 
   /**
@@ -98,7 +98,7 @@ class CloudFlareAdminSettingsFormTest extends BrowserTestBase {
     $container->set('cloudflare.zone', $zone_mock);
 
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertText('Please enter a host without http/https');
+    $this->assertSession()->pageTextContains('Please enter a host without http/https');
   }
 
   /**
@@ -113,7 +113,7 @@ class CloudFlareAdminSettingsFormTest extends BrowserTestBase {
     ];
     ZoneMock::mockAssertValidCredentials(TRUE);
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertText('Please enter a host without http/https');
+    $this->assertSession()->pageTextContains('Please enter a host without http/https');
   }
 
   /**
@@ -127,7 +127,7 @@ class CloudFlareAdminSettingsFormTest extends BrowserTestBase {
       'bypass_host' => 'blah!@#!@',
     ];
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertText('You have entered an invalid host.');
+    $this->assertSession()->pageTextContains('You have entered an invalid host.');
   }
 
 }

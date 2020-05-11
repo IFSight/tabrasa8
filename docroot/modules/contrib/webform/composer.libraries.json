@@ -2,7 +2,7 @@
     "name": "drupal/webform",
     "description": "Enables the creation of webforms and questionnaires.",
     "type": "drupal-module",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
     "homepage": "https://drupal.org/project/webform",
     "authors": [
@@ -15,11 +15,16 @@
             "name": "Alexander Trotsenko (bucefal91)",
             "homepage": "https://www.drupal.org/u/bucefal91",
             "role": "Co-maintainer"
+        },
+        {
+            "name": "Contributors",
+            "homepage": "https://www.drupal.org/node/7404/committers",
+            "role": "Contributor"
         }
     ],
     "support": {
         "issues": "https://www.drupal.org/project/issues/webform?version=8.x",
-        "source": "http://cgit.drupalcode.org/webform",
+        "source": "https://git.drupalcode.org/project/webform",
         "docs": "https://www.drupal.org/docs/8/modules/webform",
         "forum": "https://drupal.stackexchange.com/questions/tagged/webform"
     },
@@ -64,13 +69,13 @@
             "type": "package",
             "package": {
                 "name": "ckeditor/autogrow",
-                "version": "4.11.4",
+                "version": "4.14.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "ckeditor.autogrow"
                 },
                 "dist": {
-                    "url": "https://download.ckeditor.com/autogrow/releases/autogrow_4.11.4.zip",
+                    "url": "https://download.ckeditor.com/autogrow/releases/autogrow_4.14.0.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -100,13 +105,13 @@
             "type": "package",
             "package": {
                 "name": "ckeditor/fakeobjects",
-                "version": "4.11.4",
+                "version": "4.14.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "ckeditor.fakeobjects"
                 },
                 "dist": {
-                    "url": "https://download.ckeditor.com/fakeobjects/releases/fakeobjects_4.11.4.zip",
+                    "url": "https://download.ckeditor.com/fakeobjects/releases/fakeobjects_4.14.0.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -118,13 +123,13 @@
             "type": "package",
             "package": {
                 "name": "ckeditor/image",
-                "version": "4.11.4",
+                "version": "4.14.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "ckeditor.image"
                 },
                 "dist": {
-                    "url": "https://download.ckeditor.com/image/releases/image_4.11.4.zip",
+                    "url": "https://download.ckeditor.com/image/releases/image_4.14.0.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -136,13 +141,13 @@
             "type": "package",
             "package": {
                 "name": "ckeditor/link",
-                "version": "4.11.4",
+                "version": "4.14.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "ckeditor.link"
                 },
                 "dist": {
-                    "url": "https://download.ckeditor.com/link/releases/link_4.11.4.zip",
+                    "url": "https://download.ckeditor.com/link/releases/link_4.14.0.zip",
                     "type": "zip"
                 },
                 "require": {
@@ -280,13 +285,13 @@
             "type": "package",
             "package": {
                 "name": "jquery/intl-tel-input",
-                "version": "16.0.0",
+                "version": "16.1.0",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "jquery.intl-tel-input"
                 },
                 "dist": {
-                    "url": "https://github.com/jackocnr/intl-tel-input/archive/v16.0.0.zip",
+                    "url": "https://github.com/jackocnr/intl-tel-input/archive/v16.1.0.zip",
                     "type": "zip"
                 },
                 "require": {

@@ -261,7 +261,7 @@ function webform_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableD
     }
   }
 
-  // Allow webform query string parameters be be transfered
+  // Allow webform query string parameters to be transfered
   // from canonical to test URL.
   $route_names = [
     'entity.webform.canonical', 'entity.webform.test_form',

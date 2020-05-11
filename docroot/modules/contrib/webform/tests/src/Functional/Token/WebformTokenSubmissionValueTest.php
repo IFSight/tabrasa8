@@ -126,6 +126,11 @@ first_name: John
 last_name: Smith
 </pre>',
 
+      // Markup.
+      'webform_submission:values:webform_markup' => '*This is some basic HTML.*
+',
+      'webform_submission:values:webform_markup:html' => '<strong>This is some basic HTML.</strong>',
+
       // Submission limits.
       'webform_submission:limit:webform' => '100',
       'webform_submission:total:webform' => '1',

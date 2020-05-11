@@ -816,6 +816,12 @@ webform.element.roles:
     - core/drupal
     - core/jquery.once
 
+webform.element.scale:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.scale.css: {}
+
 webform.element.select:
   version: VERSION
   js:
@@ -894,6 +900,12 @@ webform.element.text_format:
       css/webform.element.text_format.css: {}
   js:
     js/webform.element.text_format.js: {}
+
+webform.element.table:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.table.css: {}
 
 webform.element.tableselect:
   version: VERSION
@@ -1090,13 +1102,13 @@ libraries.jquery.inputmask:
 
 libraries.jquery.intl-tel-input:
   remote: https://github.com/jackocnr/intl-tel-input
-  version: 'v16.0.0'
+  version: 'v16.1.0'
   license:
     name: MIT
     url: https://github.com/jackocnr/intl-tel-input/blob/master/LICENSE
     gpl-compatible: true
   cdn:
-    /libraries/jquery.intl-tel-input/: https://cdn.jsdelivr.net/gh/jackocnr/intl-tel-input@v16.0.0/
+    /libraries/jquery.intl-tel-input/: https://cdn.jsdelivr.net/gh/jackocnr/intl-tel-input@v16.1.0/
   css:
     component:
       /libraries/jquery.intl-tel-input/build/css/intlTelInput.min.css: { minified: true }

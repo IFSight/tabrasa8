@@ -64,7 +64,7 @@ abstract class DiagnosticCheckTestBase extends UnitTestCase {
     $this->container = new ContainerBuilder();
     $this->container->set('string_translation', $this->getStringTranslationStub());
 
-    $this->composerDependencyStub = $this->getMock('\Drupal\cloudflare\CloudFlareComposerDependenciesCheckInterface');
+    $this->composerDependencyStub = $this->createMock('\Drupal\cloudflare\CloudFlareComposerDependenciesCheckInterface');
     $this->composerDependencyStub->expects($this->any())
       ->method('check')
       ->will($this->returnValue(TRUE));

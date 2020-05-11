@@ -49,11 +49,11 @@ class CloudFlareAdminSettingsInvalidFormTest extends BrowserTestBase {
   public function testConfigFormDisplay() {
     $this->drupalLogin($this->adminUser);
     $this->drupalGet($this->route);
-    $this->assertText('This will help suppress log warnings regarding requests bypassing CloudFlare', 'Helper Text');
-    $this->assertField('apikey', 'Make sure that the Api Key field is visible..');
-    $this->assertField('email', 'Make sure the edit email field is visible.');
-    $this->assertField('client_ip_restore_enabled', 'Make sure the Restore Client Ip Address checkbox is visible.');
-    $this->assertField('bypass_host', 'Make sure the bypass host field is visible.');
+    $this->assertSession()->pageTextContains('This will help suppress log warnings regarding requests bypassing CloudFlare', 'Helper Text');
+    $this->assertSession()->fieldExists('apikey');
+    $this->assertSession()->fieldExists('email');
+    $this->assertSession()->fieldExists('client_ip_restore_enabled');
+    $this->assertSession()->fieldExists('bypass_host');
   }
 
   /**
@@ -64,7 +64,7 @@ class CloudFlareAdminSettingsInvalidFormTest extends BrowserTestBase {
     // throws a 500 code for travis CI.
     $this->drupalLogin($this->adminUser);
     $this->drupalGet($this->route);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -91,7 +91,7 @@ class CloudFlareAdminSettingsInvalidFormTest extends BrowserTestBase {
       'email' => 'test@test.com',
     ];
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertUrl('/admin/config/services/cloudflare');
+    $this->assertSession()->addressEquals('/admin/config/services/cloudflare');
   }
 
   /**
@@ -106,7 +106,7 @@ class CloudFlareAdminSettingsInvalidFormTest extends BrowserTestBase {
     ];
     $this->drupalLogin($this->adminUser);
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertText('Invalid Api Key: Key can only contain lowercase or numerical characters.');
+    $this->assertSession()->pageTextContains('Invalid Api Key: Key can only contain lowercase or numerical characters.');
   }
 
   /**
@@ -121,7 +121,7 @@ class CloudFlareAdminSettingsInvalidFormTest extends BrowserTestBase {
     ];
     $this->drupalLogin($this->adminUser);
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertText('Invalid Api Key: Key should be 37 chars long.');
+    $this->assertSession()->pageTextContains('Invalid Api Key: Key should be 37 chars long.');
   }
 
   /**
@@ -136,7 +136,7 @@ class CloudFlareAdminSettingsInvalidFormTest extends BrowserTestBase {
     ];
     $this->drupalLogin($this->adminUser);
     $this->drupalPostForm($this->route, $edit, t('Next'));
-    $this->assertText('Invalid Api Key: Key can only contain alphanumeric characters.');
+    $this->assertSession()->pageTextContains('Invalid Api Key: Key can only contain alphanumeric characters.');
   }
 
 }

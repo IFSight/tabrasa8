@@ -128,7 +128,8 @@ pre.webform-codemirror-runmode {
 /* System tray divider */
 
 .ui-dialog.ui-dialog-off-canvas.webform-off-canvas {
-  z-index: 599 !important; /* Place off canvas under dialog overlay */
+  /* Place un admin menu toolbar (z-index: 502) */
+  z-index: 501 !important;
 }
 
 .ui-dialog.ui-dialog-off-canvas .ui-resizable-w {

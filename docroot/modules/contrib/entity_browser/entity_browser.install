@@ -14,11 +14,7 @@ function entity_browser_requirements($phase) {
   // This branch of Entity Browser shouldn't be used with core < 8.4.x or with
   // media_entity 1.x enabled.
   $incompatible = FALSE;
-  $drupal_version = explode('.', \Drupal::VERSION);
-  if ($drupal_version[1] < 4) {
-    $incompatible = TRUE;
-  }
-  elseif (\Drupal::moduleHandler()->moduleExists('media_entity')) {
+  if (\Drupal::moduleHandler()->moduleExists('media_entity')) {
     $info = \Drupal::service('extension.list.module')->getExtensionInfo('media_entity');
     if (empty($info['version'])) {
       // If the version being used is -dev, $info['version'] will be empty. Try

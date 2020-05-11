@@ -1453,6 +1453,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     }
 
     if ($elements !== FALSE) {
+      $elements = WebformElementHelper::removeIgnoredProperties($elements);
       $this->initElementsRecursive($elements);
       $this->invokeHandlers('alterElements', $elements, $this);
     }
@@ -1500,9 +1501,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   protected function initElementsRecursive(array &$elements, $parent = '', $depth = 0) {
     /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
     $element_manager = \Drupal::service('plugin.manager.webform.element');
-
-    // Remove ignored properties.
-    $elements = WebformElementHelper::removeIgnoredProperties($elements);
 
     foreach ($elements as $key => &$element) {
       if (!WebformElementHelper::isElement($element, $key)) {

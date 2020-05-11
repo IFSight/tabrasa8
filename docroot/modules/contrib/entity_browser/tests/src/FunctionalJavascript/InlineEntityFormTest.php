@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\entity_browser\FunctionalJavascript;
 
+use Drupal\FunctionalJavascriptTests\SortableTestTrait;
+
 /**
  * Test for integration of entity browser and inline entity form.
  *
@@ -10,6 +12,8 @@ namespace Drupal\Tests\entity_browser\FunctionalJavascript;
  * @package Drupal\Tests\entity_browser\FunctionalJavascript
  */
 class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
+
+  use SortableTestTrait;
 
   /**
    * {@inheritdoc}
@@ -95,8 +99,9 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     // Test reorder of elements.
-    $dragged = $this->xpath("//div[@data-drupal-selector='edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current-items-0']")[0];
-    $this->dragDropElement($dragged, 150, 0);
+    $list_selector = '[data-drupal-selector="edit-ief-media-field-form-inline-entity-form-entities-0-form-ief-media-type-file-field-current"]';
+    $item_selector = "$list_selector .item-container";
+    $this->sortableAfter("$item_selector:first-child", "$item_selector:last-child", $list_selector);
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Update Test File Media');
@@ -159,8 +164,9 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
     $this->getSession()
       ->switchToIFrame('entity_browser_iframe_ief_entity_browser_file');
 
-    $dragged = $this->xpath("//div[@data-drupal-selector='edit-selected-items-2-0']")[0];
-    $this->dragDropElement($dragged, 150, 0);
+    $list_selector = '[data-drupal-selector="edit-selected"]';
+    $item_selector = "$list_selector .item-container";
+    $this->sortableAfter("$item_selector:first-child", "$item_selector:last-child", $list_selector);
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Use selected');
@@ -407,8 +413,20 @@ class InlineEntityFormTest extends EntityBrowserWebDriverTestBase {
 
     $ief_table = $this->assertSession()->elementExists('xpath', '//table[contains(@id, "ief-entity-table-edit-field-nodes-entities")]');
     $table_text = $ief_table->getText();
-    $this->assertContains('Boxer', $table_text);
-    $this->assertContains('Napoleon', $table_text);
+    $this->assertStringContainsString('Boxer', $table_text);
+    $this->assertStringContainsString('Napoleon', $table_text);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function sortableUpdate($item, $from, $to = NULL) {
+    list ($container) = explode(' ', $item, 2);
+
+    $js = <<<END
+(Drupal.entityBrowserEntityReference || Drupal.entityBrowserMultiStepDisplay).entitiesReordered(document.querySelector("$container"));
+END;
+    $this->getSession()->executeScript($js);
   }
 
 }

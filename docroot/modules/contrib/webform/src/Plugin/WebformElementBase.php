@@ -1653,7 +1653,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface {
     $value = $this->formatTextItem($element, $webform_submission, ['prefixing' => FALSE] + $options);
 
     if ($format === 'raw') {
-      return Markup::create($value);
+      return $value;
     }
 
     // Build a render that used #plain_text so that HTML characters are escaped.

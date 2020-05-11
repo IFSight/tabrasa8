@@ -2,7 +2,7 @@
 // @codingStandardsIgnoreFile
 
 /**
- * This is file was generated using Drush. DO NOT EDIT.
+ * This is file was generated using Drush. DO NOT EDIT. 
  *
  * @see drush webform-generate-commands
  * @see \Drupal\webform\Commands\DrushCliServiceBase::generate_commands_drush9
@@ -277,6 +277,22 @@ class WebformCommands extends WebformCommandsBase {
    */
   public function drush_webform_repair() {
     $this->cliService->drush_webform_repair();
+  }
+
+  /****************************************************************************/
+  // drush webform:remove:orphans. DO NOT EDIT.
+  /****************************************************************************/
+
+  /**
+   * Removes orphaned submissions where the submission's webform was deleted.
+   *
+   * @command webform:remove:orphans
+   * @usage webform:remove:orphans
+   *   Removes orphaned submissions where the submission's webform was deleted.
+   * @aliases wfro,webform-remove-orphans
+   */
+  public function drush_webform_remove_orphans() {
+    $this->cliService->drush_webform_remove_orphans();
   }
 
   /****************************************************************************/

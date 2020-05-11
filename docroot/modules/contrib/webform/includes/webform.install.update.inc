@@ -15,8 +15,10 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\views\Entity\View;
+use Drupal\webform\Element\WebformSignature as WebformSignatureElement;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformOptions;
+use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\Plugin\WebformHandler\EmailWebformHandler;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\Plugin\WebformHandler\RemotePostWebformHandler;
@@ -3532,4 +3534,194 @@ function webform_update_8188() {
 function webform_update_8189() {
   _webform_update_admin_settings();
   _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3121814: Webform submission check taking a long time.
+ */
+function webform_update_8191() {
+  // Copied from: history_update_8101()
+  // @see https://www.drupal.org/docs/8/api/update-api/updating-database-schema-andor-data-in-drupal-8
+  $spec = [
+    'description' => 'The base table for webform_submission entities.',
+    'fields' => [
+      'sid' => [
+        'type' => 'serial',
+        'unsigned' => FALSE,
+        'size' => 'normal',
+        'not null' => TRUE,
+      ],
+      'webform_id' => [
+        'description' => 'The ID of the target entity.',
+        'type' => 'varchar_ascii',
+        'length' => 32,
+        'not null' => TRUE,
+      ],
+      'uuid' => [
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'binary' => FALSE,
+        'not null' => TRUE,
+      ],
+      'langcode' => [
+        'type' => 'varchar_ascii',
+        'length' => 12,
+        'not null' => TRUE,
+      ],
+      'serial' => [
+        'type' => 'int',
+        'unsigned' => FALSE,
+        'size' => 'normal',
+        'not null' => FALSE,
+      ],
+      'token' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'binary' => FALSE,
+        'not null' => FALSE,
+      ],
+      'uri' => [
+        'type' => 'varchar',
+        'length' => 2000,
+        'binary' => FALSE,
+        'not null' => FALSE,
+      ],
+      'created' => [
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'completed' => [
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'changed' => [
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'in_draft' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'current_page' => [
+        'type' => 'varchar',
+        'length' => 128,
+        'binary' => FALSE,
+        'not null' => FALSE,
+      ],
+      'remote_addr' => [
+        'type' => 'varchar',
+        'length' => 128,
+        'binary' => FALSE,
+        'not null' => FALSE,
+      ],
+      'uid' => [
+        'description' => 'The ID of the target entity.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'entity_type' => [
+        'type' => 'varchar_ascii',
+        'length' => 32,
+        'binary' => FALSE,
+        'not null' => FALSE,
+      ],
+      'entity_id' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'binary' => FALSE,
+        'not null' => FALSE,
+      ],
+      'locked' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'sticky' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => FALSE,
+      ],
+      'notes' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+    ],
+    'unique keys' => [
+      'webform_submission_field__uuid__value' => ['uuid'],
+    ],
+    'primary key' => ['sid'],
+    'indexes' => [
+      'webform_submission_field__webform_id__target_id' => ['webform_id'],
+      'webform_submission_field__uid__target_id' => ['uid'],
+      'webform_submission_field__token' => ['token'],
+    ],
+    'foreign keys' => [],
+  ];
+  Database::getConnection()
+    ->schema()
+    ->addIndex('webform_submission', 'webform_submission__token', ['token'], $spec);
+}
+
+/**
++ * Unsafe HMAC construction.
++ */
+function webform_update_8192() {
+  $invalid_signatures = [];
+  $files = file_scan_directory('public://webform/','/signature-/');
+  foreach ($files as $file) {
+    $value = file_get_contents($file->uri);
+    $value = 'data:image/png;base64,' . base64_encode($value);
+    if (WebformSignatureElement::isSignatureValid($value)) {
+      continue;
+    }
+
+    // Get invalid signature's submission id.
+    if (preg_match('#public://webform/[a-z0-9_]+/signature/(\d+)/#', $file->uri, $match)) {
+      $invalid_signatures[] = $match[1];
+    }
+
+    // Delete invalid invalid signature file.
+    file_unmanaged_delete($file->uri);
+  }
+
+  // Exit if all signatures are valid.
+  if (!$invalid_signatures) {
+    return NULL;
+  }
+
+  // Load invalid signature's submissions.
+  $webform_submissions = WebformSubmission::loadMultiple($invalid_signatures);
+  if (!$webform_submissions) {
+    return NULL;
+  }
+
+  // Return plain text or HTML notice.
+  if (PHP_SAPI === 'cli') {
+    $text = t('Invalid signature file detected and deleted. (@see @url)', ['@url' => 'https://www.drupal.org/security/psa']) . PHP_EOL;
+    foreach ($webform_submissions as $webform_submission) {
+      $text .= '- ' . $webform_submission->label() . ' (' .  $webform_submission->toUrl()->setAbsolute()->toString() . ')' . PHP_EOL;
+    }
+    return $text;
+  }
+  else {
+    $links = [];
+    foreach ($webform_submissions as $webform_submission) {
+      $links[] = $webform_submission->toLink()->toRenderable();
+    }
+
+    $t_args = [':href' => 'https://www.drupal.org/security/psa'];
+    $build = [
+      'title' => [
+        '#markup' => t('Invalid signature file detected and deleted. (@see <a href=":href">PSA-XXXXX</a>)', $t_args),
+      ],
+      'links' => [
+        '#theme' => 'item_list',
+        '#items' => $links,
+      ],
+    ];
+    return \Drupal::service('renderer')->renderPlain($build);
+  }
 }

@@ -3,11 +3,12 @@ type: module
 description: 'Provides editorial management tools for the Webform module.'
 package: Webform
 core_version_requirement: ^8.7.7 || ^9
+configure: webform_editorial.index
 hidden: true
 dependencies:
   - 'webform:webform'
 
-# Information added by Drupal.org packaging script on 2020-03-18
-version: '8.x-5.9'
+# Information added by Drupal.org packaging script on 2020-05-05
+version: '8.x-5.11'
 project: 'webform'
-datestamp: 1584560018
+datestamp: 1588690393

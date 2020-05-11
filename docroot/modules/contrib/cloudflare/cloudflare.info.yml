@@ -1,15 +1,14 @@
 name: CloudFlare
 type: module
 description: CloudFlare CDN integration.
-# core: 8.x
+core_version_requirement: ^8 || ^9
 package: Web services
 configure: cloudflare.admin_settings_form
 
 dependencies:
   - ctools:ctools
 
-# Information added by Drupal.org packaging script on 2019-03-15
-version: '8.x-1.0-alpha11'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-04-27
+version: '8.x-1.0-beta1'
 project: 'cloudflare'
-datestamp: 1552652605
+datestamp: 1587986984

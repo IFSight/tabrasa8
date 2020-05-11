@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Provides configurable blocks of menu links.
+ */
+
+/**
  * Implements hook_theme_suggestions_HOOK() for "block".
  */
 function menu_block_theme_suggestions_block(array $variables) {

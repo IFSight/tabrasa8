@@ -50,7 +50,7 @@ elements: |
     '#title': webform_element_multiple_custom_access
     '#default_value': 5
     '#access': false
-
+  
 css: ''
 javascript: ''
 settings:
@@ -164,6 +164,7 @@ settings:
   purge_days: null
   results_disabled: true
   results_disabled_ignore: false
+  results_customize: false
   token_view: false
   token_update: false
 access:
@@ -222,3 +223,4 @@ handlers:
     conditions: {  }
     weight: 0
     settings: {  }
+variants: {  }
