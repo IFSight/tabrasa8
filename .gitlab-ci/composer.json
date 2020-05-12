@@ -1,0 +1,14 @@
+{
+  "name": "ifsight/gitlab-ci-pipelines",
+  "type": "root-package",
+  "description": "A repository containing standardized CI tests for use with Gitlab",
+  "keywords": ["Gitlab", "CI", "Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://git.ifsight.net/proj/contrib/gitlab-ci-pipelines",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://git.ifsight.net/proj/contrib/gitlab-ci-pipelines/issues",
+    "source": "https://git.ifsight.net/proj/contrib/gitlab-ci-pipelines"
+  },
+  "require": { }
+}

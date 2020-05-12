@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * @file
+ * Validates modified files against particular extensions.
+ */
+
+// Initial values for some variables.
+$files = [];
+$rev = [];
+$exit_status = 0;
+$return = 0;
+
+// Find files that have been changed in this branch.
+exec("git diff-index --name-only $(git merge-base HEAD origin/master)", $files);
+
+// File extensions to check. If a modified file contains one of these extensions
+// then we should display an error and fail the pipeline.
+$file_exts = [
+  'rej',
+  'orig',
+  'DS_Store',
+  'vscode',
+  'code-workspace',
+  'idea',
+];
+
+// Ignore file paths that contain these strings.
+$ignore_file_path_strings = [
+  'contrib',
+  'core',
+  'vendor',
+];
+
+// Loop through each file that has been modified in this commit.
+foreach ($files as $file) {
+  // Skip files that don't exist.
+  if (!file_exists($file)) {
+    continue;
+  }
+
+  // Get the filename and extension.
+  $filename = pathinfo($file, PATHINFO_BASENAME);
+  $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+  // Skip over the file if it matches an an ignored file path, or does not match
+  // one of the included file extensions.
+  $ignore_file_paths = array_filter($ignore_file_path_strings, function ($item) use ($file) {
+    return strpos($file, $item) !== FALSE;
+  });
+  if (!in_array($ext, $file_exts) || !empty($ignore_file_paths)) {
+    continue;
+  }
+
+  echo "File with $ext extension: ", $file, "\n";
+  $exit_status = 1;
+}
+
+exit($exit_status);

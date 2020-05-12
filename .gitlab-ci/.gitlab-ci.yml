@@ -1,0 +1,7 @@
+php:
+  stage: test
+  script:
+    - php72 gitlab-ci-pipelines/gitlab-ci.lint
+    - php72 gitlab-ci-pipelines/gitlab-ci.debug
+    - php72 gitlab-ci-pipelines/gitlab-ci.phpcs
+    - php72 gitlab-ci-pipelines/gitlab-ci.ext
