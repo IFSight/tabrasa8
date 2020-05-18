@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\views_ui\Kernel;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
 use Drupal\views_ui\Controller\ViewsUIController;
 use Drupal\Component\Utility\Html;
@@ -50,7 +49,7 @@ class TagTest extends ViewsKernelTestBase {
       return ['value' => $tag, 'label' => Html::escape($tag)];
     }, $tags);
     foreach ($matches as $match) {
-      $this->assertTrue(in_array($match, $suggestions), 'Make sure the returned array has the proper format.');
+      $this->assertContains($match, $suggestions, 'Make sure the returned array has the proper format.');
     }
 
     // Make sure that matching by a certain prefix works.
@@ -59,7 +58,7 @@ class TagTest extends ViewsKernelTestBase {
     $matches = (array) json_decode($result->getContent(), TRUE);
     $this->assertEqual(count($matches), 8, 'Make sure that only a subset is returned.');
     foreach ($matches as $tag) {
-      $this->assertTrue(array_search($tag['value'], $tags) !== FALSE, new FormattableMarkup('Make sure the returned tag @tag actually exists.', ['@tag' => $tag['value']]));
+      $this->assertContains($tag['value'], $tags);
     }
 
     // Make sure an invalid result doesn't return anything.

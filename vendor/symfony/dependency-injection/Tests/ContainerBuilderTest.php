@@ -719,7 +719,7 @@ class ContainerBuilderTest extends TestCase
     public function testCompileWithArrayInStringResolveEnv()
     {
         $this->expectException('Symfony\Component\DependencyInjection\Exception\RuntimeException');
-        $this->expectExceptionMessage('A string value must be composed of strings and/or numbers, but found parameter "env(json:ARRAY)" of type array inside string value "ABC %env(json:ARRAY)%".');
+        $this->expectExceptionMessage('A string value must be composed of strings and/or numbers, but found parameter "env(json:ARRAY)" of type "array" inside string value "ABC %env(json:ARRAY)%".');
         putenv('ARRAY={"foo":"bar"}');
 
         $container = new ContainerBuilder();
@@ -1090,7 +1090,7 @@ class ContainerBuilderTest extends TestCase
         $container->set('a', new \stdClass());
     }
 
-    public function testThrowsExceptionWhenAddServiceOnACompiledContainer()
+    public function testNoExceptionWhenAddServiceOnACompiledContainer()
     {
         $container = new ContainerBuilder();
         $container->compile();
@@ -1238,7 +1238,7 @@ class ContainerBuilderTest extends TestCase
         $container = new ContainerBuilder();
 
         $container->register(A::class)->setPublic(true);
-        $bDefinition = $container->register('b', __NAMESPACE__.'\B');
+        $bDefinition = $container->register('b', B::class);
         $bDefinition->setAutowired(true);
         $bDefinition->setPublic(true);
 

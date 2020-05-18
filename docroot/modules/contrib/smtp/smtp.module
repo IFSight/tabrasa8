@@ -78,6 +78,9 @@ function smtp_send_queue_runner(array $variables) {
  *   True if email was sent. False otherwise.
  */
 function _smtp_mailer_send(array $variables) {
+
+  $smtp_config = \Drupal::config('smtp.settings');
+
   $mailer = $variables['mailer'];
   $to = $variables['to'];
   $from = $variables['from'];
@@ -100,6 +103,8 @@ function _smtp_mailer_send(array $variables) {
     return FALSE;
   }
 
-  $mailer->SmtpClose();
+  if (!$smtp_config->get('smtp_keepalive')) {
+    $mailer->SmtpClose();
+  }
   return TRUE;
 }

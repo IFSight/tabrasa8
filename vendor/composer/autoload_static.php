@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
+class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -12,9 +12,10 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
+        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '92c8763cd6170fce6fcfe7e26b4e8c10' => __DIR__ . '/..' . '/symfony/phpunit-bridge/bootstrap.php',
         '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
-        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
@@ -87,6 +88,7 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Php56\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Iconv\\' => 23,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Yaml\\' => 23,
@@ -188,6 +190,8 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
             'Drupal\\Console\\' => 15,
             'Drupal\\Composer\\Plugin\\Scaffold\\' => 32,
             'Drupal\\Component\\' => 17,
+            'Drupal\\' => 7,
+            'DrupalPractice\\' => 15,
             'DrupalCheck\\' => 12,
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
@@ -292,6 +296,10 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Intl\\Idn\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
         'Symfony\\Polyfill\\Iconv\\' => 
         array (
@@ -566,6 +574,14 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
         array (
             0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Component',
         ),
+        'Drupal\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/Drupal',
+        ),
+        'DrupalPractice\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice',
+        ),
         'DrupalCheck\\' => 
         array (
             0 => __DIR__ . '/..' . '/mglaman/drupal-check/src',
@@ -685,13 +701,6 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
             'Stack' => 
             array (
                 0 => __DIR__ . '/..' . '/stack/builder/src',
-            ),
-        ),
-        'P' => 
-        array (
-            'PEAR' => 
-            array (
-                0 => __DIR__ . '/..' . '/pear/pear_exception',
             ),
         ),
         'E' => 
@@ -834,6 +843,7 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
         'Nette\\Utils\\Strings' => __DIR__ . '/..' . '/nette/utils/src/Utils/Strings.php',
         'Nette\\Utils\\UnknownImageFileException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Utils\\Validators' => __DIR__ . '/..' . '/nette/utils/src/Utils/Validators.php',
+        'PEAR_Exception' => __DIR__ . '/..' . '/pear/pear_exception/PEAR/Exception.php',
         'PHPUnit\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',
         'PHPUnit\\Framework\\Assert' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert.php',
         'PHPUnit\\Framework\\AssertionFailedError' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/AssertionFailedError.php',
@@ -1390,11 +1400,11 @@ class ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInitdeabe4f88dc45b2bc00fd1fb9729acfa::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit253df31900dffd17482b7b23a9e6c925::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit253df31900dffd17482b7b23a9e6c925::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit253df31900dffd17482b7b23a9e6c925::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit253df31900dffd17482b7b23a9e6c925::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit253df31900dffd17482b7b23a9e6c925::$classMap;
 
         }, null, ClassLoader::class);
     }

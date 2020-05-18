@@ -66,6 +66,7 @@ class SMTPConfigFormTest extends UnitTestCase {
     $this->mockConfig->get('smtp_port')->willReturn('');
     $this->mockConfig->get('smtp_protocol')->willReturn('');
     $this->mockConfig->get('smtp_autotls')->willReturn(TRUE);
+    $this->mockConfig->get('smtp_timeout')->willReturn('');
     $this->mockConfig->get('smtp_username')->willReturn('');
     $this->mockConfig->get('smtp_password')->willReturn('');
     $this->mockConfig->get('smtp_from')->willReturn('');
@@ -74,6 +75,7 @@ class SMTPConfigFormTest extends UnitTestCase {
     $this->mockConfig->get('smtp_client_hostname')->willReturn('');
     $this->mockConfig->get('smtp_client_helo')->willReturn('');
     $this->mockConfig->get('smtp_debugging')->willReturn('');
+    $this->mockConfig->get('smtp_keepalive')->willReturn(FALSE);
   }
 
   /**

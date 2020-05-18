@@ -71,7 +71,7 @@ class PaginationAJAXTest extends WebDriverTestBase {
 
     $settings = $this->getDrupalSettings();
 
-    // Make sure the the view_path is set correctly.
+    // Make sure that the view_path is set correctly.
     $expected_view_path = '/test-content-ajax';
     $this->assertEquals($expected_view_path, current($settings['views']['ajaxViews'])['view_path']);
 
@@ -142,7 +142,7 @@ class PaginationAJAXTest extends WebDriverTestBase {
     $scripts = $this->getSession()->getPage()->findAll('xpath', '//script');
     $script_src = [];
     foreach ($scripts as $script) {
-      $this->assertFalse(in_array($script->getAttribute('src'), $script_src));
+      $this->assertNotContains($script->getAttribute('src'), $script_src);
       $script_src[] = $script->getAttribute('src');
     }
   }
