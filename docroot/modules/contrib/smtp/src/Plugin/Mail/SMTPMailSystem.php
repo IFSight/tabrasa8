@@ -155,11 +155,17 @@ class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
 
     // Create a new PHPMailer object - autoloaded from registry.
     $mailer = new PHPMailer(TRUE);
+    $mailer->Timeout = $this->smtpConfig->get('smtp_timeout');
 
     // Turn on debugging, if requested.
     if ($this->smtpConfig->get('smtp_debugging')
       && \Drupal::currentUser()->hasPermission('administer smtp module')) {
       $mailer->SMTPDebug = TRUE;
+    }
+
+    // Turn on KeepAlive feature if requested.
+    if ($this->smtpConfig->get('smtp_keepalive')) {
+      $mailer->SMTPKeepAlive = TRUE;
     }
 
     // The $from address might contain the "name" part. If it does, split it,

@@ -24,7 +24,12 @@ class BrowserTestBaseTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['test_page_test', 'form_test', 'system_test', 'node'];
+  public static $modules = [
+    'test_page_test',
+    'form_test',
+    'system_test',
+    'node',
+  ];
 
   /**
    * {@inheritdoc}
@@ -651,7 +656,7 @@ class BrowserTestBaseTest extends BrowserTestBase {
    */
   public function testInstall() {
     $htaccess_filename = $this->tempFilesDirectory . '/.htaccess';
-    $this->assertTrue(file_exists($htaccess_filename), "$htaccess_filename exists");
+    $this->assertFileExists($htaccess_filename);
   }
 
   /**

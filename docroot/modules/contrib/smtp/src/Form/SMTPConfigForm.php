@@ -110,6 +110,14 @@ class SMTPConfigForm extends ConfigFormBase {
       '#description' => $this->t('To uninstall this module you must turn it off here first.'),
       '#disabled' => $this->isOverridden('smtp_on'),
     ];
+
+    // Force Disabling if class doesn't exist.
+    if (!class_exists(\PHPMailer\PHPMailer\PHPMailer::class)) {
+      $form['onoff']['smtp_on']['#disabled'] = TRUE;
+      $form['onoff']['smtp_on']['#default_value'] = 'off';
+      $form['onoff']['smtp_on']['#description'] = $this->t('<strong>SMTP cannot be turned on because the PHPMailer library is missing.</strong>');
+    }
+
     $form['server'] = [
       '#type'  => 'details',
       '#title' => $this->t('SMTP server settings'),
@@ -173,6 +181,14 @@ class SMTPConfigForm extends ConfigFormBase {
       '#options' => ['on' => $this->t('On'), 'off' => $this->t('Off')],
       '#description' => $this->t('Whether to enable TLS encryption automatically if a server supports it, even if the protocol is not set to "tls".'),
       '#disabled' => $this->isOverridden('smtp_autotls'),
+    ];
+
+    $form['server']['smtp_timeout'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Timeout'),
+      '#default_value' => $config->get('smtp_timeout'),
+      '#description' => $this->t('Amount of seconds for the SMTP commands to timeout.'),
+      '#disabled' => $this->isOverridden('smtp_timeout'),
     ];
 
     $form['auth'] = [
@@ -265,6 +281,13 @@ class SMTPConfigForm extends ConfigFormBase {
       '#disabled' => $this->isOverridden('smtp_debugging'),
     ];
 
+    $form['server']['smtp_keepalive'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Turn on the SMTP keep alive feature'),
+      '#default_value' => $config->get('smtp_keepalive'),
+      '#description' => $this->t('Enabling this option will keep the SMTP connection open instead of it being openned and then closed for each mail'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -344,6 +367,7 @@ class SMTPConfigForm extends ConfigFormBase {
       'smtp_hostbackup',
       'smtp_port',
       'smtp_protocol',
+      'smtp_timeout',
       'smtp_username',
       'smtp_from',
       'smtp_fromname',
@@ -351,6 +375,7 @@ class SMTPConfigForm extends ConfigFormBase {
       'smtp_client_helo',
       'smtp_allowhtml',
       'smtp_debugging',
+      'smtp_keepalive',
     ];
     foreach ($config_keys as $name) {
       if (!$this->isOverridden($name)) {

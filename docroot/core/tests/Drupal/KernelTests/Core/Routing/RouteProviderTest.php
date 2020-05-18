@@ -38,7 +38,12 @@ class RouteProviderTest extends KernelTestBase {
   /**
    * Modules to enable.
    */
-  public static $modules = ['url_alter_test', 'system', 'language', 'path_alias'];
+  public static $modules = [
+    'url_alter_test',
+    'system',
+    'language',
+    'path_alias',
+  ];
 
   /**
    * A collection of shared fixture data for tests.
@@ -126,14 +131,14 @@ class RouteProviderTest extends KernelTestBase {
 
     $candidates = array_flip($candidates);
 
-    $this->assertTrue(count($candidates) == 7, 'Correct number of candidates found');
-    $this->assertTrue(array_key_exists('/node/5/edit', $candidates), 'First candidate found.');
-    $this->assertTrue(array_key_exists('/node/5/%', $candidates), 'Second candidate found.');
-    $this->assertTrue(array_key_exists('/node/%/edit', $candidates), 'Third candidate found.');
-    $this->assertTrue(array_key_exists('/node/%/%', $candidates), 'Fourth candidate found.');
-    $this->assertTrue(array_key_exists('/node/5', $candidates), 'Fifth candidate found.');
-    $this->assertTrue(array_key_exists('/node/%', $candidates), 'Sixth candidate found.');
-    $this->assertTrue(array_key_exists('/node', $candidates), 'Seventh candidate found.');
+    $this->assertCount(7, $candidates, 'Correct number of candidates found');
+    $this->assertArrayHasKey('/node/5/edit', $candidates);
+    $this->assertArrayHasKey('/node/5/%', $candidates);
+    $this->assertArrayHasKey('/node/%/edit', $candidates);
+    $this->assertArrayHasKey('/node/%/%', $candidates);
+    $this->assertArrayHasKey('/node/5', $candidates);
+    $this->assertArrayHasKey('/node/%', $candidates);
+    $this->assertArrayHasKey('/node', $candidates);
   }
 
   /**

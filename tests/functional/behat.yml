@@ -1,0 +1,54 @@
+default:
+  suites:
+    default:
+      paths: [ "%paths.base%/features/default" ]
+      filters:
+        tags: ~@skip
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\RawDrupalContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+    modules:
+      paths: [ "%paths.base%/features/modules" ]
+      filters:
+        tags: ~@skip
+      contexts:
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+
+  extensions:
+    Behat\MinkExtension:
+      goutte:
+        guzzle_parameters:
+          verify: false
+          config:
+            curl:
+              CURLOPT_TIMEOUT: 600
+              CURLOPT_CONNECTTIMEOUT: 0
+          redirect.disable: true
+      base_url: 'https://tabrasa8.ifdev'
+      javascript_session: selenium2
+      selenium2:
+        wd_host: http://selenium:4444/wd/hub
+        browser: chrome
+        capabilities:
+          marionette: true
+    Drupal\DrupalExtension:
+      blackbox: ~
+      api_driver: 'drupal'
+      drush:
+        alias: 'local'
+      drupal:
+        # Change this to the absolute path to Drupal install.
+        drupal_root: '/sites/tabrasa8.ifdev/docroot'
+      text:
+        log_out: "Log out"
+      region_map:
+        content: '.region-content'
+        front highlight: '.front__highlight'
+        global navigation: '#block-global-top-nav-front'
+        page title: '.page-title'
+        site alerts: 'div.alert-preheader'

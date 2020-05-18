@@ -89,7 +89,7 @@ class FileFieldWidgetTest extends FileFieldTestBase {
     $nid = $this->uploadNodeFile($test_file, $field_name, $type_name);
     $node = $node_storage->loadUnchanged($nid);
     $node_file = File::load($node->{$field_name}->target_id);
-    $this->assertFileExists($node_file->getFileUri(), 'New file saved to disk on node creation.');
+    $this->assertFileExists($node_file->getFileUri());
 
     // Ensure the file can be downloaded.
     $this->drupalGet($node_file->createFileUrl());
@@ -166,7 +166,7 @@ class FileFieldWidgetTest extends FileFieldTestBase {
         // Ensure we have the expected number of Remove buttons, and that they
         // are numbered sequentially.
         $buttons = $this->xpath('//input[@type="submit" and @value="Remove"]');
-        $this->assertTrue(is_array($buttons) && count($buttons) === $num_expected_remove_buttons, new FormattableMarkup('There are %n "Remove" buttons displayed.', ['%n' => $num_expected_remove_buttons]));
+        $this->assertCount($num_expected_remove_buttons, $buttons, new FormattableMarkup('There are %n "Remove" buttons displayed.', ['%n' => $num_expected_remove_buttons]));
         foreach ($buttons as $i => $button) {
           $key = $i >= $remaining ? $i - $remaining : $i;
           $check_field_name = $field_name2;
@@ -187,12 +187,12 @@ class FileFieldWidgetTest extends FileFieldTestBase {
         // correct name.
         $upload_button_name = $current_field_name . '_' . $remaining . '_upload_button';
         $buttons = $this->xpath('//input[@type="submit" and @value="Upload" and @name=:name]', [':name' => $upload_button_name]);
-        $this->assertTrue(is_array($buttons) && count($buttons) == 1, 'The upload button is displayed with the correct name.');
+        $this->assertCount(1, $buttons, 'The upload button is displayed with the correct name.');
 
         // Ensure only at most one button per field is displayed.
         $buttons = $this->xpath('//input[@type="submit" and @value="Upload"]');
         $expected = $current_field_name == $field_name ? 1 : 2;
-        $this->assertTrue(is_array($buttons) && count($buttons) == $expected, 'After removing a file, only one "Upload" button for each possible field is displayed.');
+        $this->assertCount($expected, $buttons, 'After removing a file, only one "Upload" button for each possible field is displayed.');
       }
     }
 
@@ -263,7 +263,7 @@ class FileFieldWidgetTest extends FileFieldTestBase {
     $nid = $this->uploadNodeFile($test_file, $field_name, $type_name);
     $node = $node_storage->loadUnchanged($nid);
     $node_file = File::load($node->{$field_name}->target_id);
-    $this->assertFileExists($node_file->getFileUri(), 'New file saved to disk on node creation.');
+    $this->assertFileExists($node_file->getFileUri());
 
     // Ensure the private file is available to the user who uploaded it.
     $this->drupalGet($node_file->createFileUrl());
@@ -330,7 +330,7 @@ class FileFieldWidgetTest extends FileFieldTestBase {
 
     $comment = Comment::load($cid);
     $comment_file = $comment->{'field_' . $name}->entity;
-    $this->assertFileExists($comment_file->getFileUri(), 'New file saved to disk on node creation.');
+    $this->assertFileExists($comment_file->getFileUri());
     // Test authenticated file download.
     $url = $comment_file->createFileUrl();
     $this->assertNotEqual($url, NULL, 'Confirmed that the URL is valid');
@@ -507,7 +507,7 @@ class FileFieldWidgetTest extends FileFieldTestBase {
 
     /** @var \Drupal\file\FileInterface $node_file */
     $node_file = File::load($node->{$field_name}->target_id);
-    $this->assertFileExists($node_file->getFileUri(), 'A file was saved to disk on node creation');
+    $this->assertFileExists($node_file->getFileUri());
     $this->assertEqual($attacker_user->id(), $node_file->getOwnerId(), 'New file belongs to the attacker.');
 
     // Ensure the file can be downloaded.

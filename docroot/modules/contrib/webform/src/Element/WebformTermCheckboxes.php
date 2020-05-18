@@ -79,7 +79,7 @@ class WebformTermCheckboxes extends Checkboxes {
       if (!$item->access('view')) {
         continue;
       }
-      
+
       $options[$item->id()] = $item->getName();
     }
     return $options;
