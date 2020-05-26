@@ -1,5 +1,11 @@
 # Package Versions
 
+**`composer/package-versions-deprecated` is a fork of `ocramius/package-versions`** which provides compatibility with Composer 1 and 2 on PHP 7+. It replaces ocramius/package-versions so if you have a dependency requiring it and you want to use Composer v2 but can not upgrade to PHP 7.4 just yet, you can require this package instead.
+
+If you have a direct dependency on ocramius/package-versions, we recommend instead that once you migrated to Composer 2 you also migrate to use the `Composer\Versions` class which offers the functionality present here out of the box.
+
+# Original README below
+
 This utility provides quick and easy access to version information of composer dependencies.
 
 This information is derived from the ```composer.lock``` file which is (re)generated during ```composer install``` or ```composer update```.
@@ -23,10 +29,7 @@ var_dump($version); // 1.0.0@0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33
 composer require ocramius/package-versions
 ```
 
-It is suggested that you use a optimized composer autoloader in order to prevent
-autoload I/O when accessing the `PackageVersions\Versions` API:
-
-Therefore you should use `optimize-autoloader: true` in your composer.json:
+It is suggested that you use [an optimized composer autoloader](https://getcomposer.org/doc/06-config.md#optimize-autoloader) (to prevent autoload I/O when accessing the `PackageVersions\Versions` API) in your composer.json:
 ```
 ...
     "config": {
@@ -34,7 +37,6 @@ Therefore you should use `optimize-autoloader: true` in your composer.json:
     },
 ...
 ```
-see https://getcomposer.org/doc/06-config.md#optimize-autoloader
 
 In case you manually generate your autoloader via the CLI use the `--optimize` flag:
 
@@ -52,9 +54,11 @@ This is especially useful when you want to generate assets/code/artifacts that a
 the current version of a certain dependency. Doing so at runtime by checking the installed
 version of a package would be too expensive, and this package mitigates that.
 
-## Professional Support
+## ocramius/package-versions for enterprise
 
-[Professionally supported `ocramius/package-versions` is available through Tidelift](https://tidelift.com/subscription/pkg/packagist-ocramius-package-versions?utm_source=packagist-ocramius-package-versions&utm_medium=referral&utm_campaign=readme).
+Available as part of the Tidelift Subscription.
+
+The maintainer of ocramius/package-versions and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/packagist-ocramius-package-versions?utm_source=packagist-ocramius-package-versions&utm_medium=referral&utm_campaign=enterprise&utm_term=repo).
 
 You can also contact the maintainer at ocramius@gmail.com for looking into issues related to this package
 in your private projects.

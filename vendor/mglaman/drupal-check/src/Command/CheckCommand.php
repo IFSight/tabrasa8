@@ -21,6 +21,7 @@ class CheckCommand extends Command
     private $memoryLimit;
     private $drupalRoot;
     private $vendorRoot;
+    private $excludeDirectory;
 
     protected function configure(): void
     {
@@ -34,6 +35,7 @@ class CheckCommand extends Command
             ->addOption('analysis', 'a', InputOption::VALUE_NONE, 'Check code analysis')
             ->addOption('style', 's', InputOption::VALUE_NONE, 'Check code style')
             ->addOption('memory-limit', null, InputOption::VALUE_OPTIONAL, 'Memory limit for analysis')
+            ->addOption('exclude-dir', 'e', InputOption::VALUE_OPTIONAL, 'Directories to exclude. Separate multiple directories with a comma, no spaces.')
             ->addOption(
                 'no-progress',
                 null,
@@ -48,6 +50,7 @@ class CheckCommand extends Command
         $this->isAnalysisCheck = $input->getOption('analysis');
         $this->isStyleCheck = $input->getOption('style');
         $this->memoryLimit = $input->getOption('memory-limit');
+        $this->excludeDirectory = $input->getOption('exclude-dir');
 
         if ($this->memoryLimit) {
             $output->writeln("<comment>Memory limit set to $this->memoryLimit", OutputInterface::VERBOSITY_DEBUG);
@@ -137,6 +140,12 @@ class CheckCommand extends Command
             ]
         ];
 
+        if (!empty($this->excludeDirectory)) {
+            // There may be more than one path passed in, comma separated.
+            $excluded_directories = explode(',', $this->excludeDirectory);
+            $configuration_data['parameters']['excludes_analyse'] = array_merge($excluded_directories, $configuration_data['parameters']['excludes_analyse']);
+        }
+
         if ($this->isAnalysisCheck) {
             $configuration_data['parameters']['level'] = 4;
         } else {
@@ -202,6 +211,14 @@ class CheckCommand extends Command
             $configuration,
             '--error-format=' . $input->getOption('format')
         ];
+
+        if ($input->getOption('no-progress')) {
+            $command[] = '--no-progress';
+        }
+        if ($input->getOption('memory-limit')) {
+            $command[] = '--memory-limit=' . $input->getOption('memory-limit');
+        }
+
         if ($output->getVerbosity() === OutputInterface::VERBOSITY_VERBOSE) {
             $command[] = '-v';
         } elseif ($output->getVerbosity() === OutputInterface::VERBOSITY_VERY_VERBOSE) {
@@ -212,13 +229,12 @@ class CheckCommand extends Command
         $command = array_merge($command, $paths);
 
         $process = new Process($command);
-        $process->setTty(Tty::isTtySupported());
         $process->setTimeout(null);
         $process->run(static function ($type, $buffer) use ($output) {
             if (Process::ERR === $type) {
-                $output->write($buffer, false, OutputInterface::OUTPUT_RAW);
+                $output->getErrorOutput()->write($buffer, false, OutputInterface::OUTPUT_RAW);
             } else {
-                $output->writeln($buffer, OutputInterface::OUTPUT_RAW);
+                $output->write($buffer, false, OutputInterface::OUTPUT_RAW);
             }
         });
         unlink($configuration);
