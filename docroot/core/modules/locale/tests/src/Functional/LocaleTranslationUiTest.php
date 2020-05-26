@@ -182,7 +182,7 @@ class LocaleTranslationUiTest extends BrowserTestBase {
     // Reload to remove $name.
     $this->drupalGet($path);
     // Verify that language is no longer found.
-    $this->assertResponse(404, 'Language no longer found.');
+    $this->assertResponse(404);
     $this->drupalLogout();
 
     // Delete the string.
@@ -323,7 +323,7 @@ class LocaleTranslationUiTest extends BrowserTestBase {
       $this->drupalPostForm('admin/config/regional/translate', $edit, t('Save translations'));
       // Check for a form error on the textarea.
       $form_class = $this->xpath('//form[@id="locale-translate-edit-form"]//textarea/@class');
-      $this->assertContains('error', $form_class[0]->getText(), 'The string was rejected as unsafe.');
+      $this->assertStringContainsString('error', $form_class[0]->getText(), 'The string was rejected as unsafe.');
       $this->assertNoText(t('The string has been saved.'), 'The string was not saved.');
     }
   }

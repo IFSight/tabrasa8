@@ -115,7 +115,7 @@ class UncaughtExceptionTest extends BrowserTestBase {
       '%function' => 'Drupal\error_test\Controller\ErrorTestController->Drupal\error_test\Controller\{closure}()',
     ];
     $this->drupalGet('error-test/generate-fatals');
-    $this->assertResponse(500, 'Received expected HTTP status code.');
+    $this->assertResponse(500);
     $message = new FormattableMarkup('%type: @message in %function (line ', $fatal_error);
     $this->assertRaw((string) $message);
     $this->assertRaw('<pre class="backtrace">');
@@ -279,7 +279,7 @@ class UncaughtExceptionTest extends BrowserTestBase {
 
     // Find fatal error logged to the error.log
     $errors = file(\Drupal::root() . '/' . $this->siteDirectory . '/error.log');
-    $this->assertIdentical(count($errors), 8, 'The error + the error that the logging service is broken has been written to the error log.');
+    $this->assertCount(8, $errors, 'The error + the error that the logging service is broken has been written to the error log.');
     $this->assertStringContainsString('Failed to log error', $errors[0], 'The error handling logs when an error could not be logged to the logger.');
 
     $expected_path = \Drupal::root() . '/core/modules/system/tests/modules/error_service_test/src/MonkeysInTheControlRoom.php';
@@ -371,14 +371,14 @@ class UncaughtExceptionTest extends BrowserTestBase {
    * {@inheritdoc}
    */
   protected function assertText($text) {
-    $this->assertContains($text, $this->response);
+    $this->assertStringContainsString($text, $this->response);
   }
 
   /**
    * {@inheritdoc}
    */
   protected function assertNoText($text) {
-    $this->assertNotContains($text, $this->response);
+    $this->assertStringNotContainsString($text, $this->response);
   }
 
   /**
