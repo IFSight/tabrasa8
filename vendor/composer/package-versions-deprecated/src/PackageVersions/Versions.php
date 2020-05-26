@@ -44,6 +44,7 @@ final class Versions
   'drupal/adminimal_theme' => '1.5.0@8.x-1.5',
   'drupal/allowed_formats' => '1.2.0@8.x-1.2',
   'drupal/better_exposed_filters' => '3.0.0-alpha6@8.x-3.0-alpha6',
+  'drupal/blazy' => '2.1.0@8.x-2.1',
   'drupal/block_field' => '1.0.0-rc1@8.x-1.0-rc1',
   'drupal/captcha' => '1.0.0@8.x-1.0',
   'drupal/cloudflare' => '1.0.0-beta2@8.x-1.0-beta2',
@@ -88,6 +89,8 @@ final class Versions
   'drupal/scheduler' => '1.1.0@8.x-1.1',
   'drupal/search_api' => '1.16.0@8.x-1.16',
   'drupal/simple_sitemap' => '3.6.0@8.x-3.6',
+  'drupal/slick' => '2.2.0@8.x-2.2',
+  'drupal/slick_browser' => '2.1.0@8.x-2.1',
   'drupal/smtp' => '1.0.0-rc2@8.x-1.0-rc2',
   'drupal/social_media_links' => '2.6.0@8.x-2.6',
   'drupal/token' => '1.7.0@8.x-1.7',
@@ -237,7 +240,7 @@ final class Versions
   'symfony/phpunit-bridge' => 'v3.4.39@c02893ae43532b46a4f0e0f207d088b939f278d9',
   'theseer/tokenizer' => '1.1.3@11336f6f84e16a720dae9d8e6ed5019efa85a0f9',
   'vanare/behat-cucumber-json-formatter' => 'v1.1.3@b28ae403404be4c74c740a3948d9338fc51443a3',
-  'drupal/drupal' => 'dev-master@0d8396162dd82581aca247a0be2912b8fc267354',
+  'drupal/drupal' => 'dev-577-add-slick-browser-to-project@794423b9c469832e22bd66ddb068629120303562',
 );
 
     private function __construct()
