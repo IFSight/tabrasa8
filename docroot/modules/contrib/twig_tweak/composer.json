@@ -10,7 +10,8 @@
         "source": "https://git.drupalcode.org/project/twig_tweak"
     },
     "require": {
-        "drupal/core": "^8.7 || ^9.0"
+        "drupal/core": "^8.7 || ^9.0",
+        "twig/twig": "^1.41 || ^2.12"
     },
     "suggest": {
         "symfony/var-dumper": "Better dump() function for debugging Twig variables"

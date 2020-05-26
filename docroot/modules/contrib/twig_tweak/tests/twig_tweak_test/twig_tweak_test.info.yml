@@ -10,7 +10,7 @@ dependencies:
   - drupal:media
   - drupal:twig_tweak
 
-# Information added by Drupal.org packaging script on 2020-03-11
-version: '8.x-2.5'
+# Information added by Drupal.org packaging script on 2020-05-20
+version: '8.x-2.6'
 project: 'twig_tweak'
-datestamp: 1583908077
+datestamp: 1589992481
