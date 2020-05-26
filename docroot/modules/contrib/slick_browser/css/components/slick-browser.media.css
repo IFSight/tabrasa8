@@ -1,0 +1,84 @@
+/**
+ * @file
+ */
+
+/** Body with fullscreen video either outside or within iframe/ modal. */
+body.is-zoom {
+  height: 100vh;
+  /* admin toolbar JS */
+  overflow: hidden !important; /* csslint allow: known-properties, important */
+  position: relative;
+}
+
+.sb .media {
+  background-color: #fff;
+}
+
+.sb__zoom,
+.is-zoom .sb .pager,
+.is-zoom .eb-tabs,
+.is-zoom .sb__aside,
+.is-zoom .slick .slick-dots,
+.is-zoom .slick .slick__arrow {
+  display: none;
+  visibility: hidden;
+}
+
+/** Makes the .media wrapper zommed, ensures supporting multiple instances. */
+.is-zoom .is-sb-zoomed .sb__zoom {
+  background-color: #000;
+  display: block;
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  visibility: visible;
+  width: 100%;
+  z-index: 9999;
+}
+
+.is-zoom .is-sb-zoomed .sb__zoom iframe {
+  width: 100%;
+  height: 100vh;
+}
+
+/** Body for the browser within iframe/ modal which has .form--view. */
+.is-zoom .form--view.is-sb-zoomed .is-playing iframe {
+  height: 100vh;
+}
+
+.is-zoom .form--view.form--iframe.is-sb-zoomed .is-playing iframe {
+  height: 100%;
+}
+
+/** Icons. */
+.sb .media__icon--play {
+  border: 0;
+}
+
+.sb .media__icon--close::before,
+.sb .media__icon--close::after {
+  height: 4px;
+  margin: -2px 0 0 -10px;
+  width: 20px;
+}
+
+.sb .media__icon--close {
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  width: 40px;
+}
+
+.is-zoom .is-sb-zoomed .is-playing .media__icon--close {
+  margin: 0;
+  opacity: 1;
+  top: 0;
+  visibility: visible;
+  background-color: #6b6b6b;
+}
+
+.sb .media--rendered {
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}

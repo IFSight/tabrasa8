@@ -1,0 +1,15 @@
+{% extends "@slick/slick.html.twig" %}
+{#
+/**
+ * @file
+ * Theme override for slick.
+ */
+#}
+{%
+  set classes = [
+    display == 'main' ? 'slick--browser blazy',
+    '-classic' in settings.skin or 'classic-' in settings.skin ? 'slick--skin--classic',
+    '-grid' in settings.skin or 'grid-' in settings.skin ? 'slick--skin--grid',
+  ]
+%}
+{% set attributes = attributes.addClass(classes) %}

@@ -1,0 +1,62 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.slick_browser_file
+  enforced:
+    module:
+      - slick_browser
+  module:
+    - dropzonejs_eb_widget
+    - slick_browser
+    - views
+name: slick_browser_file_dz
+label: 'Slick Browser: File Dropzone'
+display: iframe
+display_configuration:
+  width: 100%
+  height: '620'
+  link_text: 'Media Library'
+  auto_open: true
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: file
+  display: slick_browser_file
+  display_settings:
+    _context: selection
+    selection_position: bottom
+  select_text: 'Add to Page'
+  selection_hidden: false
+widget_selector: slick_browser_tabs
+widget_selector_configuration:
+  tabs_position: top
+  buttons_position: bottom
+widgets:
+  f9f48526-e3b3-4ccb-a308-145500e90c0c:
+    settings:
+      view: slick_browser_file
+      view_display: slick_browser_file_scaled
+      submit_text: 'Select entities'
+      auto_select: false
+    uuid: f9f48526-e3b3-4ccb-a308-145500e90c0c
+    weight: 1
+    label: 'Media Library'
+    id: view
+  07b50159-0c57-4ccc-a5af-d91687fffc8f:
+    settings:
+      upload_location: 'public://[date:custom:Y]-[date:custom:m]'
+      dropzone_description: 'Drop files here to upload them'
+      max_filesize: 40M
+      extensions: 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'
+      clientside_resize: false
+      resize_width: null
+      resize_height: null
+      resize_quality: !!float 1
+      resize_method: contain
+      thumbnail_method: contain
+      submit_text: 'Select entities'
+      auto_select: false
+    uuid: 07b50159-0c57-4ccc-a5af-d91687fffc8f
+    weight: 2
+    label: 'Upload Files'
+    id: dropzonejs

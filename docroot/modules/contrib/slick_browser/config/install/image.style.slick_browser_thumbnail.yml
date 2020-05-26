@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+name: slick_browser_thumbnail
+label: 'Slick Browser Thumbnail'
+effects:
+  07645033-37c0-4bca-9d59-52b40de3aae0:
+    uuid: 07645033-37c0-4bca-9d59-52b40de3aae0
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 120
+      height: 90
+      anchor: center-center

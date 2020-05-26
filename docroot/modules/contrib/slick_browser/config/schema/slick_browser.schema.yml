@@ -1,0 +1,41 @@
+slick_browser:
+  type: mapping
+  label: 'Slick Browser'
+  mapping:
+    overridables:
+      type: sequence
+      label: 'Overridable options'
+      sequence:
+        - type: string
+          label: 'Overridable'
+
+entity_browser.browser.selection_display.multi_step_display.display_settings.slick_browser_file:
+  type: slick_browser
+  label: 'File multistep display settings'
+
+entity_browser.field_widget_display.slick_browser_file:
+  type: slick_browser
+  label: 'File widget display settings'
+
+entity_browser.browser.selection_display.multi_step_display.display_settings.slick_browser_media:
+  type: slick_browser
+  label: 'Media multistep display settings'
+
+entity_browser.field_widget_display.slick_browser_media:
+  type: slick_browser
+  label: 'Media widget display settings'
+
+field.widget.third_party.slick_browser:
+  type: slick_browser
+  label: 'Slick Browser third party settings'
+
+entity_browser.browser.widget_selector.slick_browser_tabs:
+  type: mapping
+  label: 'Widget selector configuration'
+  mapping:
+    tabs_position:
+      type: string
+      label: 'Tabs position'
+    buttons_position:
+      type: string
+      label: 'Buttons position'

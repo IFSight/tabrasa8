@@ -1,0 +1,81 @@
+
+Slick Browser 8.x-2.0-dev, 2020-03-23
+-------------------------------------
+- Fixed for limited cardinality without AJAX and Media Library button.
+- Updated to Blazy:2.0+.
+- Added Author Views field for Slick Browser: Media.
+- Fixed for single image with hidden Alt and Title fields.
+- Added Seven vs. Claro cosmetic compatibility as usual.
+
+Slick Browser 8.x-2.0-dev, 2020-03-01
+-------------------------------------
+- Added a hook_update() to ensure things are picked up.
+
+Slick Browser 8.x-2.0-dev, 2020-02-28
+-------------------------------------
+- Removed used services.
+- Added micro-optimization.
+- Fixed for selection counter with AJAX.
+- Fixed for selection removal.
+- Updated config to reflect suggestions at TROUBLESHOOTING for best displays.
+- Added Slick Browser: File Modal Dropzone.
+
+Slick Browser 8.x-2.0-dev, 2020-02-27
+-------------------------------------
+- Fixed for display selection with field_name and cardinality.
+- Fixed for missing Image style form item regression.
+- Fixed for overlimit still counted after AJAX.
+- Added a counter for selected items.
+- Fixed for few more glitches.
+
+Slick Browser 8.x-2.0-dev, 2020-02-25
+-------------------------------------
+- Fixed for media bundle selection positioning.
+- Replaced selection over-bottom for bottom to avoid complexity.
+- Renamed CSS is-collapsed to is-sb-collapsed for potential conflicts.
+- Fixed for few more cosmetic issues.
+- Replaced jquery.sortable with the new core sortable.
+
+Slick Browser 8.x-2.0-dev, 2020-02-23
+-------------------------------------
+- Fixed for hidden edit button.
+- Reverted the new Sortable library which disabled click events on buttons.
+- Updated minimum core_version_requirement to 8.8.
+- Renamed and refined few CSS classes to avoid potential conflicts.
+- Replaced jquery.sortable with the new core sortable.
+
+Slick Browser 8.x-2.0-dev, 2020-02-21
+-------------------------------------
+- Increased modal iframe height from 520 to 640.
+
+Slick Browser 8.x-2.0-dev, 2020-02-20
+-------------------------------------
+- Cleaned up markups irrelevant to admin previews.
+- Fixed for Claro vs. Seven compatibility issues.
+- Fixed for fullscreen video preview distracting elements visibility.
+- Added autosubmit for Media bundle selection.
+- Reduced grid visible items from 12 to 8 due to narrow iframe window.
+- Added simple integration with core Media Library for configurable widget grid.
+
+Slick Browser 8.x-2.0-dev, 2020-02-19
+-------------------------------------
+- Fixed for aspect ratio, and few more little things.
+
+Slick Browser 8.x-2.0-dev, 2020-02-18
+-------------------------------------
+- Fixed for Slick Browser: Label display.
+- Fixed for edit button for file entity.
+- Fixed for full screen video.
+- Fixed for widget display.
+
+Slick Browser 8.x-2.0-dev, 2020-02-11
+-------------------------------------
+- Updated to the latest Blazy DEV 2/11/20 and Slick 2.x.
+
+Slick Browser 8.x-2.0-dev, 2019-01-07
+-------------------------------------
+- Updated for Blazy and Slick 2.x.
+
+Slick Browser 8.x-2.0-dev, 2018-12-19
+-------------------------------------
+- Initial commit.

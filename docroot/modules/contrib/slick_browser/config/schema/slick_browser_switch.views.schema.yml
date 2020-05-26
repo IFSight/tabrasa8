@@ -1,0 +1,13 @@
+views.filter.slick_browser_switch:
+  type: views_filter
+  label: 'Slick Browser'
+  mapping:
+    value:
+      type: string
+      label: 'Value'
+    switch:
+      type: string
+      label: 'Slick Browser'
+    active:
+      type: string
+      label: 'The first active switcher'

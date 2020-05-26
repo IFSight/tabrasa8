@@ -1,0 +1,59 @@
+/**
+ * @file
+ * Only reasonable if it has Alt or Title field enabled along with image.
+ */
+
+/* Claro */
+.sb .slick--skin--split .sb__content {
+  min-height: 260px;
+}
+
+.sb .slick--skin--split .sb__caption {
+  min-height: 210px;
+  opacity: 1;
+  padding: 14px;
+}
+
+.sb .slick--skin--split .button--caption {
+  display: none;
+}
+
+.sb .slick .slick-dots button::before {
+  background: #999;
+}
+
+.sb.sb--skin--sb-split .button--caption {
+  display: none;
+}
+
+.sb.sb--skin--sb-split .sb__caption {
+  padding-top: 0;
+  padding-bottom: 0;
+  visibility: visible;
+  z-index: 3;
+}
+
+.sb.sb--skin--sb-split .is-sb-1 .sb__caption {
+  padding-top: 15px;
+}
+
+@media (min-width: 64em) {
+  .is-sb-text .slick--skin--split .sb__caption {
+    margin-left: 48%;
+    width: 52%;
+  }
+
+  .is-sb-text .slick--skin--split .sb__preview {
+    float: left;
+    width: 48%;
+  }
+
+  .is-sb-text.is-sb-1 .slick--skin--split .sb__caption {
+    margin-left: 0;
+  }
+
+  .is-sb-text.is-sb-1 .slick--skin--split .sb__preview {
+    float: none;
+    width: 100%;
+  }
+}

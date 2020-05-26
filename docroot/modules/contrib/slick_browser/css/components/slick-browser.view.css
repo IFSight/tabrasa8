@@ -1,0 +1,87 @@
+/**
+ * @file
+ */
+
+.view--sb {
+  overflow: hidden;
+  margin-bottom: 120px;
+  position: relative;
+}
+
+.sb .sb__viewswitch {
+  float: right;
+}
+
+.sb .preview-section .sb__viewswitch {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.sb .pager,
+.view--sb .slick .slick__arrow {
+  display: block;
+  min-height: 42px;
+  line-height: 1.2;
+  margin: 0; /* Claro */
+  padding: 0;
+  text-align: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+.form--sb .pager,
+.form--sb .slick .slick__arrow {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.view--sb .slick .slick__arrow {
+  margin-top: 42px;
+  width: 84px; /* min 36x2 + border 12 */
+}
+
+/* phpcs:ignore -- this is the only way without extra legs for Claro */
+#block-claro-content .view--sb .slick .slick__arrow { /* csslint allow: ids */
+  margin-top: 48px;
+}
+
+.sb .pager__items,
+.view--sb .slick .slick__arrow {
+  background-color: #e6e5e1;
+  background-clip: padding-box;
+  border: 6px solid rgba(0, 0, 0, .4);
+  display: inline-block;
+}
+
+.sb .pager__items {
+  pointer-events: auto;
+  margin: 0 auto;
+  padding: 5px;
+}
+
+.sb .pager__items .pager__item {
+  display: inline-block;
+}
+
+.sb .pager__items .pager__item--current {
+  line-height: 2; /* Claro */
+}
+
+.sb .view-filters {
+  margin-bottom: 1em;
+}
+
+@media (min-width: 640px) {
+  .sb .view-filters .form-text {
+    max-width: 200px;
+  }
+
+  .sb .form--inline .form-actions {
+    clear: none;
+    float: left;
+    margin: 2.25em 0 0.75em;
+  }
+}

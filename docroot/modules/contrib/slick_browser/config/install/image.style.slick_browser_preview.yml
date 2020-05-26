@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+name: slick_browser_preview
+label: 'Slick Browser Preview'
+effects:
+  7e4902dd-0a6a-4ab8-b7ce-190193e3bf32:
+    uuid: 7e4902dd-0a6a-4ab8-b7ce-190193e3bf32
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 640
+      height: 360
+      anchor: center-center

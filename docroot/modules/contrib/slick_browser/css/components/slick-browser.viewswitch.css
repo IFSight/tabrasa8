@@ -1,0 +1,303 @@
+/**
+ * @file
+ */
+
+/* csslint "box-sizing": true, "box-model": true, ids: true */
+.sb__viewswitch .button-group {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.sb__viewswitch .button {
+  padding: 0;
+  position: relative;
+}
+
+.sb__viewswitch .button.is-sb-active {
+  background: #ff6d2c;
+}
+
+/** Overrides core */
+.sb__viewswitch .button:focus {
+  border: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.sb__viewswitch .button--view::before,
+.sb__viewswitch .button--view::after {
+  content: '';
+  display: block;
+  height: 0;
+  position: absolute;
+  right: 12px;
+  top: -4px;
+  width: 20px;
+}
+
+.sb__viewswitch .button--grid::before,
+.sb__viewswitch .button--grid::after {
+  /*
+  -webkit-box-shadow: 0 12px 0 3px #333, 0 20px 0 3px #333, 0 28px 0 3px #333;
+  box-shadow: 0 12px 0 3px #333, 0 20px 0 3px #333, 0 28px 0 3px #333;
+  width: 4px;
+  */
+  -webkit-box-shadow: 0 14px 0 2px #333, 0 22px 0 2px #333;
+  box-shadow: 0 14px 0 2px #333, 0 22px 0 2px #333; /* Claro wants 2px */
+  width: 1px;
+}
+
+.sb__viewswitch .button--view.button--grid::before {
+  right: auto;
+  left: 14px;
+}
+
+.sb__viewswitch .button--list::before,
+.sb__viewswitch .button--list::after {
+  -webkit-box-shadow: 0 14px 0 1px #333, 0 19px 0 1px #333, 0 24px 0 1px #333;
+  box-shadow: 0 14px 0 1px #333, 0 19px 0 1px #333, 0 24px 0 1px #333;
+}
+
+.sb__viewswitch .button--view.button--list::before {
+  right: auto;
+  left: 10px;
+  width: 1px;
+}
+
+.sb__viewswitch .button--view.button--list::after {
+  width: 10px;
+}
+
+.sb__viewswitch .button-group .button--view.button--help {
+  font-size: 16px;
+}
+
+/** Views field. */
+.view--sb .views-field,
+.view--sb .views-field--cloned {
+  font-size: 14px; /* Claro */
+  line-height: 1.4;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.form--sb .views-field,
+.form--overlimit .is-checked .views-field {
+  cursor: cell;
+}
+
+.form--overlimit .views-field {
+  cursor: not-allowed;
+}
+
+.form--sb .view--sb-list .view-list--header .views-field {
+  cursor: default;
+}
+
+.view--sb .view-list--header {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  display: none;
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+
+/** List view. */
+.sb.view--sb-list .sb__grid {
+  margin: 0;
+}
+
+.sb.view--sb-list .grid {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  border: 1px dotted transparent;
+  padding: 0;
+  width: 100%;
+}
+
+.sb.view--sb-list .grid:nth-child(even) {
+  background-color: #f0f0f0;
+}
+
+.sb.view--sb-list .grid.is-checked {
+  background-color: #ffd; /* #d5f0fa; */
+  border-color: #ccc;
+}
+
+.sb.view--sb-list .grid.view-list--header {
+  background-color: #fff;
+  border-bottom: 4px solid #f0f0f0;
+}
+
+/** Views field. */
+.view--node.view--sb-list .views-label,
+.view--block.view--sb-list .views-label,
+.view--sb .sb__grid .is-info-active .views-label {
+  display: inline-block;
+  min-width: 100px;
+  padding-right: 10px;
+  position: relative;
+  text-align: right;
+  vertical-align: top;
+  visibility: visible;
+}
+
+/** Excludes fake table header for the list view. */
+.view--sb .views-field .views-label,
+.sb__footer .views-label {
+  visibility: hidden;
+  position: absolute;
+}
+
+.sb.view--sb-list .views-field {
+  display: block;
+  margin-left: 90px;
+}
+
+.sb.view--sb-list .view-list--header .views-field {
+  margin-left: 0;
+}
+
+.view--node.view--sb-list .views-field,
+.view--block.view--sb-list .views-field,
+.sb.view--sb-list .views-field--preview {
+  margin-left: 0;
+}
+
+/** Was checked */
+.view--sb .grid.was-checked .grid__content,
+.view--sb .grid.was-checked .views-field {
+  cursor: not-allowed;
+  opacity: .8;
+}
+
+.view--sb .grid.was-checked.is-info-active .views-field {
+  opacity: 1;
+}
+
+/** Preview. */
+.sb.view--sb-list .views-field--preview {
+  float: left;
+  margin-right: -100%;
+  width: 80px;
+}
+
+.sb.view--sb-list .view-list--header .views-field {
+  width: auto;
+}
+
+/** Checked grid. */
+.view--sb .is-checked .media::after,
+.view--sb .was-checked .media::after {
+  color: #ff6d2c;
+  content: '\2714';
+  display: block;
+  font-size: 28px;
+  height: 28px;
+  left: 2px;
+  line-height: 28px;
+  position: absolute;
+  top: 0;
+  width: 28px;
+  z-index: 3;
+}
+
+/** .sb.view--sb .views-field.views-field-entity-browser-select, */
+.view--sb .grid.was-checked .button--select,
+.view--sb .is-checked:hover .media::after {
+  display: none;
+}
+
+/** Twitter, etc. has inline CSS with visibility, hence !important. */
+.sb.view--sb .media__thumbnail,
+.sb.view--sb-list .media--list > * {
+  display: none !important; /* csslint allow: known-properties, important */
+}
+
+.sb.view--sb-list .media--list > .visible-list {
+  display: block !important; /* csslint allow: known-properties, important */
+  padding: 0;
+}
+
+.sb.view--sb-list .views-field--name {
+  min-width: 210px;
+}
+
+.view--sb-list .views-field {
+  min-height: 22px !important; /* csslint allow: known-properties, important */
+}
+
+.view--sb-list .view-content .grid__content {
+  padding: 5px;
+}
+
+.view--sb .view-list--header {
+  display: none;
+}
+
+@media (min-width: 680px) {
+  .sb.view--sb-list .grid {
+    display: inline-block;
+    vertical-align: top;
+    width: 49.9999%;
+  }
+
+  .sb.view--sb .view-list--header {
+    display: none;
+  }
+}
+
+@media (min-width:768px) {
+  .sb.view--sb-list .grid {
+    width: 100%;
+  }
+
+  .view--sb-list .view-content .grid__content {
+    padding: 0;
+  }
+
+  .sb.view--sb-list .views-field--preview {
+    margin-right: 0;
+  }
+
+  .sb.view--sb-list .grid {
+    display: table;
+    table-layout: fixed;
+  }
+
+  .sb.view--sb-list .grid__content {
+    display: table-row;
+    padding: 0;
+  }
+
+  .sb.view--sb-list .visible-list,
+  .sb.view--sb-list .views-field {
+    display: table-cell;
+    padding: 5px;
+  }
+
+  .sb.view--sb-list .view-list--header .views-field--preview {
+    padding-left: 15px;
+  }
+
+  /** Prevents broken vertical slick with irregular heights within table view. */
+  .sb.view--sb-list .views-field .media {
+    height: 62px;
+    /* Even if unholy */
+    padding-bottom: 0 !important; /* csslint allow: known-properties, important */
+  }
+
+  /** Consider using object-fit rather than aspect ratio when widely supported. */
+  .sb.view--sb-list .views-field img {
+    object-fit: cover;
+  }
+
+  .view--sb-list .view-content .views-field {
+    min-height: 64px !important; /* csslint allow: known-properties, important */
+  }
+
+  .view--sb-list .view-list--header .views-field {
+    min-height: 32px !important; /* csslint allow: known-properties, important */
+  }
+}

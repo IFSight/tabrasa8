@@ -1,0 +1,88 @@
+langcode: und
+status: true
+dependencies:
+  config:
+    - media.type.image
+    - views.view.slick_browser_media
+  enforced:
+    module:
+      - slick_browser
+  module:
+    - dropzonejs_eb_widget
+    - entity_browser_entity_form
+    - media
+    - slick_browser
+    - views
+name: slick_browser_media_modal_dz
+label: 'Slick Browser: Media Modal Dropzone'
+display: modal
+display_configuration:
+  width: '1280'
+  height: '640'
+  link_text: 'Media Library'
+  auto_open: false
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: media
+  display: slick_browser_media
+  display_settings:
+    image_style: slick_browser_thumbnail
+    view_mode: slick_browser
+    _context: selection
+    selection_position: right
+  select_text: 'Add to Page'
+  selection_hidden: false
+widget_selector: slick_browser_tabs
+widget_selector_configuration:
+  tabs_position: bottom
+  buttons_position: bottom
+widgets:
+  a670ec30-bc6c-4120-8536-68918fc54fd9:
+    settings:
+      entity_type: media
+      bundle: image
+      form_mode: default
+      submit_text: 'Save entity'
+    uuid: a670ec30-bc6c-4120-8536-68918fc54fd9
+    weight: -9
+    label: 'Add Image'
+    id: entity_form
+  8c6c7fb3-b9ac-448a-8be7-83f1d6f0bcea:
+    settings:
+      entity_type: media
+      bundle: video
+      form_mode: default
+      submit_text: 'Save entity'
+    uuid: 8c6c7fb3-b9ac-448a-8be7-83f1d6f0bcea
+    weight: -8
+    label: 'Add Video'
+    id: entity_form
+  7144ddca-762c-41d5-99af-9d4a81e2bb51:
+    settings:
+      view: slick_browser_media
+      view_display: slick_browser_media_scaled
+      submit_text: 'Select entities'
+      auto_select: false
+    uuid: 7144ddca-762c-41d5-99af-9d4a81e2bb51
+    weight: -10
+    label: 'Media Library'
+    id: view
+  e626a7f8-4391-493e-a94e-3e86e4a303d1:
+    settings:
+      media_type: image
+      upload_location: 'public://[date:custom:Y]-[date:custom:m]'
+      dropzone_description: 'Drop files here to upload them'
+      max_filesize: 1024M
+      extensions: 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'
+      clientside_resize: false
+      resize_width: null
+      resize_height: null
+      resize_quality: !!float 1
+      resize_method: contain
+      thumbnail_method: contain
+      submit_text: 'Select entities'
+      auto_select: false
+    uuid: e626a7f8-4391-493e-a94e-3e86e4a303d1
+    weight: -7
+    label: 'Upload images'
+    id: dropzonejs_media_entity

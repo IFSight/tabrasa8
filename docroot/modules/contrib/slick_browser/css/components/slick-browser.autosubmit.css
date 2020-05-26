@@ -1,0 +1,101 @@
+/**
+ * @file
+ */
+
+.view--sb .sb__autosubmit {
+  overflow: hidden;
+  position: relative;
+}
+
+.sb__autosubmit .sb__radios.form-wrapper {
+  clear: both;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+/* Seven vs. Claro. */
+.sb__radios .form-radios .form-item {
+  display: inline-block;
+  line-height: 36px;
+  margin: 1px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  vertical-align: top;
+}
+
+.sb__radios legend,
+.sb__radios .form-radios input {
+  opacity: 0;
+  position: absolute;
+  visibility: hidden;
+  /* Claro */
+  transform: none;
+  margin: 0;
+  top: 0;
+}
+
+.sb__radios legend {
+  display: none;
+}
+
+.sb__radios .form-radios .form-item input {
+  height: 100%;
+  width: 100%;
+}
+
+.sb__radios .form-radios .form-item label {
+  background: #f0f0f0;
+  padding: .5rem 1rem;
+}
+
+.sb__radios .form-radios .form-item input:checked ~ label {
+  background: #ff6d2c;
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .sb__autosubmit .sb__radios.form-wrapper {
+    left: 0;
+    background: #f0f0f0;
+    margin: 0;
+    padding: 5px 2rem;
+  }
+
+  .sb .preview-section .sb__radios.form-wrapper {
+    margin: 1rem 0;
+  }
+
+  /* Limit when form is available to not disturn Views preview. */
+  .form--sb .sb__autosubmit .sb__radios.form-wrapper,
+  .form--sb.form--selection-bottom.form--selection-h .sb__autosubmit .sb__radios.form-wrapper {
+    bottom: auto;
+    top: 46px;
+    position: fixed;
+  }
+
+  .form--buttons-bottom.form--tabs-v .sb__autosubmit .sb__radios.form-wrapper,
+  .form--sb.form--buttons-bottom.form--tabs-bottom .sb__autosubmit .sb__radios.form-wrapper {
+    top: 0;
+  }
+
+  .form--buttons-top.form--tabs-top .sb__autosubmit .sb__radios.form-wrapper {
+    bottom: 0;
+    top: auto;
+  }
+
+  .form--sb .sb__autosubmit .sb__radios.form-wrapper input,
+  .form--sb.form--selection-bottom.form--selection-h .sb__autosubmit .sb__radios.form-wrapper input {
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 0;
+  }
+
+  .sb__radios.form-wrapper > div {
+    margin: 0;
+    padding: 0;
+  }
+}

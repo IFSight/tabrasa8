@@ -1,0 +1,21 @@
+name: Slick Browser
+type: module
+description: Provides a Slick Entity Browser integration.
+core_version_requirement: ^8.8 || ^9
+package: Slick
+dependencies:
+  - drupal:views
+  - entity_browser:entity_browser (>= 2.x)
+  - slick:slick (>= 2.x)
+
+test_dependencies:
+  - inline_entity_form:inline_entity_form
+  - entity_browser:entity_browser_entity_form
+
+# Add a fake version so local drush and Git checkouts do not fail dependencies.
+# version: 8.x-2.x
+
+# Information added by Drupal.org packaging script on 2020-05-10
+version: '8.x-2.1'
+project: 'slick_browser'
+datestamp: 1589115377

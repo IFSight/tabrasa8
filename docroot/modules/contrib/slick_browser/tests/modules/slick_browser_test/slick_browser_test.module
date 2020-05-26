@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Testing various Slick Browser hooks, etc.
+ */
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function slick_browser_test_library_info_alter(array &$libraries, $extension) {
+  if ($extension === 'slick') {
+    $path = \Drupal::root() . '/libraries/slick/slick/slick.min.js';
+    if (!is_file($path)) {
+      $libraries['slick']['js'] = ['https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js' => ['type' => 'external', 'weight' => -4]];
+      unset($libraries['slick']['js']['/libraries/slick/slick/slick.min.js']);
+    }
+  }
+}

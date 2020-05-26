@@ -1,0 +1,131 @@
+/**
+ * @file
+ */
+
+.form--buttons-top .sb__header,
+.form--tabs-top .eb-tabs {
+  bottom: auto;
+  top: 0;
+}
+
+.form--tabs-top .sb__header .eb-tabs {
+  top: 5px;
+}
+
+.form--tabs-bottom .eb-tabs {
+  bottom: 4px;
+  top: auto;
+}
+
+/** Tabs remove border to allow vertical tabs. */
+.form--tabs .eb-tabs ul,
+.form--tabs .eb-tabs ul li {
+  border: 0;
+}
+
+.form--tabs-h .eb-tabs {
+  background-color: #e6e5e1;
+}
+
+.form--tabs-h .eb-tabs ul li.active {
+  background: #fff;
+}
+
+.form--tabs-top.form--media-bundle-selection .eb-tabs ul li.active {
+  background: #f0f0f0;
+}
+
+.form--tabs-v .eb-tabs ul li.active {
+  border-bottom: 1px solid #444;
+}
+
+.form--tabs .eb-tabs ul li a {
+  padding: 8px 1em;
+  text-decoration: none; /* Claro */
+}
+
+.form--buttons-bottom.form--tabs-bottom .views-exposed-form.views-exposed-form {
+  margin-top: 0;
+}
+
+.is-sb-empty .is-btn-hidden {
+  display: none;
+}
+
+.sb__header .button {
+  margin: 0;
+}
+
+/** Ajaxified Add to Page */
+.sb__header input {
+  margin: 0;
+  padding: 6px 15px 7px;
+  position: relative;
+}
+
+.sb__header > .entity-browser-use-selected.is-btn-hidden {
+  right: 72px;
+}
+
+@media (min-width: 640px) {
+  .form--tabs .sb__header .eb-tabs {
+    float: left;
+    width: auto;
+  }
+
+  .form--tabs .sb__footer .eb-tabs {
+    width: 100%;
+  }
+
+  .form--tabs-v.form--tabs-right .eb-tabs {
+    left: auto;
+    right: 0;
+  }
+
+  .form--buttons-top.form--tabs-bottom .eb-tabs {
+    bottom: 0;
+  }
+
+  .form--buttons-bottom .sb__header {
+    bottom: 0;
+    top: auto;
+  }
+
+  .form--buttons-top .sb__header > div {
+    bottom: auto;
+    top: 4px;
+  }
+}
+
+@media (min-width: 768px) {
+  .form--tabs-v .eb-tabs ul li {
+    display: block;
+  }
+
+  /* Not expected! Tabs is opposite of selection /sb__footer. */
+  .form--tabs-left.form--selection-right .eb-tabs,
+  .form--tabs-right.form--selection-left .eb-tabs {
+    top: 64px;
+    width: 180px;
+  }
+
+  .form--tabs-left.form--selection-right > .sb,
+  .form--tabs-left.form--selection-right > .sb__main {
+    padding-left: 210px;
+  }
+
+  .form--tabs-left.form--selection-right .slick--browser:first-child .slick-dots {
+    left: 190px;
+    right: auto;
+  }
+
+  .form--tabs-right.form--selection-left > .sb,
+  .form--tabs-right.form--selection-left > .sb__main {
+    padding-right: 210px;
+  }
+
+  .form--tabs-right.form--selection-left .slick--browser:first-child .slick-dots {
+    left: auto;
+    right: 190px;
+  }
+}

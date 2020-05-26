@@ -1,0 +1,64 @@
+{#
+/**
+ * @file
+ * Theme override for a slick vanilla containing main preview and thumbnail.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - item: Render elements of the image browser.
+ * - settings: The available settings.
+ *
+ * @see template_preprocess_slick_vanilla__browser()
+ */
+#}
+{%
+  set classes = [
+    'slick__slide slide slide--vanilla slide--' ~ delta,
+    item.preview and settings.layout ? 'slide--caption--' ~ settings.layout|clean_class,
+    settings.entity_type_id is defined ? 'is-' ~ settings.entity_type_id|clean_class,
+    settings.bundle is defined ? 'is-' ~ settings.bundle|clean_class,
+    settings.field_type is defined ? 'is-' ~ settings.field_type|clean_class,
+    settings.current_item != 'thumbnail' ? 'js-form-managed-file', 'form-managed-file',
+  ]
+%}
+{% set preview %}
+  {% if item.image_crop is defined %}
+    <div class="sb__crop">
+      {{ item.image_crop }}
+    </div>
+  {% endif %}
+
+  <div class="sb__preview">
+    {{ item.preview }}
+    {{ item.label }}
+  </div>
+
+  {% if item.meta is not empty %}
+    <div class="sb__caption">
+      {{ item.meta }}
+    </div>
+  {% endif %}
+
+  {% if item.action %}
+    <div class="sb__action button-group button-group--icon">
+      {{ item.action }}
+    </div>
+  {% endif %}
+{% endset %}
+
+{% if settings.current_item == 'main' %}<div{{ attributes.addClass(classes) }}>{% endif %}
+  {% if item.preview or item.label %}
+    {% block slick_browser_preview %}
+      {% if settings.current_item == 'main' %}
+        <div class="sb__content clearfix">{{ preview }}</div>
+      {% else %}
+        {{ preview }}
+      {% endif %}
+    {% endblock %}
+  {% endif %}
+
+  {% block slick_browser_extra %}
+    {{ item|without('image_crop', 'preview', 'meta', 'action', 'label') }}
+  {% endblock %}
+
+{% if settings.current_item == 'main' %}</div>{% endif %}

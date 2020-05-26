@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+id: grid_browser_v
+name: grid_browser_v
+label: 'Grid Browser: Vertical'
+weight: -5
+group: main
+skin: sb-grid
+breakpoints: 0
+optimized: true
+options:
+  options__active_tab: edit-options-settings
+  settings:
+    dots: true
+    lazyLoad: blazy
+    slidesToShow: 1
+    swipeToSlide: true
+    vertical: true
+    verticalSwiping: true

@@ -1,0 +1,14 @@
+{% extends "@slick/slick-grid.html.twig" %}
+{#
+/**
+ * @file
+ * Theme override for slick grid.
+ */
+#}
+{%
+  set classes = [
+    'sb__grid',
+    'column' or 'grid' in settings.style ? 'sb__sortable',
+  ]
+%}
+{% set attributes = attributes.addClass(classes) %}

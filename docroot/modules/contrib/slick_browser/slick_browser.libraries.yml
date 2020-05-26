@@ -1,0 +1,109 @@
+admin:
+  css:
+    theme:
+      css/slick-browser.admin.css: {}
+  dependencies:
+    - blazy/admin
+
+common:
+  js:
+    js/slick-browser.common.min.js: { minified: true }
+  css:
+    base:
+      css/slick-browser.common.css: {}
+    layout:
+      css/slick-browser.module.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - blazy/load
+
+modal:
+  js:
+    js/slick-browser.modal.min.js: { minified: true }
+  css:
+    component:
+      css/components/slick-browser.modal.css: {}
+  dependencies:
+    - entity_browser/modal
+    - entity_browser/iframe
+    - blazy/loading
+
+form:
+  js:
+    js/slick-browser.form.min.js: { minified: true }
+  css:
+    component:
+      css/components/slick-browser.form.css: {}
+      css/components/slick-browser.selection.css: {}
+  dependencies:
+    - entity_browser/iframe
+    - slick_browser/common
+    - slick_browser/view
+
+media:
+  js:
+    js/slick-browser.media.min.js: { minified: true }
+  css:
+    component:
+      css/components/slick-browser.media.css: {}
+  dependencies:
+    - blazy/media
+    - slick_browser/common
+
+tabs:
+  js:
+    js/slick-browser.tabs.min.js: { minified: true }
+  css:
+    component:
+      css/components/slick-browser.tabs.css: {}
+  dependencies:
+    - entity_browser/tabs
+    - slick_browser/form
+
+slick:
+  css:
+    component:
+      css/components/slick-browser.grid.css: {}
+      css/components/slick-browser.slick.css: {}
+  dependencies:
+    - slick/slick.load
+
+autosubmit:
+  js:
+    js/slick-browser.autosubmit.min.js: { minified: true }
+  css:
+    component:
+      css/components/slick-browser.autosubmit.css: {}
+
+view:
+  js:
+    # Run before slick.load to react on slick events correctly.
+    js/slick-browser.view.min.js: { minified: true, weight: -0.01 }
+  css:
+    component:
+      css/components/slick-browser.view.css: {}
+      css/components/slick-browser.gridinfo.css: {}
+  dependencies:
+    - slick_browser/common
+    - slick_browser/slick
+
+viewswitch:
+  js:
+    js/slick-browser.viewswitch.min.js: { minified: true }
+  css:
+    component:
+      css/components/slick-browser.viewswitch.css: {}
+  dependencies:
+    - slick_browser/view
+
+widget:
+  js:
+    js/slick-browser.widget.min.js: { minified: true }
+  css:
+    component:
+      css/components/slick-browser.widget.css: {}
+  dependencies:
+    - core/sortable
+    - slick_browser/media
