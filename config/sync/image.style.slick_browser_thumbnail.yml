@@ -1,0 +1,20 @@
+uuid: 8c8f9575-696b-4734-bc01-6b7931a00364
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+_core:
+  default_config_hash: 0PeXu1LXYUhw9BeWU7UARuz1wNAVXtS6tG4KD7Bd5Yg
+name: slick_browser_thumbnail
+label: 'Slick Browser Thumbnail'
+effects:
+  07645033-37c0-4bca-9d59-52b40de3aae0:
+    uuid: 07645033-37c0-4bca-9d59-52b40de3aae0
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 120
+      height: 90
+      anchor: center-center

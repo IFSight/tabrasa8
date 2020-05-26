@@ -1,0 +1,20 @@
+uuid: 206b0e21-6ed3-41fc-9255-df956d8cde0d
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+_core:
+  default_config_hash: E786LmJz2dVgWKBI3purI7p5uU4GztMbcfRYOqpvkW4
+name: slick_browser_preview
+label: 'Slick Browser Preview'
+effects:
+  7e4902dd-0a6a-4ab8-b7ce-190193e3bf32:
+    uuid: 7e4902dd-0a6a-4ab8-b7ce-190193e3bf32
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 640
+      height: 360
+      anchor: center-center

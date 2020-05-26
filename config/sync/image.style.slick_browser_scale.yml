@@ -1,0 +1,20 @@
+uuid: 92f96fc2-8321-4017-be67-541224ba9972
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+_core:
+  default_config_hash: WMyVwTLhEjbSbHJtNNkTwZJUeXGYqEkfqmyH7LE73zE
+name: slick_browser_scale
+label: 'Slick Browser Scale'
+effects:
+  a52330fc-3e58-4a3a-b283-43711584f1a6:
+    uuid: a52330fc-3e58-4a3a-b283-43711584f1a6
+    id: image_scale
+    weight: 1
+    data:
+      width: 320
+      height: null
+      upscale: false

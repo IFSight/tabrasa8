@@ -1,0 +1,15 @@
+uuid: a931fa92-eb6f-496d-a09a-654f246adf41
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+  module:
+    - media
+_core:
+  default_config_hash: jaofPakt6gWDZeSAlJqndlQLwOT1-D_mnh9JgIAX1FM
+id: media.slick_browser
+label: 'Slick Browser'
+targetEntityType: media
+cache: true
