@@ -1,0 +1,392 @@
+/**
+ * @file
+ */
+
+.sb--widget {
+  background-color: #e6e5e1;
+  min-height: 160px;
+  overflow: hidden;
+}
+
+.is-sb-sort {
+  min-height: 320px;
+}
+
+.is-sb-removeall {
+  min-height: 1px;
+}
+
+.sb--widget.is-sb-empty {
+  background-color: transparent;
+  min-height: 1px;
+}
+
+.sb--widget img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  pointer-events: auto;
+  width: 100%;
+}
+
+.sb--widget .slick-list {
+  -webkit-transition: top 0.6s ease-out 0.8s, height 0.5s linear 0s;
+  transition: top 0.6s ease-out 0.8s, height 0.5s linear 0s;
+}
+
+.sb--widget .grid__content,
+.sb--widget .sb__content {
+  min-height: 62px;
+}
+
+.sb--widget .grid .grid__content {
+  border: 2px dashed #eee;
+}
+
+.sb--widget .grid:hover .grid__content {
+  border-color: #999;
+}
+
+.sb--widget .grid:hover .grid__content:hover {
+  border-color: #ff6d2c;
+}
+
+.sb__sortitem {
+  cursor: move;
+  -webkit-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+}
+
+.sb__placeholder {
+  border: 1px dotted #999;
+  background-color: #ff6d2c;
+  opacity: .8;
+}
+
+.sb .sb__placeholder.grid {
+  margin-left: 0.625rem;
+  padding: 0;
+}
+
+.sb .sb__action {
+  border: 0;
+  bottom: 0;
+  min-height: 32px;
+  position: absolute;
+  right: 0;
+  width: 100%;
+}
+
+.sb .sb__action .button-wrap {
+  width: 32px;
+}
+
+.sb .sb__action .form-select {
+  min-height: 24px;
+}
+
+.sb.is-sb-single .sb__action {
+  bottom: auto;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+.is-sb-single .sb__action .button-wrap {
+  display: inline-block;
+  left: auto;
+  right: auto;
+  position: relative;
+  vertical-align: top;
+}
+
+.sb .vertical-tabs {
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+}
+
+.sb > .details-wrapper {
+  padding: 0;
+  margin: 0; /* Claro */
+}
+
+/**
+ * Sortable.
+ */
+.sb .sb__sortlist {
+  height: 100%;
+  left: 0;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.sb .sb__sortlist {
+  top: 42px;
+}
+
+.sb .sb__sortlist .sb__sortable {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  margin: 0;
+  padding: 42px 14px;
+  width: 100%;
+}
+
+.sb .sb__sortlist .sb__sortable .sb__sortitem,
+.sb .sb__sortlist .sb__sortable .sb__placeholder {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  border: 1px solid #fff;
+  list-style: none;
+  display: inline-block;
+  margin: 4px;
+  height: 64px;
+  width: 112px;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  vertical-align: top;
+}
+
+.sb .sb__sortlist .sb__sortable .sb__sortitem img {
+  object-fit: cover;
+}
+
+.sb .sb__sortlist .sb__sortable .sb__placeholder {
+  border-style: dotted;
+  background-color: #ff6d2c;
+  opacity: .8;
+}
+
+.sb .form-type-managed-file {
+  background-color: #fff;
+  margin: 0;
+  padding: 14px 0;
+}
+
+/**
+ * Visibility.
+ */
+.sb .sb__sortlist {
+  background: #000;
+  background: rgba(0, 0, 0, .9);
+}
+
+.sb__display {
+  padding: 1rem;
+}
+
+.is-sb-empty .sb__display {
+  padding: 0;
+}
+
+.is-sb-grid .sb__display,
+.is-sb-column .sb__display {
+  /** Trigger CSS3 Columns layout. */
+  padding-bottom: 1px;
+}
+
+.sb--widget .sb__caption,
+.sb .button--done,
+.sb .sb__sortlist,
+.sb.is-sb-sort .sb__caption,
+.sb.is-sb-sort .sb__header .button,
+.sb.is-sb-1 .button--caption,
+.sb.is-sb-sort .button--sort,
+.sb.is-sb-sort .slick__arrow,
+.sb.is-sb-sort .sb__display,
+.sb.is-sb-caption .slick-wrapper--tn-overlay .slick--thumbnail {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  visibility: hidden;
+  z-index: -11;
+}
+
+/* .sb--widget .grid .sb__caption, */
+.sb.is-sb-sort .sb__header .button.button--done,
+.sb.is-sb-caption .sb__caption {
+  opacity: 1;
+  position: relative;
+  visibility: visible;
+  z-index: 23;
+}
+
+.sb.is-sb-sort,
+.sb.is-sb-sort .slick {
+  overflow: hidden;
+}
+
+.sb .sb__caption {
+  text-align: center;
+}
+
+.sb .sb__caption .form-item {
+  margin: 5px 0; /* Claro */
+  text-align: left;
+}
+
+.sb.is-sb-1 .sb__caption {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  background-color: rgba(0, 0, 0, 0.8);
+  height: 100%;
+  left: 0;
+  max-width: 210px;
+  opacity: 1;
+  padding: 15px;
+  position: absolute;
+  top: 0;
+  visibility: visible;
+}
+
+.sb.is-sb-1 .sb__caption label,
+.sb.is-sb-1 .sb__caption .description {
+  color: #fff;
+}
+
+.sb .sb__caption .description {
+  font-size: 11px;
+}
+
+.sb--widget .sb__preview {
+  padding-bottom: 0;
+}
+
+.sb .slick--widget .sb__preview {
+  min-height: 40px;
+}
+
+.sb__upload .sb__caption img {
+  width: auto;
+}
+
+.sb .is-sb-file:not(.is-sb-text) .sb__caption {
+  background-color: transparent;
+}
+
+.sb .sb__label {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  background: rgba(255, 255, 255, .8);
+  bottom: 0;
+  display: block;
+  font-size: 14px;
+  font-weight: 300;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  padding: 5px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/**
+ * Entity browser.
+ */
+.sb--widget .slick__slide.item-container {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.sb .slick--wrapper {
+  min-height: 210px;
+}
+
+.sb .sb__display .slick--widget {
+  padding-bottom: 32px;
+}
+
+.slick-browser-rendered-entity .sb__preview,
+.slick-browser-label .sb__preview {
+  padding: 15px;
+}
+
+.slick-browser-rendered-entity figure,
+.slick-browser-rendered-entity iframe,
+.slick-browser-label figure,
+.slick-browser-label iframe {
+  height: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sb--wrapper-modal > .details-wrapper > p {
+  padding-left: 15px;
+}
+
+@media (min-width: 64em) {
+  .is-sb-grid .sb__display,
+  .is-sb-column .sb__display {
+    padding: 15px; /* Claro */
+  }
+
+  .sb.is-sb-1 .sb__caption {
+    position: absolute;
+  }
+
+  .slick-wrapper {
+    overflow: hidden;
+  }
+
+  .sb .sb__display .slick--widget {
+    padding-bottom: 0;
+  }
+
+  .slick-wrapper--tn-left .slick--thumbnail {
+    float: left;
+    left: 0;
+    width: 20%;
+  }
+
+  .slick-wrapper--tn-left .slick--main {
+    margin-left: 20%;
+  }
+
+  .slick-wrapper--tn-right .slick--thumbnail {
+    float: right;
+    right: 0;
+    width: 20%;
+  }
+
+  .slick-wrapper--tn-right .slick--main {
+    margin-right: 20%;
+  }
+
+  .slick-wrapper--tn-overlay .slick--main {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .slick-wrapper--tn-overlay .slick--thumbnail {
+    height: 100%;
+    max-height: 90%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    z-index: 9;
+  }
+
+  .slick-wrapper--tn-over-top .slick--thumbnail {
+    height: auto;
+    max-height: none;
+    width: 100%;
+  }
+
+  div[class*="slick-wrapper--tn"] .slick__slider::after {
+    clear: none;
+  }
+
+  .no-touchevents .sb__display .sb__action {
+    visibility: hidden;
+  }
+
+  .no-touchevents .is-sb-single .sb__display .sb__action,
+  .no-touchevents .sb__display:hover .sb__action {
+    visibility: visible;
+  }
+}

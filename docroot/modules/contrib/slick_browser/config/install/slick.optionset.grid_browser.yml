@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+id: grid_browser
+name: grid_browser
+label: 'Grid Browser'
+weight: -5
+group: main
+skin: sb-grid
+breakpoints: 0
+optimized: true
+options:
+  options__active_tab: edit-options-settings
+  settings:
+    adaptiveHeight: true
+    dots: true
+    lazyLoad: blazy
+    slidesToShow: 1
+    swipeToSlide: true

@@ -26,13 +26,16 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\media\MediaInterface;
 use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * Twig extension with some useful functions and filters.
  *
  * Dependencies are not injected for performance reason.
  */
-class TwigExtension extends \Twig_Extension {
+class TwigExtension extends AbstractExtension {
 
   /**
    * {@inheritdoc}
@@ -47,14 +50,14 @@ class TwigExtension extends \Twig_Extension {
       // @code
       //   {{ drupal_view('who_s_new', 'block_1') }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_view', 'views_embed_view'),
+      new TwigFunction('drupal_view', 'views_embed_view'),
 
       // - Drupal View Result -
       //
       // @code
       //   {{ drupal_view('who_s_new', 'block_1') }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_view_result', 'views_get_view_result'),
+      new TwigFunction('drupal_view_result', 'views_get_view_result'),
 
       // - Drupal Block -
       //
@@ -76,7 +79,7 @@ class TwigExtension extends \Twig_Extension {
       // @endcode
       //
       // @see https://www.drupal.org/node/2964457#block-plugin
-      new \Twig_SimpleFunction('drupal_block', [$this, 'drupalBlock']),
+      new TwigFunction('drupal_block', [$this, 'drupalBlock']),
 
       // - Drupal Region -
       //
@@ -87,7 +90,7 @@ class TwigExtension extends \Twig_Extension {
       //   {# Print 'Sidebar First' region of Bartik theme. #}
       //   {{ drupal_region('sidebar_first', 'bartik') }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_region', [$this, 'drupalRegion']),
+      new TwigFunction('drupal_region', [$this, 'drupalRegion']),
 
       // - Drupal Entity -
       //
@@ -102,7 +105,7 @@ class TwigExtension extends \Twig_Extension {
       //   {# admin/structure/block page. #}
       //   {{ drupal_entity('block', 'bartik_branding', check_access=false) }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_entity', [$this, 'drupalEntity']),
+      new TwigFunction('drupal_entity', [$this, 'drupalEntity']),
 
       // - Drupal Entity Form -
       //
@@ -116,7 +119,7 @@ class TwigExtension extends \Twig_Extension {
       //   {# Print user register form. #}
       //   {{ drupal_entity_form('user', NULL, 'register', check_access=false) }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_entity_form', [$this, 'drupalEntityForm']),
+      new TwigFunction('drupal_entity_form', [$this, 'drupalEntityForm']),
 
       // - Drupal Field -
       //
@@ -125,21 +128,21 @@ class TwigExtension extends \Twig_Extension {
       //   {{ drupal_field('field_image', 'node', 1, 'teaser') }}
       //   {{ drupal_field('field_image', 'node', 1, {type: 'image_url', settings: {image_style: 'large'}}) }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_field', [$this, 'drupalField']),
+      new TwigFunction('drupal_field', [$this, 'drupalField']),
 
       // - Drupal Menu -
       //
       // @code
       //   {{ drupal_menu('main') }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_menu', [$this, 'drupalMenu']),
+      new TwigFunction('drupal_menu', [$this, 'drupalMenu']),
 
       // - Drupal Form -
       //
       // @code
       //   {{ drupal_form('Drupal\\search\\Form\\SearchBlockForm') }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_form', [$this, 'drupalForm']),
+      new TwigFunction('drupal_form', [$this, 'drupalForm']),
 
       // - Drupal Image -
       //
@@ -159,21 +162,21 @@ class TwigExtension extends \Twig_Extension {
       //   {# Render responsive image. #}
       //   {{ drupal_image('public://ocean.jpg', 'wide', responsive=true) }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_image', [$this, 'drupalImage']),
+      new TwigFunction('drupal_image', [$this, 'drupalImage']),
 
       // - Drupal Token -
       //
       // @code
       //   {{ drupal_token('site:name') }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_token', [$this, 'drupalToken']),
+      new TwigFunction('drupal_token', [$this, 'drupalToken']),
 
       // - Drupal Config -
       //
       // @code
       //   {{ drupal_config('system.site', 'name') }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_config', [$this, 'drupalConfig']),
+      new TwigFunction('drupal_config', [$this, 'drupalConfig']),
 
       // - Drupal Dump -
       //
@@ -187,11 +190,11 @@ class TwigExtension extends \Twig_Extension {
       //   {# Dump all available variables for the current template. #}
       //   {{ dd() }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_dump', [$this, 'drupalDump'], $context_options),
-      new \Twig_SimpleFunction('dd', [$this, 'drupalDump'], $context_options),
+      new TwigFunction('drupal_dump', [$this, 'drupalDump'], $context_options),
+      new TwigFunction('dd', [$this, 'drupalDump'], $context_options),
 
       // - Drupal Title -
-      new \Twig_SimpleFunction('drupal_title', [$this, 'drupalTitle']),
+      new TwigFunction('drupal_title', [$this, 'drupalTitle']),
 
       // - Drupal URL -
       //
@@ -202,7 +205,7 @@ class TwigExtension extends \Twig_Extension {
       //   {# Complex URL. #}
       //   {{ drupal_url('node/1', {query: {foo: 'bar'}, fragment: 'example', absolute: true}) }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_url', [$this, 'drupalUrl']),
+      new TwigFunction('drupal_url', [$this, 'drupalUrl']),
 
       // - Drupal Link -
       //
@@ -213,16 +216,16 @@ class TwigExtension extends \Twig_Extension {
       //   {# This link will only be shown for privileged users. #}
       //   {{ drupal_link('Example'|t, '/admin', check_access=true) }}
       // @endcode
-      new \Twig_SimpleFunction('drupal_link', [$this, 'drupalLink']),
+      new TwigFunction('drupal_link', [$this, 'drupalLink']),
 
       // - Drupal Messages -
-      new \Twig_SimpleFunction('drupal_messages', [$this, 'drupalMessages']),
+      new TwigFunction('drupal_messages', [$this, 'drupalMessages']),
 
       // - Drupal Breadcrumb -
-      new \Twig_SimpleFunction('drupal_breadcrumb', [$this, 'drupalBreadcrumb']),
+      new TwigFunction('drupal_breadcrumb', [$this, 'drupalBreadcrumb']),
 
       // - Drupal Breakpoint -
-      new \Twig_SimpleFunction('drupal_breakpoint', [$this, 'drupalBreakpoint'], $all_options),
+      new TwigFunction('drupal_breakpoint', [$this, 'drupalBreakpoint'], $all_options),
 
       // - Contextual Links -
       //
@@ -238,7 +241,7 @@ class TwigExtension extends \Twig_Extension {
       //     {{ content }}
       //   </div>
       // @endcode
-      new \Twig_SimpleFunction('contextual_links', [$this, 'contextualLinks']),
+      new TwigFunction('contextual_links', [$this, 'contextualLinks']),
     ];
   }
 
@@ -260,7 +263,7 @@ class TwigExtension extends \Twig_Extension {
       //     <div>[site:slogan]</div>
       //   {% endapply %}
       // @endcode
-      new \Twig_SimpleFilter('token_replace', [$this, 'tokenReplaceFilter']),
+      new TwigFilter('token_replace', [$this, 'tokenReplaceFilter']),
 
       // - Preg Replace -
       //
@@ -270,35 +273,42 @@ class TwigExtension extends \Twig_Extension {
       //
       // For simple string interpolation consider using built-in 'replace' or
       // 'format' Twig filters.
-      new \Twig_SimpleFilter('preg_replace', [$this, 'pregReplaceFilter']),
+      new TwigFilter('preg_replace', [$this, 'pregReplaceFilter']),
 
       // - Image Style -
       //
       // @code
       //  {{ 'public://images/ocean.jpg'|image_style('thumbnail') }}
       // @endcode
-      new \Twig_SimpleFilter('image_style', [$this, 'imageStyle']),
+      new TwigFilter('image_style', [$this, 'imageStyle']),
 
       // - Transliterate -
       //
       // @code
       //   {{ 'Привет!'|transliterate }}
       // @endcode
-      new \Twig_SimpleFilter('transliterate', [$this, 'transliterate']),
+      new TwigFilter('transliterate', [$this, 'transliterate']),
 
       // - Check Markup -
       //
       // @code
       //   {{ '<b>bold</b> <strong>strong</strong>'|check_markup('restricted_html') }}
       // @endcode
-      new \Twig_SimpleFilter('check_markup', [$this, 'checkMarkup']),
+      new TwigFilter('check_markup', [$this, 'checkMarkup']),
+
+      // - Format Size -
+      //
+      // @code
+      //   {{ 12345|format_size() }}
+      // @endcode
+      new TwigFilter('format_size', 'format_size'),
 
       // - Truncate -
       //
       // @code
       //   {{ 'Some long text'|truncate(10, true) }}
       // @endcode
-      new \Twig_SimpleFilter('truncate', [$this, 'truncate']),
+      new TwigFilter('truncate', [$this, 'truncate']),
 
       // - View -
       //
@@ -312,7 +322,7 @@ class TwigExtension extends \Twig_Extension {
       //   {{ node.field_image|view('teaser') }}
       //   {{ node.field_image|view({settings: {image_style: 'thumbnail'}}) }}
       // @endcode
-      new \Twig_SimpleFilter('view', [$this, 'view']),
+      new TwigFilter('view', [$this, 'view']),
 
       // - With -
       //
@@ -323,7 +333,7 @@ class TwigExtension extends \Twig_Extension {
       //   {# Set nested value. #}
       //   {{ content|with(['field_image', '#title'], 'Photo'|t) }}
       // @endcode
-      new \Twig_SimpleFilter('with', [$this, 'with']),
+      new TwigFilter('with', [$this, 'with']),
 
       // - Children -
       //
@@ -334,7 +344,34 @@ class TwigExtension extends \Twig_Extension {
       //     {% endfor %}
       //   </ul>
       // @endcode
-      new \Twig_SimpleFilter('children', [$this, 'children']),
+      new TwigFilter('children', [$this, 'children']),
+
+      // - File URI -
+      //
+      // When field item list passed the URI will be extracted from the first
+      // item. In order to get URI of specific item specify its delta explicitly
+      // using array notation.
+      // @code
+      //   {{ node.field_image|file_uri }}
+      //   {{ node.field_image[0]|file_uri }}
+      // @endcode
+      //
+      // Media fields are fully supported including OEmbed resources, in which
+      // case it will return the URL to the resource, similar to the `file_url`
+      // filter.
+      // @code
+      //   {{ node.field_media|file_uri }}
+      // @endcode
+      //
+      // Useful to apply the `image_style` filter to Media fields.
+      // Remember to check whether a URI is actually returned.
+      // @code
+      //   {% set media_uri = node.field_media|file_uri %}
+      //   {% if media_uri is not null %}
+      //     {{ media_uri|image_style('thumbnail') }}
+      //   {% endif %}
+      // @endcode
+      new TwigFilter('file_uri', [$this, 'fileUri']),
 
       // - File URL -
       //
@@ -355,7 +392,7 @@ class TwigExtension extends \Twig_Extension {
       // @code
       //   {{ node.field_media|file_url }}
       // @endcode
-      new \Twig_SimpleFilter('file_url', [$this, 'fileUrl']),
+      new TwigFilter('file_url', [$this, 'fileUrl']),
     ];
 
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -378,7 +415,7 @@ class TwigExtension extends \Twig_Extension {
       // @code
       //   {{ 'now'|date('Y') }}
       // @endcode
-      $filters[] = new \Twig_SimpleFilter('php', [$this, 'phpFilter']);
+      $filters[] = new TwigFilter('php', [$this, 'phpFilter'], ['needs_context' => TRUE]);
     }
     return $filters;
   }
@@ -622,10 +659,9 @@ class TwigExtension extends \Twig_Extension {
     }
 
     if ($entity) {
+      $entity = \Drupal::service('entity.repository')->getTranslationFromContext($entity, $langcode);
       $access = $check_access ? $entity->access('view', NULL, TRUE) : AccessResult::allowed();
       if ($access->isAllowed()) {
-        $entity = \Drupal::service('entity.repository')
-          ->getTranslationFromContext($entity, $langcode);
         if (isset($entity->{$field_name})) {
           $build = $entity->{$field_name}->view($view_mode);
           CacheableMetadata::createFromRenderArray($build)
@@ -1160,6 +1196,55 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
+   * Returns a URI to the file.
+   *
+   * @param object $input
+   *   An object that contains the URI.
+   *
+   * @return string|null
+   *   A URI that may be used to access the file.
+   */
+  public function fileUri($input) {
+    if ($input instanceof EntityReferenceFieldItemListInterface) {
+      $referenced_entities = $input->referencedEntities();
+      if (isset($referenced_entities[0])) {
+        return self::getUriFromEntity($referenced_entities[0]);
+      }
+    }
+    elseif ($input instanceof EntityReferenceItem) {
+      return self::getUriFromEntity($input->entity);
+    }
+    elseif ($input instanceof EntityInterface) {
+      return self::getUriFromEntity($input);
+    }
+  }
+
+  /**
+   * Extracts file URI from content entity.
+   *
+   * @param object $entity
+   *   Entity object that contains information about the file.
+   *
+   * @return string|null
+   *   A URI that may be used to access the file.
+   */
+  private static function getUriFromEntity($entity) {
+    if ($entity instanceof MediaInterface) {
+      $source = $entity->getSource();
+      $value = $source->getSourceFieldValue($entity);
+      if ($source instanceof OEmbedInterface) {
+        return $value;
+      }
+      elseif ($file = File::load($value)) {
+        return $file->getFileUri();
+      }
+    }
+    elseif ($entity instanceof FileInterface) {
+      return $entity->getFileUri();
+    }
+  }
+
+  /**
    * Returns a URL path to the file.
    *
    * @param string|object $input
@@ -1184,7 +1269,7 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Extracts file URL form content entity.
+   * Extracts file URL from content entity.
    *
    * @param object $entity
    *   Entity object that contains information about the file.
@@ -1211,17 +1296,20 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Evaluates a string of PHP code.
    *
+   * @param array $context
+   *   Twig context.
    * @param string $code
    *   Valid PHP code to be evaluated.
    *
    * @return mixed
    *   The eval() result.
    */
-  public function phpFilter($code) {
+  public function phpFilter(array $context, $code) {
+    // Make Twig variables available in PHP code.
+    extract($context);
     ob_start();
-    // @codingStandardsIgnoreStart
+    // phpcs:ignore Drupal.Functions.DiscouragedFunctions.Discouraged
     print eval($code);
-    // @codingStandardsIgnoreEnd
     $output = ob_get_contents();
     ob_end_clean();
     return $output;

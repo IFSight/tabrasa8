@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+name: slick_browser_grid
+label: 'Slick Browser Grid'
+effects:
+  6f8b1c61-6860-4a69-bca4-5d034f4531d4:
+    uuid: 6f8b1c61-6860-4a69-bca4-5d034f4531d4
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 280
+      height: 210
+      anchor: center-center

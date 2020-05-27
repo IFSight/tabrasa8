@@ -1,0 +1,30 @@
+{
+  "name": "drupal/slick_browser",
+  "description": "A Slick Entity Browser integration",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/slick_browser",
+  "authors": [
+    {
+      "name": "Gaus Surahman",
+      "homepage": "https://www.drupal.org/u/gausarts",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Contributors",
+      "homepage": "https://www.drupal.org/node/2823779/committers",
+      "role": "Contributor"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/slick_browser",
+    "source": "http://cgit.drupalcode.org/slick_browser"
+  },
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/entity_browser": "~2.0",
+    "drupal/slick": "~2.0"
+  },
+  "require-dev": {
+    "drupal/dropzonejs": "~2.0"
+  }
+}

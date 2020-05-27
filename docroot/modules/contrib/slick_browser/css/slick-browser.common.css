@@ -1,0 +1,401 @@
+/**
+ * @file
+ */
+
+/* csslint "box-sizing": true, "box-model": true, ids: true */
+.sb,
+.sb *,
+.sb *::before,
+.sb *::after {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+}
+
+.sb img,
+.sb iframe,
+.sb video {
+  display: block;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+.sb img {
+  height: auto;
+}
+
+.sb .item-selected {
+  cursor: move;
+}
+
+.sb .form-text {
+  cursor: text;
+}
+
+.sb .button,
+.button-wrap .button {
+  border-radius: 0;
+}
+
+/** Button groups. */
+.sb .button-group {
+  background-color: #e6e5e1;
+  border: 1px solid #a6a6a6;
+  overflow: hidden;
+  position: relative;
+}
+
+/**
+ * Actions.
+ */
+.sb__header {
+  background: #e6e5e1;
+  overflow: hidden;
+  padding: 4px;
+  position: relative;
+  text-align: center;
+}
+
+.is-sb-single .sb__header {
+  padding: 0;
+}
+
+.sb--widget.is-sb-empty .sb__header {
+  background: none;
+}
+
+/** Prevents blocking tabs click. */
+.form--sb .sb--wrapper-hidden .sb--widget.is-sb-empty .sb__header {
+  display: none;
+}
+
+.sb .sb__header > div,
+.sb .sb__header .button-group {
+  display: inline-block;
+  min-height: 32px;
+  margin: 0 0 0 4px;
+  position: relative;
+  vertical-align: top;
+  visibility: visible;
+  width: auto;
+}
+
+.sb .sb__action .form-item,
+.sb .sb__action .button {
+  clear: none;
+  display: inline-block;
+  vertical-align: top;
+  width: auto;
+}
+
+.sb .button-group .button,
+.ui-dialog-titlebar .button {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  height: 30px;
+  line-height: 1; /* Claro */
+  margin: 0;
+  /* Claro */
+  padding: 5px 1rem;
+}
+
+.sb .button-group .button {
+  border: 0;
+  float: left;
+  left: auto;
+  right: auto;
+  text-align: center;
+}
+
+.sb .button-group .button--view {
+  padding: 5px;
+}
+
+.sb--widget .sb__action .button {
+  background: #e6e5e1;
+}
+
+/** Button wrappers. */
+.sb .button-wrap {
+  bottom: 0;
+  color: #000;
+  display: block;
+  height: 32px;
+  line-height: 32px;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  text-indent: 0;
+  width: 32px;
+}
+
+.sb .button-wrap.button-group {
+  height: auto;
+  min-height: 32px;
+}
+
+.sb .button-wrap:hover {
+  color: #fff;
+}
+
+.sb .button-wrap .button {
+  border: 0;
+  bottom: 0;
+  font-size: 0;
+  height: 100%;
+  left: 0;
+  line-height: 14px;
+  margin: auto;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.sb .button-group .button,
+.sb .button-group.button-group--grid .button {
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+.sb .button-group--text .button {
+  width: 100%;
+}
+
+.sb .button-group.button-group--icon .button {
+  font-size: 0;
+  width: 36px;
+}
+
+.sb .button-wrap .button:hover {
+  background: #ff6d2c;
+  box-shadow: none;
+  color: #fff;
+}
+
+.sb .button-wrap.button-wrap--remove {
+  left: 0;
+  right: auto;
+}
+
+.sb .button-wrap.button-wrap--replace {
+  left: auto;
+  right: 36px;
+}
+
+/** File has no edit link. */
+.sb.is-sb-file .button-wrap.button-wrap--replace,
+.sb.is-sb-single .button-wrap.button-wrap--replace {
+  right: 0;
+}
+
+.sb .button-group .button--info {
+  left: auto;
+  right: 0;
+}
+
+.sb .button-wrap.button-wrap--show-selection {
+  bottom: auto;
+  height: 32px;
+  top: 0;
+  width: 32px;
+}
+
+.sb.form--buttons-bottom.form--tabs-bottom .button-wrap.button-wrap--show-selection {
+  bottom: 48px;
+  top: auto;
+}
+
+/*
+.form--tabs-top.form--selection-v .button-wrap.button-wrap--show-selection {
+  top: 40px;
+}
+*/
+
+.form--selection-bottom .button-wrap.button-wrap--show-selection {
+  top: -32px;
+}
+
+.form--selection-bottom.is-sb-collapsed .button-wrap.button-wrap--show-selection {
+  top: 0;
+}
+
+/** Icons. */
+.sb .button-wrap::before {
+  content: '';
+  display: inline-block;
+  font-size: 20px;
+  margin: auto;
+  pointer-events: none;
+  position: relative;
+}
+
+/** Bottom */
+.form--sb .button-wrap--show-selection::before {
+  content: '\25bc';
+  display: block;
+}
+
+.form--sb.is-sb-collapsed .button-wrap--show-selection::before {
+  content: '\25b2';
+}
+
+/** Left */
+.form--selection-v .button-wrap--show-selection::before {
+  height: 100%;
+  line-height: 26px;
+}
+
+.form--selection-left .button-wrap--show-selection::before {
+  content: '\25c0';
+}
+
+.form--selection-left.is-sb-collapsed .button-wrap--show-selection::before {
+  content: '\25b6';
+}
+
+/** Right */
+.form--selection-right .button-wrap--show-selection::before {
+  content: '\25b6';
+}
+
+.form--selection-right.is-sb-collapsed .button-wrap--show-selection::before {
+  content: '\25c0';
+}
+
+/** Remove */
+.sb .button-wrap--remove::before {
+  content: '\2717';
+}
+
+.sb .button-wrap--replace::before {
+  content: '\02194';
+}
+
+/** Grid */
+.sb .button-group--grid .button {
+  width: 32px;
+}
+
+.sb.view--sb .button-group--grid {
+  position: absolute;
+}
+
+.sb.view--sb.view--sb-list .button-group--grid {
+  display: none;
+}
+
+.sb .is-checked .button--select {
+  background: #ff6d2c;
+  color: #fff;
+}
+
+/** Edit */
+.sb .button-wrap--edit::before {
+  content: '\270F';
+  /* content: '\270E';
+  content: '\270D'; */
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.sb .item-container.label,
+.sb .item-container .views-field--selection {
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-dialog--sb .ajax-progress-throbber {
+  display: none;
+}
+
+.sb .media {
+  background-color: #f0f0f0;
+}
+
+/*
+ * Delete confirm.
+ */
+.button-wrap--confirm span {
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  font-size: 0;
+  height: 32px;
+  left: auto;
+  min-width: 32px;
+  right: 0;
+  position: absolute;
+  text-transform: uppercase;
+  top: 0;
+  width: 100%;
+}
+
+.button-wrap--confirm.is-open,
+.sb .sb__action .button-wrap.is-open,
+.sb .button-wrap--confirm.is-open .button {
+  width: 80px;
+}
+
+.button-wrap--confirm.is-open::before {
+  display: none;
+}
+
+.button-wrap--confirm.is-open .button--wrap__mask {
+  right: -100%;
+}
+
+.button-wrap--confirm .button--wrap__mask:hover,
+.button-wrap--confirm.is-open .button--wrap__confirm {
+  background-color: #ff6d2c;
+  color: #fff;
+  font-size: 14px;
+}
+
+.is-deleted .grid__content,
+.is-deleted .slide__content {
+  opacity: 0.6;
+}
+
+.sb__footer .item-container .button--wrap__mask {
+  background: #e6e5e1;
+}
+
+/** Overrides new core opacity as not good for button remove being dimmed out. */
+.sb__footer .entities-list .item-container:hover {
+  opacity: 1;
+}
+
+.sb .media--loading::before,
+.sb-body .media--loading::before,
+.form--sb .media--loading::before {
+  display: block;
+}
+
+.sb--widget {
+  min-height: 120px;
+}
+
+.sb--widget .slick__slide {
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.sb--widget .slick--initialized .slick__slide {
+  visibility: visible;
+  overflow: visible;
+}
+
+.sb .is-fallback {
+  padding: 1em;
+  text-align: center;
+}
+
+.sb-body .messages {
+  margin-top: 32px;
+}
+
+/* Claro */
+.sb-body > .page-wrapper > .layout-container {
+  margin-left: auto;
+  margin-right: auto;
+}

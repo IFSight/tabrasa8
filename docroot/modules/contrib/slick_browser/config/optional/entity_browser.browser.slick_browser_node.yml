@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.slick_browser_node
+  enforced:
+    module:
+      - slick_browser
+  module:
+    - views
+name: slick_browser_node
+label: 'Slick Browser: Node'
+display: iframe
+display_configuration:
+  width: 100%
+  height: '640'
+  link_text: 'Content Library'
+  auto_open: true
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: single
+widget_selector_configuration: {  }
+widgets:
+  373a2ba4-42ee-482c-8f7e-c249e29d0e05:
+    settings:
+      view: slick_browser_node
+      view_display: slick_browser_node
+      submit_text: 'Select entities'
+      auto_select: false
+    uuid: 373a2ba4-42ee-482c-8f7e-c249e29d0e05
+    weight: 1
+    label: 'Content Library'
+    id: view

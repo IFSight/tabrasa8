@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Installation actions for Slick Browser.
+ */
+
+/**
+ * Added a new service SlickBrowserAlter, and skins as plugins.
+ *
+ * @see https://www.drupal.org/node/3105670
+ */
+function slick_browser_update_8201() {
+  // Do nothing to clear cache.
+}
+
+/**
+ * Clearing cache to ensure things are picked up.
+ */
+function slick_browser_update_8202() {
+  // Do nothing to clear cache.
+}

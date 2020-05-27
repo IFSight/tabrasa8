@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+  module:
+    - node
+id: node.slick_browser
+label: 'Slick Browser'
+targetEntityType: node
+cache: true

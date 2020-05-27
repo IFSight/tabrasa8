@@ -78,7 +78,7 @@ class ContactPersonalTest extends BrowserTestBase {
     $this->assertEscaped($mail);
     $message = $this->submitPersonalContact($this->contactUser);
     $mails = $this->getMails();
-    $this->assertEqual(1, count($mails));
+    $this->assertCount(1, $mails);
     $mail = $mails[0];
     $this->assertEqual($mail['to'], $this->contactUser->getEmail());
     $this->assertEqual($mail['from'], $this->config('system.site')->get('mail'));
@@ -137,7 +137,7 @@ class ContactPersonalTest extends BrowserTestBase {
     $original_email = $this->contactUser->getEmail();
     $this->contactUser->setEmail(FALSE)->save();
     $this->drupalGet('user/' . $this->contactUser->id() . '/contact');
-    $this->assertResponse(404, 'Not found (404) returned when visiting a personal contact form for a user with no email address');
+    $this->assertResponse(404);
 
     // Test that the 'contact tab' does not appear on the user profiles
     // for users without an email address configured.

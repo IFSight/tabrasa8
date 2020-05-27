@@ -1,0 +1,12 @@
+services:
+  slick_browser:
+    class: Drupal\slick_browser\SlickBrowser
+    arguments: ['@blazy.entity', '@slick.admin', '@slick.formatter']
+
+  slick_browser.alter:
+    class: Drupal\slick_browser\SlickBrowserAlter
+    arguments: ['@slick_browser']
+
+  slick_browser.widget:
+    class: Drupal\slick_browser\SlickBrowserWidget
+    parent: slick_browser.alter

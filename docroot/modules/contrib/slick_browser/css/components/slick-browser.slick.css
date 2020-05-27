@@ -1,0 +1,159 @@
+/**
+ * @file
+ */
+
+/* csslint "box-sizing": true, "box-model": true, ids: true */
+.sb .slick-wrapper {
+  overflow: visible; /** To reveal dots. */
+}
+
+.sb .slick__arrow {
+  background-color: #f9f8f6;
+  bottom: auto;
+  height: 32px;
+  left: auto;
+  margin: 0;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+.sb .slick  ~ .slick .slick__arrow {
+  z-index: 100;
+}
+
+.sb .slick__arrow .slick-arrow {
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  border-radius: 0;
+  height: 32px;
+  /* Claro */
+  padding: 5px;
+  width: 36px;
+  float: none;
+  display: inline-block;
+  position: relative;
+}
+
+.sb .slick__arrow .slick-arrow {
+  float: left;
+  position: relative;
+}
+
+.sb .slick--thumbnail .slick__arrow {
+  background: none;
+  border: 0;
+  height: 1px;
+  overflow: visible;
+  position: absolute;
+  top: 50%;
+}
+
+.sb .slick--thumbnail .slick__arrow button {
+  position: absolute;
+}
+
+.sb .slick--thumbnail .slick__arrow .slick-next {
+  right: 0;
+}
+
+.view--sb .slick__arrow .slick-arrow:hover {
+  background: #ff6d2c;
+}
+
+.sb .slick-prev::before,
+.sb .slick-next::before {
+  color: #333;
+  font-size: 22px;
+  font-family: sans-serif;
+}
+
+.sb .slick__arrow--v .slick-arrow::before {
+  line-height: 12px;
+}
+
+.sb .slick__arrow--v .slick-prev::before {
+  content: '\2191';
+}
+
+.sb .slick__arrow--v .slick-next::before {
+  content: '\2193';
+}
+
+.sb .slick-disabled {
+  visibility: hidden;
+}
+
+.sb .slick-dots li button::before {
+  display: none;
+}
+
+.sb .slick .slick-dots button {
+  background: #999;
+  display: block;
+  opacity: 0.8;
+}
+
+.sb .slick .slick-dots .slick-active button {
+  background: #ff6d2c;
+}
+
+.sb .slick--thumbnail.slick--skin--asnavfor .slick-list {
+  padding: 0;
+}
+
+.sb .grid .sb__caption {
+  padding: 15px;
+}
+
+.is-sb-slick .slick--vertical.slick--thumbnail {
+  padding: 0;
+}
+
+@media (min-width: 720px) {
+  .sb--widget.is-sb-slick .slick__arrow {
+    position: absolute;
+    right: 0;
+    top: 16px;
+  }
+
+  .form--sb .slick--browser .slick-dotted .slick-dots {
+    top: 68px;
+  }
+
+  /** Overrides a few skins to avoid broken displays. */
+  .is-sb-slick {
+    padding-right: 32px;
+  }
+
+  .sb .slick--browser .slick-dotted .slick-dots {
+    bottom: auto;
+    left: auto;
+    right: -34px;
+    top: 0;
+    width: 32px;
+  }
+
+  .sb .slick--browser .slick-dotted {
+    margin-bottom: 0;
+  }
+
+  .sb .slick--browser .slick-dotted .slick-dots li {
+    display: block;
+    margin: 0 5px 5px;
+  }
+
+  .form--sb .slick--browser .slick-dotted .slick-dots {
+    top: 0;
+  }
+
+  .form--sb .slick--browser:first-child .slick-dots {
+    position: fixed;
+    right: 0;
+    top: 82px;
+  }
+
+  .form--tabs-right .slick--browser:first-child .slick-dots {
+    left: 0;
+    right: auto;
+  }
+}

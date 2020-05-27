@@ -5,6 +5,7 @@ module:
   allowed_formats: 0
   automated_cron: 0
   better_exposed_filters: 0
+  blazy: 0
   block: 0
   block_content: 0
   block_field: 0
@@ -74,6 +75,8 @@ module:
   search: 0
   shortcut: 0
   simple_sitemap: 0
+  slick: 0
+  slick_browser: 0
   smtp: 0
   social_media_links: 0
   social_media_links_field: 0

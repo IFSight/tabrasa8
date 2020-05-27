@@ -1,0 +1,213 @@
+/**
+ * @file
+ * Selection.
+ *
+ * .sb__footer is used at two places: EB selections, widgets.
+ */
+
+/** Form actions and selections stored within .sb__footer */
+.form--sb .sb__footer {
+  bottom: 0;
+  min-height: 32px;
+  width: 100%;
+  transition: transform .4s;
+  transform: translateX(0);
+}
+
+.form--sb.is-no-selection .sb__footer,
+.form--sb.is-sb-empty .sb__footer {
+  background-color: transparent;
+  padding: 0;
+}
+
+.form--sb .sb__footer,
+.sb.form--tabs-v .sb__footer {
+  background-color: rgba(0, 0, 0, .6);
+  padding: 5px 0;
+}
+
+.form--sb.is-sb-collapsed .sb__footer {
+  padding: 0;
+}
+
+.form--sb .sb__footer img {
+  object-fit: cover;
+  min-height: 80px;
+}
+
+.form--sb .sb__footer .entities-list a {
+  color: #fff;
+}
+
+.sb__footer .form-actions {
+  margin: 0;
+  min-height: 28px;
+}
+
+/** Overrides EB inline CSS (slideToggle) since SB offers different positions. */
+.sb__footer .entities-list {
+  clear: both;
+  overflow-y: scroll;
+  height: auto !important; /* csslint allow: known-properties, important */
+  display: block !important; /* csslint allow: known-properties, important */
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .3s, visibility .3s;
+}
+
+.sb.is-sb-collapsed .sb__footer .entities-list {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.is-sb-empty .sb__footer .entities-list {
+  overflow: hidden;
+}
+
+.sb__footer .entities-list .item-container {
+  background-color: rgba(0, 0, 0, .8);
+  color: #fff;
+  float: left;
+  height: 78px;
+  margin: 10px 0 10px 10px;
+  padding: 0;
+  text-indent: 8px;
+  width: 100px;
+}
+
+/** Selection: bottom. */
+.form--selection-bottom .sb__footer {
+  max-height: 140px;
+  transform: translateY(0);
+}
+
+.form--selection-bottom.is-sb-collapsed .sb__footer {
+  transform: translateY(64px);
+}
+
+.form--selection-bottom .sb__footer .entities-list {
+  max-height: 100px;
+}
+
+.sb.form--sb.view--sb-help .button-wrap--show-selection {
+  visibility: hidden;
+}
+
+.form--selection-bottom .sb__footer,
+.sb.form--selection-bottom.view--sb-help .sb__footer {
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  max-height: 180px;
+  min-height: 120px;
+  width: 100%;
+}
+
+.form--selection-bottom.is-sb-collapsed .sb__footer {
+  min-height: 28px;
+}
+
+.form--selection-bottom.form--tabs-bottom .sb__footer,
+.form--selection-bottom.form--buttons-bottom .sb__footer,
+.sb.form--selection-bottom.view--sb-help .sb__footer {
+  bottom: 48px;
+  padding-bottom: 0;
+}
+
+.form--selection-h.form--buttons-top.form--tabs-bottom .sb__footer {
+  bottom: 32px;
+}
+
+.form--selection-bottom.form--buttons-top.form--tabs-top .sb__footer {
+  bottom: 0;
+}
+
+.sb__footer .entities-list {
+  overflow-y: auto;
+}
+
+.sb.form--selection-right .slick--browser:first-child .slick-dots,
+.sb.form--selection-right .button-wrap.button-wrap--show-selection {
+  right: auto;
+  left: 0;
+}
+
+.sb.form--selection-v .sb__footer {
+  left: 0;
+  height: 100vh;
+}
+
+.form--selection-v.form--buttons-bottom .sb__footer {
+  padding-bottom: 36px;
+  padding-top: 32px;
+}
+
+.form--selection-v.form--buttons-top .sb__footer {
+  top: 48px;
+}
+
+.sb.form--selection-left .sb__footer {
+  left: 0;
+  right: auto;
+}
+
+.sb.form--selection-right .sb__footer {
+  left: auto;
+  right: 0;
+}
+
+.sb.form--selection-v.is-sb-collapsed .sb__footer {
+  transform: translateX(-210px);
+}
+
+.sb.form--selection-v.form--selection-right.is-sb-collapsed .sb__footer {
+  transform: translateX(210px);
+}
+
+@media (min-width: 768px) {
+  .sb.form--tabs-v .eb-tabs,
+  .form--selection-v .sb__footer {
+    clear: none;
+    float: left;
+    margin-right: -100%;
+    text-align: left;
+    top: 0;
+    width: 240px;
+  }
+
+  .form--tabs-v.form--tabs-right .eb-tabs,
+  .form--selection-v.form--selection-right .sb__footer {
+    float: right;
+    margin-right: 0;
+  }
+
+  /** Both tabs and selection on the same side. */
+  .form--tabs-left.form--selection-left .eb-tabs,
+  .form--tabs-right.form--selection-right .eb-tabs {
+    display: none;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .form--tabs-left.form--selection-left.is-sb-collapsed .eb-tabs {
+    left: -100%;
+  }
+
+  .form--tabs-right.form--selection-right.is-sb-collapsed .eb-tabs {
+    right: -100%;
+  }
+
+  .form--tabs .sb__footer .eb-tabs {
+    background: none;
+    display: block;
+  }
+
+  .form--tabs .sb__footer .eb-tabs li a {
+    color: #ccc;
+  }
+
+  .form--tabs .sb__footer .eb-tabs li .is-active {
+    color: #fff;
+  }
+}

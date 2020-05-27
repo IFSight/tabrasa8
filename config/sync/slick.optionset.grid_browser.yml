@@ -1,0 +1,25 @@
+uuid: c6608c2b-e010-4600-ab1f-0641b6dbfac1
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - slick_browser
+_core:
+  default_config_hash: S7JMfP0nrMKziRa9TJ5VTabf_LWRzu0rfcwW3SOjNBI
+id: grid_browser
+name: grid_browser
+label: 'Grid Browser'
+weight: -5
+group: main
+skin: sb-grid
+breakpoints: 0
+optimized: true
+options:
+  options__active_tab: edit-options-settings
+  settings:
+    adaptiveHeight: true
+    dots: true
+    lazyLoad: blazy
+    slidesToShow: 1
+    swipeToSlide: true

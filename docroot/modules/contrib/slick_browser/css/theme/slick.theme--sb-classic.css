@@ -1,0 +1,34 @@
+/**
+ * @file
+ */
+
+/* csslint "box-sizing": true, "box-model": true, ids: true */
+@media (min-width: 64em) {
+  .is-sb-text .slick--skin--classic .sb__caption {
+    box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+    background: rgba(0,0,0,.8);
+    height: 100%;
+    left: 0;
+    padding: 15px;
+    position: absolute;
+    top: 0;
+    width: 32%;
+    z-index: 3;
+  }
+
+  .is-sb-text .slick--skin--classic label,
+  .is-sb-text .slick--skin--classic .description {
+    color: #fff;
+  }
+
+  .is-sb-text .slick--skin--classic .form-text {
+    width: 100%;
+  }
+
+  .is-sb-text .slick--skin--classic .form-text:focus {
+    position: relative;
+    max-width: 420px;
+    width: 420px;
+    transition: width .5s;
+  }
+}

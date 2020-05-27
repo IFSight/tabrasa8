@@ -217,7 +217,6 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     // Check that the URL was updated.
     $this->drupalGet($style_path);
     $this->assertTitle(t('Edit style @name | Drupal', ['@name' => $style_label]));
-    $this->assertResponse(200, new FormattableMarkup('Image style %original renamed to %new', ['%original' => $style->id(), '%new' => $style_name]));
 
     // Check that the available image effects are properly sorted.
     $option = $this->xpath('//select[@id=:id]//option', [':id' => 'edit-new--2']);
@@ -278,7 +277,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     $this->drupalPostForm(NULL, $edit, t('Add effect'));
     $entity_type_manager = $this->container->get('entity_type.manager');
     $style = $entity_type_manager->getStorage('image_style')->loadUnchanged($style_name);
-    $this->assertEqual(count($style->getEffects()), 6, 'Rotate effect with transparent background was added.');
+    $this->assertCount(6, $style->getEffects(), 'Rotate effect with transparent background was added.');
 
     // Style deletion form.
 

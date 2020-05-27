@@ -1,0 +1,254 @@
+/**
+ * @file
+ */
+
+.sb,
+.sb .grid__content,
+.sb .item-container {
+  position: relative;
+}
+
+.sb-body {
+  background: #fff;
+  /*margin: 0;
+  padding: 0;*/
+}
+
+.sb .entities-list .item-container > img,
+.sb .entities-list .item-container > input {
+  margin: auto;
+}
+
+.sb--widget .item-container {
+  min-width: 120px;
+}
+
+.sb__footer .item-container {
+  overflow: hidden;
+}
+
+/** Visibility. */
+.visible-list,
+.visible-grid,
+.visible-help,
+.form--sb .view .button-group,
+.view--sb .sb__grid .views-field {
+  display: none;
+}
+
+.sb .button-wrap .button,
+.view--sb-help .visible-help,
+.view--sb-grid .visible-grid,
+.view--sb-list .visible-list,
+.view--sb .sb__grid .views-field-blazy-file,
+.view--sb .sb__grid .views-field-blazy-media,
+.view--sb .sb__grid .views-field--preview,
+.view--sb .sb__grid .views-field--selection,
+.view--sb .sb__grid .views-field.visually-hidden,
+.form--sb .view--sb-grid .button-group--grid,
+.view--sb .sb__grid .is-info-active .views-field {
+  display: block;
+}
+
+/** Info. */
+/** This button is cloned to the header (dialog tittlebar), so hide it. */
+/** Disable till required unless having Views, not upload.
+.form--upload .sb__header [name="use_selected"], */
+.form--sb.is-sb-empty .button-group--select {
+  /* height: 0; */
+  left: -9999px;
+  opacity: 0;
+  position: absolute;
+  visibility: hidden;
+  width: 100%;
+  z-index: -1;
+}
+
+.form--sb.form--inline-entity-form .button-group--select {
+  height: auto;
+  left: auto;
+  opacity: 1;
+  position: relative;
+  visibility: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.view--sb-grid .button-group--grid {
+  position: relative;
+  width: 100%;
+}
+
+.form--sb > .sb__header {
+  position: fixed;
+}
+
+.sb .entity-browser-iframe-container,
+.sb--widget {
+  margin: 0 auto;
+}
+
+.sb .entity-browser-iframe-container {
+  margin-top: 15px;
+}
+
+.slick--brower.slick--skin--grid {
+  padding: 0 0.625rem;
+}
+
+/** :not([open]) */
+.sb.sb--wrapper > .details-wrapper.visually-hidden {
+  display: block;
+}
+
+/** Layering. */
+.sb--wrapper .sb--wrapper {
+  z-index: 1;
+}
+
+.form--sb .sb__header {
+  z-index: 101; /* Above footer selection. */
+}
+
+.sb .slick__arrow,
+.sb .pager {
+  z-index: 999;
+}
+
+.form--tabs .eb-tabs {
+  left: 0;
+  position: fixed;
+  z-index: 98;
+}
+
+.form--sb .sb__footer {
+  z-index: 96; /* above dots, beneath header. */
+}
+
+.sb .slick--browser .slick-dotted .slick-dots {
+  z-index: 32;
+}
+
+.sb__help {
+  z-index: 8;
+}
+
+.sb .view-filters {
+  position: relative;
+  z-index: 12; /* Makes Bundle menu above the content. */
+}
+
+.sb .views-exposed-form {
+  padding: 0.25rem 1.25rem;
+  position: relative;
+  z-index: 9;
+}
+
+/*
+.form--tabs-v > .sb__main,
+.form--tabs-v > div[style^="display"],
+.form--selection-v > .sb__main,
+.form--selection-v > div[style^="display"] {
+  width: 100%;
+  position: relative;
+}
+*/
+
+.sb .button-wrap {
+  z-index: 7;
+}
+
+.sb .button-wrap--show-selection {
+  z-index: 8;
+}
+
+.sb .button-wrap .button {
+  z-index: 2;
+}
+
+.sb .button-wrap::before {
+  /** Above core theme button:focus, otherwise the icons are hidden. */
+  z-index: 11;
+}
+
+.sb .button-group--grid {
+  border: 0;
+  z-index: 11;
+}
+
+.sb .sb__action {
+  z-index: 80;
+}
+
+.sb.media--loading::before {
+  position: fixed;
+  z-index: 999;
+}
+
+.button-wrap--confirm .button--wrap__mask {
+  -webkit-transition: right 0.2s ease-out;
+  transition: right 0.2s ease-out;
+  z-index: 10;
+}
+
+.button-wrap--confirm .button--wrap__confirm {
+  z-index: 1;
+}
+
+.button-wrap--confirm .button,
+.button-wrap--confirm .button:hover {
+  opacity: 0;
+  z-index: 2;
+}
+
+/* Directly delete after confirm, no need for AJAX for known widget part. */
+.sb--widget .button-wrap--confirm .button--remove,
+.sb--widget .button-wrap--confirm .button--remove:hover {
+  z-index: -1;
+}
+
+/* Unless with limited cardinality  so to reveal the Media Library button.*/
+/* Relies on AJAX to rebuild the Media Library link. */
+.is-sb-ajax .button-wrap--confirm.is-open .button--remove,
+.is-sb-ajax .button-wrap--confirm.is-open .button--remove:hover,
+.is-sb-single .button-wrap--confirm.is-open .button--remove,
+.is-sb-single .button-wrap--confirm.is-open .button--remove:hover {
+  z-index: 12;
+}
+
+.sb .sb__sortlist {
+  z-index: 99;
+}
+
+.sb.is-sb-sort .sb__sortlist {
+  opacity: 1;
+  overflow-y: auto;
+  visibility: visible;
+  z-index: 99;
+}
+
+.sb.is-sb-1 .sb__caption {
+  z-index: 9;
+}
+
+/** Can be within a form, or outside as within a widget. */
+.sb__header {
+  text-align: right;
+}
+
+@media (min-width: 640px) {
+  .sb .button-group--text .button {
+    width: auto;
+  }
+
+  .sb .sb__header > div,
+  .sb .sb__header .button-group {
+    margin-bottom: 0;
+  }
+
+  .view--node.view--sb-list .views-label,
+  .view--block.view--sb-list .views-label {
+    visibility: hidden;
+    position: absolute;
+  }
+}

@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.slick_browser_file
+  enforced:
+    module:
+      - slick_browser
+  module:
+    - slick_browser
+    - views
+name: slick_browser_file_modal
+label: 'Slick Browser: File Modal'
+display: modal
+display_configuration:
+  width: '1280'
+  height: '640'
+  link_text: 'Media Library'
+  auto_open: false
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: file
+  display: slick_browser_file
+  display_settings:
+    _context: selection
+    selection_position: right
+  select_text: 'Add to Page'
+  selection_hidden: false
+widget_selector: slick_browser_tabs
+widget_selector_configuration:
+  tabs_position: top
+  buttons_position: top
+widgets:
+  0ffd4731-9cf9-4bad-9758-c02ba4b5fa4b:
+    settings:
+      view: slick_browser_file
+      view_display: slick_browser_file
+      submit_text: 'Select entities'
+      auto_select: false
+    uuid: 0ffd4731-9cf9-4bad-9758-c02ba4b5fa4b
+    weight: -10
+    label: 'Media Library'
+    id: view
+  ba472d63-0dce-4a5c-9bb9-6aa8f1a071b7:
+    settings:
+      upload_location: 'public://[date:custom:Y]-[date:custom:m]'
+      multiple: true
+      submit_text: 'Select files'
+      extensions: 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'
+    uuid: ba472d63-0dce-4a5c-9bb9-6aa8f1a071b7
+    weight: -9
+    label: 'Upload Files'
+    id: upload

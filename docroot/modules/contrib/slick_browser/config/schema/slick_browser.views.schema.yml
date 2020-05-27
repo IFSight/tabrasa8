@@ -1,0 +1,5 @@
+# Schema for the Slick Browser style plugins.
+
+views.style.slick_browser:
+  type: slick_base
+  label: 'Slick Browser'
