@@ -2,10 +2,10 @@
 
 namespace Drupal\purge_queuer_url\Plugin\Purge\DiagnosticCheck;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\purge\Plugin\Purge\DiagnosticCheck\DiagnosticCheckInterface;
 use Drupal\purge\Plugin\Purge\DiagnosticCheck\DiagnosticCheckBase;
+use Drupal\purge\Plugin\Purge\DiagnosticCheck\DiagnosticCheckInterface;
 use Drupal\purge_queuer_url\TrafficRegistryInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Tests if the URL queuer's traffic registry is in a healthy shape.
@@ -28,7 +28,7 @@ class RegistryCheck extends DiagnosticCheckBase implements DiagnosticCheckInterf
   protected $registry;
 
   /**
-   * Constructs a \Drupal\purge_queuer_url\Plugin\Purge\DiagnosticCheck\RegistryCheck object.
+   * Constructs a RegistryCheck object.
    *
    * @param \Drupal\purge_queuer_url\TrafficRegistryInterface $registry
    *   The traffic registry with the stored URLs and tags.
@@ -39,7 +39,7 @@ class RegistryCheck extends DiagnosticCheckBase implements DiagnosticCheckInterf
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    */
-  public function __construct(TrafficRegistryInterface $registry, array $configuration, $plugin_id, $plugin_definition) {
+  final public function __construct(TrafficRegistryInterface $registry, array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->registry = $registry;
   }
@@ -63,14 +63,14 @@ class RegistryCheck extends DiagnosticCheckBase implements DiagnosticCheckInterf
     $this->value = $this->registry->countUrls();
     if ($this->value < 50) {
       $this->recommendation = $this->t("You need to spider your site to be able to queue URLs or paths, for example run: 'wget -r -nd --delete-after -l100 --spider http://site/'.");
-      return SELF::SEVERITY_WARNING;
+      return self::SEVERITY_WARNING;
     }
     elseif ($this->value > 7000) {
       $this->recommendation = $this->t("Your traffic database is huge, please consider tag based invalidation before your site becomes VERY slow!");
-      return SELF::SEVERITY_WARNING;
+      return self::SEVERITY_WARNING;
     }
     $this->recommendation = ' ';
-    return SELF::SEVERITY_OK;
+    return self::SEVERITY_OK;
   }
 
 }

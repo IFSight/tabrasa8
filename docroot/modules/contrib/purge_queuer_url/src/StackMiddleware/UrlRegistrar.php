@@ -2,12 +2,12 @@
 
 namespace Drupal\purge_queuer_url\StackMiddleware;
 
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Cache\CacheableResponseInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\purge_queuer_url\TrafficRegistryInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Collects URLs for all passing traffic.
@@ -52,9 +52,9 @@ class UrlRegistrar implements HttpKernelInterface {
   /**
    * Whether to queue paths (true) instead of URLs or not (false).
    *
-   * @var true|false
+   * @var true|false|null
    */
-  protected $queue_paths = NULL;
+  protected $queuePaths = NULL;
 
   /**
    * Constructs a UrlRegistrar object.
@@ -73,7 +73,7 @@ class UrlRegistrar implements HttpKernelInterface {
     // Take the configured settings from our configuration object.
     $settings = $config_factory->get('purge_queuer_url.settings');
     $this->blacklist = $settings->get('blacklist');
-    $this->queue_paths = $settings->get('queue_paths');
+    $this->queuePaths = $settings->get('queue_paths');
     if ($settings->get('host_override')) {
       $this->host = $settings->get('host');
     }
@@ -152,7 +152,7 @@ class UrlRegistrar implements HttpKernelInterface {
     $host = ($this->host == FALSE) ? $request->getHttpHost() : $this->host;
     $path = $request->getBaseUrl() . $request->getPathInfo() . $qs;
 
-    if ($this->queue_paths) {
+    if ($this->queuePaths) {
       return ltrim($path, '/');
     }
     else {
@@ -164,6 +164,7 @@ class UrlRegistrar implements HttpKernelInterface {
    * {@inheritdoc}
    */
   public function handle(Request $request, $type = self::MASTER_REQUEST, $catch = TRUE) {
+    /** @var \Symfony\Component\HttpFoundation\Response|\Drupal\Core\Cache\CacheableResponseInterface$response */
     $response = $this->httpKernel->handle($request, $type, $catch);
     $what_to_do = $this->determine($request, $response);
     if ($what_to_do === TRUE) {

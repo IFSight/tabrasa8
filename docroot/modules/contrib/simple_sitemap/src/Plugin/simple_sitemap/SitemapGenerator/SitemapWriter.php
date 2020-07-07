@@ -2,7 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
-use Drupal\Core\Url;
+use Drupal\Core\Routing\RouteProvider;
 
 /**
  * Class SitemapWriter
@@ -15,10 +15,25 @@ class SitemapWriter extends \XMLWriter {
   const ENCODING = 'UTF-8';
 
   /**
+   * @var \Drupal\Core\Routing\RouteProvider
+   */
+  protected $routeProvider;
+
+  public function __construct(RouteProvider $route_provider) {
+    $this->routeProvider = $route_provider;
+  }
+
+  /**
    * Adds the XML stylesheet to the XML page.
    */
   public function writeXsl() {
-    $xsl_url = Url::fromRoute('simple_sitemap.sitemap_xsl')->toString();
+    // Use this instead of URL::fromRoute() to avoid creating a URL with the
+    // subdomain from which creation was triggered which might lead to a CORS
+    // problem. See https://www.drupal.org/project/simple_sitemap/issues/3131672.
+    $xsl_url = $this->routeProvider
+      ->getRouteByName('simple_sitemap.sitemap_xsl')
+      ->getPath();
+
     $this->writePI('xml-stylesheet', 'type="text/xsl" href="' . $xsl_url . '"');
   }
 

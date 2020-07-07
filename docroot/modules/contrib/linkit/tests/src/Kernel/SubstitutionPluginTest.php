@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\linkit\Kernel;
 
+use Drupal\Core\Site\Settings;
 use Drupal\entity_test\Entity\EntityTest;
 use Drupal\file\Entity\File;
 use Drupal\linkit\Plugin\Linkit\Substitution\Canonical as CanonicalSubstitutionPlugin;
@@ -84,16 +85,14 @@ class SubstitutionPluginTest extends LinkitKernelTestBase {
   protected function setUpFilesystem() {
     $public_file_directory = $this->siteDirectory . '/files';
 
-    require_once 'core/includes/file.inc';
-
     mkdir($this->siteDirectory, 0775);
     mkdir($this->siteDirectory . '/files', 0775);
-    mkdir($this->siteDirectory . '/files/config/' . CONFIG_SYNC_DIRECTORY, 0775, TRUE);
+    mkdir($this->siteDirectory . '/files/config/' . Settings::get('config_sync_directory'), 0775, TRUE);
 
     $this->setSetting('file_public_path', $public_file_directory);
 
     $GLOBALS['config_directories'] = [
-      CONFIG_SYNC_DIRECTORY => $this->siteDirectory . '/files/config/sync',
+      Settings::get('config_sync_directory') => $this->siteDirectory . '/files/config/sync',
     ];
   }
 

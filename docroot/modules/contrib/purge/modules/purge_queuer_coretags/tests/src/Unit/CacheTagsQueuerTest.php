@@ -15,7 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @coversDefaultClass \Drupal\purge_queuer_coretags\CacheTagsQueuer
- * @group purge_queuer_coretags
+ *
+ * @group purge
  */
 class CacheTagsQueuerTest extends UnitTestCase {
 
@@ -64,7 +65,7 @@ class CacheTagsQueuerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->purgeQueue = $this->getMockBuilder(QueueServiceInterface::class)->setMethods([])->getMock();
     $this->purgeQueuers = $this->getMockBuilder(QueuersServiceInterface::class)->setMethods(['get'])->getMock();
     $this->purgeInvalidationFactory = $this->getMockForAbstractClass(InvalidationsServiceInterface::class);
@@ -85,7 +86,7 @@ class CacheTagsQueuerTest extends UnitTestCase {
   /**
    * @covers ::initialize
    */
-  public function testInitializeDoesntLoadWhenQueuerDisabled() {
+  public function testInitializeDoesntLoadWhenQueuerDisabled(): void {
     $this->purgeInvalidationFactory->expects($this->never())->method('get');
     $this->purgeQueue->expects($this->never())->method('add');
     $this->purgeQueuers
@@ -101,7 +102,7 @@ class CacheTagsQueuerTest extends UnitTestCase {
    *
    * @dataProvider providerTestInvalidateTags()
    */
-  public function testInvalidateTags($config, array $sets) {
+  public function testInvalidateTags($config, array $sets): void {
     $this->container->set('config.factory', $this->getConfigFactoryStub($config));
     // Assert that the queuer plugin is loaded exactly once.
     $this->purgeQueuers
@@ -121,7 +122,7 @@ class CacheTagsQueuerTest extends UnitTestCase {
       ->expects($this->exactly($invs_added_total))
       ->method('get')
       ->with('tag')
-      ->willReturn($this->getMock(InvalidationInterface::class)
+      ->willReturn($this->createMock(InvalidationInterface::class)
     );
     // Assert the precise calls to QueueServiceInterface::add().
     $number_queue_add_calls = count(array_filter($sets, function ($set) {
@@ -159,7 +160,7 @@ class CacheTagsQueuerTest extends UnitTestCase {
   /**
    * Provides test data for testInvalidateTags().
    */
-  public function providerTestInvalidateTags() {
+  public function providerTestInvalidateTags(): array {
     $blacklist = [
       'purge_queuer_coretags.settings' => [
         'blacklist' => [

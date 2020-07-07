@@ -350,7 +350,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->condition('o.entity_id', $this->node->id())
       ->execute()
       ->fetchField();
-    $this->assertFalse(empty($result));
+    $this->assertNotEmpty($result);
 
     $this->generator->setBundleSettings('node', 'page', ['priority' => 0.1, 'changefreq' => 'never'])
       ->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
@@ -376,7 +376,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->condition('o.entity_id', $this->node->id())
       ->execute()
       ->fetchField();
-    $this->assertTrue(empty($result));
+    $this->assertEmpty($result);
   }
 
   /**
@@ -488,7 +488,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
       ->generateSitemap(QueueWorker::GENERATE_TYPE_BACKEND);
 
     $variants = $this->generator->getSitemapManager()->getSitemapVariants();
-    $this->assertTrue(isset($variants['test']));
+    $this->assertArrayHasKey('test', $variants);
 
     $this->drupalGet($this->defaultSitemapUrl);
     $this->assertSession()->responseContains('node/' . $this->node->id());
@@ -509,7 +509,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $this->generator->getSitemapManager()->removeSitemapVariants('test');
 
     $variants = $this->generator->getSitemapManager()->getSitemapVariants();
-    $this->assertFalse(isset($variants['test']));
+    $this->assertArrayNotHasKey('test', $variants);
 
     // Test if sitemap has been removed along with the variant.
     $this->drupalGet('test/sitemap.xml');
@@ -569,7 +569,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
     $chunks = $this->database->query('SELECT id FROM {simple_sitemap} WHERE delta != 0 AND status = 1');
     $chunks->allowRowCount = TRUE;
     $chunk_count = $chunks->rowCount();
-    $this->assertTrue($chunk_count === $expected_sitemap_count);
+    $this->assertSame($chunk_count, $expected_sitemap_count);
 
     // Test if index has been created when necessary.
     $index = $this->database->query('SELECT id FROM {simple_sitemap} WHERE delta = 0 AND status = 1')

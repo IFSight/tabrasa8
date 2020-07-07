@@ -58,7 +58,7 @@ function linkit_form_editor_link_dialog_alter(&$form, FormStateInterface $form_s
   $filter_format = $form_state->getBuildInfo()['args'][0];
 
   /** @var \Drupal\Core\Entity\EntityStorageInterface $editorStorage */
-  $editorStorage = Drupal::service('entity.manager')->getStorage('editor');
+  $editorStorage = Drupal::service('entity_type.manager')->getStorage('editor');
 
   /** @var \Drupal\editor\EditorInterface $editor */
   $editor = $editorStorage->load($filter_format->id());

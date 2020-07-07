@@ -53,7 +53,7 @@ class AutocompleteController implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')->getStorage('linkit_profile'),
+      $container->get('entity_type.manager')->getStorage('linkit_profile'),
       $container->get('linkit.suggestion_manager')
     );
   }

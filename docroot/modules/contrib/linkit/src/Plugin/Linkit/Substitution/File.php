@@ -33,7 +33,7 @@ class File extends PluginBase implements SubstitutionInterface {
    * {@inheritdoc}
    */
   public static function isApplicable(EntityTypeInterface $entity_type) {
-    return $entity_type->isSubclassOf('Drupal\file\FileInterface');
+    return $entity_type->entityClassImplements('Drupal\file\FileInterface');
   }
 
 }

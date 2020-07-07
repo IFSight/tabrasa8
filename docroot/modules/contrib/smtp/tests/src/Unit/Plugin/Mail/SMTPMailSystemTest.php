@@ -5,8 +5,11 @@ namespace Drupal\Tests\smtp\Unit\Plugin\Mail;
 use Drupal\Component\Utility\EmailValidator;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileSystem;
+use Drupal\Core\File\MimeType\MimeTypeGuesser;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\smtp\Plugin\Mail\SMTPMailSystem;
 use Drupal\Tests\UnitTestCase;
@@ -31,11 +34,17 @@ class SMTPMailSystemTest extends UnitTestCase {
 
     $this->mockLogger = $this->prophesize(LoggerChannelFactoryInterface::class);
     $this->mockMessenger = $this->prophesize(Messenger::class);
+    $this->mockCurrentUser = $this->prophesize(AccountProxy::class);
+    $this->mockFileSystem = $this->prophesize(FileSystem::class);
+    $this->mimeTypeGuesser = $this->prophesize(MimeTypeGuesser::class);
 
     $mockContainer = $this->mockContainer = $this->prophesize(ContainerInterface::class);
     $mockContainer->get('config.factory')->willReturn($this->mockConfigFactory->reveal());
     $mockContainer->get('logger.factory')->willReturn($this->mockLogger->reveal());
     $mockContainer->get('messenger')->willReturn($this->mockMessenger->reveal());
+    $mockContainer->get('current_user')->willReturn($this->mockCurrentUser->reveal());
+    $mockContainer->get('file_system')->willReturn($this->mockFileSystem->reveal());
+    $mockContainer->get('file.mime_type.guesser')->willReturn($this->mimeTypeGuesser->reveal());
 
     $mockStringTranslation = $this->prophesize(TranslationInterface::class);
     $mockStringTranslation->translate(Argument::any())->willReturnArgument(0);
@@ -109,7 +118,7 @@ class SMTPMailSystemTest extends UnitTestCase {
    * @dataProvider getComponentsProvider
    */
   public function testGetComponents($input, $expected) {
-    $mailSystem = new SMTPMailSystemTestHelper([], '', [], $this->mockLogger->reveal(), $this->mockMessenger->reveal(), $this->emailValidator);
+    $mailSystem = new SMTPMailSystemTestHelper([], '', [], $this->mockLogger->reveal(), $this->mockMessenger->reveal(), $this->emailValidator, $this->mockConfigFactory->reveal(), $this->mockCurrentUser->reveal(), $this->mockFileSystem->reveal(), $this->mimeTypeGuesser->reveal());
 
     $ret = $mailSystem->publiGetComponents($input);
 

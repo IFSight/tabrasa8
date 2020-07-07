@@ -1,0 +1,6 @@
+services:
+  purge_queuer_url.sqlsanitize.commands:
+    class: \Drupal\purge_queuer_url\Commands\SqlSanitizeCommands
+    arguments: ['@module_handler', '@purge_queuer_url.registry']
+    tags:
+      - { name: drush.command }

@@ -122,7 +122,7 @@ function simple_sitemap_schema() {
         'default' => 0,
       ],
       'status' => [
-        'description' => "Flag indicating the publishing status of the chunk.",
+        'description' => 'Flag indicating the publishing status of the chunk.',
         'type' => 'int',
         'size' => 'tiny',
         'not null' => TRUE,

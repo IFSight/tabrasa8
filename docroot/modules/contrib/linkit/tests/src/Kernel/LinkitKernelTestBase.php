@@ -33,6 +33,9 @@ abstract class LinkitKernelTestBase extends KernelTestBase {
     $this->installSchema('system', 'sequences');
     $this->installEntitySchema('user');
     $this->installConfig(['filter']);
+    if ($this->container->get('entity_type.manager')->hasDefinition('path_alias')) {
+      $this->installEntitySchema('path_alias');
+    }
   }
 
   /**

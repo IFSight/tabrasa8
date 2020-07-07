@@ -351,7 +351,7 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
   public static function isMultilingualSitemap() {
     $has_multiple_indexable_languages = count(
         array_diff_key(\Drupal::languageManager()->getLanguages(),
-          \Drupal::service('simple_sitemap.generator')->getSetting('excluded_languages'))
+          \Drupal::service('simple_sitemap.generator')->getSetting('excluded_languages', []))
       ) > 1;
 
     return $has_multiple_indexable_languages

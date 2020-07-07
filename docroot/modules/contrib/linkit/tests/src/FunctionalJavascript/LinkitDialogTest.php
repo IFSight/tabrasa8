@@ -37,6 +37,11 @@ class LinkitDialogTest extends WebDriverTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * An instance of the "CKEditor" text editor plugin.
    *
    * @var \Drupal\ckeditor\Plugin\Editor\CKEditor

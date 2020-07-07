@@ -13,15 +13,16 @@ use Drupal\system\MenuInterface;
 use Drupal\language\ConfigurableLanguageInterface;
 
 /**
- *Implements hook_help().
+ * Implements hook_help().
  *
  * @param $route_name
  * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
  * @return \Drupal\Component\Render\MarkupInterface|null
  */
 function simple_sitemap_help($route_name, RouteMatchInterface $route_match) {
-  return $route_name === 'help.page.simple_sitemap' ?
-    check_markup(file_get_contents(dirname(__FILE__) . "/README.md")) : NULL;
+  return $route_name === 'help.page.simple_sitemap'
+    ? check_markup(file_get_contents(__DIR__ . '/README.md'))
+    : NULL;
 }
 
 /**

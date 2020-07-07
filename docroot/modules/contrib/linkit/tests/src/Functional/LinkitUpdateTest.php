@@ -9,6 +9,7 @@ use Drupal\FunctionalTests\Update\UpdatePathTestBase;
  * Tests Linkit upgrade paths.
  *
  * @group Update
+ * @group legacy
  */
 class LinkitUpdateTest extends UpdatePathTestBase {
 
@@ -18,6 +19,11 @@ class LinkitUpdateTest extends UpdatePathTestBase {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
@@ -42,15 +48,15 @@ class LinkitUpdateTest extends UpdatePathTestBase {
    */
   public function testLinkitUpdate8500() {
     $editor = $this->configFactory->get('editor.editor.format_1');
-    $this->assertTrue($editor->get('settings.plugins.linkit'), 'We got old linkit settings in the editor configuration.');
+    $this->assertNotEmpty($editor->get('settings.plugins.linkit'), 'We got old linkit settings in the editor configuration.');
     $format_1_linkit_profile = $editor->get('settings.plugins.linkit.linkit_profile');
 
     $editor = $this->configFactory->get('editor.editor.format_2');
-    $this->assertTrue($editor->get('settings.plugins.linkit'), 'We got old linkit settings in the editor configuration.');
+    $this->assertNotEmpty($editor->get('settings.plugins.linkit'), 'We got old linkit settings in the editor configuration.');
     $format_2_linkit_profile = $editor->get('settings.plugins.linkit.linkit_profile');
 
     $editor = $this->configFactory->get('editor.editor.format_3');
-    $this->assertTrue($editor->get('settings.plugins.linkit'), 'We got old linkit settings in the editor configuration.');
+    $this->assertNotEmpty($editor->get('settings.plugins.linkit'), 'We got old linkit settings in the editor configuration.');
     $format_3_linkit_profile = $editor->get('settings.plugins.linkit.linkit_profile');
 
     $test_profile = $this->configFactory->get('linkit.linkit_profile.test_profile');
@@ -73,19 +79,19 @@ class LinkitUpdateTest extends UpdatePathTestBase {
     $this->assertNull($editor->get('settings.plugins.linkit'), 'Old linkit settings in the editor configuration is removed.');
     $this->assertEquals($editor->get('settings.toolbar.rows.0.1.items.0'), 'DrupalLink', 'Drupal link plugin is in the toolbar.');
     $this->assertNotEquals($editor->get('settings.toolbar.rows.0.1.items.1'), 'Linkit', 'Linkit plugin is removed from the toolbar.');
-    $this->assertTrue($editor->get('settings.plugins.drupallink.linkit_enabled'), 'Drupal link plugin has linkit enabled.');
+    $this->assertNotEmpty($editor->get('settings.plugins.drupallink.linkit_enabled'), 'Drupal link plugin has linkit enabled.');
     $this->assertEquals($editor->get('settings.plugins.drupallink.linkit_profile'), $format_1_linkit_profile, 'Drupal link plugin uses the same profile as the old linkit plugin.');
 
     $editor = $this->configFactory->get('editor.editor.format_2');
     $this->assertNull($editor->get('settings.plugins.linkit'), 'Old linkit settings in the editor configuration is removed.');
     $this->assertEquals($editor->get('settings.toolbar.rows.0.1.items.0'), 'DrupalLink', 'Drupal link plugin is in the toolbar.');
-    $this->assertTrue($editor->get('settings.plugins.drupallink.linkit_enabled'), 'Drupal link plugin has linkit enabled.');
+    $this->assertNotEmpty($editor->get('settings.plugins.drupallink.linkit_enabled'), 'Drupal link plugin has linkit enabled.');
     $this->assertEquals($editor->get('settings.plugins.drupallink.linkit_profile'), $format_2_linkit_profile, 'Drupal link plugin uses the same profile as the old linkit plugin.');
 
     $editor = $this->configFactory->get('editor.editor.format_3');
     $this->assertNull($editor->get('settings.plugins.linkit'), 'Old linkit settings in the editor configuration is removed.');
     $this->assertEquals($editor->get('settings.toolbar.rows.0.0.items.0'), 'DrupalLink', 'Drupal link plugin is in the toolbar.');
-    $this->assertTrue($editor->get('settings.plugins.drupallink.linkit_enabled'), 'Drupal link plugin has linkit enabled.');
+    $this->assertNotEmpty($editor->get('settings.plugins.drupallink.linkit_enabled'), 'Drupal link plugin has linkit enabled.');
     $this->assertEquals($editor->get('settings.plugins.drupallink.linkit_profile'), $format_3_linkit_profile, 'Drupal link plugin uses the same profile as the old linkit plugin.');
 
     $format = $this->configFactory->get('filter.format.format_1');

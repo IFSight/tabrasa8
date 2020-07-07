@@ -2,11 +2,11 @@
 
 namespace Drupal\purge_queuer_url\Plugin\Purge\Queuer;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\purge\Plugin\Purge\Invalidation\Exception\TypeUnsupportedException;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Queues URLs or paths when Drupal invalidates cache tags.
@@ -33,7 +33,7 @@ class UrlAndPathQueuer implements CacheTagsInvalidatorInterface, ContainerAwareI
   /**
    * Purge's queue service.
    *
-   * @var null|Drupal\purge\Plugin\Purge\Queue\QueueServiceInterface
+   * @var null|\Drupal\purge\Plugin\Purge\Queue\QueueServiceInterface
    */
   protected $purgeQueue;
 
@@ -47,7 +47,7 @@ class UrlAndPathQueuer implements CacheTagsInvalidatorInterface, ContainerAwareI
   /**
    * The queuer plugin or FALSE when the plugin is disabled.
    *
-   * @var false|\Drupal\purge_queuer_url\Plugin\Purge\Queuer\UrlAndPathQueuerPlugin
+   * @var null|false|\Drupal\purge_queuer_url\Plugin\Purge\Queuer\UrlAndPathQueuerPlugin
    */
   protected $queuer;
 
@@ -60,9 +60,8 @@ class UrlAndPathQueuer implements CacheTagsInvalidatorInterface, ContainerAwareI
   protected function initialize() {
     if (is_null($this->queuer)) {
 
-      // Attempt to load the urlpath queuer plugin, when it fails it is disabled.
+      // Attempt to load the queuer plugin, when it fails it is disabled.
       $this->queuer = $this->container->get('purge.queuers')->get('urlpath');
-
       if ($this->queuer !== FALSE) {
         $this->purgeInvalidationFactory = $this->container->get('purge.invalidation.factory');
         $this->purgeQueue = $this->container->get('purge.queue');
@@ -94,7 +93,7 @@ class UrlAndPathQueuer implements CacheTagsInvalidatorInterface, ContainerAwareI
       if ($urls_and_paths = $this->registry->getUrls($tags)) {
         $invalidations = [];
 
-        // Iterate the matches and add URL or Path invalidations correspondingly.
+        // Iterate the matches and add URL/Path invalidations correspondingly.
         foreach ($urls_and_paths as $url_or_path) {
           $invalidation_type = strpos($url_or_path, '://') ? 'url' : 'path';
           try {

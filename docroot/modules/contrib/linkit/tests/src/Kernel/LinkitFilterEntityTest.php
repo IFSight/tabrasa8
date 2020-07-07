@@ -7,6 +7,7 @@ use Drupal\entity_test\Entity\EntityTestMul;
 use Drupal\file\Entity\File;
 use Drupal\filter\FilterPluginCollection;
 use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\Tests\Traits\Core\PathAliasTestTrait;
 
 /**
  * Tests the Linkit filter.
@@ -18,13 +19,21 @@ use Drupal\language\Entity\ConfigurableLanguage;
 class LinkitFilterEntityTest extends LinkitKernelTestBase {
 
   use AssertLinkitFilterTrait;
+  use PathAliasTestTrait;
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['filter', 'entity_test', 'path', 'language', 'file'];
+  public static $modules = [
+    'filter',
+    'entity_test',
+    'path',
+    'path_alias',
+    'language',
+    'file',
+  ];
 
   /**
    * {@inheritdoc}
@@ -81,16 +90,13 @@ class LinkitFilterEntityTest extends LinkitKernelTestBase {
     $entity->addTranslation('fi', ['name' => $this->randomMachineName(), 'langcode' => 'fi']);
     $entity->save();
 
-    /** @var \Drupal\Core\Path\AliasStorageInterface $path_alias_storage */
-    $path_alias_storage = $this->container->get('path.alias_storage');
-
     $url = $entity->toUrl()->toString();
 
     // Add url aliases.
-    $path_alias_storage->save($url, '/' . $this->randomMachineName(), 'en');
-    $path_alias_storage->save($url, '/' . $this->randomMachineName(), 'sv');
-    $path_alias_storage->save($url, '/' . $this->randomMachineName(), 'da');
-    $path_alias_storage->save($url, '/' . $this->randomMachineName(), 'fi');
+    $this->createPathAlias($url, '/' . $this->randomMachineName(), 'en');
+    $this->createPathAlias($url, '/' . $this->randomMachineName(), 'sv');
+    $this->createPathAlias($url, '/' . $this->randomMachineName(), 'da');
+    $this->createPathAlias($url, '/' . $this->randomMachineName(), 'fi');
 
     // Disable the automatic title attribute.
     $this->filter->setConfiguration(['settings' => ['title' => 0]]);
@@ -142,7 +148,7 @@ class LinkitFilterEntityTest extends LinkitKernelTestBase {
 
     // Make sure the title is not overwritten.
     $input = '<a data-entity-type="' . $entity->getEntityTypeId() . '" data-entity-uuid="' . $entity->uuid() . '" title="Do not override">Link text</a>';
-    $this->assertTrue(strpos($this->process($input)->getProcessedText(), 'Do not override'), 'The filer is not overwrite the provided title attribute value.');
+    $this->assertTrue(strpos($this->process($input)->getProcessedText(), 'Do not override') !== FALSE, 'The filer is not overwrite the provided title attribute value.');
   }
 
 }
