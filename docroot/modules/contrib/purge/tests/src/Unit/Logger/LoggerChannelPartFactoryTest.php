@@ -7,6 +7,7 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\purge\Logger\LoggerChannelPartFactory
+ *
  * @group purge
  */
 class LoggerChannelPartFactoryTest extends UnitTestCase {
@@ -28,8 +29,8 @@ class LoggerChannelPartFactoryTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    $this->loggerChannelPurge = $this->getMock('\Psr\Log\LoggerInterface');
+  protected function setUp(): void {
+    $this->loggerChannelPurge = $this->createMock('\Psr\Log\LoggerInterface');
     $this->loggerChannelPartFactory = new LoggerChannelPartFactory($this->loggerChannelPurge);
   }
 
@@ -38,7 +39,7 @@ class LoggerChannelPartFactoryTest extends UnitTestCase {
    *
    * @dataProvider providerTestCreate()
    */
-  public function testCreate($id, array $grants = []) {
+  public function testCreate($id, array $grants = []): void {
     $this->assertInstanceOf(
       '\Drupal\purge\Logger\LoggerChannelPart',
       $this->loggerChannelPartFactory->create($id, $grants)
@@ -48,7 +49,7 @@ class LoggerChannelPartFactoryTest extends UnitTestCase {
   /**
    * Provides test data for testCreate().
    */
-  public function providerTestCreate() {
+  public function providerTestCreate(): array {
     return [
       ['foo', [0, 1, 2]],
       ['bar', [1, 2, 3]],

@@ -1,5 +1,3 @@
-[//]: # ( clear&&curl -s -F input_files[]=@CHANGELOG.md -F from=markdown -F to=html http://c.docverter.com/convert|tail -n+11|head -n-2 )
-
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -13,7 +11,26 @@ and this project adheres to
 
 ### Changed
 
+## [8.x-3.0] - 2020-05-29
+
+### Added
+- **Improvement:** added more tags to the default blacklist of the core tags
+  queuer: ``config:core.extension``, ``extensions``, ``config:purge``,
+  ``config:field.storage``.
+
+### Changed
+- **Important:** Purge now requires Drupal 8 to be updated to a recent stable
+  version, which is ``8.8.6``. This requirement supports the ongoing commitment
+  to stability, quality and functional equivalent on Drupal 8, while paving
+  the way for equal Drupal 9 quality with a single codebase.
+- **Important:** Purge now requires at least PHP 7.2 or newer.
+- **Important:** Drush 8 legacy wrappers have been removed.
+
 ### Fixed
+- **D9 support:** Various little fixes have been made to run smooth on D9.
+- **Improvement:** Code quality has been brought up to date (D9 readiness).
+- **Improvement:** Rewrote the entire UI testsuite to pass (D9 readiness).
+- **Improvement:** Rewrote the entire kernel testsuite to pass (D9 readiness).
 
 ## [8.x-3.0-beta9] - 2019-10-03
 
@@ -31,7 +48,7 @@ and this project adheres to
 
 ### Changed
 - **Improvement:** thousands of fixes to pass all these these standards checks:
-    - `phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md`
+    - `phpcs --standard=Drupal --extensions=php,module,inc,install,..`
     - `phpcs --standard=AcquiaDrupalStrict`
 - **Improvement:** `PROJECTPAGE.md`, `README.md` and **new** `CHANGELOG.md`.
 - **Improvement:** Drupal's status report now only shows warning and error

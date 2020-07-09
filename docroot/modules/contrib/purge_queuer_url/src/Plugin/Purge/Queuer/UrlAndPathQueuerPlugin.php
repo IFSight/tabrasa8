@@ -2,8 +2,8 @@
 
 namespace Drupal\purge_queuer_url\Plugin\Purge\Queuer;
 
-use Drupal\purge\Plugin\Purge\Queuer\QueuerInterface;
 use Drupal\purge\Plugin\Purge\Queuer\QueuerBase;
+use Drupal\purge\Plugin\Purge\Queuer\QueuerInterface;
 
 /**
  * Queues URLs or paths to your Purge queue utilizing a traffic database.

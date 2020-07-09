@@ -15,5 +15,8 @@
     "issues": "http://drupal.org/project/linkit",
     "source": "http://cgit.drupalcode.org/linkit"
   },
+  "require" : {
+    "drupal/core": "^8.7.7 || ^9"
+  },
   "license": "GPL-2.0+"
 }

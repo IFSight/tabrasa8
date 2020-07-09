@@ -58,7 +58,7 @@ class SelectTest extends DatabaseTestBase {
 
     // Check the returned number of rows.
     $this->assertCount(4, $records);
-    // Check that the flattened query contains the sanitised comment string.
+    // Check that the flattened query contains the sanitized comment string.
     $this->assertStringContainsString($expected, $query);
 
     $connection = Database::getConnection();
@@ -559,7 +559,7 @@ class SelectTest extends DatabaseTestBase {
       // Normally it would throw an exception but we are suppressing
       // it with the throw_exception option.
       $options['throw_exception'] = FALSE;
-      $this->connection->select('some_table_that_doesnt_exist', 't', $options)
+      $this->connection->select('some_table_that_does_not_exist', 't', $options)
         ->fields('t')
         ->countQuery()
         ->execute();
@@ -573,7 +573,7 @@ class SelectTest extends DatabaseTestBase {
 
     try {
       // This query will fail because the table does not exist.
-      $this->connection->select('some_table_that_doesnt_exist', 't')
+      $this->connection->select('some_table_that_does_not_exist', 't')
         ->fields('t')
         ->countQuery()
         ->execute();

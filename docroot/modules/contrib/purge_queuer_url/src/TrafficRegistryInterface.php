@@ -2,8 +2,8 @@
 
 namespace Drupal\purge_queuer_url;
 
-use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;
+use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 
 /**
  * Describes a traffic registry with URLs and tags.
@@ -31,7 +31,7 @@ interface TrafficRegistryInterface extends ServiceProviderInterface, ServiceModi
   /**
    * Remove a URL or path from the registry.
    *
-   * @param $url_or_path
+   * @param string $url_or_path
    *   The URL or path string to remove from the registry.
    */
   public function remove($url_or_path);

@@ -152,38 +152,31 @@ class SimplesitemapSitemapsForm extends SimplesitemapFormBase {
           '#attributes' => ['class' => ['form-item', 'clearfix']],
         ];
         foreach ($variants as $variant_name => $variant_definition) {
-          $row = [];
-          switch ($sitemap_statuses[$variant_name]) {
-            case 0:
-              $row['name']['data']['#markup'] = '<span title="' . $variant_name . '">' . $this->t($variant_definition['label']) . '</span>';
-              break;
-            case 1:
-            case 2:
-              $row['name']['data']['#markup'] = $this->t('<a href="@url" target="_blank">@variant</a>',
-                ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl(), '@variant' => $this->t($variant_definition['label'])]
-              );
-              break;
-          }
           if (!isset($sitemap_statuses[$variant_name])) {
+            $row['name']['data']['#markup'] = '<span title="' . $variant_name . '">' . $this->t($variant_definition['label']) . '</span>';
             $row['status'] = $this->t('pending');
           }
           else {
             switch ($sitemap_statuses[$variant_name]) {
+
               case 0:
+                $row['name']['data']['#markup'] = '<span title="' . $variant_name . '">' . $this->t($variant_definition['label']) . '</span>';
                 $row['status'] = $this->t('generating');
                 break;
+
               case 1:
-                $row['status'] = $this->t('published on @time', ['@time' => $this->dateFormatter->format($published_timestamps[$variant_name])]
-                );
-                break;
               case 2:
-                $row['status'] = $this->t('published on @time, regenerating',
-                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl(), '@time' => $this->dateFormatter->format($published_timestamps[$variant_name])]
+                $row['name']['data']['#markup'] = $this->t('<a href="@url" target="_blank">@variant</a>',
+                  ['@url' => $sitemap_generator->setSitemapVariant($variant_name)->getSitemapUrl(), '@variant' => $this->t($variant_definition['label'])]
                 );
+                $row['status'] = $this->t(($sitemap_statuses[$variant_name] === 1
+                  ? 'published on @time'
+                  : 'published on @time, regenerating'
+                ), ['@time' => $this->dateFormatter->format($published_timestamps[$variant_name])]);
                 break;
             }
           }
-          $form['simple_sitemap_settings']['status']['types'][$type_name]['table']['#rows'][$variant_name] = $row;
+          $form['simple_sitemap_settings']['status']['types'][$type_name]['table']['#rows'][$variant_name] = isset($row) ? $row : [];
           unset($sitemap_statuses[$variant_name]);
         }
       }
@@ -203,7 +196,7 @@ class SimplesitemapSitemapsForm extends SimplesitemapFormBase {
    *  1: Instance is published
    *  2: Instance is published but is being regenerated
    *
-   * @todo Move to SitemapGeneratorBase or DefaultSitemapGenerator so it can be overwritten by sitemap types with custom storages.
+   * @todo Implement SitemapGeneratorBase::isPublished() per sitemap instead or at least return a constant.
    */
   protected function fetchSitemapInstanceStatuses() {
     $results = $this->db
@@ -223,7 +216,7 @@ class SimplesitemapSitemapsForm extends SimplesitemapFormBase {
   /**
    * @return array
    *
-   * @todo Move to SitemapGeneratorBase or DefaultSitemapGenerator so it can be overwritten by sitemap types with custom storages.
+   * @todo Implement SitemapGeneratorBase::getPublishedTimestamp() per sitemap instead or at least return a constant.
    */
   protected function fetchSitemapInstancePublishedTimestamps() {
     return $this->db

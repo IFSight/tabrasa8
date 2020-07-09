@@ -1,10 +1,10 @@
-name: Purge
+core_version_requirement: '^8.8.6 || ^9.0.0'
+name: 'Purge'
 type: module
 description: 'Provides a generic external cache invalidation API and queue service.'
 package: Purge
-core: 8.x
 
-# Information added by Drupal.org packaging script on 2019-10-03
-version: '8.x-3.0-beta9'
+# Information added by Drupal.org packaging script on 2020-05-29
+version: '8.x-3.0'
 project: 'purge'
-datestamp: 1570108087
+datestamp: 1590744319

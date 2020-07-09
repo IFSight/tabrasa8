@@ -25,7 +25,7 @@ class PurgerFormController extends ControllerBase {
    * @param \Drupal\purge\Plugin\Purge\Purger\PurgersServiceInterface $purge_purgers
    *   The purge executive service, which wipes content from external caches.
    */
-  public function __construct(PurgersServiceInterface $purge_purgers) {
+  final public function __construct(PurgersServiceInterface $purge_purgers) {
     $this->purgePurgers = $purge_purgers;
   }
 
@@ -162,6 +162,9 @@ class PurgerFormController extends ControllerBase {
    *   The page title.
    */
   public function detailFormTitle($id) {
+    if (!($this->getPurgerPluginDefinition($id))) {
+      return $this->t('Purger');
+    }
     return $this->purgePurgers->getLabels()[$id];
   }
 

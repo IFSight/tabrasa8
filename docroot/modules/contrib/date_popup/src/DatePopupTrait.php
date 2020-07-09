@@ -15,13 +15,25 @@ trait DatePopupTrait {
    */
   protected function applyDatePopupToForm(array &$form) {
     if (!empty($this->options['expose']['identifier'])) {
-      // Detect filters that are using min/max.
-      if (isset($form[$this->options['expose']['identifier']]['min'])) {
-        $form[$this->options['expose']['identifier']]['min']['#type'] = 'date';
-        $form[$this->options['expose']['identifier']]['max']['#type'] = 'date';
+      $identifier = $this->options['expose']['identifier'];
+      // Identify wrapper.
+      $wrapper_key = $identifier . '_wrapper';
+      if (isset($form[$wrapper_key])) {
+        $element = &$form[$wrapper_key][$identifier];
       }
       else {
-        $form[$this->options['expose']['identifier']]['#type'] = 'date';
+        $element = &$form[$identifier];
+      }
+      // Detect filters that are using min/max.
+      if (isset($element['min'])) {
+        $element['min']['#type'] = 'date';
+        $element['max']['#type'] = 'date';
+        if (isset($element['value'])) {
+          $element['value']['#type'] = 'date';
+        }
+      }
+      else {
+        $element['#type'] = 'date';
       }
     }
   }

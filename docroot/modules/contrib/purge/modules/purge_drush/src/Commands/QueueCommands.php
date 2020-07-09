@@ -3,8 +3,9 @@
 namespace Drupal\purge_drush\Commands;
 
 use Consolidation\AnnotatedCommand\AnnotationData;
-use Consolidation\AnnotatedCommand\CommandData;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
+use Consolidation\SiteAlias\SiteAliasManagerAwareInterface;
+use Consolidation\SiteAlias\SiteAliasManagerAwareTrait;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\purge\Plugin\Purge\Invalidation\Exception\InvalidExpressionException;
 use Drupal\purge\Plugin\Purge\Invalidation\Exception\MissingExpressionException;
@@ -30,7 +31,8 @@ use Symfony\Component\Console\Output\BufferedOutput;
 /**
  * Interact with the Purge queue from the command line.
  */
-class QueueCommands extends DrushCommands {
+class QueueCommands extends DrushCommands implements SiteAliasManagerAwareInterface {
+  use SiteAliasManagerAwareTrait;
 
   /**
    * The 'purge.processors' service.
@@ -98,17 +100,6 @@ class QueueCommands extends DrushCommands {
     $this->purgeQueue = $purge_queue;
     $this->purgeQueueStats = $purge_queue_stats;
     $this->purgeQueuers = $purge_queuers;
-  }
-
-  /**
-   * Validate access to the SiteProcess API.
-   *
-   * @hook validate p:queue-work
-   */
-  public function checkDrushVersion(CommandData $commandData) {
-    if (!(method_exists(Drush::class, 'aliasManager') && method_exists(Drush::class, 'drush'))) {
-      throw new \Exception(dt('Drush 9.6=> is required for this command!'));
-    }
   }
 
   /**
@@ -335,10 +326,12 @@ class QueueCommands extends DrushCommands {
         }
         // Finish execution for [q]uit or --> pressed on the last page.
         elseif (($char === 113) || ((!$next) && ($char === 67))) {
-          return;
+          return NULL;
         }
       }
     }
+
+    return NULL;
   }
 
   /**
@@ -503,7 +496,7 @@ class QueueCommands extends DrushCommands {
 
     // Process one/multiple chunks and gather the results.
     $opt = ['format' => 'json', 'finish' => FALSE, 'no-interaction' => TRUE];
-    $self = Drush::aliasManager()->getSelf();
+    $self = $this->siteAliasManager()->getSelf();
     $runs = [];
     do {
       $subproc = Drush::drush($self, 'p:queue-work', [], $opt);

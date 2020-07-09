@@ -5,7 +5,7 @@ type: module
 core_version_requirement: ^8.7.7 || ^9
 configure: smtp.config
 
-# Information added by Drupal.org packaging script on 2020-05-14
-version: '8.x-1.0-rc2'
+# Information added by Drupal.org packaging script on 2020-06-06
+version: '8.x-1.0-rc3'
 project: 'smtp'
-datestamp: 1589493634
+datestamp: 1591402048

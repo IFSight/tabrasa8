@@ -2,10 +2,9 @@
 
 namespace Drupal\purge_queuer_url;
 
-use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Condition;
-use Drupal\purge_queuer_url\TrafficRegistryInterface;
+use Drupal\Core\DependencyInjection\ServiceProviderBase;
 
 /**
  * Provides a database-driven traffic registry with URLs and tags.

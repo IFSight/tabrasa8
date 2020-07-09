@@ -6,6 +6,7 @@ use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\purge\Logger\PurgeLoggerAwareTrait
+ *
  * @group purge
  */
 class PurgeLoggerAwareTraitTest extends UnitTestCase {
@@ -20,14 +21,14 @@ class PurgeLoggerAwareTraitTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    $this->logger = $this->getMock('\Psr\Log\LoggerInterface');
+  protected function setUp(): void {
+    $this->logger = $this->createMock('\Psr\Log\LoggerInterface');
   }
 
   /**
    * @covers ::logger
    */
-  public function testLogger() {
+  public function testLogger(): void {
     $trait = $this->getMockForTrait('\Drupal\purge\Logger\PurgeLoggerAwareTrait');
     $trait->setLogger($this->logger);
     $this->assertEquals($this->logger, $trait->logger());
@@ -36,7 +37,7 @@ class PurgeLoggerAwareTraitTest extends UnitTestCase {
   /**
    * @covers ::logger
    */
-  public function testLoggerUnset() {
+  public function testLoggerUnset(): void {
     $trait = $this->getMockForTrait('\Drupal\purge\Logger\PurgeLoggerAwareTrait');
     $this->expectException(\LogicException::class);
     $this->expectExceptionMessage('Logger unavailable, call ::setLogger().');

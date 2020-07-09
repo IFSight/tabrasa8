@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Tests the linkit autocomplete functionality.
  *
- * @group Linkit
+ * @group linkit
  */
 class LinkitAutocompleteTest extends LinkitKernelTestBase {
 

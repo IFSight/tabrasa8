@@ -2,16 +2,49 @@
 
 namespace Drupal\purge_queuer_url\Form;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\purge_ui\Form\QueuerConfigFormBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configuration form for the Url and Path queuer.
  */
 class ConfigurationForm extends QueuerConfigFormBase {
+
+  /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * Constructs a ConfigurationForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
+   */
+  final public function __construct(ConfigFactoryInterface $config_factory, MessengerInterface $messenger) {
+    $this->setConfigFactory($config_factory);
+    $this->messenger = $messenger;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('messenger')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -23,7 +56,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'purge_queuer_url.configuration_form';
   }
 
@@ -33,9 +66,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('purge_queuer_url.settings');
 
-    /**
-     * Traffic collection.
-     */
+    // Traffic collection.
     $form['collection'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Traffic collection'),
@@ -83,8 +114,8 @@ class ConfigurationForm extends QueuerConfigFormBase {
       '#type' => 'select',
       '#default_value' => $config->get('scheme'),
       '#options' => [
-        'http' => 'http://',
-        'https' => 'https://',
+        'http' => $this->t('http://'),
+        'https' => $this->t('https://'),
       ],
       '#states' => [
         'visible' => [
@@ -94,9 +125,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
       ],
     ];
 
-    /**
-     * Blacklist form elements (and ajax 'add more' logic).
-     */
+    // Blacklist form elements (and ajax 'add more' logic).
     $form['blacklist'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Blacklist'),
@@ -132,7 +161,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
     $form['blacklist']['add'] = [
       '#type' => 'submit',
       '#name' => 'add',
-      '#value' => t('Add'),
+      '#value' => $this->t('Add'),
       '#submit' => [[$this, 'addMoreSubmit']],
       '#ajax' => [
         'callback' => [$this, 'addMoreCallback'],
@@ -141,9 +170,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
       ],
     ];
 
-    /**
-     * Define a clear button to allow clearing the registry.
-     */
+    // Define a clear button to allow clearing the registry.
     $form['actions']['clear'] = [
       '#type' => 'submit',
       '#value' => $this->t('Clear traffic history'),
@@ -215,7 +242,7 @@ class ConfigurationForm extends QueuerConfigFormBase {
     // Clear the traffic registry IF there are no ordinary form errors.
     if (!$form_state->getErrors()) {
       \Drupal::service('purge_queuer_url.registry')->clear();
-      drupal_set_message($this->t("The traffic registry has been cleared, your site needs to get regular traffic before it starts queueing URLs or paths again! Pages currently cached in Drupal's render cache won't be collected unless you clear those, but be careful doing that on a busy site!"));
+      $this->messenger->addMessage($this->t("The traffic registry has been cleared, your site needs to get regular traffic before it starts queueing URLs or paths again! Pages currently cached in Drupal's render cache won't be collected unless you clear those, but be careful doing that on a busy site!"));
     }
 
     // Determine all the AJAX and non-AJAX logic depending on how we're called.

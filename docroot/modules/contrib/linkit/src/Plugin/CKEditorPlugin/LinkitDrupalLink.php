@@ -38,7 +38,7 @@ class LinkitDrupalLink extends DrupalLink implements CKEditorPluginConfigurableI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')->getStorage('linkit_profile')
+      $container->get('entity_type.manager')->getStorage('linkit_profile')
     );
   }
 

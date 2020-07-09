@@ -35,7 +35,7 @@ class QueueBrowserForm extends FormBase {
    * @param \Drupal\purge\Plugin\Purge\Queue\QueueServiceInterface $purge_queue
    *   The purge queue service.
    */
-  public function __construct(QueueServiceInterface $purge_queue) {
+  final public function __construct(QueueServiceInterface $purge_queue) {
     $this->purgeQueue = $purge_queue;
   }
 
@@ -59,6 +59,9 @@ class QueueBrowserForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#prefix'] = '<div id="browserwrapper">';
     $form['#suffix'] = '</div>';
+
+    // This is rendered as a modal dialog, so we need to set some extras.
+    $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
 
     // Store paging information in form state so we can easily update it.
     if (is_null($form_state->get('pages'))) {
