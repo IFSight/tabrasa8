@@ -56,7 +56,7 @@ final class Versions
   'drupal/console-en' => '1.9.4@30813a832fdb1244e84cbcc012cd103d5e9d673d',
   'drupal/console-extend-plugin' => '0.9.3@ad8e52df34b2e78bdacfffecc9fe8edf41843342',
   'drupal/core' => '8.9.2@8f0e24555c093669ce41edbb30637fe19df16802',
-  'drupal/core-composer-scaffold' => '8.9.1@07cdfe2799789fc0c2d0e3e1ba64cb5e2a973ece',
+  'drupal/core-composer-scaffold' => '8.9.2@07cdfe2799789fc0c2d0e3e1ba64cb5e2a973ece',
   'drupal/core-recommended' => '8.9.2@8301ff766f17ce8a9eb36d3ffd183cbfff01dad6',
   'drupal/ctools' => '3.4.0@8.x-3.4',
   'drupal/date_popup' => '1.1.0@8.x-1.1',
@@ -255,7 +255,7 @@ final class Versions
   'symfony/phpunit-bridge' => 'v3.4.42@ac355e1e9ebde4cf6ef5187f5cf4b43001f9a29f',
   'theseer/tokenizer' => '1.1.3@11336f6f84e16a720dae9d8e6ed5019efa85a0f9',
   'vanare/behat-cucumber-json-formatter' => 'v1.1.3@b28ae403404be4c74c740a3948d9338fc51443a3',
-  'drupal/drupal' => 'dev-master@067a2a2f78d0d36de4620af5f1fb2bf7cfb03baf',
+  'drupal/drupal' => 'dev-master@27293be28bb63fe37f15a48121865b84f0447a45',
 );
 
     private function __construct()

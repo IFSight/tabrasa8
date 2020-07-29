@@ -2,7 +2,6 @@
 Thumbs.db
 .idea/
 *~
-log/
 *.log
 *.rej
 *.orig
