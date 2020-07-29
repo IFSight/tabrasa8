@@ -70,10 +70,11 @@
         "wikimedia/composer-merge-plugin": "~1.4"
     },
     "require-dev": {
-        "drupal/devel": "^2.0",
         "behat/mink-selenium2-driver": "1.4.x-dev as 1.3.x-dev",
         "drupal/core-dev": "^8.9",
+        "drupal/devel": "^2.0",
         "drupal/drupal-extension": "^4.0@beta",
+        "drush/drush": "^10.3",
         "genesis/behat-fail-aid": "^2.1",
         "guzzlehttp/guzzle": "^6.0@dev",
         "mglaman/drupal-check": "^1.1",

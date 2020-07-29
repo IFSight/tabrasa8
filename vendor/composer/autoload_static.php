@@ -15,9 +15,9 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '92c8763cd6170fce6fcfe7e26b4e8c10' => __DIR__ . '/..' . '/symfony/phpunit-bridge/bootstrap.php',
         '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
-        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
@@ -40,9 +40,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         '751a5a3f463e4be759be31748b61737c' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/parse_cookie_header.legacy.php',
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '9b38cf48e83f5d8f60375221cd213eee' => __DIR__ . '/..' . '/phpstan/phpstan/bootstrap.php',
-        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
-        '5a12a5271c58108e0aa33355e6ac54ea' => __DIR__ . '/..' . '/drupal/console-core/src/functions.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
+        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
+        '952683d815ff0a7bf322b93c0be7e4e4' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/bootstrap.php',
+        '5a12a5271c58108e0aa33355e6ac54ea' => __DIR__ . '/..' . '/drupal/console-core/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -118,11 +119,13 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
             'Symfony\\Bridge\\PhpUnit\\' => 23,
             'Stecman\\Component\\Symfony\\Console\\BashCompletion\\' => 49,
+            'SelfUpdate\\' => 11,
             'Seld\\PharUtils\\' => 15,
             'Seld\\JsonLint\\' => 14,
         ),
         'R' => 
         array (
+            'Robo\\' => 5,
             'React\\Promise\\' => 14,
         ),
         'P' => 
@@ -148,6 +151,7 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         ),
         'L' => 
         array (
+            'League\\Container\\' => 17,
             'Laminas\\ZendFrameworkBridge\\' => 28,
             'Laminas\\Stdlib\\' => 15,
             'Laminas\\Feed\\' => 13,
@@ -159,6 +163,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
             'JsonSchema\\' => 11,
             'Jean85\\' => 7,
         ),
+        'I' => 
+        array (
+            'Interop\\Container\\' => 18,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\Stream\\' => 18,
@@ -166,6 +174,8 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'Grasmash\\YamlExpander\\' => 22,
+            'Grasmash\\Expander\\' => 18,
             'Goutte\\' => 7,
         ),
         'F' => 
@@ -180,6 +190,8 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         ),
         'D' => 
         array (
+            'Drush\\Internal\\' => 15,
+            'Drush\\' => 6,
             'Drupal\\redis\\' => 13,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
@@ -190,6 +202,7 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
             'Drupal\\Component\\' => 17,
             'Drupal\\' => 7,
             'DrupalPractice\\' => 15,
+            'DrupalCodeGenerator\\' => 20,
             'DrupalCheck\\' => 12,
             'Doctrine\\Instantiator\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
@@ -201,6 +214,13 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         ),
         'C' => 
         array (
+            'Consolidation\\SiteProcess\\' => 26,
+            'Consolidation\\SiteAlias\\' => 24,
+            'Consolidation\\OutputFormatters\\' => 31,
+            'Consolidation\\Log\\' => 18,
+            'Consolidation\\Filter\\' => 21,
+            'Consolidation\\Config\\' => 21,
+            'Consolidation\\AnnotatedCommand\\' => 31,
             'Composer\\XdebugHandler\\' => 23,
             'Composer\\Spdx\\' => 14,
             'Composer\\Semver\\' => 16,
@@ -411,6 +431,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/..' . '/stecman/symfony-console-completion/src',
         ),
+        'SelfUpdate\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/self-update/src',
+        ),
         'Seld\\PharUtils\\' => 
         array (
             0 => __DIR__ . '/..' . '/seld/phar-utils/src',
@@ -418,6 +442,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         'Seld\\JsonLint\\' => 
         array (
             0 => __DIR__ . '/..' . '/seld/jsonlint/src/Seld/JsonLint',
+        ),
+        'Robo\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/robo/src',
         ),
         'React\\Promise\\' => 
         array (
@@ -472,6 +500,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/..' . '/makinacorpus/php-lucene/src',
         ),
+        'League\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/container/src',
+        ),
         'Laminas\\ZendFrameworkBridge\\' => 
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src',
@@ -500,6 +532,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/..' . '/jean85/pretty-package-versions/src',
         ),
+        'Interop\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
+        ),
         'GuzzleHttp\\Stream\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/streams/src',
@@ -520,6 +556,14 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
+        'Grasmash\\YamlExpander\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/grasmash/yaml-expander/src',
+        ),
+        'Grasmash\\Expander\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/grasmash/expander/src',
+        ),
         'Goutte\\' => 
         array (
             0 => __DIR__ . '/..' . '/fabpot/goutte/Goutte',
@@ -539,6 +583,14 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         'Egulias\\EmailValidator\\' => 
         array (
             0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
+        ),
+        'Drush\\Internal\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drush/drush/src/internal-forks',
+        ),
+        'Drush\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drush/drush/src',
         ),
         'Drupal\\redis\\' => 
         array (
@@ -580,6 +632,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/..' . '/drupal/coder/coder_sniffer/DrupalPractice',
         ),
+        'DrupalCodeGenerator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src',
+        ),
         'DrupalCheck\\' => 
         array (
             0 => __DIR__ . '/..' . '/mglaman/drupal-check/src',
@@ -611,6 +667,34 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'Consolidation\\SiteProcess\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/site-process/src',
+        ),
+        'Consolidation\\SiteAlias\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/site-alias/src',
+        ),
+        'Consolidation\\OutputFormatters\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/output-formatters/src',
+        ),
+        'Consolidation\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/log/src',
+        ),
+        'Consolidation\\Filter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/filter-via-dot-access-data/src',
+        ),
+        'Consolidation\\Config\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/config/src',
+        ),
+        'Consolidation\\AnnotatedCommand\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/consolidation/annotated-command/src',
         ),
         'Composer\\XdebugHandler\\' => 
         array (
