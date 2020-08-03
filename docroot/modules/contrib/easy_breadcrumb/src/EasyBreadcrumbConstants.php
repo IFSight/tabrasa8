@@ -13,6 +13,10 @@ class EasyBreadcrumbConstants {
   const MODULE_NAME = 'easy_breadcrumb';
 
   /**
+   * Module's settings.
+   */
+  const MODULE_SETTINGS = 'easy_breadcrumb.settings';
+  /**
    * Flag for applying easy breadcrumb to admin routes.
    */
   const APPLIES_ADMIN_ROUTES = 'applies_admin_routes';
@@ -83,6 +87,21 @@ class EasyBreadcrumbConstants {
   const CAPITALIZATOR_IGNORED_WORDS = 'capitalizator_ignored_words';
 
   /**
+   * List of words to be forced by the 'capitalizator'. E.g.: your brand's name.
+   */
+  const CAPITALIZATOR_FORCED_WORDS = 'capitalizator_forced_words';
+
+  /**
+   * List of words to be forced by the 'capitalizator'. E.g.: your brand's name.
+   */
+  const CAPITALIZATOR_FORCED_WORDS_FIRST_LETTER = 'capitalizator_forced_words_first_letter';
+
+  /**
+   * Logical value to 'Make the first letters of each segment capitalized'.
+   */
+  const CAPITALIZATOR_FORCED_WORDS_CASE_SENSITIVITY = 'capitalizator_forced_words_case_sensitivity';
+
+  /**
    * Flag for showing the language prefix as its own segment.
    */
   const LANGUAGE_PATH_PREFIX_AS_SEGMENT = 'language_path_prefix_as_segment';
@@ -96,6 +115,11 @@ class EasyBreadcrumbConstants {
    * Use page title as fallback for menu title.
    */
   const USE_PAGE_TITLE_AS_MENU_TITLE_FALLBACK = 'use_page_title_as_menu_title_fallback';
+
+  /**
+   * Use site title as the front page segment.
+   */
+  const USE_SITE_TITLE = 'use_site_title';
 
   /**
    * Flag for removing repeated identical segments from the breadcrumb.
@@ -116,6 +140,11 @@ class EasyBreadcrumbConstants {
    * Flag for using term hierarchy.
    */
   const TERM_HIERARCHY = 'term_hierarchy';
+
+  /**
+   * Flag for adding the breadcrumb as structured to the HTML head.
+   */
+  const ADD_STRUCTURED_DATA_JSON_LD = 'add_structured_data_json_ld';
 
   /**
    * Default list of excluded paths.
@@ -139,41 +168,19 @@ class EasyBreadcrumbConstants {
    *   Default list of replaced titles.
    */
   public static function defaultReplacedTitles() {
-    static $default_replaced_titles = [];
 
-    return $default_replaced_titles;
+    return [];
   }
 
   /**
-   * Default list of replaced titles.
+   * Default list of replaced paths.
    *
    * @return array
-   *   Default list of replaced titles.
+   *   Default list of replaced paths.
    */
   public static function defaultCustomPaths() {
-    static $default_custom_paths = [];
 
-    return $default_custom_paths;
-  }
-
-  /**
-   * Default list of ignored words.
-   *
-   * @return array
-   *   Default list of ignored words.
-   */
-  public static function defaultIgnoredWords() {
-    static $default_ignored_words = [
-      'of',
-      'and',
-      'or',
-      'de',
-      'del',
-      'y',
-      'o',
-    ];
-
-    return $default_ignored_words;
+    return [];
   }
 
 }

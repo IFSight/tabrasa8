@@ -8,6 +8,11 @@ easy_breadcrumb_test.title_formattable_markup:
   defaults:
     _controller: '\Drupal\easy_breadcrumb_test\Controller\TestRouteController::page'
     _title_callback: '\Drupal\easy_breadcrumb_test\Controller\TestRouteController::pageTitleFormattableMarkup'
+easy_breadcrumb_test.title_markup:
+  path: /test/easy-breadcrumb-markup
+  defaults:
+    _controller: '\Drupal\easy_breadcrumb_test\Controller\TestRouteController::page'
+    _title_callback: '\Drupal\easy_breadcrumb_test\Controller\TestRouteController::pageTitleMarkup'
 easy_breadcrumb_test.title_translatable_markup:
   path: /test/easy-breadcrumb-translatable
   defaults:

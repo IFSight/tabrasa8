@@ -9,9 +9,24 @@ use Drupal\Core\DrupalKernelInterface;
  */
 class IconsetFinderService {
 
+  /**
+   * {@inheritdoc}
+   */
   protected $installDirs = [];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $searchDirs = [];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $iconsets = [];
+
+  /**
+   * {@inheritdoc}
+   */
   protected $kernel;
 
   /**
@@ -54,7 +69,7 @@ class IconsetFinderService {
     // Similar to 'modules' and 'themes' directories inside an installation
     // profile, installation profiles may want to place libraries into a
     // 'libraries' directory.
-    $profile = drupal_get_profile();
+    $profile = \Drupal::installProfile();
     if ($profile && strpos($profile, "core") === FALSE) {
       $profile_path = drupal_get_path('profile', $profile);
       $searchdirs[] = "$profile_path/libraries";

@@ -49,3 +49,10 @@ function social_media_links_help($route_name, RouteMatchInterface $route_match) 
       return $output;
   }
 }
+
+/**
+ * Attaching css file.
+ */
+function social_media_links_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'social_media_links/social_media_links.theme';
+}

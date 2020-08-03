@@ -2,6 +2,7 @@
 
 namespace Drupal\social_media_links;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
@@ -12,7 +13,14 @@ use Drupal\Core\Url;
  */
 class PlatformBase extends PluginBase implements PlatformInterface {
 
+  /**
+   * {@inheritdoc}
+   */
   protected $value;
+
+  /**
+   * {@inheritdoc}
+   */
   protected $description;
 
   /**
@@ -95,6 +103,13 @@ class PlatformBase extends PluginBase implements PlatformInterface {
   /**
    * {@inheritdoc}
    */
-  public static function validateValue(array &$element, FormStateInterface $form_state, array $form) {}
+  public static function validateValue(array &$element, FormStateInterface $form_state, array $form) {
+    // Do not allow a URL when the plugin already provides a URL prefix.
+    if (!empty($element['#value']) && !empty($element['#field_prefix'])) {
+      if (UrlHelper::isExternal($element['#value'])) {
+        $form_state->setError($element, t("The entered value %value is a URL. You should enter only the relative part, the URL prefix is automatically prepended.", ['%value' => $element['#value']]));
+      }
+    }
+  }
 
 }

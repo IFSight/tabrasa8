@@ -10,6 +10,6 @@ services:
     factory: config.factory:getEditable
     arguments: ['smtp.settings']
 
-  smtp.contection_tester:
+  smtp.connection_tester:
     class: Drupal\smtp\ConnectionTester\ConnectionTester
     arguments: ['@config.factory', '@smtp.logger_channel', '@plugin.manager.mail']

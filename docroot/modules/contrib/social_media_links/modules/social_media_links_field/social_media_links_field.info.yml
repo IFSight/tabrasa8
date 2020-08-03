@@ -1,12 +1,13 @@
 name: Social Media Links Field
 description: The module provides a field type to capture social media profiles.
 type: module
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 
 dependencies:
-  - social_media_links
-# Information added by Drupal.org packaging script on 2017-11-12
-version: '8.x-2.6'
-core: '8.x'
+  - social_media_links:social_media_links
+
+# Information added by Drupal.org packaging script on 2020-07-24
+version: '8.x-2.7'
 project: 'social_media_links'
-datestamp: 1510489388
+datestamp: 1595616930

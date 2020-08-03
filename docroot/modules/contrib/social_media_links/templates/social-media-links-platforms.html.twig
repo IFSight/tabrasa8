@@ -15,7 +15,7 @@
 <ul{{ attributes.addClass(classes) }}>
   {% for platform in platforms %}
     <li>
-      <a href="{{ platform.url }}" {{ platform.attributes}} >
+      <a class="social-media-link-icon--{{ platform.id }}" href="{{ platform.url }}" {{ platform.attributes }} >
         {{ platform.element }}
       </a>
 
@@ -24,7 +24,7 @@
           <br />
         {% endif %}
 
-        <span><a href="{{ platform.url }}" {{ link_attributes }}>{{ platform.name }}</a></span>
+        <span><a class="social-media-link--{{ platform.id }}" href="{{ platform.url }}" {{ platform.attributes }}>{{ platform.name }}</a></span>
       {% endif %}
     </li>
   {% endfor %}

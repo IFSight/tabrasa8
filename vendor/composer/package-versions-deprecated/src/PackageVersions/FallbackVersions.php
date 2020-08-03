@@ -38,7 +38,7 @@ final class FallbackVersions
      * @throws OutOfBoundsException If a version cannot be located.
      * @throws UnexpectedValueException If the composer.lock file could not be located.
      */
-    public static function getVersion(string $packageName) : string
+    public static function getVersion(string $packageName): string
     {
         $versions = iterator_to_array(self::getVersions(self::getPackageData()));
 
@@ -56,7 +56,7 @@ final class FallbackVersions
      *
      * @throws UnexpectedValueException
      */
-    private static function getPackageData() : array
+    private static function getPackageData(): array
     {
         $checkedPaths = [
             // The top-level project's ./vendor/composer/installed.json
@@ -115,7 +115,7 @@ final class FallbackVersions
      *
      * @psalm-return Generator<string, string>
      */
-    private static function getVersions(array $packageData) : Generator
+    private static function getVersions(array $packageData): Generator
     {
         foreach ($packageData as $package) {
             yield $package['name'] => $package['version'] . '@' . (

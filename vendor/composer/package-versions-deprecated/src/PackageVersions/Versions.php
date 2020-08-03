@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PackageVersions;
 
+use Composer\InstalledVersions;
 use OutOfBoundsException;
 
 /**
@@ -11,10 +12,19 @@ use OutOfBoundsException;
  * @see \PackageVersions\Installer
  *
  * This file is overwritten at every run of `composer install` or `composer update`.
+ *
+ * @deprecated in favor of the Composer\InstalledVersions class provided by Composer 2. Require composer-runtime-api:^2 to ensure it is present.
  */
 final class Versions
 {
+    /**
+     * @deprecated please use {@see \Composer\InstalledVersions::getRootPackage()} instead. The
+     *             equivalent expression for this constant's contents is
+     *             `\Composer\InstalledVersions::getRootPackage()['name']`.
+     *             This constant will be removed in version 2.0.0.
+     */
     const ROOT_PACKAGE_NAME = 'drupal/drupal';
+
     /**
      * Array of all available composer packages.
      * Dont read this array from your calling code, but use the \PackageVersions\Versions::getVersion() method instead.
@@ -60,10 +70,10 @@ final class Versions
   'drupal/core-recommended' => '8.9.2@8301ff766f17ce8a9eb36d3ffd183cbfff01dad6',
   'drupal/ctools' => '3.4.0@8.x-3.4',
   'drupal/date_popup' => '1.1.0@8.x-1.1',
-  'drupal/easy_breadcrumb' => '1.12.0@8.x-1.12',
+  'drupal/easy_breadcrumb' => '1.13.0@8.x-1.13',
   'drupal/elasticsearch_connector' => '6.0.0-alpha2@8.x-6.0-alpha2',
   'drupal/embed' => '1.4.0@8.x-1.4',
-  'drupal/entity' => '1.0.0@8.x-1.0',
+  'drupal/entity' => '1.1.0@8.x-1.1',
   'drupal/entity_browser' => '2.5.0@8.x-2.5',
   'drupal/entity_embed' => '1.1.0@8.x-1.1',
   'drupal/entity_reference_revisions' => '1.8.0@8.x-1.8',
@@ -71,7 +81,7 @@ final class Versions
   'drupal/field_group' => '3.1.0@8.x-3.1',
   'drupal/geolocation' => '1.11.0@8.x-1.11',
   'drupal/google_analytics' => '2.5.0@8.x-2.5',
-  'drupal/inline_entity_form' => '1.0.0-rc6@8.x-1.0-rc6',
+  'drupal/inline_entity_form' => '1.0.0-rc7@8.x-1.0-rc7',
   'drupal/libraries' => '3.0.0-alpha1@8.x-3.0-alpha1',
   'drupal/linkit' => '5.0.0-beta11@8.x-5.0-beta11',
   'drupal/mailsystem' => '4.3.0@8.x-4.3',
@@ -91,8 +101,8 @@ final class Versions
   'drupal/simple_sitemap' => '3.7.0@8.x-3.7',
   'drupal/slick' => '2.2.0@8.x-2.2',
   'drupal/slick_browser' => '2.1.0@8.x-2.1',
-  'drupal/smtp' => '1.0.0-rc3@8.x-1.0-rc3',
-  'drupal/social_media_links' => '2.6.0@8.x-2.6',
+  'drupal/smtp' => '1.0.0-rc4@8.x-1.0-rc4',
+  'drupal/social_media_links' => '2.7.0@8.x-2.7',
   'drupal/token' => '1.7.0@8.x-1.7',
   'drupal/twig_tweak' => '2.6.0@8.x-2.6',
   'drupal/ultimate_cron' => '2.0.0-alpha4@8.x-2.0-alpha4',
@@ -127,7 +137,7 @@ final class Versions
   'pear/console_getopt' => 'v1.4.3@a41f8d3e668987609178c7c4a9fe48fecac53fa0',
   'pear/pear-core-minimal' => 'v1.10.10@625a3c429d9b2c1546438679074cac1b089116a7',
   'pear/pear_exception' => 'v1.0.1@dbb42a5a0e45f3adcf99babfb2a1ba77b8ac36a7',
-  'phpmailer/phpmailer' => 'v6.1.6@c2796cb1cb99d7717290b48c4e6f32cb6c60b7b3',
+  'phpmailer/phpmailer' => 'v6.1.7@2c2370ba3df7034f9eb7b8f387c97b52b2ba5ad0',
   'psr/container' => '1.0.0@b7ce3b176482dbbc1245ebf52b181af44c2cf55f',
   'psr/http-message' => '1.0.1@f6561bf28d520154e4b0ec72be95418abe6d9363',
   'psr/log' => '1.1.3@0f73288fd15629204f9d42b7055f72dacbe811fc',
@@ -139,12 +149,12 @@ final class Versions
   'stecman/symfony-console-completion' => '0.11.0@a9502dab59405e275a9f264536c4e1cb61fc3518',
   'symfony-cmf/routing' => '1.4.1@fb1e7f85ff8c6866238b7e73a490a0a0243ae8ac',
   'symfony/class-loader' => 'v3.4.41@e4636a4f23f157278a19e5db160c63de0da297d8',
-  'symfony/config' => 'v3.4.42@cd61db31cbd19cbe4ba9f6968f13c9076e1372ab',
+  'symfony/config' => 'v3.4.43@9e2aa97f0d51f114983666f5aa362426d53e004a',
   'symfony/console' => 'v3.4.41@bfe29ead7e7b1cc9ce74c6a40d06ad1f96fced13',
-  'symfony/css-selector' => 'v3.4.42@9ccf6e78077a3fc1596e6c7b5958008965a11518',
+  'symfony/css-selector' => 'v3.4.43@9ccf6e78077a3fc1596e6c7b5958008965a11518',
   'symfony/debug' => 'v3.4.41@518c6a00d0872da30bd06aee3ea59a0a5cf54d6d',
   'symfony/dependency-injection' => 'v3.4.41@e39380b7104b0ec538a075ae919f00c7e5267bac',
-  'symfony/dom-crawler' => 'v3.4.42@c3086a58a66b2a519c0b7ac80539a3727609ea9c',
+  'symfony/dom-crawler' => 'v3.4.43@fc66039e3138db2fc54ee9ad30646d99c4495691',
   'symfony/event-dispatcher' => 'v3.4.41@14d978f8e8555f2de719c00eb65376be7d2e9081',
   'symfony/filesystem' => 'v3.4.43@0f625d0cb1e59c8c4ba61abb170125175218ff10',
   'symfony/finder' => 'v3.4.43@5ec813ccafa8164ef21757e8c725d3a57da59200',
@@ -183,9 +193,9 @@ final class Versions
   'behat/transliterator' => 'v1.3.0@3c4ec1d77c3d05caa1f0bf8fb3aae4845005c7fc',
   'chi-teck/drupal-code-generator' => '1.32.1@8abba7131ed4c89c1e8fc6dca0d05a4b6d0b2749',
   'composer/ca-bundle' => '1.2.7@95c63ab2117a72f48f5a55da9740a3273d45b7fd',
-  'composer/composer' => '1.10.8@56e0e094478f30935e9128552188355fa9712291',
-  'composer/package-versions-deprecated' => '1.8.1@b9805885293f3957ee0dd42616ac6915c4ac9a4b',
-  'composer/spdx-licenses' => '1.5.3@0c3e51e1880ca149682332770e25977c70cf9dae',
+  'composer/composer' => '1.10.10@32966a3b1d48bc01472a8321fd6472b44fad033a',
+  'composer/package-versions-deprecated' => '1.10.99@dd51b4443d58b34b6d9344cf4c288e621c9a826f',
+  'composer/spdx-licenses' => '1.5.4@6946f785871e2314c60b4524851f3702ea4f2223',
   'composer/xdebug-handler' => '1.4.2@fa2aaf99e2087f013a14f7432c1cd2dd7d8f1f51',
   'consolidation/annotated-command' => '2.12.0@512a2e54c98f3af377589de76c43b24652bcb789',
   'consolidation/config' => '1.2.1@cac1279bae7efb5c7fb2ca4c3ba4b8eb741a96c1',
@@ -199,7 +209,7 @@ final class Versions
   'container-interop/container-interop' => '1.2.0@79cbf1341c22ec75643d841642dd5d6acd83bdb8',
   'doctrine/instantiator' => '1.3.1@f350df0268e904597e3bd9c4685c53e0e333feea',
   'drupal/coder' => '8.3.9@d51e0b8c6561e21c0545d04b5410a7bed7ee7c6b',
-  'drupal/core-dev' => '8.9.1@36370b3f42911c09ffb35f08fc72853d20e6efd7',
+  'drupal/core-dev' => '8.9.2@36370b3f42911c09ffb35f08fc72853d20e6efd7',
   'drupal/devel' => '2.1.0@8.x-2.1',
   'drupal/drupal-driver' => 'v2.1.0@ebc7fc3cbaa0b2eb7bcb100d1302dadb67a9de29',
   'drupal/drupal-extension' => 'v4.1.0@f611a70aaa2d1ef6b3fdae9c35dc573508c7d648',
@@ -214,28 +224,28 @@ final class Versions
   'jean85/pretty-package-versions' => '1.3.0@e3517fb11b67e798239354fe8213927d012ad8f9',
   'justinrainbow/json-schema' => '5.2.10@2ba9c8c862ecd5510ed16c6340aa9f6eadb4f31b',
   'league/container' => '2.4.1@43f35abd03a12977a60ffd7095efd6a7808488c0',
-  'mglaman/drupal-check' => '1.1.2@eaee2c8b03bf3bb8aff190b9000d12e0c3bea87b',
-  'mglaman/phpstan-drupal' => '0.12.4@4a74b797251562081715bb086a49d460c61a8783',
+  'mglaman/drupal-check' => '1.1.3@42ef2d602f2c97c6bdb794aa891094554ec7f520',
+  'mglaman/phpstan-drupal' => '0.12.5@f7676482b39184270eaba25cbd5e491144814a93',
   'mikey179/vfsstream' => 'v1.6.8@231c73783ebb7dd9ec77916c10037eff5a2b6efe',
   'myclabs/deep-copy' => '1.10.1@969b211f9a51aa1f6c01d1d2aef56d3bd91598e5',
   'nette/finder' => 'v2.5.2@4ad2c298eb8c687dd0e74ae84206a4186eeaed50',
-  'nette/neon' => 'v3.1.2@3c3dcbc6bf6c80dc97b1fc4ba9a22ae67930fc0e',
+  'nette/neon' => 'v3.2.1@a5b3a60833d2ef55283a82d0c30b45d136b29e75',
   'nette/utils' => 'v3.1.2@488f58378bba71767e7831c83f9e0fa808bf83b9',
   'phar-io/manifest' => '1.0.3@7761fcacf03b4d4f16e7ccb606d4879ca431fcf4',
   'phar-io/version' => '2.0.1@45a2ec53a73c70ce41d55cedef9063630abaf1b6',
   'phpdocumentor/reflection-common' => '2.2.0@1d01c49d4ed62f25aa84a747ad35d5a16924662b',
-  'phpdocumentor/reflection-docblock' => '5.1.0@cd72d394ca794d3466a3b2fc09d5a6c1dc86b47e',
+  'phpdocumentor/reflection-docblock' => '5.2.0@3170448f5769fe19f456173d833734e0ff1b84df',
   'phpdocumentor/type-resolver' => '1.3.0@e878a14a65245fbe78f8080eba03b47c3b705651',
-  'phpspec/prophecy' => '1.11.0@8ff0384cd5d87e038297e79d85c99e4b2dcf0e61',
-  'phpstan/phpstan' => '0.12.32@d03863f504c8432b3de4d1881f73f6acb8c0e67c',
-  'phpstan/phpstan-deprecation-rules' => '0.12.4@9b4b8851fb5d59fd0eed00fbe9c22cfc328e0187',
+  'phpspec/prophecy' => '1.11.1@b20034be5efcdab4fb60ca3a29cba2949aead160',
+  'phpstan/phpstan' => '0.12.34@ad75388d71fb0b4a954f71a852fd989915a51cb7',
+  'phpstan/phpstan-deprecation-rules' => '0.12.5@bfabc6a1b4617fbcbff43f03a4c04eae9bafae21',
   'phpunit/php-code-coverage' => '6.1.4@807e6013b00af69b6c5d9ceb4282d0393dbb9d8d',
   'phpunit/php-file-iterator' => '2.0.2@050bedf145a257b1ff02746c31894800e5122946',
   'phpunit/php-text-template' => '1.2.1@31f8b717e51d9a2afca6c9f046f5d69fc27c8686',
   'phpunit/php-timer' => '2.1.2@1038454804406b0b5f5f520358e78c1c2f71501e',
   'phpunit/php-token-stream' => '3.1.1@995192df77f63a59e47f025390d2d1fdf8f425ff',
   'phpunit/phpunit' => '7.5.20@9467db479d1b0487c99733bb1e7944d32deded2c',
-  'roave/security-advisories' => 'dev-master@239e50ae0e1906d32b32ed58bc7d15c81bfc06f0',
+  'roave/security-advisories' => 'dev-master@38ea77863c1b13199948363e9cf7f7dd35a06e37',
   'sebastian/code-unit-reverse-lookup' => '1.0.1@4419fcdb5eabb9caa61a27c7a1db532a6b55dd18',
   'sebastian/comparator' => '3.0.2@5de4fc177adf9bce8df98d8d141a7559d7ccf6da',
   'sebastian/diff' => '3.0.2@720fcc7e9b5cf384ea68d9d930d480907a0c1a29',
@@ -250,16 +260,17 @@ final class Versions
   'seld/jsonlint' => '1.8.0@ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1',
   'seld/phar-utils' => '1.1.1@8674b1d84ffb47cc59a101f5d5a3b61e87d23796',
   'squizlabs/php_codesniffer' => '3.5.5@73e2e7f57d958e7228fce50dc0c61f58f017f9f6',
-  'symfony/browser-kit' => 'v3.4.42@1467e0c7cf0c5c2c08dc9b45ca0300ac3cd3a824',
-  'symfony/lock' => 'v3.4.42@c5374725a61b25cd24ec1615b0707a2aa0cefe5a',
-  'symfony/phpunit-bridge' => 'v3.4.42@ac355e1e9ebde4cf6ef5187f5cf4b43001f9a29f',
-  'theseer/tokenizer' => '1.1.3@11336f6f84e16a720dae9d8e6ed5019efa85a0f9',
+  'symfony/browser-kit' => 'v3.4.43@1467e0c7cf0c5c2c08dc9b45ca0300ac3cd3a824',
+  'symfony/lock' => 'v3.4.43@34ccf3bd733215da3037f82a85bbbf4c18fac683',
+  'symfony/phpunit-bridge' => 'v3.4.43@03f831108f7cea087be83cc6dd07d3419542a5ba',
+  'theseer/tokenizer' => '1.2.0@75a63c33a8577608444246075ea0af0d052e452a',
   'vanare/behat-cucumber-json-formatter' => 'v1.1.3@b28ae403404be4c74c740a3948d9338fc51443a3',
-  'drupal/drupal' => 'dev-master@27293be28bb63fe37f15a48121865b84f0447a45',
+  'drupal/drupal' => 'dev-updates@b5e4803cfb4621216ab18296e7402bc908d49aca',
 );
 
     private function __construct()
     {
+        class_exists(InstalledVersions::class);
     }
 
     /**
@@ -267,9 +278,17 @@ final class Versions
      *
      * @psalm-param key-of<self::VERSIONS> $packageName
      * @psalm-pure
+     *
+     * @psalm-suppress ImpureMethodCall we know that {@see InstalledVersions} interaction does not
+     *                                  cause any side effects here.
      */
-    public static function getVersion(string $packageName) : string
+    public static function getVersion(string $packageName): string
     {
+        if (class_exists(InstalledVersions::class, false)) {
+            return InstalledVersions::getPrettyVersion($packageName)
+                . '@' . InstalledVersions::getReference($packageName);
+        }
+
         if (isset(self::VERSIONS[$packageName])) {
             return self::VERSIONS[$packageName];
         }

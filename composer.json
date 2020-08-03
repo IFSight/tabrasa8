@@ -22,7 +22,7 @@
         "drupal/core-recommended": "^8.9",
         "drupal/ctools": "^3.0",
         "drupal/date_popup": "^1.0",
-        "drupal/easy_breadcrumb": "^1.8",
+        "drupal/easy_breadcrumb": "^1.13",
         "drupal/elasticsearch_connector": "^6.0@alpha",
         "drupal/embed": "~1.0",
         "drupal/entity": "^1.0@beta",

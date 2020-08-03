@@ -27,10 +27,29 @@ use Psr\Log\LoggerInterface;
  */
 class SocialMediaLinksBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * {@inheritdoc}
+   */
   protected $platformManager;
+
+  /**
+   * {@inheritdoc}
+   */
   protected $iconsetManager;
+
+  /**
+   * {@inheritdoc}
+   */
   protected $iconsetFinderService;
+
+  /**
+   * {@inheritdoc}
+   */
   protected $renderer;
+
+  /**
+   * {@inheritdoc}
+   */
   protected $logger;
 
   /**
@@ -194,6 +213,7 @@ class SocialMediaLinksBlock extends BlockBase implements ContainerFactoryPluginI
       '#type' => 'details',
       '#title' => $this->t('Icon Sets'),
       '#open' => TRUE,
+      '#attributes' => ['class' => ['iconsets-wrapper']],
     ];
     $form['iconset']['style'] = [
       '#type' => 'select',
@@ -349,8 +369,8 @@ class SocialMediaLinksBlock extends BlockBase implements ContainerFactoryPluginI
       $platforms[$platform_id]['attributes'] = new Attribute($config['link_attributes']);
 
       if (!empty($platform['instance']->getDescription())) {
-        $platforms[$platform_id]['attributes']->setAttribute('aria-label', $platform['instance']->getDescription());
-        $platforms[$platform_id]['attributes']->setAttribute('title', $platform['instance']->getDescription());
+        $platforms[$platform_id]['attributes']->setAttribute('aria-label', $this->t($platform['instance']->getDescription()));
+        $platforms[$platform_id]['attributes']->setAttribute('title', $this->t(($platform['instance']->getDescription())));
       }
     }
 

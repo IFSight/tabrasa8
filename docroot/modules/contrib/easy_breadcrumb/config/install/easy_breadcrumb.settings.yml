@@ -11,3 +11,23 @@ term_hierarchy: FALSE
 absolute_paths: FALSE
 hide_single_home_item: FALSE
 title_from_page_when_available: TRUE
+capitalizator_mode: 'ucwords'
+capitalizator_ignored_words:
+  - of
+  - and
+  - or
+  - de
+  - del
+  - y
+  - o
+  - a
+capitalizator_forced_words_first_letter: FALSE
+capitalizator_forced_words_case_sensitivity: TRUE
+add_structured_data_jsonld: FALSE
+use_site_title: FALSE
+dependencies:
+  module:
+    - easy_breadcrumb
+  enforced:
+    module:
+      - easy_breadcrumb

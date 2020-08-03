@@ -5,6 +5,8 @@
  * The Easy Breadcrumb module improves the core system breadcrumbs.
  */
 
+use Drupal\Core\Block\BlockPluginInterface;
+
 /**
  * Implements hook_help().
  */
@@ -35,5 +37,29 @@ function easy_breadcrumb_help($route_name) {
         ]);
 
       return $output;
+  }
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function easy_breadcrumb_block_view_system_breadcrumb_block_alter(array &$build, BlockPluginInterface $block) {
+
+  // Get JSON-LD.
+  if ($json_ld = \Drupal::service('easy_breadcrumb.structured_data_json_ld')
+    ->value()) {
+
+    // Prepare script tag.
+    $structured_data = [
+      '#tag'        => 'script',
+      '#attributes' => ['type' => 'application/ld+json'],
+      '#value'      => $json_ld,
+    ];
+
+    // Add script tag.
+    $build['#attached']['html_head'][] = [
+      $structured_data,
+      'easy_breadcrumb_structured_data_json_ld',
+    ];
   }
 }

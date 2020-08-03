@@ -23,6 +23,24 @@ function smtp_uninstall() {
 }
 
 /**
+ * Add SMTP timeout configuration and change default to 30.
+ */
+function smtp_update_8001() {
+  \Drupal::configFactory()->getEditable('smtp.settings')
+    ->set('smtp_timeout', 30)
+    ->save(TRUE);
+}
+
+/**
+ * Add SMTP keepalive configuration and set default to FALSE.
+ */
+function smtp_update_8002() {
+  \Drupal::configFactory()->getEditable('smtp.settings')
+    ->set('smtp_keepalive', FALSE)
+    ->save(TRUE);
+}
+
+/**
  * If mailsystem exists, disable smtp mailsystem automatically.
  */
 function smtp_update_8004() {
@@ -106,7 +124,7 @@ function smtp_requirements(string $phase) {
       else {
         $requirements['smtp_phpmailer']['severity'] = REQUIREMENT_INFO;
         /** @var \Drupal\smtp\ConnectionTester\ConnectionTester $tester */
-        $tester = \Drupal::service('smtp.contection_tester');
+        $tester = \Drupal::service('smtp.connection_tester');
         $tester->testConnection();
         $requirements = array_merge($requirements, $tester->hookRequirements($phase));
       }
