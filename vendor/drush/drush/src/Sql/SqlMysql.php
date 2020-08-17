@@ -133,6 +133,15 @@ EOT;
         return $tables;
     }
 
+    public function listTablesQuoted()
+    {
+        $tables = $this->listTables();
+        foreach ($tables as &$table) {
+            $table = "`$table`";
+        }
+        return $tables;
+    }
+
     public function dumpCmd($table_selection)
     {
         $dbSpec = $this->getDbSpec();
