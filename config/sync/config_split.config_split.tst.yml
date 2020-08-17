@@ -12,6 +12,6 @@ blacklist: {  }
 graylist:
   - environment_indicator.indicator
   - system.performance
-graylist_dependents: true
+graylist_dependents: false
 graylist_skip_equal: true
 weight: 0
