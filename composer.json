@@ -17,7 +17,6 @@
         "drupal/cloudflare": "^1.0@alpha",
         "drupal/components": "^1.0",
         "drupal/config_split": "^1.4",
-        "drupal/console": "~1.0",
         "drupal/core-composer-scaffold": "^8.9",
         "drupal/core-recommended": "^8.9",
         "drupal/ctools": "^3.0",
