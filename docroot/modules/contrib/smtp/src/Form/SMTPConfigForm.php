@@ -98,7 +98,7 @@ class SMTPConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->configFactory->get('smtp.settings');
+    $config = $this->configFactory->getEditable('smtp.settings');
 
     // Don't overwrite the default if MailSystem module is enabled.
     $mailsystem_enabled = $this->moduleHandler->moduleExists('mailsystem');
@@ -211,8 +211,10 @@ class SMTPConfigForm extends ConfigFormBase {
     ];
 
     $form['server']['smtp_timeout'] = [
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#title' => $this->t('Timeout'),
+      '#size' => 6,
+      '#maxlength' => 6,
       '#default_value' => $config->get('smtp_timeout'),
       '#description' => $this->t('Amount of seconds for the SMTP commands to timeout.'),
       '#disabled' => $this->isOverridden('smtp_timeout'),
@@ -346,6 +348,10 @@ class SMTPConfigForm extends ConfigFormBase {
     if ($values['smtp_on'] !== 'off' && $values['smtp_port'] == '') {
       $form_state->setErrorByName('smtp_port', $this->t('You must enter an SMTP port number.'));
     }
+
+    if ($values['smtp_timeout'] == '' || $values['smtp_timeout'] < 1) {
+      $form_state->setErrorByName('smtp_timeout', $this->t('You must enter a Timeout value greater than 0.'));
+    } 
 
     if ($values['smtp_from'] && !$this->emailValidator->isValid($values['smtp_from'])) {
       $form_state->setErrorByName('smtp_from', $this->t('The provided from e-mail address is not valid.'));

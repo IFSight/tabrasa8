@@ -3,16 +3,17 @@
 namespace Drupal\social_media_links_field\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\WidgetBase;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\Validator\ConstraintViolationInterface;
 
+/**
+ * Class SocialMediaLinksFieldBaseWidget.
+ */
 abstract class SocialMediaLinksFieldBaseWidget extends WidgetBase {
 
   /**
    * Returns the available platforms as options array.
    *
    * @return array
+   *   $options.
    */
   protected function getAvailablePlatformOptions() {
     $available_platforms = $this->getAvailablePlatforms();
@@ -29,6 +30,7 @@ abstract class SocialMediaLinksFieldBaseWidget extends WidgetBase {
    * Returns the list of platforms that was selected in field settings.
    *
    * @return array
+   *   $available_platforms
    */
   protected function getAvailablePlatforms() {
     $platforms = \Drupal::service('plugin.manager.social_media_links.platform')->getPlatforms();

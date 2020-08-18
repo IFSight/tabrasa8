@@ -22,14 +22,14 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['easy_breadcrumb.settings'];
+    return [EasyBreadcrumbConstants::MODULE_SETTINGS];
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('easy_breadcrumb.settings');
+    $config = $this->config(EasyBreadcrumbConstants::MODULE_SETTINGS);
 
     // Details for grouping general settings fields.
     $details_general = [
@@ -112,6 +112,20 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get(EasyBreadcrumbConstants::USE_PAGE_TITLE_AS_MENU_TITLE_FALLBACK),
     ];
 
+    $details_general[EasyBreadcrumbConstants::USE_SITE_TITLE] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Use site title as the front page segment'),
+      '#description' => $this->t('Use site title as the front page segment. This field works together with the "Include the front page as a segment in the breadcrumb"-option.'),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::USE_SITE_TITLE),
+    ];
+
+    $details_general[EasyBreadcrumbConstants::ADD_STRUCTURED_DATA_JSON_LD] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Add current breadcrumb as structured data.'),
+      '#description'   => $this->t('Check to have the current breadcrumb trail added as <a href="@href" target="_blank">structured data</a> in JSON-LD to the HTML <code><head></code>.', ['@href' => 'https://developers.google.com/search/docs/data-types/breadcrumb']),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::ADD_STRUCTURED_DATA_JSON_LD),
+    ];
+
     // Formats the excluded paths array as line separated list of paths
     // before displaying them.
     $excluded_paths = $config->get(EasyBreadcrumbConstants::EXCLUDED_PATHS);
@@ -143,7 +157,7 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
     $details_advanced[EasyBreadcrumbConstants::CUSTOM_PATHS] = [
       '#type' => 'textarea',
       '#title' => $this->t('Paths to replace with custom breadcrumbs'),
-      '#description' => $this->t('Enter a line separated list of internal paths followed by breadcrumb pattern.   Separate crumbs from their path with a vertical bar ("|").  Separate crumbs with double-colon ("::"). Omit the URL to display an unlinked crumb.  Fields will be trimmed to remove extra start/end spaces, so you can use them to help format your input, if desired. Replaced Titles will not be processed on custom paths. Excluded paths listed here will have breadcrumbs added.   Examples (with and without extra spacing):<br><code>/news/archive/site_launched  ::  News|/news  ::  Archive | /news/archive  ::  Site Launched<br>/your/path::LinkedCrumb1|url1::LinkedCrumb2|url2::UnlinkedCrumb3</code><br>'),
+      '#description' => $this->t('Enter a line separated list of internal paths followed by breadcrumb pattern. Separate crumbs from their path with a vertical bar ("|"). Separate crumbs with double-colon ("::"). Omit the URL to display an unlinked crumb. Fields will be trimmed to remove extra start/end spaces, so you can use them to help format your input, if desired. Replaced Titles will not be processed on custom paths. Excluded paths listed here will have breadcrumbs added. Examples (with and without extra spacing):<br><code>/news/archive/site_launched  ::  News | /news  ::  Archive | /news/archive  ::  Site Launched<br>/your/path::LinkedCrumb1|url1::LinkedCrumb2|url2::UnlinkedCrumb3</code><br><p>It is also possible to express the path to be matched as a <a href="https://www.php.net/manual/en/book.pcre.php" target="_blank">regex expression</a>. "regex!" must be added to the start of the path to match in order for it to be interpreted as regex:<br><code>regex!/news/archive/\d{4} ::  News | /news  ::  Archive | /news/archive</code><p>Expressions can even include matching groups which can be referenced in the path of a segment path:<br><code>regex!/groups/([^/]*)/info :: Groups | /groups :: Group | /groups/$1</code></p>'),
       '#default_value' => $custom_paths,
     ];
 
@@ -183,7 +197,7 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
     $details_advanced[EasyBreadcrumbConstants::HIDE_SINGLE_HOME_ITEM] = [
       '#type' => 'checkbox',
       '#title' => $this->t("Hide link to home page if it's the only breadcrumb item"),
-      '#description' => $this->t('Hide the breadcrumb when it only links to the home page and nothing more.'),
+      '#description' => $this->t('Hide the breadcrumb when it only links to the home page and nothing more. <br> <strong>Note: If the homepage path is a "/" then this feature has an uncertain behavior.</strong>'),
       '#default_value' => $config->get(EasyBreadcrumbConstants::HIDE_SINGLE_HOME_ITEM),
     ];
 
@@ -192,6 +206,91 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Add parent hierarchy'),
       '#description' => $this->t('Add all taxonomy parents in the crumb for current term.'),
       '#default_value' => $config->get(EasyBreadcrumbConstants::TERM_HIERARCHY),
+    ];
+
+    $details_advanced[EasyBreadcrumbConstants::CAPITALIZATOR_MODE] = [
+      '#type' => 'select',
+      '#title' => $this->t("Transformation mode for the segments' titles"),
+      '#options' => [
+        'none' => $this->t('None'),
+        'ucwords' => $this->t("Capitalize the first letter of each word in the segment"),
+        'ucfirst' => $this->t("Only capitalize the first letter of each segment"),
+        'ucall' => $this->t("Capitalize all the letters of each word in the segment"),
+        'ucforce' => $this->t("Capitalize only the words that are set below"),
+      ],
+      '#description' => $this->t("Choose the transformation mode you want to apply to the segments' titles. E.g.: 'blog/once-a-time' -> 'Home >> Blog >> Once a Time'."),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::CAPITALIZATOR_MODE),
+    ];
+
+    // Formats the ignored-words array as space separated list of words
+    // (word1 word2 wordN) before displaying them.
+    $capitalizator_ignored_words_arr = $config->get(EasyBreadcrumbConstants::CAPITALIZATOR_IGNORED_WORDS);
+    $capitalizator_ignored_words = @implode(' ', $capitalizator_ignored_words_arr);
+
+    $details_advanced[EasyBreadcrumbConstants::CAPITALIZATOR_IGNORED_WORDS] = [
+      '#type' => 'textarea',
+      '#rows' => 3,
+      '#title' => $this->t("Words to be ignored by the 'capitalizator'"),
+      '#description' => $this->t("Enter a space separated list of words to be ignored by the 'capitalizator'. This will be applied only to the words not at the beginning of each segment. E.g.: of and."),
+      '#default_value' => $capitalizator_ignored_words,
+      '#states' => [
+        'visible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['value' => 'ucwords'],
+        ],
+        'invisible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['!value' => 'ucwords'],
+        ],
+      ],
+    ];
+
+    // Formats the forced-words array as space separated list of words
+    // (word1 word2 wordN) before displaying them.
+    $capitalizator_forced_words_arr = $config->get(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS);
+    $capitalizator_forced_words = @implode(' ', $capitalizator_forced_words_arr);
+
+    $details_advanced[EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS] = [
+      '#type' => 'textarea',
+      '#rows' => 3,
+      '#title' => $this->t("Words to be forced to capitalized by the 'capitalizator'"),
+      '#description' => $this->t("Enter a space separated list of words to be forced by the 'capitalizator'. This will be applied only to the words that are listed. This field is case sensitive. E.g.: if you want to capitalize your brand's name."),
+      '#default_value' => $capitalizator_forced_words,
+      '#states' => [
+        'visible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['value' => 'ucforce'],
+        ],
+        'invisible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['!value' => 'ucforce'],
+        ],
+      ],
+    ];
+
+    $details_advanced[EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_CASE_SENSITIVITY] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t("Use case sensitivity when matching words to be forced to capitalization."),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_CASE_SENSITIVITY),
+      '#states' => [
+        'visible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['value' => 'ucforce'],
+        ],
+        'invisible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['!value' => 'ucforce'],
+        ],
+      ],
+      '#description' => $this->t("If checked, it matches drupal with drupal, druPAL with druPAL. Unchecked, it matches drupal with Drupal, drupal with druPAL."),
+    ];
+
+    $details_advanced[EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_FIRST_LETTER] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t("Make the first letters of each segment capitalized."),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_FIRST_LETTER),
+      '#states' => [
+        'visible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['value' => 'ucforce'],
+        ],
+        'invisible' => [
+          ':input[name="' . EasyBreadcrumbConstants::CAPITALIZATOR_MODE . '"]' => ['!value' => 'ucforce'],
+        ],
+      ],
     ];
 
     $form = [];
@@ -207,31 +306,39 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('easy_breadcrumb.settings');
 
-    $config
-      ->set(EasyBreadcrumbConstants::APPLIES_ADMIN_ROUTES, $form_state->getValue(EasyBreadcrumbConstants::APPLIES_ADMIN_ROUTES))
-      ->set(EasyBreadcrumbConstants::INCLUDE_INVALID_PATHS, $form_state->getValue(EasyBreadcrumbConstants::INCLUDE_INVALID_PATHS))
-      ->set(EasyBreadcrumbConstants::EXCLUDED_PATHS, $form_state->getValue(EasyBreadcrumbConstants::EXCLUDED_PATHS))
-      ->set(EasyBreadcrumbConstants::REPLACED_TITLES, $form_state->getValue(EasyBreadcrumbConstants::REPLACED_TITLES))
-      ->set(EasyBreadcrumbConstants::CUSTOM_PATHS, $form_state->getValue(EasyBreadcrumbConstants::CUSTOM_PATHS))
-      ->set(EasyBreadcrumbConstants::SEGMENTS_SEPARATOR, $form_state->getValue(EasyBreadcrumbConstants::SEGMENTS_SEPARATOR))
-      ->set(EasyBreadcrumbConstants::INCLUDE_HOME_SEGMENT, $form_state->getValue(EasyBreadcrumbConstants::INCLUDE_HOME_SEGMENT))
-      ->set(EasyBreadcrumbConstants::HOME_SEGMENT_TITLE, $form_state->getValue(EasyBreadcrumbConstants::HOME_SEGMENT_TITLE))
-      ->set(EasyBreadcrumbConstants::HOME_SEGMENT_KEEP, $form_state->getValue(EasyBreadcrumbConstants::HOME_SEGMENT_KEEP))
-      ->set(EasyBreadcrumbConstants::INCLUDE_TITLE_SEGMENT, $form_state->getValue(EasyBreadcrumbConstants::INCLUDE_TITLE_SEGMENT))
-      ->set(EasyBreadcrumbConstants::TITLE_SEGMENT_AS_LINK, $form_state->getValue(EasyBreadcrumbConstants::TITLE_SEGMENT_AS_LINK))
-      ->set(EasyBreadcrumbConstants::TITLE_FROM_PAGE_WHEN_AVAILABLE, $form_state->getValue(EasyBreadcrumbConstants::TITLE_FROM_PAGE_WHEN_AVAILABLE))
-      ->set(EasyBreadcrumbConstants::LANGUAGE_PATH_PREFIX_AS_SEGMENT, $form_state->getValue(EasyBreadcrumbConstants::LANGUAGE_PATH_PREFIX_AS_SEGMENT))
-      ->set(EasyBreadcrumbConstants::USE_MENU_TITLE_AS_FALLBACK, $form_state->getValue(EasyBreadcrumbConstants::USE_MENU_TITLE_AS_FALLBACK))
-      ->set(EasyBreadcrumbConstants::USE_PAGE_TITLE_AS_MENU_TITLE_FALLBACK, $form_state->getValue(EasyBreadcrumbConstants::USE_PAGE_TITLE_AS_MENU_TITLE_FALLBACK))
-      ->set(EasyBreadcrumbConstants::REMOVE_REPEATED_SEGMENTS, $form_state->getValue(EasyBreadcrumbConstants::REMOVE_REPEATED_SEGMENTS))
-      ->set(EasyBreadcrumbConstants::ABSOLUTE_PATHS, $form_state->getValue(EasyBreadcrumbConstants::ABSOLUTE_PATHS))
-      ->set(EasyBreadcrumbConstants::HIDE_SINGLE_HOME_ITEM, $form_state->getValue(EasyBreadcrumbConstants::HIDE_SINGLE_HOME_ITEM))
-      ->set(EasyBreadcrumbConstants::TERM_HIERARCHY, $form_state->getValue(EasyBreadcrumbConstants::TERM_HIERARCHY))
-      ->save();
+    $settings = $this->configFactory->getEditable(EasyBreadcrumbConstants::MODULE_SETTINGS);
+
+    $values = $form_state->cleanValues()->getValues();
+    foreach ($values as $field_key => $field_value) {
+      $settings->set($field_key, $field_value);
+    }
+    $settings->save();
 
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Pre-processes the list of words for storing them as an array.
+   *
+   * Replaces line-endings by spaces and splits words by spaces.
+   * E.g.: array('of','and').
+   *
+   * @param string $words
+   *   A string of words.
+   *
+   * @return array
+   *   An array of processed words.
+   */
+  private function processValuesToArray($words) {
+    $words_arr = [];
+    $words = preg_replace('/\r*\n+/', ' ', $words);
+    $words = trim($words);
+    $words_arr_aux = $words === '' ? [] : preg_split('/\s+/', $words);
+    foreach ($words_arr_aux as $word) {
+      $words_arr[$word] = $word;
+    }
+    return $words_arr;
   }
 
 }

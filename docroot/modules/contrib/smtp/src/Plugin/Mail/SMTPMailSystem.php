@@ -200,14 +200,20 @@ class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
     }
 
     $to = $message['to'];
-    $from = $message['from'];
     $body = $message['body'];
     $headers = $message['headers'];
     $subject = $message['subject'];
 
     // Create a new PHPMailer object - autoloaded from registry.
     $mailer = new PHPMailer(TRUE);
-    $mailer->Timeout = $this->smtpConfig->get('smtp_timeout');
+    // Use email.validator due to different validation standard by PHPMailer.
+    $mailer::$validator = [$this->emailValidator, 'isValid'];
+
+    // Override PHPMailer default timeout if requested.
+    $smtp_timeout = $this->smtpConfig->get('smtp_timeout');
+    if (!empty($smtp_timeout)) {
+      $mailer->Timeout = $smtp_timeout;
+    }
 
     // Turn on debugging, if requested.
     if ($this->smtpConfig->get('smtp_debugging')
@@ -220,17 +226,14 @@ class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
       $mailer->SMTPKeepAlive = TRUE;
     }
 
-    // The $from address might contain the "name" part. If it does, split it,
-    // since PHPMailer expects $from to be the raw email address.
-    $matches = [];
-    if (preg_match('/^(.*)\s\<(.*)\>$/', $from, $matches)) {
-      $from = $matches[2];
-      $from_name = $matches[1];
+    // Prefer the from_name from the message.
+    if (!empty($message['params']['from_name'])) {
+      $from_name = $message['params']['from_name'];
     }
 
     // If the smtp_fromname is set, it overrides the name that was passed as
     // part of the $from address.
-    if (!empty($this->smtpConfig->get('smtp_fromname'))) {
+    elseif (!empty($this->smtpConfig->get('smtp_fromname'))) {
       $from_name = $this->smtpConfig->get('smtp_fromname');
     }
 
@@ -238,15 +241,29 @@ class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
       // If value is not defined in settings, use site_name.
       $from_name = $this->configFactory->get('system.site')->get('name');
     }
+    
+    // Set from email.
+    if (!empty($message['params']['from_mail'])) {
+      $from = $message['params']['from_mail'];
+    }
 
     // Set SMTP module email from.
-    $smtp_from = $this->smtpConfig->get('smtp_from');
-    if ($this->emailValidator->isValid($smtp_from)) {
-      $from = $smtp_from;
-      $headers['Sender'] = $smtp_from;
-      $headers['Return-Path'] = $smtp_from;
-      $headers['Reply-To'] = $smtp_from;
+    elseif ($this->emailValidator->isValid($this->smtpConfig->get('smtp_from'))) {
+      $from = $this->smtpConfig->get('smtp_from');
     }
+    if (empty($from)) {
+      $from = $message['from'];
+      // The $from address might contain the "name" part. If it does, split it,
+      // since PHPMailer expects $from to be the raw email address.
+      $matches = [];
+      if (preg_match('/^(.*)\s\<(.*)\>$/', $from, $matches)) {
+        $from = $matches[2];
+      }
+    }
+
+    $headers['Sender'] = $from;
+    $headers['Return-Path'] = $from;
+    $headers['Reply-To'] = $from;
 
     // Defines the From value to what we expect.
     $mailer->From = $from;
@@ -490,7 +507,7 @@ class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
               // If plain/html within the body part, add it to $mailer->Body.
               elseif (strpos($body_part2, 'text/html')) {
                 // Get the encoding.
-                $body_part2_encoding = $this->getSubstring($body_part2, 'Content-Transfer-Encoding', ' ', "\n");
+                $body_part2_encoding = trim($this->getSubstring($body_part2, 'Content-Transfer-Encoding', ' ', "\n"));
                 // Clean up the text.
                 $body_part2 = trim($this->removeHeaders(trim($body_part2)));
                 // Check whether the encoding is base64, and if so, decode it.
@@ -633,7 +650,7 @@ class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
       smtp_send_queue($mailerArr);
     }
     else {
-      return _smtp_mailer_send($mailerArr);
+      return $this->smtpMailerSend($mailerArr);
     }
 
     return TRUE;
@@ -789,6 +806,21 @@ class SMTPMailSystem implements MailInterface, ContainerFactoryPluginInterface {
     }
 
     return $components;
+  }
+
+  /**
+   * Wrapper around global static call to increase testability.
+   *
+   * @param array $mailerArr
+   *   Variables to send email.
+   *
+   * @return bool
+   *   True if email was sent. False otherwise.
+   *
+   * @see _smtp_mailer_send;
+   */
+  function smtpMailerSend($mailerArr) {
+    return _smtp_mailer_send($mailerArr);
   }
 
 }

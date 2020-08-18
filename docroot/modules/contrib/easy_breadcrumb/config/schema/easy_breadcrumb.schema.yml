@@ -60,3 +60,9 @@ easy_breadcrumb.settings:
     term_hierarchy:
       type: boolean
       label: 'Use term hierarchy'
+    add_structured_data_jsonld:
+      type: boolean
+      label: 'Add current breadcrumb as structured data in JSON-LD to the HTML head'
+    use_site_title:
+      type: boolean
+      label: 'Use site title for the front page segment in the breadcrumb'

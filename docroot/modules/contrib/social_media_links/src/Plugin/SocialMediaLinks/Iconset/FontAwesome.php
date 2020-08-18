@@ -58,6 +58,10 @@ class FontAwesome extends IconsetBase implements IconsetInterface {
       case 'email':
         $icon_name = 'envelope';
         break;
+
+      case 'website':
+        $icon_name = 'home';
+        break;
     }
 
     $icon = [
@@ -72,9 +76,14 @@ class FontAwesome extends IconsetBase implements IconsetInterface {
    * {@inheritdoc}
    */
   public function getLibrary() {
-    return [
-      'social_media_links/fontawesome.component',
-    ];
+    if (\Drupal::service('module_handler')->moduleExists('fontawesome')) {
+      return parent::getLibrary();
+    }
+    else {
+      return [
+        'social_media_links/fontawesome.component',
+      ];
+    }
   }
 
   /**

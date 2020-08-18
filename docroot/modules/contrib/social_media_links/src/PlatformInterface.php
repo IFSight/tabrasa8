@@ -85,7 +85,7 @@ interface PlatformInterface extends PluginInspectionInterface {
   /**
    * Generates the final url for the output.
    *
-   * @param Url $url
+   * @param \Drupal\Core\Url $url
    *   A Url object with the full plattform url.
    *
    * @return string

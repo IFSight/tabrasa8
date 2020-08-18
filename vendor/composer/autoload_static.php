@@ -40,10 +40,9 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         '751a5a3f463e4be759be31748b61737c' => __DIR__ . '/..' . '/laminas/laminas-diactoros/src/functions/parse_cookie_header.legacy.php',
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '9b38cf48e83f5d8f60375221cd213eee' => __DIR__ . '/..' . '/phpstan/phpstan/bootstrap.php',
-        '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '952683d815ff0a7bf322b93c0be7e4e4' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/bootstrap.php',
-        '5a12a5271c58108e0aa33355e6ac54ea' => __DIR__ . '/..' . '/drupal/console-core/src/functions.php',
+        '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -118,7 +117,6 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
             'Symfony\\Cmf\\Component\\Routing\\' => 30,
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
             'Symfony\\Bridge\\PhpUnit\\' => 23,
-            'Stecman\\Component\\Symfony\\Console\\BashCompletion\\' => 49,
             'SelfUpdate\\' => 11,
             'Seld\\PharUtils\\' => 15,
             'Seld\\JsonLint\\' => 14,
@@ -195,9 +193,6 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
             'Drupal\\redis\\' => 13,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
-            'Drupal\\Console\\Core\\' => 20,
-            'Drupal\\Console\\Composer\\Plugin\\' => 31,
-            'Drupal\\Console\\' => 15,
             'Drupal\\Composer\\Plugin\\Scaffold\\' => 32,
             'Drupal\\Component\\' => 17,
             'Drupal\\' => 7,
@@ -240,7 +235,6 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         'A' => 
         array (
             'Asm89\\Stack\\' => 12,
-            'Alchemy\\Zippy\\' => 14,
         ),
     );
 
@@ -427,10 +421,6 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/..' . '/symfony/phpunit-bridge',
         ),
-        'Stecman\\Component\\Symfony\\Console\\BashCompletion\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/stecman/symfony-console-completion/src',
-        ),
         'SelfUpdate\\' => 
         array (
             0 => __DIR__ . '/..' . '/consolidation/self-update/src',
@@ -604,18 +594,6 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/../..' . '/docroot/core/lib/Drupal/Core',
         ),
-        'Drupal\\Console\\Core\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drupal/console-core/src',
-        ),
-        'Drupal\\Console\\Composer\\Plugin\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drupal/console-extend-plugin/src',
-        ),
-        'Drupal\\Console\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drupal/console/src',
-        ),
         'Drupal\\Composer\\Plugin\\Scaffold\\' => 
         array (
             0 => __DIR__ . '/..' . '/drupal/core-composer-scaffold',
@@ -750,10 +728,6 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         array (
             0 => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack',
         ),
-        'Alchemy\\Zippy\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/alchemy/zippy/src',
-        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -822,17 +796,9 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
             array (
                 0 => __DIR__ . '/..' . '/doctrine/collections/lib',
             ),
-            'Dflydev\\PlaceholderResolver' => 
-            array (
-                0 => __DIR__ . '/..' . '/dflydev/placeholder-resolver/src',
-            ),
             'Dflydev\\DotAccessData' => 
             array (
                 0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
-            ),
-            'Dflydev\\DotAccessConfiguration' => 
-            array (
-                0 => __DIR__ . '/..' . '/dflydev/dot-access-configuration/src',
             ),
         ),
         'C' => 

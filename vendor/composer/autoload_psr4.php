@@ -51,7 +51,6 @@ return array(
     'Symfony\\Cmf\\Component\\Routing\\' => array($vendorDir . '/symfony-cmf/routing'),
     'Symfony\\Bridge\\PsrHttpMessage\\' => array($vendorDir . '/symfony/psr-http-message-bridge'),
     'Symfony\\Bridge\\PhpUnit\\' => array($vendorDir . '/symfony/phpunit-bridge'),
-    'Stecman\\Component\\Symfony\\Console\\BashCompletion\\' => array($vendorDir . '/stecman/symfony-console-completion/src'),
     'SelfUpdate\\' => array($vendorDir . '/consolidation/self-update/src'),
     'Seld\\PharUtils\\' => array($vendorDir . '/seld/phar-utils/src'),
     'Seld\\JsonLint\\' => array($vendorDir . '/seld/jsonlint/src/Seld/JsonLint'),
@@ -95,9 +94,6 @@ return array(
     'Drupal\\redis\\' => array($baseDir . '/docroot/modules/contrib/redis/src'),
     'Drupal\\Driver\\' => array($baseDir . '/docroot/drivers/lib/Drupal/Driver'),
     'Drupal\\Core\\' => array($baseDir . '/docroot/core/lib/Drupal/Core'),
-    'Drupal\\Console\\Core\\' => array($vendorDir . '/drupal/console-core/src'),
-    'Drupal\\Console\\Composer\\Plugin\\' => array($vendorDir . '/drupal/console-extend-plugin/src'),
-    'Drupal\\Console\\' => array($vendorDir . '/drupal/console/src'),
     'Drupal\\Composer\\Plugin\\Scaffold\\' => array($vendorDir . '/drupal/core-composer-scaffold'),
     'Drupal\\Component\\' => array($baseDir . '/docroot/core/lib/Drupal/Component'),
     'Drupal\\' => array($vendorDir . '/drupal/coder/coder_sniffer/Drupal'),
@@ -131,5 +127,4 @@ return array(
     'Behat\\Mink\\' => array($vendorDir . '/behat/mink/src'),
     'Behat\\Behat\\' => array($vendorDir . '/behat/behat/src/Behat/Behat'),
     'Asm89\\Stack\\' => array($vendorDir . '/asm89/stack-cors/src/Asm89/Stack'),
-    'Alchemy\\Zippy\\' => array($vendorDir . '/alchemy/zippy/src'),
 );

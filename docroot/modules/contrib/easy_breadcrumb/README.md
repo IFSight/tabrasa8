@@ -67,14 +67,15 @@ Configurable parameters:
  * Use menu title as fallback instead of raw path component.
  * Remove segments of the breadcrumb that are identical.
  * Use a custom separator between the breadcrumb's segments. (TODO)
- * Choose a transformation mode for the segments' title.(TODO)
- * Make the 'capitalizator' ignore some words. (TODO)
+ * Choose a transformation mode for the segments' title.
+ * Make the 'capitalizator' ignore some words.
 
 
 MAINTAINERS
 -----------
 
  * Greg Boggs - https://www.drupal.org/u/greg-boggs
+ * Neslee Canil Pinto - https://www.drupal.org/u/neslee-canil-pinto
  * Jeff Mahoney (loopduplicate) - https://www.drupal.org/u/loopduplicate
 
 Supporting organization:

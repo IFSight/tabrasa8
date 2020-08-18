@@ -37,10 +37,8 @@ class SecurityUpdateCommands extends DrushCommands
     /**
      * Check Drupal Composer packages for pending security updates.
      *
-     * This uses the Drupal security advisories package to determine if updates
+     * This uses the [Drupal security advisories package](https://github.com/drupal-composer/drupal-security-advisories) to determine if updates
      * are available.
-     *
-     * @see https://github.com/drupal-composer/drupal-security-advisories
      *
      * @command pm:security
      * @aliases sec,pm-security
@@ -162,7 +160,7 @@ class SecurityUpdateCommands extends DrushCommands
      * @return UnstructuredData
      * @throws \Exception
      * @command pm:security-php
-     * @aliases sec-php,pm:security-php
+     * @aliases sec-php,pm-security-php
      * @bootstrap none
      *
      * @usage drush pm:security-php --format=json

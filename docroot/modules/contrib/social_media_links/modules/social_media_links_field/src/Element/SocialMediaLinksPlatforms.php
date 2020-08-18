@@ -5,7 +5,6 @@ namespace Drupal\social_media_links_field\Element;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 
 /**
@@ -61,7 +60,7 @@ class SocialMediaLinksPlatforms extends FormElement {
 
     $element = [
       '#tree' => TRUE,
-      '#prefix' => '<div id="' .  $wrapper_id . '">',
+      '#prefix' => '<div id="' . $wrapper_id . '">',
       '#suffix' => '</div>',
       '#wrapper_id' => $wrapper_id,
     ] + $element;
@@ -128,6 +127,7 @@ class SocialMediaLinksPlatforms extends FormElement {
    *   The current state of the form.
    *
    * @return array
+   *   $platform_field_element
    */
   public static function ajaxRefresh(array $form, FormStateInterface $form_state) {
     $platform_element = $form_state->getTriggeringElement();

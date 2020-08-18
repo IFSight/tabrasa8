@@ -38,3 +38,11 @@ function smtp_post_update_set_smtp_autotls() {
     ->set('smtp_autotls', TRUE)
     ->save(TRUE);
 }
+
+/**
+ * Rebuild caches to ensure the connection typo service change is updated.
+ */
+function smtp_post_update_connection_typo() {
+  // Empty update to cause a cache rebuild so that the service changes are read.
+  // Caused by this typo: https://www.drupal.org/project/smtp/issues/3150369
+}

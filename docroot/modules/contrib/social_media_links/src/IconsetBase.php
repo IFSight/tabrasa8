@@ -11,7 +11,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class IconsetBase extends PluginBase implements IconsetInterface, ContainerFactoryPluginInterface {
 
+  /**
+   * {@inheritdoc}
+   */
   protected $path = '';
+
+  /**
+   * {@inheritdoc}
+   */
   protected $finder;
 
   /**

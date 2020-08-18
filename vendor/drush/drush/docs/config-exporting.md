@@ -1,15 +1,10 @@
 # Exporting and Importing Configuration
 
 Drush provides commands to export, transfer, and import configuration files
-to and from a Drupal 8 site.  Configuration can be altered by different
+to and from a Drupal site.  Configuration can be altered by different
 methods in order to provide different behaviors in different environments;
 for example, a development server might be configured slightly differently
 than the production server.
-
-This document describes how to make simple value changes to configuration
-based on the environment, how to have a different set of enabled modules
-in different configurations without affecting your exported configuration
-values, and how to make more complex changes.
 
 ## Simple Value Changes
 
@@ -21,7 +16,7 @@ The configuration override system allows you to change configuration
 values for a given instance of a site (e.g. the development server) by
 setting configuration variables in the site's settings.php file.
 For example, to change the name of a local development site:
-```
+```php
 $config['system.site']['name'] = 'Local Install of Awesome Widgets, Inc.';
 ```
 Note that the configuration override system is a Drupal feature, not

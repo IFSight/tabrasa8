@@ -3,7 +3,9 @@
 namespace Drupal\easy_breadcrumb_test\Controller;
 
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\Markup;
 
 /**
  * Provides block routines for search server-specific routes.
@@ -33,6 +35,18 @@ class TestRouteController extends ControllerBase {
    */
   public function pageTitleFormattableMarkup() {
     return new FormattableMarkup('Type: @type', ['@type' => FormattableMarkup::class]);
+  }
+
+  /**
+   * Returns the page title as Markup.
+   *
+   * Used in views page titles.
+   *
+   * @return \Drupal\Component\Render\Markup
+   *   The page title.
+   */
+  public function pageTitleMarkup() {
+    return Markup::create(Xss::filter('Markup'));
   }
 
   /**

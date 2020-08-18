@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\smtp\Kernel;
+namespace Drupal\Tests\smtp\Kernel\ConnectionTester;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\smtp\ConnectionTester\ConnectionTester;
@@ -43,7 +43,7 @@ class ConnectionTesterTest extends KernelTestBase {
     $smtp_settings->set('smtp_on', $smtp_on);
     $smtp_settings->save();
 
-    $object = \Drupal::service('smtp.contection_tester');
+    $object = \Drupal::service('smtp.connection_tester');
     $object->setMailer($this->getMockMailer($result, $exception));
 
     $object->testConnection();
