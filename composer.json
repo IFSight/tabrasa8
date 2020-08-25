@@ -16,6 +16,7 @@
         "drupal/captcha": "^1.0@beta",
         "drupal/cloudflare": "^1.0@alpha",
         "drupal/components": "^1.0",
+        "drupal/config_ignore": "^2.2",
         "drupal/config_split": "^1.4",
         "drupal/core-composer-scaffold": "^8.9",
         "drupal/core-recommended": "^8.9",

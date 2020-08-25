@@ -55,6 +55,7 @@ final class Versions
   'drupal/cloudflare' => '1.0.0-beta2@8.x-1.0-beta2',
   'drupal/components' => '1.1.0@8.x-1.1',
   'drupal/config_filter' => '2.1.0@8.x-2.1',
+  'drupal/config_ignore' => 'dev-2.x@f651e027aaf5ea3c481a5a3996fdddb018736bc4',
   'drupal/config_split' => '1.4.0@8.x-1.4',
   'drupal/core' => '8.9.3@ee02fd4cbe4ac148b4d7e297ec63b3459983862e',
   'drupal/core-composer-scaffold' => '8.9.3@07cdfe2799789fc0c2d0e3e1ba64cb5e2a973ece',
@@ -257,7 +258,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.0@123e248e14ee8dd3fbe89fb5a733a6cf91f5820e',
   'webmozart/assert' => '1.9.1@bafc69caeb4d49c39fd0779086c03a3738cbb389',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-updates@007e311f39b68622e99e5d50af7cc7d374b05a8c',
+  'drupal/drupal' => 'dev-updates@fe380cdb275ba2c24bbd073df585b64e6620e014',
 );
 
     private function __construct()
