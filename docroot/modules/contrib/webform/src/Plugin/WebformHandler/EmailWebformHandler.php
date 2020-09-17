@@ -547,7 +547,7 @@ class EmailWebformHandler extends WebformHandlerBase implements WebformHandlerMe
     // webform_token() Twig function.
     // @see \Drupal\webform\Twig\WebformTwigExtension
     $twig_default_body = $body_custom_default_values[$body_default_format];
-    $twig_default_body = preg_replace('/(\[[^]]+\])/', '{{ webform_token(\'\1\', webform_submission) }}', $twig_default_body);
+    $twig_default_body = preg_replace('/(\[[^]]+\])/', '{{ webform_token(\'\1\', webform_submission, [], options) }}', $twig_default_body);
     $body_custom_default_values['twig'] = $twig_default_body;
 
     // Look at the 'body' and determine the body select and custom

@@ -89,7 +89,8 @@ class Telephone extends TextBase {
 
     // Add support for telephone_validation.module.
     if (\Drupal::moduleHandler()->moduleExists('telephone_validation')) {
-      $format = (int) $this->getElementProperty($element, 'telephone_validation_format');
+      $format = $this->getElementProperty($element, 'telephone_validation_format');
+      $format = ($format !== '') ? (int) $format : '';
       if ($format === \libphonenumber\PhoneNumberFormat::NATIONAL) {
         $country = (array) $this->getElementProperty($element, 'telephone_validation_country');
       }

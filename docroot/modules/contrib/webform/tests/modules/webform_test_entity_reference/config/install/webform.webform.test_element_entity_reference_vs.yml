@@ -65,17 +65,17 @@ elements: |
     '#wrapper_attributes':
       class:
         - webform-entity-reference-options
-
+  
 css: |
   /* Autocomplete */
-
+  
   .ui-autocomplete {
     display: flex;
     flex-wrap: wrap !important;
     align-self: flex-start !important;
     max-width: 540px !important;
   }
-
+  
   .ui-autocomplete .ui-menu-item-wrapper {
     display: block !important;
     border: 1px solid #ccc !important;
@@ -84,34 +84,34 @@ css: |
     margin: 10px 0 0 10px !important;
     padding: 10px !important;
   }
-
+  
   .ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
     background-color: blue !important;
   }
-
+  
   .ui-autocomplete .views-field views-field-field-image {
     display: block;
     margin: 0 0 5px 0;
   }
-
+  
   /* Checkboex and radios */
-
+  
   .webform-entity-reference-options .fieldset-wrapper > div {
     display: flex;
     flex-wrap: wrap;
     align-self: flex-start;
   }
-
+  
   .webform-entity-reference-options .form-item {
     position: relative;
   }
-
+  
   .webform-entity-reference-options .form-item input {
     position: absolute;
     top: 20px;
     left: 20px;
   }
-
+  
   .webform-entity-reference-options .form-item label {
     display: block;
     border: 1px solid #ccc;
@@ -120,7 +120,7 @@ css: |
     margin: 0 10px 10px 0;
     padding: 10px;
   }
-
+  
   .webform-entity-reference-options .form-item input:checked + label {
     display: block;
     border: 1px solid #ccc;
@@ -129,12 +129,12 @@ css: |
     margin: 0 10px 10px 0;
     padding: 10px;
   }
-
+  
   .webform-entity-reference-options label.option img {
     display: block;
     margin: 0 0 5px 0;
   }
-
+  
 javascript: ''
 settings:
   ajax: false
@@ -206,6 +206,8 @@ settings:
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -261,6 +263,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  serial_disabled: false
 access:
   create:
     roles:

@@ -5,6 +5,7 @@
  * Provides a 'Card' container element for clientside multistep form pagination.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Render\Element;
@@ -105,6 +106,20 @@ function webform_cards_webform_submission_form_alter(array &$form, FormStateInte
     return;
   }
 
+  // Display quick form submit when testing webform cards.
+  if ($form_object->getOperation() === 'test'
+    && \Drupal::request()->getMethod() === 'GET') {
+    $form_id = Html::getId($form_object->getFormId());
+    $build = [
+      '#type' => 'link',
+      '#url' => Url::fromRoute('<none>', [], ['fragment' => $form_id]),
+      '#title' => t('Submit %title form', ['%title' => $webform->label()]),
+      '#attributes' => ['class' => ['js-webform-card-test-submit-form']],
+    ];
+    \Drupal::messenger()->addWarning(\Drupal::service('renderer')->render($build));
+    $form['#attached']['library'][] = 'webform_cards/webform_cards.test';
+  }
+
   // Add cards JavaScript.
   $form['#attached']['library'][] = 'webform_cards/webform_cards';
 
@@ -143,6 +158,10 @@ function webform_cards_webform_submission_form_alter(array &$form, FormStateInte
     'wizard_progress_link',
     // Auto forward to next page when the page is completed.
     'wizard_auto_forward',
+    // Hide the next button when auto-forwarding.
+    'wizard_auto_forward_hide_next_button',
+    // Navigate between cards using left or right arrow keys.
+    'wizard_keyboard',
     // Link to previous pages in preview.
     'wizard_preview_link',
     // Include confirmation page in progress.
@@ -175,7 +194,7 @@ function webform_cards_webform_submission_form_alter(array &$form, FormStateInte
       WebformInterface::PAGE_PREVIEW,
       WebformInterface::PAGE_CONFIRMATION,
     ])) {
-      $current_page = $current_card ?: array_key_first($pages);
+      $current_page = $current_card ?: key($pages);
     }
     $form['progress'] = [
       '#theme' => 'webform_progress',
@@ -208,6 +227,11 @@ function webform_cards_webform_submission_form_alter(array &$form, FormStateInte
       'class' => ['webform-button--previous', 'webform-cards-button--previous'],
     ],
     '#weight' => 0,
+    // Cards and previews previous button labels can have the same value.
+    // Issue #1342066 Document that buttons with the same #value need a unique
+    // #name for the Form API to distinguish them, or change the Form API to
+    // assign unique #names automatically.
+    '#name' => $webform->id() . '_card_previous_button',
   ];
   $form['actions']['cards_next'] = [
     '#type' => 'submit',
@@ -217,6 +241,14 @@ function webform_cards_webform_submission_form_alter(array &$form, FormStateInte
     ],
     '#weight' => 1,
   ];
+
+  // Add 'data-webform-unsaved-ignore' attribute to forms with unsaved
+  // data warning.
+  // @see webform.form.unsaved.js
+  if ($webform->getSetting('form_unsaved', TRUE)) {
+    $form['actions']['cards_prev']['#attributes']['data-webform-unsaved-ignore'] = TRUE;
+    $form['actions']['cards_next']['#attributes']['data-webform-unsaved-ignore'] = TRUE;
+  };
 
   // Process the submitted values before they are stored.
   $form['#entity_builders'][] = 'webform_card_webform_submission_builder';
@@ -336,6 +368,12 @@ function webform_cards_form_webform_settings_form_form_alter(array &$form, FormS
         '#description' => t("If checked, the wizard/cards progress bar's pages will be hidden or shown based on each pages conditional logic."),
       ],
       'wizard_auto_forward' => [
+        '#access' => TRUE,
+      ],
+      'wizard_auto_forward_hide_next_button' => [
+        '#access' => TRUE,
+      ],
+      'wizard_keyboard' => [
         '#access' => TRUE,
       ],
       'wizard_start_label' => [

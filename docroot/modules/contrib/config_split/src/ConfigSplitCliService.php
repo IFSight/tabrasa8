@@ -3,6 +3,7 @@
 namespace Drupal\config_split;
 
 use Drupal\config_filter\Config\FilteredStorage;
+use Drupal\config_filter\Config\FilteredStorageInterface;
 use Drupal\config_filter\ConfigFilterManagerInterface;
 use Drupal\config_filter\ConfigFilterStorageFactory;
 use Drupal\config_split\Config\GhostStorage;
@@ -13,6 +14,7 @@ use Drupal\Core\Config\FileStorageFactory;
 use Drupal\Core\Config\StorageComparer;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ModuleInstallerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
@@ -129,6 +131,13 @@ class ConfigSplitCliService {
   protected $stringTranslation;
 
   /**
+   * The ModuleExtensionList to be passed to the config importer.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
+   */
+  protected $moduleExtensionList;
+
+  /**
    * List of messages.
    *
    * @var array
@@ -150,7 +159,8 @@ class ConfigSplitCliService {
     ModuleHandlerInterface $module_handler,
     ModuleInstallerInterface $module_installer,
     ThemeHandlerInterface $theme_handler,
-    TranslationInterface $string_translation
+    TranslationInterface $string_translation,
+    ModuleExtensionList $moduleExtensionList
   ) {
     $this->configFilterManager = $config_filter_manager;
     $this->storageFactory = $storageFactory;
@@ -164,6 +174,7 @@ class ConfigSplitCliService {
     $this->moduleInstaller = $module_installer;
     $this->themeHandler = $theme_handler;
     $this->stringTranslation = $string_translation;
+    $this->moduleExtensionList = $moduleExtensionList;
     $this->errors = [];
   }
 
@@ -181,8 +192,12 @@ class ConfigSplitCliService {
    */
   public function ioExport($split, $io, callable $t, $confirmed = FALSE) {
     if (!$split) {
+      $io->warning('Please consider using `drush config:export` instead for exporting all config.');
       $message = $t('Do a normal (including filters) config export?');
       $storage = $this->syncStorage;
+      if (!$storage instanceof FilteredStorageInterface) {
+        throw new \RuntimeException('Only exporting splits is supported when not using Config Filter 8.x-1.x');
+      }
     }
     else {
       $config_name = $this->getSplitName($split);
@@ -221,8 +236,12 @@ class ConfigSplitCliService {
    */
   public function ioImport($split, $io, callable $t, $confirmed = FALSE) {
     if (!$split) {
+      $io->text('Please consider using `drush config:import` instead for importing all config.');
       $message = $t('Do a normal (including filters) config import?');
       $storage = $this->syncStorage;
+      if (!$storage instanceof FilteredStorageInterface) {
+        throw new \RuntimeException('Only importing splits is supported when not using Config Filter 8.x-1.x');
+      }
     }
     else {
       $config_name = $this->getSplitName($split);
@@ -298,7 +317,10 @@ class ConfigSplitCliService {
 
     // Copy everything.
     foreach ($active->listAll() as $name) {
-      $storage->write($name, $active->read($name));
+      $config_data = $active->read($name);
+      if ($config_data !== FALSE) {
+        $storage->write($name, $config_data);
+      }
     }
 
     // Get all override data from the remaining collections.
@@ -334,7 +356,7 @@ class ConfigSplitCliService {
    */
   public function import(StorageInterface $storage) {
 
-    $comparer = new StorageComparer($storage, $this->activeStorage, $this->configManager);
+    $comparer = new StorageComparer($storage, $this->activeStorage);
 
     if (!$comparer->createChangelist()->hasChanges()) {
       return static::NO_CHANGES;
@@ -349,7 +371,8 @@ class ConfigSplitCliService {
       $this->moduleHandler,
       $this->moduleInstaller,
       $this->themeHandler,
-      $this->stringTranslation
+      $this->stringTranslation,
+      $this->moduleExtensionList
     );
 
     if ($importer->alreadyImporting()) {

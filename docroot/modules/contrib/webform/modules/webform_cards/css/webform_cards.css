@@ -73,6 +73,10 @@ html.js form.webform-cards-toggle-show .webform-card[style*="display: block"] {
   display: block !important;
 }
 
+html.js form.webform-cards-toggle-show .webform-card[style*="display: none"] {
+  display: none !important;
+}
+
 html.js form.webform-cards-toggle-show .webform-progress {
   display: none;
 }

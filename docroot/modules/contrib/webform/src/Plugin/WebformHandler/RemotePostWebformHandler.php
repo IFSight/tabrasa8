@@ -267,6 +267,7 @@ class RemotePostWebformHandler extends WebformHandlerBase {
         '#title' => $this->t('@title URL', $t_args),
         '#description' => $this->t('The full URL to POST to when an existing webform submission is @state. (e.g. @url)', $t_args),
         '#required' => ($state === WebformSubmissionInterface::STATE_COMPLETED),
+        '#maxlength' => NULL,
         '#default_value' => $this->configuration[$state_url],
       ];
       $form[$state][$state_custom_data] = [

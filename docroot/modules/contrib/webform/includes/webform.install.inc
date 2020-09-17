@@ -23,6 +23,10 @@ use Drupal\webform\WebformInterface;
  * @see drush_webform_repair()
  */
 function _webform_update_admin_settings($reset = FALSE) {
+  // Make sure to purge the config cache before updating any config.
+  // This ensure that any config schema changes are loaded.
+  \Drupal::service('cache.config')->deleteAll();
+
   $admin_config = \Drupal::configFactory()->getEditable('webform.settings');
 
   $current_settings = $admin_config->getRawData();

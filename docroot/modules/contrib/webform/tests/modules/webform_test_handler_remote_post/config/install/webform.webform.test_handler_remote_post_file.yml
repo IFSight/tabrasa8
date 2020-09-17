@@ -26,7 +26,7 @@ elements: |
     '#required': true
     '#multiple': true
     '#file_extensions': txt
-
+  
 css: ''
 javascript: ''
 settings:
@@ -99,6 +99,8 @@ settings:
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -128,7 +130,7 @@ settings:
   confirmation_title: ''
   confirmation_message: |
     <p>Your confirmation number is [webform_submission:values:confirmation_number].</p>
-
+    
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
@@ -156,6 +158,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  serial_disabled: false
 access:
   create:
     roles:

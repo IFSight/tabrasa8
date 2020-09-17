@@ -17,7 +17,7 @@ category: ''
 elements: |
   introduction:
     '#markup': 'After you submit the form, a care specialist will call you back within XX hours to schedule an appointment.'
-  h2:
+  hr:
     '#type': webform_horizontal_rule
   call:
     '#markup': 'You may also speak with a care specialist directly by calling <a href="tel:XXX-XXX-XXXX">XXX-XXX-XXXX</a> on Monday–Friday between 8:30 am to 5:00 pm EST.'
@@ -205,7 +205,7 @@ elements: |
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': 'Send Request'
-
+  
 css: ''
 javascript: ''
 settings:
@@ -278,6 +278,8 @@ settings:
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -333,6 +335,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  serial_disabled: false
 access:
   create:
     roles:

@@ -972,13 +972,13 @@ JS;
      */
     public function wait($timeout, $condition)
     {
-        $script = "return $condition;";
+        $script = 'return (' . $condition . ');';
         $start = microtime(true);
         $end = $start + $timeout / 1000.0;
 
         do {
             $result = $this->wdSession->execute(array('script' => $script, 'args' => array()));
-            usleep(100000);
+            usleep(10000);
         } while (microtime(true) < $end && !$result);
 
         return (bool) $result;

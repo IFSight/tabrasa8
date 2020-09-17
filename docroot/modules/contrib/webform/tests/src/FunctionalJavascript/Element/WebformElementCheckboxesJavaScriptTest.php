@@ -49,28 +49,15 @@ class WebformElementCheckboxesJavaScriptTest extends WebformWebDriverTestBase {
 
     // Check that checking 'none' disables all checkboxes.
     $this->click('#edit-checkboxes-none-none');
-    $assert_session->fieldDisabled('edit-checkboxes-none-one');
     $assert_session->checkboxNotChecked('edit-checkboxes-none-one');
-    $assert_session->fieldDisabled('edit-checkboxes-none-two');
     $assert_session->checkboxNotChecked('edit-checkboxes-none-two');
-    $assert_session->fieldDisabled('edit-checkboxes-none-three');
     $assert_session->checkboxNotChecked('edit-checkboxes-none-three');
-
-    // Check that unchecking 'none' enables all checkboxes.
-    $this->click('#edit-checkboxes-none-none');
-    $assert_session->fieldEnabled('edit-checkboxes-none-one');
-    $assert_session->fieldEnabled('edit-checkboxes-none-two');
-    $assert_session->fieldEnabled('edit-checkboxes-none-three');
 
     // Check the 'all' and 'none' work together.
     $this->click('#edit-checkboxes-both-none');
-    $assert_session->fieldDisabled('edit-checkboxes-both-one');
     $assert_session->checkboxNotChecked('edit-checkboxes-both-one');
-    $assert_session->fieldDisabled('edit-checkboxes-both-two');
     $assert_session->checkboxNotChecked('edit-checkboxes-both-two');
-    $assert_session->fieldDisabled('edit-checkboxes-both-three');
     $assert_session->checkboxNotChecked('edit-checkboxes-both-three');
-    $assert_session->fieldDisabled('edit-checkboxes-both-all');
     $assert_session->checkboxNotChecked('edit-checkboxes-both-all');
 
     $this->click('#edit-checkboxes-both-none');

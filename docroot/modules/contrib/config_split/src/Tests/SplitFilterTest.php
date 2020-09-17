@@ -44,11 +44,7 @@ class SplitFilterTest extends UnitTestCase {
       ->willReturn(['f' => 0, 'g' => 0, 'b' => 0]);
 
     $filter = new SplitFilter($configuration, 'config_split', [], $manager->reveal());
-
-    // Get the protected blacklist property.
-    $blacklist = new \ReflectionProperty(SplitFilter::class, 'blacklist');
-    $blacklist->setAccessible(TRUE);
-    $actual = $blacklist->getValue($filter);
+    $actual = $filter->getBlacklist();
     // The order of values and keys are not important.
     sort($actual);
     $expected = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'module1.settings'];
@@ -79,29 +75,60 @@ class SplitFilterTest extends UnitTestCase {
       ->willReturn(['f' => 0, 'g' => 0, 'b' => 0]);
 
     $filter = new SplitFilter($configuration, 'config_split', [], $manager->reveal());
-
-    // Get the protected blacklist property.
-    $graylist = new \ReflectionProperty(SplitFilter::class, 'graylist');
-    $graylist->setAccessible(TRUE);
-    $actual = $graylist->getValue($filter);
+    $actual = $filter->getGraylist();
     // The order of values and keys are not important.
     sort($actual);
     $this->assertArrayEquals(['a', 'b', 'f', 'g'], $actual);
   }
 
   /**
-   * Test that the wildcards are properly taken into account.
+   * Test that conditionally split config will not be completely split.
    */
-  public function testWildcards() {
+  public function testConditionallySplitInCompleteSplit() {
+    $configuration = [];
+    $configuration['blacklist'] = ['b', 'c', 'd'];
+    $configuration['graylist'] = ['a'];
+    $configuration['module'] = [];
+    $configuration['theme'] = [];
+    $configuration['graylist_dependents'] = TRUE;
+
+    // The config manager returns dependent entities for modules and themes.
+    $manager = $this->prophesize('Drupal\Core\Config\ConfigManagerInterface');
+    $manager->findConfigEntityDependents(Argument::exact('module'), Argument::cetera())->willReturn([]);
+    $manager->findConfigEntityDependents(Argument::exact('theme'), Argument::cetera())->willReturn([]);
+    // Add a config storage returning some settings for the filtered modules.
+    $all_config = array_merge(array_fill_keys(range("a", "z"), []), ['module1.settings' => [], 'module3.settings' => []]);
+    $manager->getConfigFactory()->willReturn($this->getConfigStorageStub($all_config));
+    // Add more config dependencies, independently of what is asked for.
+    $manager->findConfigEntityDependents(Argument::exact('config'), Argument::exact(['b', 'c', 'd']))
+      ->willReturn(['e' => 0]);
+    $manager->findConfigEntityDependents(Argument::exact('config'), Argument::exact(['a']))
+      ->willReturn(['f' => 0, 'b' => 0]);
+
+    $filter = new SplitFilter($configuration, 'config_split', [], $manager->reveal());
+    $actual = $filter->getBlacklist();
+    // The order of values and keys are not important.
+    sort($actual);
+    $this->assertArrayEquals(['c', 'd', 'e'], $actual);
+  }
+
+  /**
+   * Test that the wildcards are properly taken into account.
+   *
+   * @dataProvider wildcardsData
+   */
+  public function testWildcards($name, $method) {
 
     $list = ['a', 'b', 'contact*', '*.d', 'e*i', 'f*de*', 'x'];
 
     $configuration = [];
-    $configuration['blacklist'] = $list;
-    $configuration['graylist'] = $list;
+    $configuration['blacklist'] = [];
+    $configuration['graylist'] = [];
     $configuration['module'] = [];
     $configuration['theme'] = [];
     $configuration['graylist_dependents'] = TRUE;
+
+    $configuration[$name] = $list;
 
     // The config manager returns dependent entities for modules and themes.
     $manager = $this->prophesize('Drupal\Core\Config\ConfigManagerInterface');
@@ -139,20 +166,22 @@ class SplitFilterTest extends UnitTestCase {
     ];
 
     $manager->findConfigEntityDependents(Argument::exact('config'), Argument::exact($expected))->willReturn([]);
+    $manager->findConfigEntityDependents(Argument::exact('config'), Argument::exact([]))->willReturn([]);
 
     $filter = new SplitFilter($configuration, 'config_split', [], $manager->reveal());
+    $actual = $filter->{$method}();
+    $this->assertArrayEquals($expected, $actual);
+  }
 
-    // Get the protected blacklist property.
-    $blacklist = new \ReflectionProperty(SplitFilter::class, 'blacklist');
-    $blacklist->setAccessible(TRUE);
-    $black = $blacklist->getValue($filter);
-    $graylist = new \ReflectionProperty(SplitFilter::class, 'graylist');
-    $graylist->setAccessible(TRUE);
-    $gray = $graylist->getValue($filter);
-
-    $this->assertArrayEquals($expected, $black);
-    $this->assertArrayEquals($expected, $gray);
-
+  /**
+   * The data for the wildcard test.
+   */
+  public function wildcardsData() {
+    // We need to test the methods separately.
+    return [
+      ['blacklist', 'getBlacklist'],
+      ['graylist', 'getGraylist'],
+    ];
   }
 
   /**

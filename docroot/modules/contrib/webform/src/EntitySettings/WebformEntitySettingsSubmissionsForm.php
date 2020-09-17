@@ -117,6 +117,18 @@ class WebformEntitySettingsSubmissionsForm extends WebformEntitySettingsBaseForm
       '#description' => $this->t('The value of the next submission number. This is usually 1 when you start and will go up with each webform submission.'),
       '#min' => 1,
       '#default_value' => $webform_storage->getNextSerial($webform),
+      '#states' => [
+        'visible' => [
+          ':input[name="serial_disabled"]' => ['checked' => FALSE],
+        ]
+      ],
+    ];
+    $form['submission_settings']['serial_disabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Disable next submission number'),
+      '#description' => $this->t('If checked the next number will be automatically set to the internal submission id.'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['serial_disabled'],
     ];
     $form['submission_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
     $form['submission_settings']['submission_container']['elements'] = [

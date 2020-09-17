@@ -314,10 +314,6 @@ class WebformElementHelper {
    *   A webform element that is missing the 'data-drupal-states' attribute.
    */
   public static function fixStatesWrapper(array &$element) {
-    if (empty($element['#states'])) {
-      return;
-    }
-
     $attributes = [];
 
     // Set .js-form-wrapper which is targeted by states.js hide/show logic.
@@ -336,7 +332,23 @@ class WebformElementHelper {
       }
     }
 
-    $attributes['data-drupal-states'] = Json::encode($element['#states']);
+    // Move the element's #states the wrapper's #states.
+    if (isset($element['#states'])) {
+      $attributes['data-drupal-states'] = Json::encode($element['#states']);
+
+      // Copy #states to #_webform_states property which can be used by the
+      // WebformSubmissionConditionsValidator.
+      // @see \Drupal\webform\WebformSubmissionConditionsValidator
+      $element['#_webform_states'] = $element['#states'];
+
+      // Remove #states property to prevent nesting.
+      unset($element['#states']);
+    }
+
+    // If there are attributes for the wrapper do not add it.
+    if (empty($attributes)) {
+      return;
+    }
 
     $element += ['#prefix' => '', '#suffix' => ''];
 
@@ -349,14 +361,6 @@ class WebformElementHelper {
 
     // Attach library.
     $element['#attached']['library'][] = 'core/drupal.states';
-
-    // Copy #states to #_webform_states property which can be used by the
-    // WebformSubmissionConditionsValidator.
-    // @see \Drupal\webform\WebformSubmissionConditionsValidator
-    $element['#_webform_states'] = $element['#states'];
-
-    // Remove #states property to prevent nesting.
-    unset($element['#states']);
   }
 
   /**

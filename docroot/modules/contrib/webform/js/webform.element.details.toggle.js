@@ -23,7 +23,7 @@
         var $tabs = $form.find('.webform-tabs');
 
         // Get only the main details elements and ignore all nested details.
-        var selector = ($tabs.length) ? '.webform-tab' : '.js-webform-details-toggle';
+        var selector = ($tabs.length) ? '.webform-tab' : '.js-webform-details-toggle, .webform-elements';
         var $details = $form.find('details').filter(function () {
           var $parents = $(this).parentsUntil(selector);
           return ($parents.find('details').length === 0);
@@ -57,6 +57,9 @@
             // @see webform.element.details.save.js
             if (Drupal.webformDetailsSaveGetName) {
               $form.find('details').each(function () {
+                // Note: Drupal.webformDetailsSaveGetName checks if localStorage
+                // exists and is enabled.
+                // @see webform.element.details.save.js
                 var name = Drupal.webformDetailsSaveGetName($(this));
                 if (name) {
                   localStorage.setItem(name, open);

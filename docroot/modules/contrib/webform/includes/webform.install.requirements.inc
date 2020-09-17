@@ -108,14 +108,14 @@ function webform_requirements($phase) {
   /****************************************************************************/
 
   if (\Drupal::config('webform.settings')->get('requirements.bootstrap')) {
-    $spam_protection = FALSE;
+    $bootstrap_enabled = FALSE;
     $themes = \Drupal::service('theme_handler')->listInfo();
     foreach ($themes as $theme) {
       if ((isset($theme->base_themes) && isset($theme->base_themes['bootstrap'])) || $theme === 'bootstrap') {
-        $spam_protection = TRUE;
+        $bootstrap_enabled = TRUE;
       }
     }
-    if ($spam_protection) {
+    if ($bootstrap_enabled) {
       if (\Drupal::moduleHandler()->moduleExists('webform_bootstrap')) {
         $requirements['webform_bootstrap'] = [
           'title' => t('Webform: Bootstrap integration'),
@@ -130,6 +130,28 @@ function webform_requirements($phase) {
           'severity' => REQUIREMENT_WARNING,
         ];
       }
+    }
+  }
+
+  /****************************************************************************/
+  // Check Clientside validation module.
+  /****************************************************************************/
+
+  if (\Drupal::config('webform.settings')->get('requirements.clientside_validation')
+    && \Drupal::moduleHandler()->moduleExists('clientside_validation')) {
+    if (\Drupal::moduleHandler()->moduleExists('webform_clientside_validation')) {
+      $requirements['webform_clientside_validation'] = [
+        'title' => t('Webform: Clientside validation'),
+        'value' => t('Webform Clientside Validation module installed.'),
+      ];
+    }
+    else {
+      $requirements['webform_clientside_validation'] = [
+        'title' => t('Webform: Clientside validation'),
+        'value' => t('Webform Clientside Validation module not installed.'),
+        'description' => t('The Webform Clientside Validation module helps support Webform Clientside Validation integration. <a href=":href">Disable Webform Clientside Validation warning</a>', [':href' => Url::fromRoute('webform.config.advanced')->toString()]),
+        'severity' => REQUIREMENT_WARNING,
+      ];
     }
   }
 

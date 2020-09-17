@@ -102,6 +102,7 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
   protected function getExpectedElementDefaultProperties() {
     $yaml = <<<YAML
 address:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -117,6 +118,7 @@ address:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   available_countries: {  }
   default_value: {  }
@@ -137,6 +139,7 @@ address:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -148,6 +151,7 @@ address:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   prepopulate: false
   private: false
@@ -163,6 +167,7 @@ captcha:
   captcha_type: default
   flex: 1
 checkbox:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -178,6 +183,7 @@ checkbox:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: false
@@ -209,6 +215,7 @@ checkbox:
   title_display: after
   wrapper_attributes: {  }
 checkboxes:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -224,6 +231,7 @@ checkboxes:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -274,6 +282,7 @@ checkboxes:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 color:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -289,6 +298,7 @@ color:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   color_size: medium
@@ -333,6 +343,7 @@ container:
   states: {  }
   states_clear: true
 date:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -348,6 +359,7 @@ date:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   date_date_format: Y-m-d
@@ -384,6 +396,7 @@ date:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -395,6 +408,7 @@ date:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   placeholder: ''
   prepopulate: false
@@ -413,6 +427,7 @@ date:
   unique_user: false
   wrapper_attributes: {  }
 datelist:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -428,6 +443,7 @@ datelist:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   date_abbreviate: true
@@ -474,6 +490,7 @@ datelist:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -485,6 +502,7 @@ datelist:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   prepopulate: false
   private: false
@@ -500,6 +518,7 @@ datelist:
   unique_user: false
   wrapper_attributes: {  }
 datetime:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -515,6 +534,7 @@ datetime:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   date_date_datepicker_button: false
@@ -561,6 +581,7 @@ datetime:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -572,6 +593,7 @@ datetime:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   prepopulate: false
   private: false
@@ -587,6 +609,7 @@ datetime:
   unique_user: false
   wrapper_attributes: {  }
 details:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -602,6 +625,7 @@ details:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   description: ''
@@ -625,6 +649,7 @@ details:
   title: ''
   title_display: ''
 email:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -640,6 +665,7 @@ email:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -667,6 +693,7 @@ email:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -678,6 +705,7 @@ email:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -698,6 +726,7 @@ email:
   unique_user: false
   wrapper_attributes: {  }
 entity_autocomplete:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -713,6 +742,7 @@ entity_autocomplete:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -736,6 +766,7 @@ entity_autocomplete:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -747,6 +778,7 @@ entity_autocomplete:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   prepopulate: false
   private: false
@@ -766,6 +798,7 @@ entity_autocomplete:
   unique_user: false
   wrapper_attributes: {  }
 fieldset:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -781,6 +814,7 @@ fieldset:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   description: ''
@@ -823,6 +857,7 @@ hidden:
   private: false
   title: ''
 item:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -838,6 +873,7 @@ item:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   description: ''
   description_display: ''
@@ -858,6 +894,7 @@ item:
   title_display: ''
   wrapper_attributes: {  }
 label:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -873,6 +910,7 @@ label:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   description: ''
@@ -882,6 +920,7 @@ label:
   states: {  }
   title: ''
 language_select:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -897,6 +936,7 @@ language_select:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -930,6 +970,7 @@ language_select:
   unique_user: false
   wrapper_attributes: {  }
 machine_name:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -945,6 +986,7 @@ machine_name:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -978,6 +1020,7 @@ machine_name:
   unique_user: false
   wrapper_attributes: {  }
 managed_file:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -993,6 +1036,7 @@ managed_file:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   button: false
@@ -1040,6 +1084,7 @@ managed_file:
   uri_scheme: private
   wrapper_attributes: {  }
 number:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1055,6 +1100,7 @@ number:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -1081,6 +1127,7 @@ number:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -1092,6 +1139,7 @@ number:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   placeholder: ''
   prepopulate: false
@@ -1111,6 +1159,7 @@ number:
   unique_user: false
   wrapper_attributes: {  }
 processed_text:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1126,6 +1175,7 @@ processed_text:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   display_on: form
   flex: 1
@@ -1136,6 +1186,7 @@ processed_text:
   text: ''
   wrapper_attributes: {  }
 radios:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1151,6 +1202,7 @@ radios:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -1190,6 +1242,7 @@ radios:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 range:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1205,6 +1258,7 @@ range:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -1246,6 +1300,7 @@ range:
   unique_user: false
   wrapper_attributes: {  }
 search:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1261,6 +1316,7 @@ search:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -1302,6 +1358,7 @@ search:
   unique_user: false
   wrapper_attributes: {  }
 select:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1317,6 +1374,7 @@ select:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -1368,6 +1426,7 @@ table:
   empty: ''
   header: {  }
 tableselect:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1383,6 +1442,7 @@ tableselect:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -1424,6 +1484,7 @@ tableselect:
   unique_user: false
   wrapper_attributes: {  }
 tel:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1439,6 +1500,7 @@ tel:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -1469,6 +1531,7 @@ tel:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -1480,6 +1543,7 @@ tel:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -1500,6 +1564,7 @@ tel:
   unique_user: false
   wrapper_attributes: {  }
 text_format:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1515,6 +1580,7 @@ text_format:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   allowed_formats: {  }
   default_value: {  }
@@ -1539,6 +1605,7 @@ text_format:
   states_clear: true
   title: ''
 textarea:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1554,6 +1621,7 @@ textarea:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -1585,6 +1653,7 @@ textarea:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -1596,6 +1665,7 @@ textarea:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -1617,6 +1687,7 @@ textarea:
   unique_user: false
   wrapper_attributes: {  }
 textfield:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1632,6 +1703,7 @@ textfield:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -1665,6 +1737,7 @@ textfield:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -1676,6 +1749,7 @@ textfield:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -1696,6 +1770,7 @@ textfield:
   unique_user: false
   wrapper_attributes: {  }
 url:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1711,6 +1786,7 @@ url:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -1738,6 +1814,7 @@ url:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -1749,6 +1826,7 @@ url:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -1772,6 +1850,7 @@ value:
   title: ''
   value: ''
 view:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1787,6 +1866,7 @@ view:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   arguments: {  }
   display_id: ''
@@ -1796,6 +1876,7 @@ view:
   private: false
   states: {  }
 webform_actions:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1811,8 +1892,13 @@ webform_actions:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
+  delete__attributes: {  }
+  delete__dialog: false
+  delete__label: ''
+  delete_hide: true
   draft__attributes: {  }
   draft__label: ''
   draft_hide: false
@@ -1833,6 +1919,9 @@ webform_actions:
   submit__label: ''
   submit_hide: false
   title: ''
+  update__attributes: {  }
+  update__label: ''
+  update_hide: false
   wizard_next__attributes: {  }
   wizard_next__label: ''
   wizard_next_hide: false
@@ -1840,6 +1929,7 @@ webform_actions:
   wizard_prev__label: ''
   wizard_prev_hide: false
 webform_address:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1871,6 +1961,7 @@ webform_address:
   address__title: Address
   address__title_display: ''
   address__type: textfield
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -1914,6 +2005,7 @@ webform_address:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -1926,6 +2018,7 @@ webform_address:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   postal_code__access: true
   postal_code__description: ''
@@ -1955,6 +2048,7 @@ webform_address:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_attachment_token:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -1970,6 +2064,7 @@ webform_attachment_token:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   display_on: none
   download: false
@@ -1986,6 +2081,7 @@ webform_attachment_token:
   trim: false
   wrapper_attributes: {  }
 webform_attachment_twig:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2001,6 +2097,7 @@ webform_attachment_twig:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   display_on: none
   download: false
@@ -2017,6 +2114,7 @@ webform_attachment_twig:
   trim: false
   wrapper_attributes: {  }
 webform_attachment_url:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2032,6 +2130,7 @@ webform_attachment_url:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   display_on: none
   download: false
@@ -2048,6 +2147,7 @@ webform_attachment_url:
   url: ''
   wrapper_attributes: {  }
 webform_audio_file:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2063,6 +2163,7 @@ webform_audio_file:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   button: false
@@ -2110,6 +2211,7 @@ webform_audio_file:
   uri_scheme: private
   wrapper_attributes: {  }
 webform_autocomplete:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2125,6 +2227,7 @@ webform_autocomplete:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete_existing: false
@@ -2162,6 +2265,7 @@ webform_autocomplete:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -2173,6 +2277,7 @@ webform_autocomplete:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -2193,6 +2298,7 @@ webform_autocomplete:
   unique_user: false
   wrapper_attributes: {  }
 webform_card:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2208,6 +2314,7 @@ webform_card:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   format: details
   format_attributes: {  }
@@ -2223,6 +2330,7 @@ webform_card:
   title_display: ''
   title_tag: h2
 webform_checkboxes_other:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2238,6 +2346,7 @@ webform_checkboxes_other:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -2303,6 +2412,7 @@ webform_checkboxes_other:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_codemirror:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2318,6 +2428,7 @@ webform_codemirror:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -2354,6 +2465,7 @@ webform_codemirror:
   wrap: true
   wrapper_attributes: {  }
 webform_computed_token:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2369,6 +2481,7 @@ webform_computed_token:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   ajax: false
   description: ''
@@ -2392,6 +2505,7 @@ webform_computed_token:
   title_display: ''
   wrapper_attributes: {  }
 webform_computed_twig:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2407,6 +2521,7 @@ webform_computed_twig:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   ajax: false
   description: ''
@@ -2431,6 +2546,7 @@ webform_computed_twig:
   whitespace: ''
   wrapper_attributes: {  }
 webform_contact:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2462,6 +2578,7 @@ webform_contact:
   address__title: Address
   address__title_display: ''
   address__type: textfield
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -2521,6 +2638,7 @@ webform_contact:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -2533,6 +2651,7 @@ webform_contact:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   name__access: true
   name__description: ''
@@ -2578,6 +2697,7 @@ webform_contact:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_custom_composite:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2593,6 +2713,7 @@ webform_custom_composite:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -2619,6 +2740,7 @@ webform_custom_composite:
   more: ''
   more_title: ''
   multiple: true
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -2631,6 +2753,7 @@ webform_custom_composite:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   prepopulate: false
   private: false
@@ -2643,6 +2766,7 @@ webform_custom_composite:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_document_file:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2658,6 +2782,7 @@ webform_document_file:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   button: false
@@ -2706,6 +2831,7 @@ webform_document_file:
   wrapper_attributes: {  }
 webform_element: {  }
 webform_email_confirm:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2721,6 +2847,7 @@ webform_email_confirm:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -2748,6 +2875,7 @@ webform_email_confirm:
   minlength: null
   more: ''
   more_title: ''
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -2758,6 +2886,7 @@ webform_email_confirm:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -2779,6 +2908,7 @@ webform_email_confirm:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_email_multiple:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2794,6 +2924,7 @@ webform_email_multiple:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   autocomplete: 'on'
@@ -2817,6 +2948,7 @@ webform_email_multiple:
   minlength: null
   more: ''
   more_title: ''
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -2828,6 +2960,7 @@ webform_email_multiple:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   pattern: ''
   pattern_error: ''
@@ -2848,6 +2981,7 @@ webform_email_multiple:
   unique_user: false
   wrapper_attributes: {  }
 webform_entity_checkboxes:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2863,6 +2997,7 @@ webform_entity_checkboxes:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -2911,6 +3046,7 @@ webform_entity_checkboxes:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_entity_radios:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2926,6 +3062,7 @@ webform_entity_radios:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -2966,6 +3103,7 @@ webform_entity_radios:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_entity_select:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -2981,6 +3119,7 @@ webform_entity_select:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -3046,6 +3185,7 @@ webform_horizontal_rule:
   display_on: form
   states: {  }
 webform_image_file:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3061,6 +3201,7 @@ webform_image_file:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attachment_image_style: ''
   attributes: {  }
@@ -3111,6 +3252,7 @@ webform_image_file:
   uri_scheme: private
   wrapper_attributes: {  }
 webform_image_select:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3126,6 +3268,7 @@ webform_image_select:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -3176,6 +3319,7 @@ webform_image_select:
   unique_user: false
   wrapper_attributes: {  }
 webform_likert:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3191,6 +3335,7 @@ webform_likert:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   answers: {  }
   answers_description_display: description
@@ -3226,6 +3371,7 @@ webform_likert:
   title_display: ''
   wrapper_attributes: {  }
 webform_link:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3241,6 +3387,7 @@ webform_link:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -3267,6 +3414,7 @@ webform_link:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -3279,6 +3427,7 @@ webform_link:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   prepopulate: false
   private: false
@@ -3306,6 +3455,7 @@ webform_link:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_location_geocomplete:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3321,6 +3471,7 @@ webform_location_geocomplete:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   administrative_area_level_1__access: false
   administrative_area_level_1__title: State/Province
@@ -3381,6 +3532,7 @@ webform_location_geocomplete:
   value__title: Address
   wrapper_attributes: {  }
 webform_location_places:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3396,6 +3548,7 @@ webform_location_places:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   administrative__access: false
   administrative__title: State/Province
@@ -3451,6 +3604,7 @@ webform_location_places:
   value__title: Address
   wrapper_attributes: {  }
 webform_mapping:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3466,6 +3620,7 @@ webform_mapping:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   arrow: →
   default_value: {  }
@@ -3500,6 +3655,7 @@ webform_mapping:
   title_display: ''
   wrapper_attributes: {  }
 webform_markup:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3515,6 +3671,7 @@ webform_markup:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   display_on: form
   flex: 1
@@ -3523,6 +3680,7 @@ webform_markup:
   states: {  }
   wrapper_attributes: {  }
 webform_message:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3538,6 +3696,7 @@ webform_message:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   display_on: form
@@ -3551,6 +3710,7 @@ webform_message:
   private: false
   states: {  }
 webform_more:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3566,6 +3726,7 @@ webform_more:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   display_on: form
@@ -3575,6 +3736,7 @@ webform_more:
   private: false
   states: {  }
 webform_name:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3590,6 +3752,7 @@ webform_name:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -3648,6 +3811,7 @@ webform_name:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -3660,6 +3824,7 @@ webform_name:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   prepopulate: false
   private: false
@@ -3689,6 +3854,7 @@ webform_name:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 'webform_options_custom:buttons':
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3704,6 +3870,7 @@ webform_name:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -3753,6 +3920,7 @@ webform_name:
   unique_user: false
   wrapper_attributes: {  }
 'webform_options_custom:us_states':
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3768,6 +3936,7 @@ webform_name:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -3817,6 +3986,7 @@ webform_name:
   unique_user: false
   wrapper_attributes: {  }
 webform_radios_other:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3832,6 +4002,7 @@ webform_radios_other:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -3889,6 +4060,7 @@ webform_radios_other:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_rating:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3904,6 +4076,7 @@ webform_rating:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: 0
@@ -3943,6 +4116,7 @@ webform_rating:
   unique_user: false
   wrapper_attributes: {  }
 webform_same:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -3958,6 +4132,7 @@ webform_same:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: false
@@ -3990,6 +4165,7 @@ webform_same:
   title_display: after
   wrapper_attributes: {  }
 webform_scale:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4005,6 +4181,7 @@ webform_scale:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -4047,6 +4224,7 @@ webform_scale:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_section:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4062,6 +4240,7 @@ webform_section:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   description: ''
@@ -4085,6 +4264,7 @@ webform_section:
   title_display: ''
   title_tag: h2
 webform_select_other:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4100,6 +4280,7 @@ webform_select_other:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -4167,6 +4348,7 @@ webform_select_other:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_signature:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4182,6 +4364,7 @@ webform_signature:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -4216,6 +4399,7 @@ webform_signature:
   unique_user: false
   wrapper_attributes: {  }
 webform_table:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4231,6 +4415,7 @@ webform_table:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   caption: ''
@@ -4262,6 +4447,7 @@ webform_table:
   title_display: ''
   wrapper_attributes: {  }
 webform_table_row:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4277,6 +4463,7 @@ webform_table_row:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   flex: 1
@@ -4285,6 +4472,7 @@ webform_table_row:
   states_clear: true
   title: ''
 webform_table_sort:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4300,6 +4488,7 @@ webform_table_sort:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -4337,6 +4526,7 @@ webform_table_sort:
   unique_user: false
   wrapper_attributes: {  }
 webform_tableselect_sort:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4352,6 +4542,7 @@ webform_tableselect_sort:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -4393,6 +4584,7 @@ webform_tableselect_sort:
   unique_user: false
   wrapper_attributes: {  }
 webform_telephone:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4408,6 +4600,7 @@ webform_telephone:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   choices: false
@@ -4441,6 +4634,7 @@ webform_telephone:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -4453,6 +4647,7 @@ webform_telephone:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   phone__access: true
   phone__description: ''
@@ -4484,6 +4679,7 @@ webform_telephone:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_term_checkboxes:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4499,6 +4695,7 @@ webform_term_checkboxes:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   breadcrumb: false
@@ -4551,6 +4748,7 @@ webform_term_checkboxes:
   wrapper_attributes: {  }
   wrapper_type: fieldset
 webform_term_select:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4566,6 +4764,7 @@ webform_term_select:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   breadcrumb: false
@@ -4615,6 +4814,7 @@ webform_term_select:
   vocabulary: ''
   wrapper_attributes: {  }
 webform_terms_of_service:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4630,6 +4830,7 @@ webform_terms_of_service:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: false
@@ -4659,6 +4860,7 @@ webform_terms_of_service:
   title: 'I agree to the {terms of service}.'
   wrapper_attributes: {  }
 webform_time:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4674,6 +4876,7 @@ webform_time:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -4699,6 +4902,7 @@ webform_time:
   more: ''
   more_title: ''
   multiple: false
+  multiple__add: true
   multiple__add_more: true
   multiple__add_more_button_label: Add
   multiple__add_more_input: true
@@ -4710,6 +4914,7 @@ webform_time:
   multiple__min_items: null
   multiple__no_items_message: 'No items entered. Please add items below.'
   multiple__operations: true
+  multiple__remove: true
   multiple__sorting: true
   placeholder: ''
   prepopulate: false
@@ -4729,6 +4934,7 @@ webform_time:
   unique_user: false
   wrapper_attributes: {  }
 webform_toggle:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4744,6 +4950,7 @@ webform_toggle:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: false
@@ -4778,6 +4985,7 @@ webform_toggle:
   toggle_theme: light
   wrapper_attributes: {  }
 webform_toggles:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4793,6 +5001,7 @@ webform_toggles:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -4834,6 +5043,7 @@ webform_toggles:
   unique_user: false
   wrapper_attributes: {  }
 webform_variant:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4849,6 +5059,7 @@ webform_variant:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   default_value: ''
@@ -4873,6 +5084,7 @@ webform_variant:
   variant: ''
   wrapper_attributes: {  }
 webform_video_file:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4888,6 +5100,7 @@ webform_video_file:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   button: false
@@ -4935,6 +5148,7 @@ webform_video_file:
   uri_scheme: private
   wrapper_attributes: {  }
 webform_wizard_page:
+  access: true
   access_create_permissions: {  }
   access_create_roles:
     - anonymous
@@ -4950,6 +5164,7 @@ webform_wizard_page:
     - anonymous
     - authenticated
   access_view_users: {  }
+  admin_notes: ''
   admin_title: ''
   attributes: {  }
   format: details

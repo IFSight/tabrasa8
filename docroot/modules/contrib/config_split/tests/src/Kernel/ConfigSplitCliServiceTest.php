@@ -8,6 +8,7 @@ use Drupal\Core\Archiver\Tar;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\KernelTests\KernelTestBase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamContent;
@@ -66,8 +67,10 @@ class ConfigSplitCliServiceTest extends KernelTestBase {
     $archive_data = $file->fread($file->getSize());
     // Save the tar file to unpack and read it.
     // See \Drupal\config\Tests\ConfigExportUITest::testExport()
-    $uri = file_unmanaged_save_data($archive_data, 'temporary://config.tar.gz');
-    $file_path = file_directory_temp() . '/' . file_uri_target($uri);
+    $uri = \Drupal::service('file_system')->saveData($archive_data, 'temporary://config.tar.gz');
+    $temp_folder = \Drupal::service('file_system')->getTempDirectory();
+    $file_target = StreamWrapperManager::getTarget($uri);
+    $file_path = $temp_folder . '/' . $file_target;
     $archiver = new Tar($file_path);
     $this->assertNotEmpty($archiver->listContents(), 'Downloaded archive file is not empty.');
 

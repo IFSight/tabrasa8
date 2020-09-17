@@ -18,7 +18,7 @@ elements: |
   textfield:
     '#type': textfield
     '#title': textfield
-
+  
 css: ''
 javascript: ''
 settings:
@@ -91,6 +91,8 @@ settings:
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -121,7 +123,7 @@ settings:
   confirmation_message: |
     <p>You can view your submission via <a href="[webform_submission:view-url]">[webform_submission:view-url:relative]</a></p>
     <p>You can update your submission via <a href="[webform_submission:update-url]">[webform_submission:update-url:relative]</a></p>
-
+    
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
@@ -149,6 +151,7 @@ settings:
   results_customize: false
   token_view: true
   token_update: true
+  serial_disabled: false
 access:
   create:
     roles:
@@ -220,7 +223,7 @@ handlers:
       body: |
         <a href="[webform_submission:view-url]">[webform_submission:view-url]</a><br/>
         <a href="[webform_submission:update-url]">[webform_submission:update-url]</a>
-
+        
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true

@@ -853,6 +853,7 @@ function template_preprocess_webform_composite_telephone(array &$variables) {
 function template_preprocess_webform_element_help(array &$variables) {
   $attributes = (isset($variables['attributes'])) ? $variables['attributes'] : [];
   $attributes['class'][] = 'webform-element-help';
+  $attributes['class'][] = 'js-webform-element-help';
   $attributes['role'] = 'tooltip';
   $attributes['tabindex'] = '0';
 

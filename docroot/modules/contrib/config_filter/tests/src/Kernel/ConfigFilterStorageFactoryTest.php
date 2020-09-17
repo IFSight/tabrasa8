@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\config_filter\Kernel;
 
+use Drupal\config_filter\Config\FilteredStorageInterface;
 use Drupal\Core\Config\DatabaseStorage;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -25,7 +26,7 @@ class ConfigFilterStorageFactoryTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['system']);
   }
@@ -34,6 +35,8 @@ class ConfigFilterStorageFactoryTest extends KernelTestBase {
    * Test that the config.storage.sync is decorated with the filtering version.
    */
   public function testServiceProvider() {
+    // Config Filter makes the sync storage a filtered storage.
+    $this->assertInstanceOf(FilteredStorageInterface::class, $this->container->get('config.storage.sync'));
     // Export the configuration.
     $this->copyConfig($this->container->get('config.storage'), $this->container->get('config.storage.sync'));
 
@@ -83,6 +86,24 @@ class ConfigFilterStorageFactoryTest extends KernelTestBase {
     // Reading from the $filtered storage returns the merged config.
     $this->assertEquals($active->listAll(), $filtered->listAll());
     $this->assertEquals($active->readMultiple($active->listAll()), $filtered->readMultiple($filtered->listAll()));
+  }
+
+  /**
+   * Test that the listAll method doesn't advertise config that doesn't exist.
+   */
+  public function testListAll() {
+    /** @var \Drupal\Core\Config\StorageInterface $filtered */
+    $filtered = $this->container->get('config_filter.storage_factory')->getSync();
+
+    // The pirate filter always adds the pirate config to listAll.
+    // But the filtered storage doesn't return the ones that don't exist.
+    $this->assertNotContains('system.pirates', $filtered->listAll());
+    $this->assertFalse($filtered->exists('system.pirates'));
+
+    // Turn on bluff mode, to make the filter properly add the config.
+    \Drupal::state()->set('config_filter_test_bluff', TRUE);
+    $this->assertContains('system.pirates', $filtered->listAll());
+    $this->assertTrue($filtered->exists('system.pirates'));
   }
 
 }

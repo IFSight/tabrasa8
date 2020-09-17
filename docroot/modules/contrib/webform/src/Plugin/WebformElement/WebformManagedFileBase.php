@@ -986,8 +986,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     }
 
     // If has access and total file size exceeds file limit then display error.
-    $has_access = (!isset($element['#access']) || $element['#access']);
-    if ($has_access && $total_file_size > $file_limit) {
+    if (Element::isVisibleElement($element) && $total_file_size > $file_limit) {
       $t_args = ['%quota' => format_size($file_limit)];
       $message = t("This form's file upload quota of %quota has been exceeded. Please remove some files.", $t_args);
       $form_state->setError($element, $message);

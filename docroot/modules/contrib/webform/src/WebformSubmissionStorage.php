@@ -572,7 +572,7 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
    * @param array $options
    *   (optional) Additional options and query conditions.
    * @param string $direction
-   *   Direction of the sibliing.
+   *   Direction of the sibling.
    *
    * @return \Drupal\webform\WebformSubmissionInterface|null
    *   The webform submission's sibling.
@@ -985,7 +985,8 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
 
     $is_new = $entity->isNew();
 
-    if (!$entity->serial()) {
+    // Set serial number using the webform table.
+    if (!$entity->serial() && !$entity->getWebform()->getSetting('serial_disabled')) {
       $next_serial = $this->entityManager->getStorage('webform')->getSerial($entity->getWebform());
       $entity->set('serial', $next_serial);
     }
@@ -994,6 +995,15 @@ class WebformSubmissionStorage extends SqlContentEntityStorage implements Webfor
 
     // Save data.
     $this->saveData($entity, !$is_new);
+
+    // Set serial number to the submission id.
+    if (!$entity->serial() && $entity->getWebform()->getSetting('serial_disabled')) {
+      $this->database->update('webform_submission')
+        ->fields(['serial' => $entity->id()])
+        ->condition('sid', $entity->id())
+        ->execute();
+      $entity->set('serial', $entity->id());
+    }
 
     // Set anonymous draft token.
     // This only needs to be called for new anonymous submissions.

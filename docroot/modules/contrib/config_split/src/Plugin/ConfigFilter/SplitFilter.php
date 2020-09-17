@@ -11,7 +11,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Component\PhpStorage\FileStorage as PhpFileStorage;
+use Drupal\Component\FileSecurity\FileSecurity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -74,8 +74,6 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->manager = $manager;
     $this->secondaryStorage = $secondary;
-    $this->calculateBlacklist();
-    $this->calculateGraylist();
   }
 
   /**
@@ -105,6 +103,32 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
       $container->get('config.manager'),
       self::getSecondaryStorage($config, $container->get('database'))
     );
+  }
+
+  /**
+   * Get the complete split config.
+   *
+   * @return string[]
+   *   The config names.
+   */
+  public function getBlacklist() {
+    if (empty($this->blacklist)) {
+      $this->calculateBlacklist();
+    }
+    return $this->blacklist;
+  }
+
+  /**
+   * Get the conditional split config.
+   *
+   * @return string[]
+   *   The config names.
+   */
+  public function getGraylist() {
+    if (empty($this->graylist)) {
+      $this->calculateGraylist();
+    }
+    return $this->graylist;
   }
 
   /**
@@ -166,14 +190,14 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
       throw new \InvalidArgumentException('The split storage has to be set and exist for write operations.');
     }
 
-    if (in_array($name, $this->blacklist)) {
+    if (in_array($name, $this->getBlacklist())) {
       if ($data) {
         $this->secondaryStorage->write($name, $data);
       }
 
       return NULL;
     }
-    elseif (in_array($name, $this->graylist)) {
+    elseif (in_array($name, $this->getGraylist())) {
       if (!$this->configuration['graylist_skip_equal'] || !$this->source || $this->source->read($name) != $data) {
         // The configuration is in the graylist but skip-equal is not set or
         // the source does not have the same data, so write to secondary and
@@ -232,7 +256,7 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
       $this->secondaryStorage->delete($name);
     }
 
-    if (in_array($name, $this->graylist) && !in_array($name, $this->blacklist)) {
+    if (in_array($name, $this->getGraylist()) && !in_array($name, $this->getBlacklist())) {
       // Do not delete graylisted config.
       return FALSE;
     }
@@ -280,7 +304,7 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
       }
     }
 
-    if (!empty($this->graylist)) {
+    if (!empty($this->getGraylist())) {
       // If the split uses the graylist feature delete individually.
       return FALSE;
     }
@@ -304,7 +328,7 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
    */
   public function filterGetAllCollectionNames(array $collections) {
     if ($this->secondaryStorage) {
-      $collections = array_merge($collections, $this->secondaryStorage->getAllCollectionNames());
+      $collections = array_unique(array_merge($collections, $this->secondaryStorage->getAllCollectionNames()));
     }
 
     return $collections;
@@ -340,7 +364,9 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
     });
     sort($blacklist);
     // Finally merge all dependencies of the blacklisted config.
-    $this->blacklist = array_unique(array_merge($blacklist, array_keys($this->manager->findConfigEntityDependents('config', $blacklist))));
+    $blacklist = array_unique(array_merge($blacklist, array_keys($this->manager->findConfigEntityDependents('config', $blacklist))));
+    // Exclude from the complete split what is conditionally split.
+    $this->blacklist = array_diff($blacklist, $this->getGraylist());
   }
 
   /**
@@ -402,7 +428,13 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
   protected static function getSecondaryStorage(ImmutableConfig $config, Connection $connection) {
     // Here we could determine to use relative paths etc.
     if ($directory = $config->get('folder')) {
-
+      if (!is_dir($directory)) {
+        // If the directory doesn't exist, attempt to create it.
+        // This might have some negative consequences but we trust the user to
+        // have properly configured their site.
+        /* @noinspection MkdirRaceConditionInspection */
+        @mkdir($directory, 0777, TRUE);
+      }
       // The following is roughly: file_save_htaccess($directory, TRUE, TRUE);
       // But we can't use global drupal functions and we want to write the
       // .htaccess file to ensure the configuration is protected and the
@@ -410,7 +442,7 @@ class SplitFilter extends ConfigFilterBase implements ContainerFactoryPluginInte
       if (file_exists($directory) && is_writable($directory)) {
         $htaccess_path = rtrim($directory, '/\\') . '/.htaccess';
         if (!file_exists($htaccess_path)) {
-          file_put_contents($htaccess_path, PhpFileStorage::htaccessLines(TRUE));
+          file_put_contents($htaccess_path, FileSecurity::htaccessLines(TRUE));
           @chmod($htaccess_path, 0444);
         }
       }

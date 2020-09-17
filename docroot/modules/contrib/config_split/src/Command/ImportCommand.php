@@ -36,7 +36,6 @@ class ImportCommand extends SplitCommandBase {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $this->setupIo($input, $output);
     try {
       // Make the magic happen.
       $this->cliService->ioImport($input->getOption('split'), $this->getIo(), [$this, 't'], $input->getOption('yes'));

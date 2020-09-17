@@ -23,6 +23,14 @@
       // @see Drupal.AjaxCommands.prototype.webformRefresh
       unsaved = false;
     },
+    get: function () {
+      // Get the current unsaved flag state.
+      return unsaved;
+    },
+    set: function (value) {
+      // Set the current unsaved flag state.
+      unsaved = value;
+    },
     attach: function (context) {
       // Look for the 'data-webform-unsaved' attribute which indicates that
       // a multi-step webform has unsaved data.
@@ -41,17 +49,20 @@
         });
       }
 
-      $('.js-webform-unsaved button, .js-webform-unsaved input[type="submit"]', context).once('webform-unsaved').on('click', function (event) {
-        // For reset button we must confirm unsaved changes before the
-        // before unload event handler.
-        if ($(this).hasClass('webform-button--reset') && unsaved) {
-          if (!window.confirm(Drupal.t('Changes you made may not be saved.') + '\n\n' + Drupal.t('Press OK to leave this page or Cancel to stay.'))) {
-            return false;
+      $('.js-webform-unsaved button, .js-webform-unsaved input[type="submit"]', context)
+        .once('webform-unsaved')
+        .not('[data-webform-unsaved-ignore]')
+        .on('click', function (event) {
+          // For reset button we must confirm unsaved changes before the
+          // before unload event handler.
+          if ($(this).hasClass('webform-button--reset') && unsaved) {
+            if (!window.confirm(Drupal.t('Changes you made may not be saved.') + '\n\n' + Drupal.t('Press OK to leave this page or Cancel to stay.'))) {
+              return false;
+            }
           }
-        }
 
-        unsaved = false;
-      });
+          unsaved = false;
+        });
 
       // Add submit handler to form.beforeSend.
       // Update Drupal.Ajax.prototype.beforeSend only once.

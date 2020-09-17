@@ -142,6 +142,17 @@ class WebformUiElementTest extends WebformBrowserTestBase {
     $this->assertNoFieldChecked('edit-webform-ui-elements-name-required');
 
     /**************************************************************************/
+    // Notes.
+    /**************************************************************************/
+
+    // Add admin notes to contact name element.
+    $edit = [
+      'properties[admin_notes][value]' => 'This is an admin note.',
+    ];
+    $this->drupalPostForm('/admin/structure/webform/manage/contact/element/name/edit', $edit, 'Save');
+    $this->assertRaw('<span data-drupal-selector="edit-webform-ui-elements-name-title-notes" class="webform-element-help js-webform-element-help" role="tooltip" tabindex="0" data-webform-help="&lt;div class=&quot;webform-element-help--title&quot;&gt;Your Name&lt;/div&gt;&lt;div class=&quot;webform-element-help--content&quot;&gt;This is an admin note.&lt;/div&gt;"><span aria-hidden="true">?</span></span>');
+
+    /**************************************************************************/
     // CRUD
     /**************************************************************************/
 
