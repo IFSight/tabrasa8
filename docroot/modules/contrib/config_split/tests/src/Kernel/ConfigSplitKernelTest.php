@@ -7,6 +7,7 @@ use Drupal\config_split\Form\ConfigSplitEntityForm;
 use Drupal\config_split\Plugin\ConfigFilter\SplitFilter;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Site\Settings;
 use Drupal\KernelTests\KernelTestBase;
 use org\bovigo\vfs\vfsStream;
 
@@ -104,8 +105,9 @@ class ConfigSplitKernelTest extends KernelTestBase {
    * @dataProvider syncFolderIsConflictingProvider
    */
   public function testSyncFolderIsConflicting($split, $sync, $expected) {
-    global $config_directories;
-    $config_directories[CONFIG_SYNC_DIRECTORY] = $sync;
+    $settings = Settings::getAll();
+    $settings['config_sync_directory'] = $sync;
+    new Settings($settings);
 
     // Access the protected static function to test it.
     $reflection = new \ReflectionClass(ConfigSplitEntityForm::class);

@@ -3,18 +3,14 @@
 namespace Drupal\config_split\Command;
 
 use Drupal\config_split\ConfigSplitCliService;
-use Drupal\Console\Core\Command\Shared\CommandTrait;
-use Drupal\Console\Core\Style\DrupalStyle;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Drupal\Console\Core\Command\Command;
 
 /**
  * Class SplitCommandBase for shared functionality.
+ *
+ * @internal
  */
 abstract class SplitCommandBase extends Command {
-
-  use CommandTrait;
 
   /**
    * The cli service doing all the work.
@@ -22,13 +18,6 @@ abstract class SplitCommandBase extends Command {
    * @var \Drupal\config_split\ConfigSplitCliService
    */
   protected $cliService;
-
-  /**
-   * The io interface composed of a commands input and output.
-   *
-   * @var \Symfony\Component\Console\Style\StyleInterface
-   */
-  protected $io;
 
   /**
    * Constructor with cli service injection.
@@ -39,28 +28,6 @@ abstract class SplitCommandBase extends Command {
   public function __construct(ConfigSplitCliService $cliService) {
     parent::__construct();
     $this->cliService = $cliService;
-  }
-
-  /**
-   * Set up the io interface.
-   *
-   * @param \Symfony\Component\Console\Input\InputInterface $input
-   *   The input interface.
-   * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   The output interface.
-   */
-  protected function setupIo(InputInterface $input, OutputInterface $output) {
-    $this->io = new DrupalStyle($input, $output);
-  }
-
-  /**
-   * Get the io interface.
-   *
-   * @return \Symfony\Component\Console\Style\StyleInterface
-   *   The io interface.
-   */
-  protected function getIo() {
-    return $this->io;
   }
 
   /**

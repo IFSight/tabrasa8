@@ -262,7 +262,7 @@ abstract class OptionsBase extends WebformElementBase {
     }
 
     foreach ($element['#options__properties'] as $option_key => $options__properties) {
-      if (!isset($element[$option_key])) {
+      if (!isset($element[$option_key]) || !is_array($options__properties)) {
         continue;
       }
 
@@ -1074,7 +1074,8 @@ abstract class OptionsBase extends WebformElementBase {
     $form['options_properties'] = [
       '#type' => 'details',
       '#title' => $this->t('Options (custom) properties'),
-      '#access' => $this->currentUser->hasPermission('edit webform source'),
+      '#access' => $this->hasProperty('options__properties')
+        && $this->currentUser->hasPermission('edit webform source'),
     ];
     $form['options_properties']['options__properties'] = [
       '#type' => 'webform_codemirror',

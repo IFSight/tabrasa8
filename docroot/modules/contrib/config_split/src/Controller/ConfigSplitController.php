@@ -3,8 +3,6 @@
 namespace Drupal\config_split\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Drupal\Core\Url;
 
 /**
  * Class ConfigSplitController.

@@ -105,6 +105,20 @@ elements: |
       '#access_view_roles': {  }
       '#access_view_permissions':
         - 'access user profiles'
+  access_property:
+    '#type': details
+    '#title': access_property
+    textfield_access_property:
+      '#type': textfield
+      '#title': textfield_access_property
+      '#access': false
+    fieldset_access_property:
+      '#type': fieldset
+      '#title': fieldset_access_property
+      '#access': false
+      fieldset_textfield_access:
+        '#type': textfield
+        '#title': fieldset_textfield_access
 
 css: ''
 javascript: ''
@@ -178,6 +192,8 @@ settings:
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -233,6 +249,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: true
+  serial_disabled: false
 access:
   create:
     roles:

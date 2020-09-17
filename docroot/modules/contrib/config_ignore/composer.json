@@ -24,6 +24,6 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "require": {
-    "drupal/config_filter": "^1 || ^2"
+    "drupal/config_filter": "1.*"
   }
 }

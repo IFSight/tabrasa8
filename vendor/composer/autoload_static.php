@@ -75,6 +75,7 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         ),
         'V' => 
         array (
+            'VariableAnalysis\\' => 17,
             'Vanare\\BehatCucumberJsonFormatter\\' => 34,
         ),
         'T' => 
@@ -276,6 +277,10 @@ class ComposerStaticInit253df31900dffd17482b7b23a9e6c925
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
+        ),
+        'VariableAnalysis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis',
         ),
         'Vanare\\BehatCucumberJsonFormatter\\' => 
         array (

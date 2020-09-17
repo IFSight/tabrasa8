@@ -3,11 +3,12 @@
     <description>The coding standard for coder_sniffer.</description>
 
     <file>coder_sniffer</file>
+    <file>tests</file>
 
     <!-- Test files that should not be checked. -->
-    <exclude-pattern>coder_sniffer/*/Test/*\.(inc|css|js|api\.php|tpl\.php)$</exclude-pattern>
-    <exclude-pattern>coder_sniffer/*/Test/*/(good|bad)\.php$</exclude-pattern>
-    <exclude-pattern>coder_sniffer/*/Test/*/drupal(6|7|8)/*\.php$</exclude-pattern>
+    <exclude-pattern>tests/*\.(inc|css|js|api\.php|tpl\.php)$</exclude-pattern>
+    <exclude-pattern>tests/*/(good|bad)\.php$</exclude-pattern>
+    <exclude-pattern>tests/*/drupal(6|7|8)/*\.php$</exclude-pattern>
 
     <!-- The following comes from the 3.4.2 PHPCS ruleset.xml { -->
 
@@ -148,13 +149,9 @@
         <exclude name="Generic.Commenting.Todo.CommentFound"/>
     </rule>
 
-    <!-- Not compliant yet, should be fixed in the future. -->
-    <rule ref="PEAR.Commenting.FunctionComment.MissingParamComment">
-        <exclude-pattern>coder_sniffer/DrupalPractice/Sniffs/CodeAnalysis/VariableAnalysisSniff.php</exclude-pattern>
-    </rule>
     <rule ref="PEAR.Commenting.FileComment.Missing">
-        <exclude-pattern>coder_sniffer/Drupal/Test</exclude-pattern>
-        <exclude-pattern>coder_sniffer/DrupalPractice/Test</exclude-pattern>
+        <exclude-pattern>tests/Drupal</exclude-pattern>
+        <exclude-pattern>tests/DrupalPractice/Test</exclude-pattern>
     </rule>
 
     <!-- Additional rules from Drupal that we want. -->

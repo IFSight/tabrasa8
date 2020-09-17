@@ -16,6 +16,12 @@
    *   Attaches the behavior for preventing duplicate webform submissions.
    */
   Drupal.behaviors.webformSubmitOnce = {
+    clear: function () {
+      var $form = $('.js-webform-submit-once');
+      $form.removeData('webform-submitted');
+      $form.find('.js-webform-wizard-pages-links :submit, .form-actions :submit').removeClass('is-disabled');
+      $form.find('.form-actions .ajax-progress.ajax-progress-throbber').remove();
+    },
     attach: function (context) {
       $('.js-webform-submit-once', context).once('webform-submit-once').each(function () {
         var $form = $(this);
@@ -53,9 +59,7 @@
           $form.find('.js-webform-wizard-pages-links :submit, .form-actions :submit').addClass('is-disabled');
 
           // Set the throbber progress indicator.
-          // @see Drupal.Ajax.prototype.setProgressIndicatorThrobber
-          var $progress = $('<div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div>');
-          $clickedButton.after($progress);
+          $clickedButton.after(Drupal.theme.ajaxProgressThrobber());
         });
       });
     }

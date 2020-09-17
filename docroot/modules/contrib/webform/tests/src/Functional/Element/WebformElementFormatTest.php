@@ -126,11 +126,8 @@ class WebformElementFormatTest extends WebformElementBrowserTestBase {
     $elements = [
       'File (Value)' => $this->getSubmissionFileUrl($submission, 'managed_file_value'),
       'File (Raw value)' => $this->getSubmissionFileUrl($submission, 'managed_file_raw'),
-      'File (File)' => '<div>
-<span class="file file--mime-text-plain file--text"> <a href="' . $this->getSubmissionFileUrl($submission, 'managed_file_file') . '" type="text/plain; length=43">managed_file_file.txt</a></span>
-</div>',
-      'File (Link)' => '
-<span class="file file--mime-text-plain file--text"> <a href="' . $this->getSubmissionFileUrl($submission, 'managed_file_link') . '" type="text/plain; length=43">managed_file_link.txt</a></span>',
+      'File (File)' => '<div><span class="file file--mime-text-plain file--text"><a href="' . $this->getSubmissionFileUrl($submission, 'managed_file_file') . '" type="text/plain; length=43">managed_file_file.txt</a></span>',
+      'File (Link)' => '<span class="file file--mime-text-plain file--text"><a href="' . $this->getSubmissionFileUrl($submission, 'managed_file_link') . '" type="text/plain; length=43">managed_file_link.txt</a></span>',
       'File (File ID)' => $submission->getElementData('managed_file_id'),
       'File (File name)' => 'managed_file_name.txt',
       'File (File base name (no extension))' => 'managed_file_basename',
@@ -174,13 +171,13 @@ class WebformElementFormatTest extends WebformElementBrowserTestBase {
       'Text field (Comma)' => 'Loremipsum, Oratione, Dixisset',
       'Text field (Semicolon)' => 'Loremipsum; Oratione; Dixisset',
       'Text field (And)' => 'Loremipsum, Oratione, and Dixisset',
-      'Text field (Ordered list)' => '<div class="item-list"><ol><li>Loremipsum</li><li>Oratione</li><li>Dixisset</li></ol></div>',
-      'Text field (Unordered list)' => '<div class="item-list"><ul><li>Loremipsum</li><li>Oratione</li><li>Dixisset</li></ul></div>',
+      'Text field (Ordered list)' => '<ol><li>Loremipsum</li><li>Oratione</li><li>Dixisset</li></ol>',
+      'Text field (Unordered list)' => '<ul><li>Loremipsum</li><li>Oratione</li><li>Dixisset</li></ul>',
       'Checkboxes (Comma)' => 'One, Two, Three',
       'Checkboxes (Semicolon)' => 'One; Two; Three',
       'Checkboxes (And)' => 'One, Two, and Three',
-      'Checkboxes (Ordered list)' => '<div class="item-list"><ol><li>One</li><li>Two</li><li>Three</li></ol>',
-      'Checkboxes (Unordered list)' => '<div class="item-list"><ul><li>One</li><li>Two</li><li>Three</li></ul>',
+      'Checkboxes (Ordered list)' => '<ol><li>One</li><li>Two</li><li>Three</li></ol>',
+      'Checkboxes (Unordered list)' => '<ul><li>One</li><li>Two</li><li>Three</li></ul>',
       'Checkboxes (Checklist)' => '<span style="font-size: 1.4em; line-height: 1em">☑</span> One<br /><span style="font-size: 1.4em; line-height: 1em">☑</span> Two<br /><span style="font-size: 1.4em; line-height: 1em">☑</span> Three<br />',
     ];
     foreach ($elements as $label => $value) {
@@ -240,8 +237,8 @@ class WebformElementFormatTest extends WebformElementBrowserTestBase {
       'comma:' => 'one, two, three',
       'semicolon:' => 'one; two; three',
       'and:' => 'one, two, and three',
-      'ul:' => '<div class="item-list"><ul><li>one</li><li>two</li><li>three</li></ul></div>',
-      'ol:' => '<div class="item-list"><ol><li>one</li><li>two</li><li>three</li></ol></div>',
+      'ul:' => '<ul><li>one</li><li>two</li><li>three</li></ul>',
+      'ol:' => '<ol><li>one</li><li>two</li><li>three</li></ol>',
       'raw:' => '1, 2, 3',
     ];
     foreach ($elements as $label => $value) {

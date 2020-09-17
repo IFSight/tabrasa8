@@ -120,3 +120,18 @@ exporting the configuration.') . '</dd>';
 
   return NULL;
 }
+
+/**
+ * Implements hook_config_readonly_whitelist_patterns().
+ *
+ * Automatically add any enabled database config splits' graylist and blacklist
+ * entries as whitelisted patterns for config_readonly.
+ */
+function config_split_config_readonly_whitelist_patterns() {
+  $patterns = [];
+  $splits = \Drupal::entityTypeManager()->getStorage('config_split')->loadByProperties(['folder' => '', 'status' => TRUE]);
+  foreach ($splits as $split) {
+    $patterns = array_merge($patterns, $split->get('graylist'), $split->get('blacklist'));
+  }
+  return $patterns;
+}

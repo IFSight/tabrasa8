@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\config_filter\Kernel;
 
+use Drupal\config_filter\Config\FilteredStorageInterface;
 use Drupal\Core\Config\DatabaseStorage;
-use Drupal\Core\Config\StorageComparer;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -32,27 +32,24 @@ class ConfigFilterStorageFactoryTest extends KernelTestBase {
   }
 
   /**
-   * Tests that config is correctly transformed.
+   * Test that the config.storage.sync is decorated with the filtering version.
    */
-  public function testStorageTransformation() {
+  public function testServiceProvider() {
+    // Config Filter makes the sync storage a filtered storage.
+    $this->assertInstanceOf(FilteredStorageInterface::class, $this->container->get('config.storage.sync'));
     // Export the configuration.
-    $sync_storage = $this->container->get('config.storage.sync');
-    $this->copyConfig($this->container->get('config.storage.export'), $sync_storage);
-    $transformed_storage = $this->container->get('config.import_transformer')->transform($sync_storage);
-
-    $comparer = new StorageComparer($transformed_storage, $this->container->get('config.storage'));
-    $comparer->createChangelist();
+    $this->copyConfig($this->container->get('config.storage'), $this->container->get('config.storage.sync'));
 
     // The pirate filter changes the system.site when importing.
-    $this->assertEquals(['system.site', 'core.extension'], $comparer->getChangelist('update'));
-    $this->assertEmpty($comparer->getChangelist('create'));
-    $this->assertEmpty($comparer->getChangelist('delete'));
-    $this->assertEmpty($comparer->getChangelist('rename'));
+    $this->assertEquals(['system.site'], $this->configImporter()->getStorageComparer()->getChangelist('update'));
+    $this->assertEmpty($this->configImporter()->getStorageComparer()->getChangelist('create'));
+    $this->assertEmpty($this->configImporter()->getStorageComparer()->getChangelist('delete'));
+    $this->assertEmpty($this->configImporter()->getStorageComparer()->getChangelist('rename'));
 
     $config = $this->config('system.site')->getRawData();
     $config['name'] .= ' Arrr';
 
-    $this->assertEquals($config, $transformed_storage->read('system.site'));
+    $this->assertEquals($config, $this->container->get('config.storage.sync')->read('system.site'));
   }
 
   /**

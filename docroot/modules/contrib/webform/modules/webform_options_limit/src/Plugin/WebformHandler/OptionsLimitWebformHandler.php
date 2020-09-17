@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Render\Element;
 use Drupal\webform\Element\WebformAjaxElementTrait;
 use Drupal\webform\Element\WebformEntityTrait;
 use Drupal\webform\Element\WebformMessage;
@@ -532,7 +533,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
    */
   public static function validateElement(&$element, FormStateInterface $form_state, &$complete_form) {
     // Skip if element is not visible.
-    if (isset($element['#access']) && $element['#access'] === FALSE) {
+    if (!Element::isVisibleElement($element)) {
       return;
     }
 

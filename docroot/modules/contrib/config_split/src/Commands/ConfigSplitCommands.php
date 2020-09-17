@@ -8,7 +8,7 @@ use Drush\Commands\DrushCommands;
 /**
  * Class ConfigSplitCommands.
  *
- * This is the Drush 9 command.
+ * This is the Drush 9 and 10 commands.
  *
  * @package Drupal\config_split\Commands
  */

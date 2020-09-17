@@ -20,3 +20,11 @@ webform_cards.admin:
   dependencies:
     - core/drupal
     - core/jquery.once
+
+webform_cards.test:
+  version: VERSION
+  js:
+    js/webform_cards.test.js: { }
+  dependencies:
+    - core/drupal
+    - core/jquery.once

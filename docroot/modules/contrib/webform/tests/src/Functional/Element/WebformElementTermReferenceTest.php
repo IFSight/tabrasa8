@@ -70,7 +70,7 @@ class WebformElementTermReferenceTest extends WebformElementBrowserTestBase {
     ];
     $this->postSubmission($webform, $edit, 'Preview');
     $this->assertRaw('<label>webform_term_checkboxes_breadcrumb_advanced</label>');
-    $this->assertRaw('<div class="item-list"><ul><li>Parent 1 › Parent 1: Child 1</li><li>Parent 1 › Parent 1: Child 2</li></ul></div>');
+    $this->assertRaw('<ul><li>Parent 1 › Parent 1: Child 1</li><li>Parent 1 › Parent 1: Child 2</li></ul>');
 
      // Unpublish term:2.
      Term::load(2)->setUnpublished()->save();
@@ -128,7 +128,7 @@ class WebformElementTermReferenceTest extends WebformElementBrowserTestBase {
     ];
     $this->postSubmission($webform, $edit, 'Preview');
     $this->assertRaw('<label>webform_term_select_breadcrumb_advanced</label>');
-    $this->assertRaw('<div class="item-list"><ul><li>Parent 1 › Parent 1: Child 1</li><li>Parent 1 › Parent 1: Child 2</li></ul></div>');
+    $this->assertRaw('<ul><li>Parent 1 › Parent 1: Child 1</li><li>Parent 1 › Parent 1: Child 2</li></ul>');
 
     // Unpublish term:2.
     Term::load(2)->setUnpublished()->save();

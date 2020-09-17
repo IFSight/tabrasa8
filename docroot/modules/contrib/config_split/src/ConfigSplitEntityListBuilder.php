@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a listing of Configuration Split Setting entities.
+ * Provides a listing of Configuration Split setting entities.
  */
 class ConfigSplitEntityListBuilder extends ConfigEntityListBuilder {
 
@@ -27,7 +27,7 @@ class ConfigSplitEntityListBuilder extends ConfigEntityListBuilder {
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
+      $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $container->get('config.factory')
     );
   }
@@ -51,7 +51,7 @@ class ConfigSplitEntityListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('Configuration Split Setting');
+    $header['label'] = $this->t('Configuration Split setting');
     $header['id'] = $this->t('Machine name');
     $header['description'] = $this->t('Description');
     $header['status'] = $this->t('Status');
@@ -62,7 +62,7 @@ class ConfigSplitEntityListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $entity->label();
+    $row['label'] = $entity->toLink();
     $row['id'] = $entity->id();
     $config = $this->configFactory->get('config_split.config_split.' . $entity->id());
     $row['description'] = $config->get('description');
@@ -82,14 +82,14 @@ class ConfigSplitEntityListBuilder extends ConfigEntityListBuilder {
     $operations = parent::getDefaultOperations($entity);
     if (!$entity->get('status') && $entity->hasLinkTemplate('enable')) {
       $operations['enable'] = [
-        'title' => t('Enable'),
+        'title' => $this->t('Enable'),
         'weight' => 40,
         'url' => $entity->toUrl('enable'),
       ];
     }
     elseif ($entity->hasLinkTemplate('disable')) {
       $operations['disable'] = [
-        'title' => t('Disable'),
+        'title' => $this->t('Disable'),
         'weight' => 50,
         'url' => $entity->toUrl('disable'),
       ];

@@ -356,26 +356,51 @@ class WebformStatesServerTest extends WebformBrowserTestBase {
       'trigger_pattern' => 'abc',
       'trigger_not_pattern' => 'ABC',
       'trigger_less' => 1,
+      'trigger_less_equal' => 1,
       'trigger_greater' => 11,
+      'trigger_greater_equal' => 11,
     ];
     $this->postSubmission($webform, $edit);
     $this->assertNoRaw('New submission added to Test: Form API #states custom pattern, less, greater, and between condition validation.');
     $this->assertRaw('dependent_pattern field is required.');
     $this->assertRaw('dependent_not_pattern field is required.');
     $this->assertRaw('dependent_less field is required.');
+    $this->assertRaw('dependent_less_equal field is required.');
     $this->assertRaw('dependent_greater field is required.');
+    $this->assertRaw('dependent_greater_equal field is required.');
+
+    $edit = [
+      'trigger_less' => 10,
+      'trigger_less_equal' => 10,
+      'trigger_greater' => 10,
+      'trigger_greater_equal' => 10,
+    ];
+    $this->postSubmission($webform, $edit);
+    $this->assertNoRaw('dependent_less field is required.');
+    $this->assertRaw('dependent_less_equal field is required.');
+    $this->assertNoRaw('dependent_greater field is required.');
+    $this->assertRaw('dependent_greater_equal field is required.');
+
+    $edit = [
+      'trigger_between' => 11,
+    ];
+    $this->postSubmission($webform, $edit);
+    $this->assertRaw('dependent_between field is required.');
+    $this->assertNoRaw('dependent_not_between field is required.');
 
     $edit = [
       'trigger_between' => 9,
     ];
     $this->postSubmission($webform, $edit);
     $this->assertNoRaw('dependent_between field is required.');
+    $this->assertRaw('dependent_not_between field is required.');
 
     $edit = [
       'trigger_between' => 21,
     ];
     $this->postSubmission($webform, $edit);
     $this->assertNoRaw('dependent_between field is required.');
+    $this->assertRaw('dependent_not_between field is required.');
 
     /**************************************************************************/
     // multiple element.

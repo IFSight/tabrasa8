@@ -209,7 +209,7 @@ class WebformEntityVariantsForm extends EntityForm {
           && $webform->access('update')
           && $webform->getSetting('share', TRUE)) {
           $operations['share'] = [
-            'title' => t('Share'),
+            'title' => $this->t('Share'),
             'url' => Url::fromRoute(
               'entity.webform.share_embed',
               ['webform' => $webform->id()],

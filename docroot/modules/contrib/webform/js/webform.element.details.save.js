@@ -7,6 +7,20 @@
 
   'use strict';
 
+  // Determine if local storage exists and is enabled.
+  // This approach is copied from Modernizr.
+  // @see https://github.com/Modernizr/Modernizr/blob/c56fb8b09515f629806ca44742932902ac145302/modernizr.js#L696-731
+  var hasLocalStorage = (function () {
+    try {
+      localStorage.setItem('webform', 'webform');
+      localStorage.removeItem('webform');
+      return true;
+    }
+    catch (e) {
+      return false;
+    }
+  }());
+
   /**
    * Attach handler to save details open/close state.
    *
@@ -14,7 +28,7 @@
    */
   Drupal.behaviors.webformDetailsSave = {
     attach: function (context) {
-      if (!window.localStorage) {
+      if (!hasLocalStorage) {
         return;
       }
 
@@ -72,7 +86,7 @@
    *   The name used to store the state of details element.
    */
   Drupal.webformDetailsSaveGetName = function ($details) {
-    if (!window.localStorage) {
+    if (!hasLocalStorage) {
       return '';
     }
 

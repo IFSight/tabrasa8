@@ -1103,7 +1103,7 @@ function _webform_token_render_more($more_title, $more) {
   // Token info might be called via CLI and not all modules are loaded
   // or an active theme is defined.
   //
-  // Prevent the below expections:
+  // Prevent the below exceptions:
   // - The theme implementations may not be rendered until all modules
   //   are loaded.
   // - Call to a member function setParser() on array in Twig\Parser->parse().

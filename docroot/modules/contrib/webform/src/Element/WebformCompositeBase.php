@@ -168,8 +168,7 @@ abstract class WebformCompositeBase extends FormElement implements WebformCompos
     $value = NestedArray::getValue($form_state->getValues(), $element['#parents']);
 
     // Only validate composite elements that are visible.
-    $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
-    if ($has_access) {
+    if (Element::isVisibleElement($element)) {
       // Validate required composite elements.
       $composite_elements = static::getCompositeElements($element);
       $composite_elements = WebformElementHelper::getFlattened($composite_elements);

@@ -1094,6 +1094,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'wizard_progress_link' => FALSE,
       'wizard_progress_states' => FALSE,
       'wizard_auto_forward' => TRUE,
+      'wizard_auto_forward_hide_next_button' => FALSE,
+      'wizard_keyboard' => TRUE,
       'wizard_start_label' => '',
       'wizard_preview_link' => FALSE,
       'wizard_confirmation' => TRUE,
@@ -1149,6 +1151,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
       'results_customize' => FALSE,
       'token_view' => FALSE,
       'token_update' => FALSE,
+      'serial_disabled' => FALSE,
     ];
   }
 
@@ -1771,6 +1774,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected function setElementPropertiesRecursive(array &$elements, $key, array $properties, $parent_key = '') {
     foreach ($elements as $element_key => &$element) {
+      // Make sure the element key is a string.
+      $element_key = (string) $element_key;
+
       if (!WebformElementHelper::isElement($element, $element_key)) {
         continue;
       }
@@ -1834,6 +1840,9 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   protected function deleteElementRecursive(array &$elements, $key) {
     foreach ($elements as $element_key => &$element) {
+      // Make sure the element key is a string.
+      $element_key = (string) $element_key;
+
       if (!WebformElementHelper::isElement($element, $element_key)) {
         continue;
       }

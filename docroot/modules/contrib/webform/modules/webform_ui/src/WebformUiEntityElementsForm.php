@@ -465,6 +465,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     $key = $element['#webform_key'];
     $title = $element['#admin_title'] ?: $element['#title'];
     $title = (is_array($title)) ? $this->renderer->render($title) : $title;
+
     $plugin_id = $this->elementManager->getElementPluginId($element);
 
     /** @var \Drupal\webform\Plugin\WebformElementInterface $webform_element */
@@ -473,7 +474,7 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     $is_container = $webform_element->isContainer($element);
     $is_root = $webform_element->isRoot();
     $is_element_disabled = $webform_element->isDisabled();
-    $is_access_disabled = (isset($element['#access']) && $element['#access'] === FALSE);
+    $is_access_disabled = !Element::isVisibleElement($element);
 
     // If disabled, display warning.
     if ($is_element_disabled) {
@@ -517,15 +518,25 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
     }
 
     $row['title'] = [
-      '#type' => 'link',
-      '#title' => $element['#admin_title'] ?: $element['#title'],
-      '#url' => new Url('entity.webform_ui.element.edit_form', [
-        'webform' => $webform->id(),
-        'key' => $key,
-      ]),
-      '#attributes' => $element_dialog_attributes,
-      '#prefix' => !empty($indentation) ? $this->renderer->renderPlain($indentation) : '',
+      'link' => [
+        '#type' => 'link',
+        '#title' => $element['#admin_title'] ?: $element['#title'],
+        '#url' => new Url('entity.webform_ui.element.edit_form', [
+          'webform' => $webform->id(),
+          'key' => $key,
+        ]),
+        '#attributes' => $element_dialog_attributes,
+        '#prefix' => !empty($indentation) ? $this->renderer->renderPlain($indentation) : '',
+      ],
     ];
+    if (!empty($element['#admin_notes'])) {
+      $row['title']['notes'] = [
+        '#type' => 'webform_help',
+        '#help_title' => $element['#admin_title'] ?: $element['#title'],
+        '#help' => $element['#admin_notes'],
+        '#weight' => 100,
+      ];
+    }
 
     if ($webform->hasContainer()) {
       if ($is_container) {
