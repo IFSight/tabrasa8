@@ -88,6 +88,7 @@ final class Versions
   'drupal/recaptcha' => '2.5.0@8.x-2.5',
   'drupal/redirect' => '1.6.0@8.x-1.6',
   'drupal/redis' => '1.4.0@8.x-1.4',
+  'drupal/role_delegation' => '1.1.0@8.x-1.1',
   'drupal/scheduler' => '1.3.0@8.x-1.3',
   'drupal/search_api' => '1.17.0@8.x-1.17',
   'drupal/simple_sitemap' => '3.7.0@8.x-3.7',
@@ -259,7 +260,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.0@123e248e14ee8dd3fbe89fb5a733a6cf91f5820e',
   'webmozart/assert' => '1.9.1@bafc69caeb4d49c39fd0779086c03a3738cbb389',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-master@4a4be7e8e0000cc3d46a333e5e383830f253bd7e',
+  'drupal/drupal' => 'dev-role-delegation@1820d1abd7cb173a33a41a53b9551e4216eac579',
 );
 
     private function __construct()
