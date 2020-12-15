@@ -32,6 +32,7 @@
         "drupal/environment_indicator": "^3.6",
         "drupal/field_group": "^3.0",
         "drupal/geolocation": "^1.0",
+        "drupal/gin": "^3.0@alpha",
         "drupal/google_analytics": "^2.1",
         "drupal/inline_entity_form": "^1.0@beta",
         "drupal/libraries": "^3.0@alpha",

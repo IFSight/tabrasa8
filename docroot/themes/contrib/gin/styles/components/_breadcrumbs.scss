@@ -1,0 +1,25 @@
+.breadcrumb {
+  &__item,
+  &__link {
+    font-weight: normal;
+    color: var(--colorGinTextLight);
+  }
+
+  &__item + &__item::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 8px;
+    padding: 0 4px;
+    background-color: var(--colorGinTextLight);
+    mask-image: icon('handle');
+    mask-position: center center;
+    mask-repeat: no-repeat;
+    mask-size: 10px 10px;
+    opacity: .8;
+  }
+
+  &__link {
+    border-radius: 2px;
+  }
+}

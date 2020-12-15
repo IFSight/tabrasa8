@@ -1,0 +1,13 @@
+type: module
+name: Gin Toolbar
+description: Gin Toolbar for Gin Theme
+core: 8.x
+core_version_requirement: ^8 || ^9
+
+dependencies:
+  - drupal:toolbar
+
+# Information added by Drupal.org packaging script on 2020-12-07
+version: '8.x-1.0-beta14'
+project: 'gin_toolbar'
+datestamp: 1607370431

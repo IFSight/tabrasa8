@@ -1,0 +1,35 @@
+.card {
+  border: 1px solid var(--colorGinBorder);
+  border-radius: $borderDefault;
+
+  &-list {
+    margin-bottom: 2rem;
+  }
+
+  &__image {
+    img {
+      border-radius: $borderDefault $borderDefault 0 0;
+
+      @include mq($breakpointXSmall) {
+        border-radius: $borderDefault 0 0 $borderDefault;
+      }
+    }
+  }
+
+  &__content-wrapper {
+    background-color: var(--colorGinLayerBackground);
+    border-radius: 0 0 $borderSmall $borderSmall;
+
+    @include mq($breakpointXSmall) {
+      border-radius: 0 $borderSmall $borderSmall 0;
+    }
+
+    .gin--dark-mode & {
+      background-color: var(--colorGinLayer2Background);
+    }
+  }
+
+  .heading-f {
+    color: var(--colorGinTitle);
+  }
+}

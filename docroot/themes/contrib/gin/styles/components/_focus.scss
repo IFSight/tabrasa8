@@ -1,0 +1,62 @@
+.page-wrapper *:focus,
+.ui-dialog *:focus,
+.dropbutton__item:first-of-type > *:focus:hover,
+.dropbutton__item:first-of-type > .button:focus:hover,
+.form-boolean:focus:active,
+.form-boolean:focus:hover,
+.cke.cke_chrome.cke_focus,
+.horizontal-tabs ul.horizontal-tabs-list li.horizontal-tab-button a:focus,
+.form-element.error:hover:focus,
+.form-actions .action-link:focus,
+.paragraphs-tabs-wrapper .field-multiple-table .draggable.drag {
+  box-shadow: 0 0 0 2px var(--colorGinLayerBackground), 0 0 0 4px var(--colorGinFocus);
+}
+
+.admin-item__link:focus {
+  border-radius: #{$borderSmall / 2};
+}
+
+.claro-details {
+  &:focus,
+  &:focus:hover,
+  &__summary:focus,
+  &__summary:focus:hover {
+      box-shadow: none;
+    }
+
+  &__summary {
+    &:after {
+      box-shadow: inset 0 0 0 2px var(--colorGinFocus);
+    }
+  }
+}
+
+.tabs__link:focus {
+  border: 1px solid transparent;
+  box-shadow: inset 0 0 0 2px var(--colorGinFocus);
+}
+
+.vertical-tabs__menu-link:focus:after,
+.tabs__trigger:focus {
+  box-shadow: none;
+  border: 2px solid var(--colorGinFocus);
+}
+
+@include mq($breakpointSmall) {
+  .is-horizontal .tabs__link:focus,
+  .is-horizontal .tabs--primary .tabs__link:focus {
+    box-shadow: 0 0 0 2px var(--colorGinLayerBackground), 0 0 0 4px var(--colorGinFocus);
+    filter: none;
+  }
+}
+
+.vertical-tabs__menu-link:focus,
+.vertical-tabs__menu-item:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.dropbutton__item:first-of-type ~ .dropbutton__item > *:focus {
+  border-color: var(--colorGinFocus) !important;
+  box-shadow: inset 0 0 0 1px var(--colorGinFocus), 0 0 0 1px var(--colorGinFocus);
+}

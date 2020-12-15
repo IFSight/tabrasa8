@@ -72,6 +72,8 @@ final class Versions
   'drupal/environment_indicator' => '3.7.0@8.x-3.7',
   'drupal/field_group' => '3.1.0@8.x-3.1',
   'drupal/geolocation' => '1.11.0@8.x-1.11',
+  'drupal/gin' => '3.0.0-alpha32@8.x-3.0-alpha32',
+  'drupal/gin_toolbar' => '1.0.0-beta14@8.x-1.0-beta14',
   'drupal/google_analytics' => '2.5.0@8.x-2.5',
   'drupal/inline_entity_form' => '1.0.0-rc7@8.x-1.0-rc7',
   'drupal/libraries' => '3.0.0-alpha1@8.x-3.0-alpha1',
@@ -260,7 +262,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.0@123e248e14ee8dd3fbe89fb5a733a6cf91f5820e',
   'webmozart/assert' => '1.9.1@bafc69caeb4d49c39fd0779086c03a3738cbb389',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-role-delegation@1820d1abd7cb173a33a41a53b9551e4216eac579',
+  'drupal/drupal' => 'dev-admin-theme@fe290760dec98d926371b4aa6180823ae87923a9',
 );
 
     private function __construct()

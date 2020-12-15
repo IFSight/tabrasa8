@@ -1,0 +1,320 @@
+.region-sticky {
+  position: relative;
+  padding: 16px 0 0;
+  width: 100%;
+  background: rgba($colorAppBackground, .98);
+  box-sizing: border-box;
+  transition: $transition;
+
+  @supports (backdrop-filter: blur()) {
+    opacity: .999; /* Fix Chrome issue with mask */
+    background: rgba($colorAppBackground, .8);
+    backdrop-filter: blur(12px);
+  }
+
+  .gin--dark-mode & {
+    background: rgba($colorDarkAppBackground, .98);
+
+    @supports (backdrop-filter: blur()) {
+      background: rgba($colorDarkAppBackground, .8);
+    }
+  }
+
+  .gin--high-contrast-mode & {
+    background: var(--colorGinAppBackground);
+    backdrop-filter: none;
+  }
+
+  @include mq($breakpointLarge) {
+    position: sticky;
+    z-index: 101;
+    top: 0;
+    width: 100%;
+    height: 88px;
+    padding: 16px 0;
+    margin-top: -2px;
+
+    .gin--classic-toolbar:not(.gin--edit-form) & {
+      position: relative;
+    }
+
+    .gin--classic-toolbar.gin--edit-form & {
+      padding-top: 16px;
+      top: $topBar;
+    }
+
+    .gin--horizontal-toolbar & {
+      top: 54px;
+    }
+
+    .gin--horizontal-toolbar.gin--edit-form & {
+      padding-top: 16px;
+    }
+
+    .gin--classic-toolbar.gin--edit-form.toolbar-tray-open & {
+      top: 79px;
+    }
+  }
+
+  &__items {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+
+    @include mq($breakpointTiny) {
+      flex-wrap: nowrap;
+      align-items: center;
+
+      .block-page-title-block,
+      .local-actions {
+        margin: 0;
+      }
+    }
+
+    @include mq($breakpointLarge) {
+      margin-bottom: 0;
+    }
+
+    .block-page-title-block {
+      flex-grow: 1;
+      align-self: center;
+      display: flex;
+      margin: 0;
+
+      .page-title {
+        align-self: center;
+        margin: 0;
+      }
+    }
+
+    @include mq($breakpointSmall) {
+      height: 100%;
+
+      .settings-tray-editable {
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+.content-header {
+  padding-top: 0;
+  margin-bottom: 0;
+  background-color: transparent;
+  overflow: initial;
+}
+
+.sticky-shadow {
+  @include mq($breakpointSmall) {
+    z-index: 98;
+    position: relative;
+    pointer-events: none;
+    height: 40px;
+    margin: -40px auto 2rem;
+    // border-bottom: 1px solid rgba(0, 0, 0, .1);
+    box-shadow: 0 10px 20px -16px rgba(0, 0, 0, .4);
+
+    .gin--dark-mode & {
+      box-shadow: none;
+    }
+  }
+
+  @include mq($breakpointLarge) {
+    position: sticky;
+    top: 48px;
+    width: calc(100% - min(10vw, 128px) + 24px);
+
+    // Modern, horizontal toolbar
+    .gin--horizontal-toolbar & {
+      top: 102px;
+    }
+
+    // Classic, legacy toolbar
+    .gin--classic-toolbar & {
+      top: 0;
+    }
+
+    .gin--classic-toolbar.gin--edit-form & {
+      top: 127px;
+    }
+
+    .gin--edit-form & {
+      max-width: 1300px;
+    }
+  }
+}
+
+.page-wrapper {
+  @include mq($breakpointLarge) {
+    margin-top: 1px; // fix for top: auto;
+  }
+}
+
+.layout-region-node-actions {
+  z-index: 102;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 0 1rem;
+  background-color: var(--colorGinAppBackground);
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+
+  @include mq($breakpointSmall) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  @include mq($breakpointMedium) {
+    padding-left: m#{i}n(5vw, 64px);
+    padding-right: m#{i}n(5vw, 64px);
+  }
+
+  @include mq($breakpointMedium 1023px) {
+    .gin--vertical-toolbar & {
+      left: $toolbarWidth;
+    }
+  }
+
+  @include mq($breakpointLarge) {
+    left: auto;
+    top: 0;
+    right: calc(var(--ginSidebarWidth) + min(5vw, 64px));
+    bottom: auto;
+    width: auto;
+    padding-left: 0;
+    padding-right: 0;
+    box-shadow: none;
+    transition: $transition;
+
+    .gin--classic-toolbar & {
+      top: 39px;
+    }
+
+    .gin--classic-toolbar.toolbar-tray-open & {
+      top: 75px;
+    }
+
+    .gin--horizontal-toolbar &,
+    .gin--horizontal-toolbar.toolbar-tray-open & {
+      top: 50px;
+    }
+  }
+
+  @include mq($breakpointBig) {
+    justify-content: flex-end;
+  }
+
+  @include mq(1828px) {
+    .gin--classic-toolbar &,
+    .gin--classic-toolbar:not([data-toolbar-menu='open']) &,
+    .gin--horizontal-toolbar &,
+    .gin--horizontal-toolbar:not([data-toolbar-menu='open']) & {
+      right: calc(50% - 460px);
+    }
+  }
+
+  @include mq(1920px) {
+    body:not([data-toolbar-menu='open']) & {
+      right: calc(50% - 504px);
+    }
+  }
+
+  @include mq(2070px) {
+    .gin--vertical-toolbar[data-toolbar-menu='open'] & {
+      right: calc(50% - 580px);
+    }
+  }
+
+  .form-actions {
+    margin: 0;
+
+    input:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .gin-sticky {
+    display: flex;
+
+    @include mq($breakpointLarge) {
+      position: relative;
+      padding: 4px 0 4px 12px;
+
+      &:after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 10%;
+        margin-left: calc(-10% + 4px);
+        height: 100%;
+        background-image: linear-gradient(to right, #{rgba($colorAppBackground, 0)}, #{$colorAppBackground}, #{$colorAppBackground});
+
+        .gin--dark-mode & {
+          background-image: linear-gradient(to right, #{rgba($colorDarkAppBackground, 0)}, #{$colorDarkAppBackground}, #{$colorDarkAppBackground});
+        }
+      }
+    }
+  }
+
+  .field--name-status {
+    flex-grow: 1;
+    align-self: center;
+    margin-right: 2rem;
+
+    @include mq($breakpointLarge) {
+      flex-grow: 0;
+    }
+  }
+}
+
+.toolbar-tray-open:not(.toolbar-vertical) .layout-container,
+body:not(.toolbar-tray-open) .layout-container {
+  margin-left: 1rem;
+  margin-right: 1rem;
+
+  @include mq($breakpointSmall) {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  @include mq($breakpointMedium) {
+    margin-left: m#{i}n(5vw, 64px);
+    margin-right: m#{i}n(5vw, 64px);
+
+    .layout-container {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+}
+
+.breadcrumb-wrapper {
+  flex-grow: 1;
+}
+
+.region-meta {
+  display: flex;
+  margin-top: 16px;
+
+  @include mq($breakpointMedium) {
+    padding: 1.5rem 0 .5rem;
+    margin-top: 0;
+  }
+}
+
+// @supports (backdrop-filter: blur(20px)) or (--webkit-backdrop-filter: blur(20px)) {
+//   .region-sticky {
+//     -webkit-backdrop-filter: saturate(180%) blur(20px);
+//     backdrop-filter: saturate(180%) blur(20px);
+//     background: rgba($colorAppBackground, .8);
+//   }
+
+//   .gin--dark-mode .region-sticky {
+//     background: rgba($colorDarkAppBackground, .8);
+//   }
+// }

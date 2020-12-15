@@ -1,0 +1,119 @@
+.dropbutton {
+  // background: var(--colorGinPrimaryLightHover);
+  border: 2px solid var(--colorGinPrimary);
+  // border: 2px solid transparent;
+  border-radius: $borderDefault;
+  box-shadow: 0 1px 2px var(--colorGinPrimaryLight);
+  // box-shadow: 0 1px 2px var(--colorGinPrimaryLightShadow);
+
+  .gin--dark-mode & {
+    box-shadow: 0 4px 18px var(--colorGinButtonShadow);
+  }
+
+  &:hover {
+    border-color: var(--colorGinPrimaryHover);
+  }
+
+  &:active, &:focus {
+    border-color: var(--colorGinPrimaryActive);
+  }
+
+  &-wrapper {
+    box-shadow: none;
+  }
+
+  &__item:first-of-type > *,
+  &__toggle {
+    background: none;
+    white-space: nowrap;
+  }
+
+  &__toggle {
+    top: 2px;
+    right: 2px;
+  }
+
+  &__item {
+    &:first-of-type ~ .dropbutton__item {
+      background-color: var(--colorGinBackground);
+
+      > a,
+      > .button {
+        color: var(--colorGinPrimaryActive);
+        background: var(--colorGinLayer3Background);
+        white-space: nowrap;
+
+        &:hover, &:active, &:focus {
+          color: var(--colorGinAppBackground);
+          background: var(--colorGinPrimary);
+        }
+      }
+
+      &, &:last-child {
+        border: 0 none;
+      }
+    }
+  }
+
+  &__toggle::before {
+    background-image: none;
+    background-color: var(--colorGinPrimaryActive);
+    mask-image: icon('drop');
+    mask-repeat: no-repeat;
+    mask-position: center center;
+    mask-size: 12px 12px;
+  }
+
+  &__toggle {
+    &:hover::before,
+    &:active::before,
+    &:focus::before {
+      background-color: var(--colorGinButtonText);
+    }
+  }
+}
+
+.js .dropbutton {
+  height: 3rem;
+  min-height: 3rem;
+}
+
+.js.no-touchevents .dropbutton--small {
+  height: 2rem;
+  min-height: 2rem;
+}
+
+.js.no-touchevents .dropbutton--extrasmall {
+  height: 1.5rem;
+  min-height: 1.5rem;
+}
+
+.js .dropbutton--multiple .dropbutton__item:first-of-type {
+  margin-right: 0;
+
+  &:not(:last-of-type) {
+    margin-right: calc(3rem + 1px);
+  }
+
+  > .button {
+    border-color: transparent !important;
+
+    &:hover {
+      color: var(--colorGinButtonText);
+      background-color: var(--colorGinPrimary);
+    }
+  }
+}
+
+.js.no-touchevents .dropbutton--multiple.dropbutton--extrasmall .dropbutton__item:first-of-type {
+  margin-right: 0;
+
+  &:not(:last-of-type) {
+    margin-right: 1.5rem;
+    border-right: 1px solid var(--colorGinPrimaryLightActive);
+  }
+}
+
+.no-touchevents .dropbutton__item--extrasmall:first-of-type > * {
+  line-height: .8rem;
+}

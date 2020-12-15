@@ -1,6 +1,7 @@
 module:
   action: 0
   admin_toolbar: 0
+  admin_toolbar_links_access_filter: 0
   admin_toolbar_tools: 0
   allowed_formats: 0
   automated_cron: 0
@@ -42,6 +43,7 @@ module:
   filter: 0
   fulcrum_whitelist: 0
   geolocation: 0
+  gin_toolbar: 0
   help: 0
   history: 0
   if_helper: 0
@@ -108,6 +110,8 @@ theme:
   adminimal_theme: 0
   if_admin: 0
   paladin: 0
+  claro: 0
+  gin: 0
 _core:
   default_config_hash: m2GVq11UAOVuNgj8x0t5fMOPujpvQQ_zxLoaly1BMEU
 profile: standard

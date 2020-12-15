@@ -1,0 +1,30 @@
+<?php
+
+use Drupal\Core\Installer\InstallerKernel;
+
+/**
+ * Implements hook_requirements().
+ */
+function gin_toolbar_requirements($phase) {
+  $requirements = [];
+
+  if ($phase === 'install') {
+    // We need to check if Gin theme is installed.
+    $installed = \Drupal::service('theme_handler')->themeExists('gin');
+
+    // If the Gin theme isn't installed then check whether currently Drupal is
+    // being installed and whether the Gin theme will be installed.
+    if (!$installed && InstallerKernel::installationAttempted()) {
+      global $install_state;
+      if (isset($install_state['profile_info']['themes']) && !in_array('gin', $install_state['profile_info']['themes'], TRUE)) {
+        $requirements['gin'] = [
+          'title' => t('Gin'),
+          'description' => t('The Gin Toolbar module works with <a href="https://www.drupal.org/project/gin" target="_blank">Gin</a> theme only'),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+    }
+  }
+
+  return $requirements;
+}

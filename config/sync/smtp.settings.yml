@@ -15,6 +15,3 @@ _core:
   default_config_hash: fP57Sd8RjnZMVH3p_R-Yt0tC8j7Z-BuzGMIp6pmrHAI
 smtp_timeout: 30
 smtp_keepalive: false
-smtp_autotls: true
-smtp_client_hostname: ''
-smtp_client_helo: ''
