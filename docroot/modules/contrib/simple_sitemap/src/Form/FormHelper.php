@@ -126,8 +126,10 @@ class FormHelper {
   public function processForm(FormStateInterface $form_state) {
     $this->formState = $form_state;
     $this->cleanUpFormInfo();
-    $this->getEntityDataFromFormEntity();
-    $this->negotiateSettings();
+
+    if ($this->getEntityDataFromFormEntity()) {
+      $this->negotiateSettings();
+    }
 
     return $this->supports();
   }
@@ -204,18 +206,18 @@ class FormHelper {
    */
   protected function supports() {
 
+    // Do not alter the form if it is irrelevant to sitemap generation.
+    if (empty($this->getEntityCategory())) {
+      return FALSE;
+    }
+
     // Do not alter the form if user lacks certain permissions.
     if (!$this->currentUser->hasPermission('administer sitemap settings')) {
       return FALSE;
     }
 
-    // Do not alter the form if it is irrelevant to sitemap generation.
-    elseif (empty($this->getEntityCategory())) {
-      return FALSE;
-    }
-
     // Do not alter the form if entity is not enabled in sitemap settings.
-    elseif (!$this->generator->entityTypeIsEnabled($this->getEntityTypeId())) {
+    if (!$this->generator->entityTypeIsEnabled($this->getEntityTypeId())) {
       return FALSE;
     }
 
@@ -401,7 +403,11 @@ class FormHelper {
     }
 
     // Menu fix.
-    $this->setEntityCategory(NULL === $this->getEntityCategory() && $entity_type_id === 'menu' ? 'bundle' : $this->getEntityCategory());
+    $this->setEntityCategory(
+      NULL === $this->getEntityCategory() && $entity_type_id === 'menu'
+        ? 'bundle'
+        : $this->getEntityCategory()
+    );
 
     switch ($this->getEntityCategory()) {
       case 'bundle':
@@ -469,6 +475,8 @@ class FormHelper {
    *
    * @return bool
    *   TRUE if simple_sitemap form values have been altered by the user.
+   *
+   * @todo Make it work with variants.
    */
   public function valuesChanged($form, array $values) {
 //    foreach (self::$valuesToCheck as $field_name) {
@@ -480,7 +488,6 @@ class FormHelper {
 //
 //    return FALSE;
 
-    //todo
     return TRUE;
   }
 

@@ -74,4 +74,16 @@ Translate none option: https://www.drupal.org/project/viewsreference/issues/2958
 Argument cache: https://www.drupal.org/project/viewsreference/issues/3003900
 
 8.x-1.4
+Composer fix
+php sniffer fixes
 Remove travis scripts
+
+8.x-1.5
+Updates for Drupal 9
+
+8.x-1.6
+Variable not defined: https://www.drupal.org/project/viewsreference/issues/3030943
+
+8.x-1.7
+Non-existent entity manager: https://www.drupal.org/project/viewsreference/issues/3191175
+Merge changes: https://www.drupal.org/project/viewsreference/issues/3174304

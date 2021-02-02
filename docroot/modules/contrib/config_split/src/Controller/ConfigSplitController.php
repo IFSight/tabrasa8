@@ -5,9 +5,7 @@ namespace Drupal\config_split\Controller;
 use Drupal\Core\Controller\ControllerBase;
 
 /**
- * Class ConfigSplitController.
- *
- * @package Drupal\config_split\Controller
+ * The controller for split actions.
  */
 class ConfigSplitController extends ControllerBase {
 

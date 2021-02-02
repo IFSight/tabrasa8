@@ -41,6 +41,13 @@ abstract class SimpleSitemapViewsTestBase extends SimplesitemapTestBase {
   protected $testView;
 
   /**
+   * The sitemap variant.
+   *
+   * @var string
+   */
+  protected $sitemapVariant;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -48,6 +55,7 @@ abstract class SimpleSitemapViewsTestBase extends SimplesitemapTestBase {
 
     $this->sitemapViews = $this->container->get('simple_sitemap.views');
     $this->cron = $this->container->get('cron');
+    $this->sitemapVariant = 'default';
 
     $this->testView = Views::getView('simple_sitemap_views_test_view');
     $this->testView->setDisplay('page_1');

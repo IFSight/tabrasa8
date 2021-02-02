@@ -113,20 +113,47 @@ class ArraySniff implements Sniff
         if ($isInlineArray === true) {
             // Check if this array has more than one element and exceeds the
             // line length defined by $this->lineLimit.
-            $currentLine = $tokens[$stackPtr]['line'];
-            $tokenCount  = $stackPtr;
-            while ($tokenCount < ($phpcsFile->numTokens - 1) && $tokens[($tokenCount + 1)]['line'] === $currentLine) {
-                $tokenCount++;
-            };
-            $lineLength = ($tokens[$tokenCount]['column'] + $tokens[$tokenCount]['length'] - 1);
+            $arrayEnding = $tokens[$tokens[$stackPtr][$parenthesisCloser]]['column'];
 
-            if ($lineLength > $this->lineLimit) {
-                $comma1 = $phpcsFile->findNext(T_COMMA, ($stackPtr + 1), $tokens[$stackPtr][$parenthesisCloser]);
-                if ($comma1 !== false) {
-                    $error = 'The array declaration line has %s characters (the limit is %s). The array content should be split up over multiple lines';
-                    $phpcsFile->addError($error, $stackPtr, 'LongLineDeclaration', [$lineLength, $this->lineLimit]);
+            if ($arrayEnding > $this->lineLimit) {
+                // Nested arrays and function calls within array elements may contain commas so we
+                // cannot simply search for the next comma as evidence that the main array has more
+                // than one item. So we examine the comma's nested_parenthesis info, and break out
+                // of the loop when a valid comma is found, otherwise look for the next one.
+                $pos = ($stackPtr + 1);
+                while (($comma = $phpcsFile->findNext(T_COMMA, $pos, $tokens[$stackPtr][$parenthesisCloser])) > 0) {
+                    // If the comma has no nested information then it is part of
+                    // the main array being tested. No need to search for more.
+                    if (isset($tokens[$comma]['nested_parenthesis']) === false) {
+                        break;
+                    }
+
+                    // Get the last key and value from nested_parenthesis array. If these match the
+                    // array opener and closer then the comma a valid part of the array being tested.
+                    $end = array_slice($tokens[$comma]['nested_parenthesis'], -1, 1, true);
+                    if ($end === [$tokens[$stackPtr][$parenthesisOpener] => $tokens[$stackPtr][$parenthesisCloser]]) {
+                        break;
+                    }
+
+                    // If the comma nested information is identical to the $lastItem nested info
+                    // then it is part of the array.
+                    if (isset($tokens[$lastItem]['nested_parenthesis']) === true
+                        && $tokens[$comma]['nested_parenthesis'] === $tokens[$lastItem]['nested_parenthesis']
+                    ) {
+                        break;
+                    }
+
+                    // If none of the breaks above have been executed then the comma is not part of the
+                    // array being tested and does not indicate a second element. Look for the next one.
+                    $pos = ($comma + 1);
+                }//end while
+
+                ;
+                if ($comma !== false) {
+                    $error = 'The array declaration extends to column %s (the limit is %s). The array content should be split up over multiple lines';
+                    $phpcsFile->addError($error, $stackPtr, 'LongLineDeclaration', [$arrayEnding, $this->lineLimit]);
                 }
-            }
+            }//end if
 
             // Only continue for multi line arrays.
             return;

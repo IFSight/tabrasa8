@@ -79,19 +79,33 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
     // Check that the view exists and it is enabled.
     if ($view_entity && $view_entity->status()) {
       $view = $view_entity->getExecutable();
+
       foreach ($this->sitemapViews->getRouterDisplayIds($view_entity) as $display_id) {
         // Ensure the display was correctly set.
         // Check that the display is enabled.
         if (!$view->setDisplay($display_id) || !$view->display_handler->isEnabled()) {
           continue;
         }
+
+        $variants = $this->sitemapViews->getIndexableVariants($view);
+        $variants = array_keys($variants);
+
+        $args_ids = [];
+        foreach ($variants as $variant) {
+          $variant_args_ids = $this->sitemapViews->getIndexableArguments($view, $variant);
+
+          if (count($variant_args_ids) > count($args_ids)) {
+            $args_ids = $variant_args_ids;
+          }
+        }
+
         // Check that the display has indexable arguments.
-        $args_ids = $this->sitemapViews->getIndexableArguments($view);
         if (empty($args_ids)) {
           continue;
         }
 
         $display_ids[] = $display_id;
+
         // Delete records about sets of arguments that are no longer indexed.
         $args_ids = $this->sitemapViews->getArgumentsStringVariations($args_ids);
         $condition = new Condition('AND');
@@ -100,13 +114,26 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
         $condition->condition('arguments_ids', $args_ids, 'NOT IN');
         $this->sitemapViews->removeArgumentsFromIndex($condition);
 
+        $max_links = 0;
+        foreach ($variants as $variant) {
+          $settings = $this->sitemapViews->getSitemapSettings($view, $variant);
+          $variant_max_links = is_numeric($settings['max_links']) ? $settings['max_links'] : 0;
+
+          if ($variant_max_links == 0) {
+            $max_links = 0;
+            break;
+          }
+          elseif ($variant_max_links > $max_links) {
+            $max_links = $variant_max_links;
+          }
+        }
+
         // Check if the records limit for display is exceeded.
-        $settings = $this->sitemapViews->getSitemapSettings($view);
-        $max_links = is_numeric($settings['max_links']) ? $settings['max_links'] : 0;
         if ($max_links > 0) {
           $condition = new Condition('AND');
           $condition->condition('view_id', $view_id);
           $condition->condition('display_id', $display_id);
+
           // Delete records that exceed the limit.
           if ($index_id = $this->sitemapViews->getIndexIdByPosition($max_links, $condition)) {
             $condition->condition('id', $index_id, '>');
@@ -114,6 +141,7 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
           }
         }
       }
+
       // Delete records about view displays that do not exist or are disabled.
       if (!empty($display_ids)) {
         $condition = new Condition('AND');
@@ -121,6 +149,7 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
         $condition->condition('display_id', $display_ids, 'NOT IN');
         $this->sitemapViews->removeArgumentsFromIndex($condition);
       }
+
       // Destroy a view instance.
       $view->destroy();
     }

@@ -8,7 +8,6 @@ use Drupal\views\Views;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 
-
 /**
  * Trait for shared code in Viewsreference Field Widgets.
  */
@@ -58,7 +57,11 @@ trait ViewsReferenceTrait {
     // Build our target_id field name attribute from the parent elements.
     $field_name = $items->getName();
     $field_path = !empty($element['target_id']['#field_parents']) ? $element['target_id']['#field_parents'] : [];
-    $original_field_path = $field_path = array_merge($field_path, [$field_name, $delta, 'target_id']);
+    $original_field_path = $field_path = array_merge($field_path, [
+      $field_name,
+      $delta,
+      'target_id',
+    ]);
     $name = array_shift($field_path);
     foreach ($field_path as $field_path_element) {
       $name .= '[' . $field_path_element . ']';
@@ -203,7 +206,7 @@ trait ViewsReferenceTrait {
 
     $options = [];
     $view_plugins = array_diff($this->getFieldSetting('plugin_types'), ["0"]);
-    if ($view = \Drupal::service('entity.manager')->getStorage('view')->load($view_id)) {
+    if ($view = \Drupal::service('entity_type.manager')->getStorage('view')->load($view_id)) {
       foreach ($view->get('display') as $display) {
         if (in_array($display['display_plugin'], $view_plugins)) {
           $options[$display['id']] = $display['display_title'];
@@ -217,6 +220,7 @@ trait ViewsReferenceTrait {
    * Helper to convert view array of machine names to label names.
    */
   protected function getViewNames($views_array) {
+    $views_list = [];
     foreach ($views_array as $key => $value) {
       $view = Views::getView($key);
       if (isset($view)) {

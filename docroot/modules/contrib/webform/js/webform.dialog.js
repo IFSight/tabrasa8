@@ -26,7 +26,7 @@
     // Init the webform dialog behavior.
     Drupal.behaviors.webformDialog.attach($div);
     // Trigger the link.
-    $div.find('a').click();
+    $div.find('a').trigger('click');
   };
 
   /**

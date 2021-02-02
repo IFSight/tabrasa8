@@ -23,9 +23,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class ConfigSplitCliService.
- *
- * @package Drupal\config_split
+ * The CLI service class for interoperability.
  *
  * @internal This service is not an api and may change at any time.
  */

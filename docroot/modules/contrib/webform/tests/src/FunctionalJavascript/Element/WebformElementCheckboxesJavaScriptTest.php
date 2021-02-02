@@ -66,6 +66,15 @@ class WebformElementCheckboxesJavaScriptTest extends WebformWebDriverTestBase {
     $assert_session->checkboxChecked('edit-checkboxes-both-two');
     $assert_session->checkboxChecked('edit-checkboxes-both-three');
     $assert_session->checkboxChecked('edit-checkboxes-both-all');
+
+    // Check that 'all' is checked when form is prepopulated.
+    $options = [
+      'query' => [
+        'checkboxes_all' => ['one', 'two', 'three'],
+      ],
+    ];
+    $this->drupalGet('/webform/test_element_checkboxes_all_none', $options);
+    $assert_session->checkboxChecked('edit-checkboxes-all-all');
   }
 
 }

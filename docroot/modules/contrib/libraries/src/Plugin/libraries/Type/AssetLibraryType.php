@@ -24,7 +24,7 @@ class AssetLibraryType extends LibraryTypeBase implements AttachableAssetLibrary
    * {@inheritdoc}
    */
   public function getAttachableAssetLibraries(LibraryInterface $library, LibraryManagerInterface $library_manager) {
-    assert('$library instanceof \Drupal\libraries\ExternalLibrary\Asset\AssetLibraryInterface');
+    assert($library instanceof \Drupal\libraries\ExternalLibrary\Asset\AssetLibraryInterface);
     /** @var \Drupal\libraries\ExternalLibrary\Asset\AssetLibraryInterface $library */
     return [$library->getId() => $library->getAttachableAssetLibrary($library_manager)];
   }

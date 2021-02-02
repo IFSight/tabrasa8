@@ -262,17 +262,18 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
           '#source' => $element_options,
           '#source__title' => $this->t('Options'),
           '#destination__type' => 'number',
-          '#destination__min' => 1,
+          '#destination__min' => 0,
           '#destination__title' => $this->t('Limit'),
           '#destination__description' => NULL,
           '#default_value' => $this->configuration['limits'],
+          '#filter' => FALSE,
         ];
       }
       else {
         $form['element_settings']['options_container']['limit'] = [
           '#type' => 'number',
           '#title' => $this->t('@title @type limit', $t_args),
-          '#min' => 1,
+          '#min' => 0,
           '#default_value' => $this->configuration['limit'],
         ];
       }
@@ -456,7 +457,12 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
     $this->applyFormStateToConfiguration($form_state);
 
     foreach ($this->configuration['limits'] as $key => $value) {
-      $this->configuration['limits'][$key] = (int) $value;
+      if ($value === '') {
+        unset($this->configuration['limits'][$key]);
+      }
+      else {
+        $this->configuration['limits'][$key] = (int) $value;
+      }
     }
     if ($this->isOptionsElement()) {
       $this->configuration['limit'] = NULL;
@@ -1233,9 +1239,9 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
    */
   protected function getLimitInformation($label, $limit, $total) {
     $total = $total ?: 0;
-    $remaining = ($limit) ? $limit - $total : NULL;
+    $remaining = ($limit) ? $limit - $total : 0;
 
-    if (empty($limit)) {
+    if (empty($limit) && $limit !== 0) {
       $status = WebformOptionsLimitHandlerInterface::LIMIT_STATUS_UNLIMITED;
     }
     elseif ($remaining <= 0) {
@@ -1429,7 +1435,7 @@ class OptionsLimitWebformHandler extends WebformHandlerBase implements WebformOp
 
       case WebformOptionsLimitHandlerInterface::MESSAGE_DISPLAY_DESCRIPTION:
         return $label
-          . (strpos($label, WebformOptionsHelper::DESCRIPTION_DELIMITER) === FALSE ? WebformOptionsHelper::DESCRIPTION_DELIMITER : '')
+          . (!WebformOptionsHelper::hasOptionDescription($label) ? WebformOptionsHelper::DESCRIPTION_DELIMITER : '')
           . $message;
     }
   }

@@ -3783,7 +3783,7 @@ function webform_update_8198() {
 
     // Try to decode elements.
     try {
-      $elements = Yaml::decode($elements);
+      $elements = WebformYaml::decode($elements);
     }
     catch (\Exception $exception) {
       continue;
@@ -3805,7 +3805,7 @@ function webform_update_8198() {
       }
     }
     if ($has_options_property) {
-      $webform_config->set('elements', Yaml::encode($elements));
+      $webform_config->set('elements', WebformYaml::encode($elements));
       $webform_config->save(TRUE);
     }
   }
@@ -3870,4 +3870,49 @@ function webform_update_8205() {
  */
 function webform_update_8206() {
   _webform_update_admin_settings();
+}
+
+/**
+ * Issue #3171834: Allow .webform-elements to support custom attributes.
+ */
+function webform_update_8207() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3151506: Remove .webform-elements wrapper around elements.
+ */
+function webform_update_8208() {
+  _webform_update_webform_settings();
+}
+
+/**
+ * Issue #3174132: Add (admin) notes to handlers.
+ */
+function webform_update_8209() {
+  $config_factory = \Drupal::configFactory();
+  foreach ($config_factory->listAll('webform.webform.') as $webform_config_name) {
+    $webform_config = $config_factory->getEditable($webform_config_name);
+
+    $data = $webform_config->getRawData();
+    $save = FALSE;
+    foreach ($data['handlers'] as &$handler) {
+      if (!isset($handler['notes'])) {
+        WebformArrayHelper::insertAfter($handler, 'label', 'notes', '');
+        $save = TRUE;
+      }
+    }
+
+    if ($save) {
+      $webform_config->setData($data);
+      $webform_config->save();
+    }
+  }
+}
+
+/**
+ * Issue #3158114: Delete own submission with secure token not working.
+ */
+function webform_update_8210() {
+  _webform_update_webform_settings();
 }

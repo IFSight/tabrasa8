@@ -3,6 +3,7 @@
 namespace Drupal\Tests\config_ignore\Functional;
 
 use Drupal\config_ignore\Plugin\ConfigFilter\IgnoreFilter;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Test functionality of config_ignore module.
@@ -14,6 +15,8 @@ use Drupal\config_ignore\Plugin\ConfigFilter\IgnoreFilter;
  * @preserveGlobalState disabled
  */
 class ConfigIgnoreTest extends ConfigIgnoreBrowserTestBase {
+
+  use StringTranslationTrait;
 
   /**
    * Verify that the Sync. table gets update with appropriate ignore actions.
@@ -62,7 +65,7 @@ class ConfigIgnoreTest extends ConfigIgnoreBrowserTestBase {
     ];
 
     $this->drupalGet('admin/config/development/configuration/ignore');
-    $this->submitForm($edit, t('Save configuration'));
+    $this->submitForm($edit, $this->t('Save configuration'));
 
     $settings = $this->config('config_ignore.settings')->get('ignored_config_entities');
 

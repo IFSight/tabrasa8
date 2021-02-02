@@ -15,7 +15,7 @@ use org\bovigo\vfs\vfsStreamContent;
 use org\bovigo\vfs\vfsStreamWrapper;
 
 /**
- * Class ConfigSplitCliServiceTest.
+ * Test the cli service.
  *
  * @group config_split
  */

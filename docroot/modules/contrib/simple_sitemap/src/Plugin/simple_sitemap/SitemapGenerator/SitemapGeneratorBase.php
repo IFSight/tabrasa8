@@ -3,7 +3,6 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Drupal\Core\Url;
-use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationUrl;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimplesitemapPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Database\Connection;
@@ -346,16 +345,41 @@ abstract class SitemapGeneratorBase extends SimplesitemapPluginBase implements S
   }
 
   /**
+   * Determines if the sitemap is to be a multilingual sitemap based on several
+   * factors.
+   *
+   * A hreflang/multilingual sitemap is only wanted if there are indexable
+   * languages available and if there is a language negotiation method enabled
+   * that is based on URL discovery. Any other language negotiation methods
+   * should be irrelevant, as a sitemap can only use URLs to guide to the
+   * correct language.
+   *
+   * @see https://www.drupal.org/project/simple_sitemap/issues/3154570#comment-13730522
+   *
    * @return bool
    */
   public static function isMultilingualSitemap() {
+    if (!\Drupal::moduleHandler()->moduleExists('language')) {
+      return FALSE;
+    }
+
+    /** @var \Drupal\language\LanguageNegotiatorInterface $language_negotiator */
+    $language_negotiator = \Drupal::service('language_negotiator');
+
+    $url_negotiation_method_enabled = FALSE;
+    foreach ($language_negotiator->getNegotiationMethods(LanguageInterface::TYPE_URL) as $method) {
+      if ($language_negotiator->isNegotiationMethodEnabled($method['id'])) {
+        $url_negotiation_method_enabled = TRUE;
+        break;
+      }
+    }
+
     $has_multiple_indexable_languages = count(
         array_diff_key(\Drupal::languageManager()->getLanguages(),
           \Drupal::service('simple_sitemap.generator')->getSetting('excluded_languages', []))
       ) > 1;
 
-    return $has_multiple_indexable_languages
-      && \Drupal::service('language_negotiator')->isNegotiationMethodEnabled(LanguageNegotiationUrl::METHOD_ID);
+    return $url_negotiation_method_enabled && $has_multiple_indexable_languages;
   }
 
 }

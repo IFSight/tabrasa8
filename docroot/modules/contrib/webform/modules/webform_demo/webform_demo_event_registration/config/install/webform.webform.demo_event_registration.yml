@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -190,6 +191,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -234,6 +236,7 @@ handlers:
   email_notification:
     id: email
     label: 'Email Notification'
+    notes: ''
     handler_id: email_notification
     status: true
     conditions: {  }
@@ -270,6 +273,7 @@ handlers:
   email_reminder:
     id: scheduled_email
     label: 'Email Reminder'
+    notes: ''
     handler_id: email_reminder
     status: true
     conditions: {  }
@@ -311,6 +315,7 @@ handlers:
   submission_limit:
     id: settings
     label: 'Submission limit'
+    notes: ''
     handler_id: submission_limit
     status: true
     conditions: {  }
@@ -326,6 +331,7 @@ handlers:
   teeshirt_options_limits:
     id: options_limit
     label: 'Tee shirt limits'
+    notes: ''
     handler_id: teeshirt_options_limits
     status: true
     conditions: {  }

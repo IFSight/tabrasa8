@@ -571,6 +571,12 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
         $url = $this->getSourceUrl();
         break;
 
+      case 'delete':
+        /** @var \Drupal\webform\WebformRequestInterface $request_handler */
+        $request_handler = \Drupal::service('webform.request');
+        $url = $request_handler->getUrl($this, $this->getSourceEntity(), 'webform.user.submission.delete');
+        break;
+
       default:
         throw new \Exception("Token URL operation $operation is not supported");
     }

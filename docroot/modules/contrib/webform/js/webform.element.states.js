@@ -26,7 +26,7 @@
         });
 
         // Initialize trigger and selector.
-        $trigger.on('change', function () {$selector.change();});
+        $trigger.on('change', function () {$selector.trigger('change');});
 
         $selector.on('change', function () {
           var selector = $selector.val();
@@ -47,7 +47,7 @@
           }
           // Always disable browser auto completion.
           $value.attr('autocomplete', 'off');
-        }).change();
+        }).trigger('change');
       });
 
       // If the states:state is required or optional the required checkbox
@@ -98,7 +98,7 @@
         requiredChecked = null;
       }
     }
-    $input.change();
+    $input.trigger('change');
   }
 
 })(jQuery, Drupal, drupalSettings);

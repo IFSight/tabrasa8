@@ -33,9 +33,7 @@ function hook_simple_sitemap_links_alter(array &$links, $sitemap_variant) {
       // If this 'loc' URL points to a non-german site, make sure to remove
       // its german alternate URL.
       else {
-        if ($link['alternate_urls']['de']) {
-          unset($links[$key]['alternate_urls']['de']);
-        }
+        unset($links[$key]['alternate_urls']['de']);
       }
     }
   }

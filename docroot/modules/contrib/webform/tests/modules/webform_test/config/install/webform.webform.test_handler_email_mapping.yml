@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -160,6 +161,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -212,6 +214,7 @@ handlers:
   select:
     id: email
     label: 'Select yes option'
+    notes: ''
     handler_id: select
     status: true
     conditions: {  }
@@ -250,6 +253,7 @@ handlers:
   empty:
     id: email
     label: 'Select empty'
+    notes: ''
     handler_id: empty
     status: true
     conditions: {  }
@@ -288,6 +292,7 @@ handlers:
   default:
     id: email
     label: 'Select default'
+    notes: ''
     handler_id: empty
     status: true
     conditions: {  }
@@ -326,6 +331,7 @@ handlers:
   checkboxes:
     id: email
     label: Checkboxes
+    notes: ''
     handler_id: checkboxes
     status: true
     conditions: {  }
@@ -366,6 +372,7 @@ handlers:
   radios_other:
     id: email
     label: 'Radios other'
+    notes: ''
     handler_id: radios_other
     status: true
     conditions: {  }

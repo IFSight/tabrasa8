@@ -184,13 +184,13 @@
             "type": "package",
             "package": {
                 "name": "codemirror/codemirror",
-                "version": "5.57.0",
+                "version": "5.53.2",
                 "type": "drupal-library",
                 "extra": {
                     "installer-name": "codemirror"
                 },
                 "dist": {
-                    "url": "https://github.com/components/codemirror/archive/5.57.0.zip",
+                    "url": "https://github.com/components/codemirror/archive/5.53.2.zip",
                     "type": "zip"
                 },
                 "require": {

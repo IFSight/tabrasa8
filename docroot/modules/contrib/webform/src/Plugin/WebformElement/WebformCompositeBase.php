@@ -945,7 +945,7 @@ abstract class WebformCompositeBase extends WebformElementBase implements Webfor
         '#help' => '<b>' . $this->t('Key') . ':</b> ' . $this->t('The machine-readable name.') .
           '<hr/><b>' . $this->t('Title') . ':</b> ' . $this->t('This is used as a descriptive label when displaying this webform element.') .
           '<hr/><b>' . $this->t('Placeholder') . ':</b> ' . $this->t('The placeholder will be shown in the element until the user starts entering a value.') .
-          '<hr/><b>' . $this->t('Description') . ':</b> ' . $this->t('A short description of the element used as help for the user when he/she uses the webform.') .
+          '<hr/><b>' . $this->t('Description') . ':</b> ' . $this->t('A short description of the element used as help for the user when they use the webform.') .
           '<hr/><b>' . $this->t('Help text') . ':</b> ' . $this->t('A tooltip displayed after the title.') .
           '<hr/><b>' . $this->t('Title display') . ':</b> ' . $this->t('A tooltip displayed after the title.'),
         '#help_title' => $this->t('Labels'),
@@ -1033,7 +1033,7 @@ abstract class WebformCompositeBase extends WebformElementBase implements Webfor
               '#type' => 'textarea',
               '#title' => $this->t('@title help text', $t_args),
               '#title_display' => 'invisible',
-              '#description' => $this->t('A short description of the element used as help for the user when he/she uses the webform.'),
+              '#description' => $this->t('A short description of the element used as help for the user when they use the webform.'),
               '#description_display' => 'invisible',
               '#rows' => 2,
               '#placeholder' => $this->t('Enter help text…'),
@@ -1249,7 +1249,7 @@ abstract class WebformCompositeBase extends WebformElementBase implements Webfor
    */
   protected function initializeCompositeElementsRecursive(array &$element, array &$composite_elements) {
     foreach ($composite_elements as $composite_key => &$composite_element) {
-      if (Element::property($composite_key)) {
+      if (WebformElementHelper::property($composite_key)) {
         continue;
       }
 

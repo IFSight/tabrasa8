@@ -11,6 +11,7 @@ use Drupal\libraries\ExternalLibrary\Asset\AttachableAssetLibraryRegistrationInt
 use Drupal\libraries\ExternalLibrary\Utility\LibraryAccessorInterface;
 use Drupal\libraries\ExternalLibrary\Utility\LibraryIdAccessorInterface;
 use Symfony\Component\Yaml\Parser;
+use Drupal\Core\Extension\Dependency;
 
 /**
  * Implements hook_library_info_build().
@@ -115,7 +116,7 @@ function libraries_get_libraries() {
   // Similar to 'modules' and 'themes' directories inside an installation
   // profile, installation profiles may want to place libraries into a
   // 'libraries' directory.
-  if ($profile = drupal_get_profile()) {
+  if ($profile = \Drupal::installProfile()) {
     $profile_path = drupal_get_path('profile', $profile);
     $searchdir[] = "$profile_path/libraries";
   };
@@ -167,7 +168,7 @@ function libraries_get_libraries() {
  * https://www.drupal.org/node/2170763
  */
 function libraries_scan_info_files() {
-  $profile = drupal_get_path('profile', drupal_get_profile());
+  $profile = drupal_get_path('profile', \Drupal::installProfile());
   $config = DrupalKernel::findSitePath(\Drupal::request());
 
   // Build a list of directories.
@@ -181,7 +182,7 @@ function libraries_scan_info_files() {
   $files = array();
   foreach ($directories as $dir) {
     if (file_exists($dir)) {
-      $files = array_merge($files, file_scan_directory($dir, '@^[a-z0-9._-]+\.libraries\.info\.yml$@', array(
+      $files = array_merge($files, \Drupal::service('file_system')->scanDirectory($dir, '@^[a-z0-9._-]+\.libraries\.info\.yml$@', array(
         'key' => 'name',
         'recurse' => FALSE,
       )));
@@ -345,9 +346,9 @@ function libraries_prepare_files(&$library, $version = NULL, $variant = NULL) {
 function libraries_detect_dependencies(&$library, $version = NULL, $variant = NULL) {
   if (isset($library['dependencies'])) {
     foreach ($library['dependencies'] as &$dependency_string) {
-      $dependency_info = ModuleHandler::parseDependency($dependency_string);
-      $dependency = libraries_detect($dependency_info['name']);
-      if (!$dependency['installed']) {
+      $dependency = Dependency::createFromString($dependency_string);
+      $info = libraries_detect($dependency->getName());
+      if (!$info['installed']) {
         $library['installed'] = FALSE;
         $library['error'] = 'missing dependency';
         $library['error message'] = t('The %dependency library, which the %library library depends on, is not installed.', array(
@@ -355,19 +356,19 @@ function libraries_detect_dependencies(&$library, $version = NULL, $variant = NU
           '%library' => $library['name'],
         ));
       }
-      elseif (drupal_check_incompatibility($dependency_info, $dependency['version'])) {
+      elseif (!$dependency->isCompatible($info['version'])) {
         $library['installed'] = FALSE;
         $library['error'] = 'incompatible dependency';
         $library['error message'] = t('The version %dependency_version of the %dependency library is not compatible with the %library library.', array(
-          '%dependency_version' => $dependency['version'],
-          '%dependency' => $dependency['name'],
+          '%dependency_version' => $info['version'],
+          '%dependency' => $info['name'],
           '%library' => $library['name'],
         ));
       }
 
       // Remove the version string from the dependency, so libraries_load() can
       // load the libraries directly.
-      $dependency_string = $dependency_info['name'];
+      $dependency_string = $info['name'];
     }
   }
 }

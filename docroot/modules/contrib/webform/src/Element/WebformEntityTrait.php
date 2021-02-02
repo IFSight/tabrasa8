@@ -71,7 +71,8 @@ trait WebformEntityTrait {
 
     // If the selection handler is not using views, then translate
     // the entity reference's options.
-    if ($element['#selection_handler'] !== 'views') {
+    if (!\Drupal::moduleHandler()->moduleExists('views')
+      || !($handler instanceof \Drupal\views\Plugin\EntityReferenceSelection\ViewsSelection)) {
       $options = static::translateOptions($options, $element);
     }
 

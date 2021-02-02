@@ -8,6 +8,7 @@ use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\Utility\WebformHtmlHelper;
 use Drupal\webform\Utility\WebformLogicHelper;
+use Drupal\webform\Utility\WebformXss;
 use Drupal\webform\Utility\WebformYaml;
 use Drupal\webform\WebformSubmissionInterface;
 
@@ -132,7 +133,7 @@ class WebformTwigExtension extends \Twig_Extension {
       return '';
     }
 
-    return (WebformHtmlHelper::containsHtml($value)) ? ['#markup' => $value] : $value;
+    return (WebformHtmlHelper::containsHtml($value)) ? ['#markup' => $value, '#allowed_tags' => WebformXss::getAdminTagList()] : $value;
   }
 
   /****************************************************************************/

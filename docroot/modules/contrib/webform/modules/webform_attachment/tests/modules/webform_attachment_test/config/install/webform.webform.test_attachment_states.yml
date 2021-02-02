@@ -1,3 +1,4 @@
+uuid: 08971b54-57be-4bc9-956a-8cfa57c7cadd
 langcode: en
 status: open
 dependencies:
@@ -157,6 +158,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -209,6 +211,7 @@ handlers:
   email:
     id: email
     label: Email
+    notes: ''
     handler_id: email
     status: true
     conditions: {  }
@@ -243,6 +246,5 @@ handlers:
       theme_name: ''
       parameters: {  }
 variants: {  }
-uuid: 08971b54-57be-4bc9-956a-8cfa57c7cadd
 _core:
   default_config_hash: XUf67HS7kvhJPn6INGzCeH3OdEnQNm9Kb_H5o-HfYlQ

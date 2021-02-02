@@ -32,14 +32,14 @@
 
         // Track which submit button was clicked.
         // @see http://stackoverflow.com/questions/5721724/jquery-how-to-get-which-button-was-clicked-upon-form-submission
-        $form.find('.js-webform-wizard-pages-links :submit, .form-actions :submit').click(function () {
+        $form.find('.js-webform-wizard-pages-links :submit, .form-actions :submit').on('click', function () {
           $form.find('.js-webform-wizard-pages-links :submit, .form-actions :submit')
             .removeClass('js-webform-submit-clicked');
           $(this)
             .addClass('js-webform-submit-clicked');
         });
 
-        $(this).submit(function () {
+        $(this).on('submit', function () {
           // Find clicked button
           var $clickedButton = $form.find('.js-webform-wizard-pages-links :submit.js-webform-submit-clicked, .form-actions :submit.js-webform-submit-clicked');
 

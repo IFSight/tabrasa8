@@ -60,7 +60,7 @@
 
           // Make sure the filter input is always focused.
           if (focusInput === 'true') {
-            setTimeout(function () {$input.focus();});
+            setTimeout(function () {$input.trigger('focus');});
           }
         }
 
@@ -73,7 +73,7 @@
          */
         function resetFilter(e) {
           $input.val('').keyup();
-          $input.focus();
+          $input.trigger('focus');
         }
 
         /**

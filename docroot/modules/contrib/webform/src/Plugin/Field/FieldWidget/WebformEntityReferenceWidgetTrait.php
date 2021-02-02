@@ -26,7 +26,6 @@ trait WebformEntityReferenceWidgetTrait {
   protected $elementManager;
 
   /**
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
@@ -52,15 +51,15 @@ trait WebformEntityReferenceWidgetTrait {
     $element = parent::settingsForm($form, $form_state);
     $element['default_data'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enable default submission data (YAML)'),
-      '#description' => t('If checked, site builders will be able to define default submission data (YAML)'),
+      '#title' => $this->t('Enable default submission data (YAML)'),
+      '#description' => $this->t('If checked, site builders will be able to define default submission data (YAML)'),
       '#default_value' => $this->getSetting('default_data'),
     ];
     if ($this->getSetting('webforms') !== NULL) {
       $element['webforms'] = [
         '#type' => 'webform_entity_select',
-        '#title' => t('Select webform'),
-        '#description' => t('If left blank all webforms will be listed in the select menu.'),
+        '#title' => $this->t('Select webform'),
+        '#description' => $this->t('If left blank all webforms will be listed in the select menu.'),
         '#select2' => TRUE,
         '#multiple' => TRUE,
         '#target_type' => 'webform',
@@ -77,7 +76,7 @@ trait WebformEntityReferenceWidgetTrait {
    */
   public function settingsSummary() {
     $summary = parent::settingsSummary();
-    $summary[] = t('Default submission data: @default_data', ['@default_data' => $this->getSetting('default_data') ? $this->t('Yes') : $this->t('No')]);
+    $summary[] = $this->t('Default submission data: @default_data', ['@default_data' => $this->getSetting('default_data') ? $this->t('Yes') : $this->t('No')]);
     $webform_ids = $this->getSetting('webforms');
     if ($webform_ids) {
       $webforms = Webform::loadMultiple($webform_ids);
@@ -85,7 +84,7 @@ trait WebformEntityReferenceWidgetTrait {
       foreach ($webforms as $webform) {
         $webform_labels[] = $webform->label();
       }
-      $summary[] = t('Webforms: @webforms', ['@webforms' => implode('; ', $webform_labels)]);
+      $summary[] = $this->t('Webforms: @webforms', ['@webforms' => implode('; ', $webform_labels)]);
     }
     return $summary;
   }

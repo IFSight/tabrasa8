@@ -10,5 +10,5 @@
     "irc": "irc://irc.freenode.org/drupal-contribute",
     "source": "http://cgit.drupalcode.org/libraries"
   },
-  "license": "GPL-2.0+"
+  "license": "GPL-2.0-or-later"
 }

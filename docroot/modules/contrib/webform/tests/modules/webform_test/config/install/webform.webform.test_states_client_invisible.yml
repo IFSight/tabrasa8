@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -816,7 +817,7 @@ elements: |
           checked: true
   webform_variant:
     '#type': webform_variant
-    '#title': 'Variant [EXPERIMENTAL]'
+    '#title': 'Variant'
     '#states':
       invisible:
         ':input[name="trigger"]':
@@ -828,7 +829,7 @@ elements: |
       invisible:
         ':input[name="trigger"]':
           checked: true
-  
+
 css: ''
 javascript: ''
 settings:
@@ -958,6 +959,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -1010,6 +1012,7 @@ handlers:
   debug:
     id: debug
     label: Debug
+    notes: ''
     handler_id: debug
     status: true
     conditions: {  }

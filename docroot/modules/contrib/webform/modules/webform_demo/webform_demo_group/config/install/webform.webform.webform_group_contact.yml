@@ -1,3 +1,4 @@
+uuid: 6f8e252a-8dee-4d99-8362-77b02dcf54d1
 langcode: en
 status: open
 dependencies:
@@ -216,6 +217,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -286,6 +288,7 @@ handlers:
   email_confirmation:
     id: email
     label: 'Email confirmation'
+    notes: ''
     handler_id: email_confirmation
     status: true
     conditions: {  }
@@ -322,6 +325,7 @@ handlers:
   email_notification:
     id: email
     label: 'Email notification'
+    notes: ''
     handler_id: email_notification
     status: true
     conditions: {  }
@@ -356,6 +360,5 @@ handlers:
       sender_mail: ''
       sender_name: ''
 variants: {  }
-uuid: 6f8e252a-8dee-4d99-8362-77b02dcf54d1
 _core:
   default_config_hash: ibrQM-l73s998t710tfXCiZlMT_13oFxxPmVh7tBHIk

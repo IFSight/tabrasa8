@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Core\Messenger\MessengerTrait;
 
 /**
  * Implements hook_libraries_info().
@@ -461,7 +462,7 @@ function _libraries_test_callback(&$library, $version, $variant, $group) {
   // Only set the message for the top-level library to prevent confusing,
   // duplicate messages.
   if (!isset($version) && !isset($variant) && \Drupal::state()->get('libraries_test.cache', FALSE)) {
-    drupal_set_message(SafeMarkup::set("The <em>$group</em> callback group was invoked."));
+    \Drupal::messenger()->addMessage(SafeMarkup::set("The <em>$group</em> callback group was invoked."));
   }
 }
 

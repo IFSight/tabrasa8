@@ -9,7 +9,8 @@
 
   Drupal.webform = Drupal.webform || {};
   Drupal.webform.cards = Drupal.webform.cards || {};
-  Drupal.webform.cards.autoForwardDelay = Drupal.webform.cards.autoForwardDelay || 250; // 1/4 second delay.
+  // Autoforward (defaults to 1/4 second delay).
+  Drupal.webform.cards.autoForwardDelay = Drupal.webform.cards.autoForwardDelay || 250;
 
   /**
    * Initialize webform cards.
@@ -41,7 +42,8 @@
           toggleHideLabel: $form.data('toggle-hide-label'),
           toggleShowLabel: $form.data('toggle-show-label'),
           ajaxEffect: $form.data('ajax-effect'),
-          ajaxSpeed: $form.data('ajax-speed')
+          ajaxSpeed: $form.data('ajax-speed'),
+          ajaxScrollTop: $form.data('ajax-scroll-top'),
         };
 
         var currentPage = $form.data('current-page');
@@ -56,11 +58,11 @@
         var $allCards = $form.find('.webform-card');
 
         // Actions and buttons.
-        var $formActions = $form.find('.form-actions');
+        var $formActions = $form.find('.form-actions').show();
         var $previewButton = $formActions.find('.webform-button--preview');
         var $submitButton = $formActions.find('.webform-button--submit');
-        var $previousButton = $form.find('.webform-button--previous');
-        var $nextButton = $form.find('.webform-button--next');
+        var $previousButton = $formActions.find('.webform-button--previous');
+        var $nextButton = $formActions.find('.webform-button--next');
 
         // Preview.
         if (!$allCards.length) {
@@ -148,15 +150,21 @@
               }
             }
 
+            // If input[type="radio"] ignore left/right keys which are used to
+            // navigate between radio buttons.
+            if (event.target.tagName === 'INPUT' && event.target.type === 'radio') {
+              return;
+            }
+
             switch (event.which) {
               // Left key triggers the previous button.
               case 37:
-                setTimeout(function () {$previousButton.click();}, Drupal.webform.cards.autoForwardDelay);
+                setTimeout(function () {$previousButton.trigger('click');}, Drupal.webform.cards.autoForwardDelay);
                 break;
 
               // Right key triggers the next button.
               case 39:
-                setTimeout(function () {$nextButton.click();}, Drupal.webform.cards.autoForwardDelay);
+                setTimeout(function () {$nextButton.trigger('click');}, Drupal.webform.cards.autoForwardDelay);
                 break;
             }
           });
@@ -195,19 +203,35 @@
          * @param {jQuery} $activeCard
          *   An jQuery object containing the active card.
          * @param {boolean} initialize
-         *   Are cards being initialize
+         *   Are cards being initialize.
+         *   If TRUE, no transition or scrolling effects will be triggered.
          */
         function setActiveCard($activeCard, initialize) {
           if (!$activeCard.length) {
             return;
           }
 
-          // Unset the active card
-          $allCards.filter('.webform-card--active').removeClass('webform-card--active');
+          // Track the previous active card.
+          var $prevCard = $allCards.filter('.webform-card--active');
+
+          // Unset the previous active card and set the active card.
+          $prevCard.removeClass('webform-card--active');
+          $activeCard.addClass('webform-card--active');
+
+          // Trigger card change event.
+          $form.trigger('webform_cards:change', [$activeCard]);
+
+          // Allow card change event to reset the active card, this allows for
+          // card change event handler to apply custom validation
+          // and conditional logic.
+          $activeCard = $allCards.filter('.webform-card--active');
+          if ($activeCard.get(0) === $prevCard.get(0)) {
+            initialize = true;
+          }
 
           // Set the previous and next labels.
-          $previousButton.val($activeCard.data('prev-button-label') || $previousButton.data('default-label'));
-          $nextButton.val($activeCard.data('next-button-label') || $nextButton.data('default-label'));
+          setButtonLabel($previousButton, $activeCard.data('prev-button-label') || $previousButton.data('default-label'));
+          setButtonLabel($nextButton, $activeCard.data('next-button-label') || $nextButton.data('default-label'));
 
           // Show/hide the previous button.
           var hasPrevCard = !!$activeCard.prevAll('.webform-card:not([style*="display: none"])').length;
@@ -219,9 +243,6 @@
           $submitButton.toggle(!hasNextCard);
           $nextButton.toggle(hasNextCard);
 
-          // Activate the card.
-          $activeCard.addClass('webform-card--active');
-
           // Hide the next button when auto-forwarding.
           if (hideAutoForwardNextButton()) {
             $nextButton.hide();
@@ -229,7 +250,11 @@
 
           // Show the active card.
           if (!initialize) {
+            // Show the active card.
             applyAjaxEffect($activeCard);
+
+            // Scroll to the top of the page or form.
+            Drupal.webformScrollTop($activeCard, options.ajaxScrollTop);
           }
 
           // Focus the active card's first visible input.
@@ -244,6 +269,7 @@
 
           // Track progress.
           trackProgress();
+
         }
 
         /**
@@ -325,11 +351,11 @@
                 if ($links.attr('role') !== 'link') {
                   $links
                     .attr({'role': 'link', 'title': card.title, 'aria-label': card.title, 'tabindex': '0'})
-                    .click(function () {
+                    .on('click', function () {
                       var $card = $allCards.filter('[data-webform-key="' + $(this).data('webform-key') + '"]');
                       setActiveCard($card);
                     })
-                    .keydown(function (event) {
+                    .on('keydown', function (event) {
                       if (event.which === 13) {
                         var $card = $allCards.filter('[data-webform-key="' + $(this).data('webform-key') + '"]');
                         setActiveCard($card);
@@ -347,9 +373,11 @@
           // Set properties.
           var properties = getCardsProgressProperties();
           for (var property in properties) {
-            var attribute = '[data-webform-progress-' + property + ']';
-            var value = properties[property];
-            $progress.find(attribute).html(value);
+            if (propertie.hasOwnProperty(value)) {
+              var attribute = '[data-webform-progress-' + property + ']';
+              var value = properties[property];
+              $progress.find(attribute).html(value);
+            }
           }
 
           // Set <progress> tag [value] and [max] attributes.
@@ -383,11 +411,11 @@
             $('body').on('keydown', function (event) {
               switch (event.which) {
                 case 37: // left.
-                  setTimeout(function () {$previousButton.click();}, Drupal.webform.cards.autoForwardDelay);
+                  setTimeout(function () {$previousButton.trigger('click');}, Drupal.webform.cards.autoForwardDelay);
                   break;
 
                 case 39: // right
-                  setTimeout(function () {$submitButton.click();}, Drupal.webform.cards.autoForwardDelay);
+                  setTimeout(function () {$submitButton.trigger('click');}, Drupal.webform.cards.autoForwardDelay);
                   break;
               }
             });
@@ -410,15 +438,15 @@
               $step
                 .find('[data-webform-progress-link]')
                 .attr({'role': 'link', 'title': title, 'aria-label': title, 'tabindex': '0'})
-                .click(function () {
+                .on('click', function () {
                   // Set current card.
                   $currentCardInput.val(card);
                   // Click button to return to the 'webform_start' page.
-                  $button.click();
+                  $button.trigger('click');
                 })
-                .keydown(function (event) {
+                .on('keydown', function (event) {
                   if (event.which === 13) {
-                    $(this).click();
+                    $(this).trigger('click');
                   }
                 });
             });
@@ -441,11 +469,11 @@
                   .attr('name', $cardButton.attr('name') + '-' + card)
                   .attr('data-drupal-selector', $cardButton.attr('data-drupal-selector') + '-' + card)
                   .attr('title', Drupal.t("Edit '@title'", {'@title': title}).toString())
-                  .click(function () {
+                  .on('click', function () {
                     // Set current card.
                     $currentCardInput.val(card);
                     // Click button to return to the 'webform_start' page.
-                    $button.click();
+                    $button.trigger('click');
                     return false;
                   });
                 $card.append($cardButton).show();
@@ -601,6 +629,9 @@
             $previousButton.hide();
             $previewButton.show();
             $submitButton.show();
+
+            // Trigger card change event with no active card.
+            $form.trigger('webform_cards:change');
           }
         }
 
@@ -644,10 +675,10 @@
               setActiveCard($nextCard);
             }
             else if ($previewButton.length) {
-              $previewButton.click();
+              $previewButton.trigger('click');
             }
             else {
-              $submitButton.click();
+              $submitButton.trigger('click');
             }
           }
           // Prevent the button's default behavior.
@@ -698,7 +729,7 @@
             return value;
           });
           if (inputHasValue) {
-            setTimeout(function () {$nextButton.click();}, Drupal.webform.cards.autoForwardDelay);
+            setTimeout(function () {$nextButton.trigger('click');}, Drupal.webform.cards.autoForwardDelay);
           }
         }
 
@@ -725,7 +756,8 @@
           }
 
           var inputValues = [];
-          var name, type;
+          var name;
+          var type;
           $autoForwardInputs.each(function () {
             name = this.name;
             type = this.type;
@@ -772,7 +804,7 @@
 
           var $firstInput = $activeCard.find(':input:visible').first();
           if (!inputHasValue($firstInput)) {
-            $firstInput.focus();
+            $firstInput.trigger('focus');
           }
         }
 
@@ -782,7 +814,7 @@
          * @param {jQuery} $input
          *   An jQuery object containing an :input.
          *
-         * @return {{boolean}}
+         * @return {boolean}
          *   TRUE if next button should be hidden
          */
         function inputHasValue($input) {
@@ -800,9 +832,24 @@
             default:
               return $('[name="' + name + '"]').val() ? true : false;
           }
-          return false;
         }
 
+        /**
+         * Set button label value or HTML markup.
+         *
+         * @param {jQuery} $button
+         *   A jQuery object containing a <button> or <input type="submit">.
+         * @param {string} label
+         *   The button's label.
+         */
+        function setButtonLabel($button, label) {
+          if ($button[0].tagName === 'BUTTON') {
+            $button.html(label);
+          }
+          else {
+            $button.val(label);
+          }
+        }
       });
 
     }

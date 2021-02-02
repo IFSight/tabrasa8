@@ -50,6 +50,7 @@ webform.admin.dialog:
     - webform/webform.form.tabs
     - webform/webform.admin.dropbutton
     - webform/webform.element.codemirror.yaml
+    - webform/webform.element.help
     - webform/webform.element.html_editor
     - webform/webform.element.other
     - webform/webform.element.message
@@ -130,6 +131,7 @@ webform.ajax:
     - core/drupal.announce
     - core/jquery.once
     - core/jquery.form
+    - webform/webform.scroll
 
 # Announce.
 
@@ -142,6 +144,13 @@ webform.announce:
     - core/jquery.once
     - core/drupal
     - core/drupal.announce
+
+# Behaviors.
+
+webform.behaviors:
+  version: VERSION
+  js:
+    js/webform.behaviors.js: {}
 
 # Block.
 
@@ -267,6 +276,16 @@ webform.promotions:
     component:
       css/webform.promotions.css: {}
 
+# Scroll.
+
+webform.scroll:
+  version: VERSION
+  js:
+    js/webform.scroll.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+
 # States.
 
 webform.states:
@@ -274,6 +293,7 @@ webform.states:
   js:
     js/webform.states.js: {}
   dependencies:
+    - webform/webform.behaviors
     - core/drupal.states
 
 # Token.
@@ -986,17 +1006,18 @@ libraries.choices:
       /libraries/choices/public/assets/styles/choices.min.css: { minified: true }
   js:
     /libraries/choices/public/assets/scripts/choices.min.js: { minified: true }
+    'https://polyfill.io/v3/polyfill.min.js?features=es5%2Ces6%2CArray.prototype.includes%2Cfetch%2CCustomEvent%2CElement.prototype.closest%2CElement.prototype.classList': { weight: -1, browsers: { IE: 'lte IE 11'} }
 
 libraries.codemirror.text:
   remote: https://github.com/codemirror/codemirror
-  version: &webform_codemirror_version '5.57.0'
+  version: &webform_codemirror_version '5.53.2'
   license: &webform_codemirror_license
     name: MIT
     url: http://codemirror.net/LICENSE
     gpl-compatible: true
   cdn: &webform_codemirror_cdn
-    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.57.0/
-    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.57.0/
+    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.53.2/
+    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.53.2/
   css:
     component:
       /libraries/codemirror/lib/codemirror.css: {}

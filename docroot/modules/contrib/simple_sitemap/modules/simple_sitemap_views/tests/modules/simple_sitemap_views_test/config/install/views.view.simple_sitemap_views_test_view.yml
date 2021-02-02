@@ -262,14 +262,15 @@ display:
     display_options:
       display_extenders:
         simple_sitemap_display_extender:
-          index: true
-          variant: default
-          priority: '0.5'
-          changefreq: ''
-          arguments:
-            type: type
-            title: title
-          max_links: 2
+          variants:
+            default:
+              index: true
+              priority: '0.5'
+              changefreq: ''
+              arguments:
+                type: type
+                title: title
+              max_links: 2
       path: simple-sitemap-views-test-view
       rendering_language: en
     cache_metadata:

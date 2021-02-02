@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: closed
 dependencies:
@@ -335,6 +336,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -387,6 +389,7 @@ handlers:
   email_notification:
     id: email
     label: 'Email notification'
+    notes: ''
     handler_id: email_notification
     status: true
     conditions: {  }

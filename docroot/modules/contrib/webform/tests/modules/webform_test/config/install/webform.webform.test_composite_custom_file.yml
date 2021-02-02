@@ -1,3 +1,4 @@
+uuid: b754b5b4-0b50-4a42-a23c-30f95cd9870e
 langcode: en
 status: open
 dependencies:
@@ -166,6 +167,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -218,6 +220,7 @@ handlers:
   debug:
     id: debug
     label: Debug
+    notes: ''
     handler_id: debug
     status: true
     conditions: {  }
@@ -226,6 +229,7 @@ handlers:
   email:
     id: email
     label: Email
+    notes: ''
     handler_id: email
     status: true
     conditions: {  }
@@ -260,6 +264,5 @@ handlers:
       theme_name: ''
       parameters: {  }
 variants: {  }
-uuid: b754b5b4-0b50-4a42-a23c-30f95cd9870e
 _core:
   default_config_hash: l67ofWFfSw0nP4K6ZBRppS9Dv_uBzGiAeEUKwW7-IwA
