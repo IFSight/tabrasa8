@@ -393,6 +393,19 @@ class TwigExtension extends AbstractExtension {
       //   {{ node.field_media|file_url }}
       // @endcode
       new TwigFilter('file_url', [$this, 'fileUrl']),
+
+      // - Entity translation -
+      //
+      // Gets the translation of the entity for the current context.
+      // @code
+      //   {{ node|translation }}
+      // @endcode
+      //
+      // An optional language code can be specified.
+      // @code
+      //   {{ node|translation('es') }}
+      // @endcode
+      new TwigFilter('translation', [$this, 'entityTranslation']),
     ];
 
     if (Settings::get('twig_tweak_enable_php_filter')) {
@@ -476,6 +489,7 @@ class TwigExtension extends AbstractExtension {
     if ($wrapper && !Element::isEmpty($build['content'])) {
       $build += [
         '#theme' => 'block',
+        '#id' => $configuration['id'] ?? NULL,
         '#attributes' => [],
         '#contextual_links' => [],
         '#configuration' => $block_plugin->getConfiguration(),
@@ -487,6 +501,7 @@ class TwigExtension extends AbstractExtension {
 
     CacheableMetadata::createFromRenderArray($build)
       ->merge(CacheableMetadata::createFromObject($access))
+      ->merge(CacheableMetadata::createFromObject($block_plugin))
       ->applyTo($build);
 
     return $build;
@@ -516,9 +531,12 @@ class TwigExtension extends AbstractExtension {
 
     $build = [];
 
-    $cache_metadata = new CacheableMetadata();
+    $entity_type = $entity_type_manager->getDefinition('block');
+    $cache_metadata = (new CacheableMetadata())
+      ->addCacheTags($entity_type->getListCacheTags())
+      ->addCacheContexts($entity_type->getListCacheContexts());
 
-    /* @var $blocks \Drupal\block\BlockInterface[] */
+    /** @var \Drupal\block\BlockInterface[] $blocks */
     foreach ($blocks as $id => $block) {
       $access = $block->access('view', NULL, TRUE);
       $cache_metadata = $cache_metadata->merge(CacheableMetadata::createFromObject($access));
@@ -537,8 +555,8 @@ class TwigExtension extends AbstractExtension {
     if ($build) {
       $build['#region'] = $region;
       $build['#theme_wrappers'] = ['region'];
-      $cache_metadata->applyTo($build);
     }
+    $cache_metadata->applyTo($build);
 
     return $build;
   }
@@ -1036,7 +1054,7 @@ class TwigExtension extends AbstractExtension {
    *   in an <img> tag. Requesting the URL will cause the image to be created.
    */
   public function imageStyle($path, $style) {
-
+    // @phpcs:ignore DrupalPractice.Objects.GlobalClass.GlobalClass
     if (!$image_style = ImageStyle::load($style)) {
       trigger_error(sprintf('Could not load image style %s.', $style));
       return;
@@ -1313,6 +1331,22 @@ class TwigExtension extends AbstractExtension {
     $output = ob_get_contents();
     ob_end_clean();
     return $output;
+  }
+
+  /**
+   * Returns the translation for the given entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to get the translation from.
+   * @param string $langcode
+   *   (optional) For which language the translation should be looked for,
+   *   defaults to the current language context.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   The appropriate translation for the given language context.
+   */
+  public function entityTranslation(EntityInterface $entity, $langcode = NULL) {
+    return \Drupal::service('entity.repository')->getTranslationFromContext($entity, $langcode);
   }
 
 }

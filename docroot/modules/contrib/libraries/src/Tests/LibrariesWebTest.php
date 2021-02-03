@@ -54,7 +54,7 @@ class LibrariesWebTest extends WebTestBase {
   function testLibrariesDetectDependencies() {
     $library = array(
       'name' => 'Example',
-      'dependencies' => array('example_missing'),
+      'dependencies' => array('Example missing'),
     );
     libraries_detect_dependencies($library);
     $this->assertEqual($library['error'], 'missing dependency', 'libraries_detect_dependencies() detects missing dependency');

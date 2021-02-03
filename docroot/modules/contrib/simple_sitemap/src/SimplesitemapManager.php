@@ -135,20 +135,22 @@ class SimplesitemapManager {
    */
   public function getSitemapVariants($sitemap_type = NULL, $attach_type_info = TRUE) {
     if (NULL === $sitemap_type) {
-      $variants = [];
+      $variants_by_type = [];
       foreach ($this->configFactory->listAll('simple_sitemap.variants.') as $config_name) {
-        $config_name_parts = explode('.', $config_name);
-        $saved_variants = $this->configFactory->get($config_name)->get('variants');
-        $saved_variants = $attach_type_info ? $this->attachSitemapTypeToVariants($saved_variants, $config_name_parts[2]) : $saved_variants;
-        $variants = array_merge($variants, (is_array($saved_variants) ? $saved_variants : []));
+        $variants = !empty($variants = $this->configFactory->get($config_name)->get('variants')) ? $variants : [];
+        $variants = $attach_type_info ? $this->attachSitemapTypeToVariants($variants, explode('.', $config_name)[2]) : $variants;
+        $variants_by_type[] = $variants;
       }
+      $variants = array_merge([], ...$variants_by_type);
     }
     else {
-      $variants = $this->configFactory->get("simple_sitemap.variants.$sitemap_type")->get('variants');
-      $variants = is_array($variants) ? $variants : [];
+      $variants = !empty($variants = $this->configFactory->get("simple_sitemap.variants.$sitemap_type")->get('variants')) ? $variants : [];
       $variants = $attach_type_info ? $this->attachSitemapTypeToVariants($variants, $sitemap_type) : $variants;
     }
-    array_multisort(array_column($variants, "weight"), SORT_ASC, $variants);
+
+    // Sort variants by weight.
+    $variant_weights = array_column($variants, 'weight');
+    array_multisort($variant_weights, SORT_ASC, $variants);
 
     return $variants;
   }

@@ -123,8 +123,8 @@ function linkit_form_editor_link_dialog_alter(&$form, FormStateInterface $form_s
 function linkit_form_editor_link_dialog_submit(array &$form, FormStateInterface $form_state) {
   $link_element = $form_state->get('link_element');
 
-  $href = $form_state->getValue(['attributes', 'href']);
-  $href_dirty_check = $form_state->getValue(['href_dirty_check']);
+  $href = parse_url($form_state->getValue(['attributes', 'href']), PHP_URL_PATH);
+  $href_dirty_check = parse_url($form_state->getValue(['href_dirty_check']), PHP_URL_PATH);
 
   if ($href !== $href_dirty_check) {
     $form_state->unsetValue(['attributes', 'data-entity-type']);

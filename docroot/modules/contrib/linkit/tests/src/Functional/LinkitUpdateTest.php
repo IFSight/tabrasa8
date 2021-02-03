@@ -105,13 +105,13 @@ class LinkitUpdateTest extends UpdatePathTestBase {
     $this->assertNotNull($format->get('filters.linkit'), 'Linkit filter is enabled.');
 
     $htmlRestrictions = FilterFormat::load('format_1')->getHtmlRestrictions();
-    $this->assertTrue(array_key_exists("data-entity-type", $htmlRestrictions['allowed']['a']));
-    $this->assertTrue(array_key_exists("data-entity-uuid", $htmlRestrictions['allowed']['a']));
-    $this->assertTrue(array_key_exists("data-entity-substitution", $htmlRestrictions['allowed']['a']));
+    $this->assertArrayHasKey("data-entity-type", $htmlRestrictions['allowed']['a']);
+    $this->assertArrayHasKey("data-entity-uuid", $htmlRestrictions['allowed']['a']);
+    $this->assertArrayHasKey("data-entity-substitution", $htmlRestrictions['allowed']['a']);
 
     $htmlRestrictions = FilterFormat::load('format_3')->getHtmlRestrictions();
-    $this->assertTrue(array_key_exists("data-entity-type", $htmlRestrictions['allowed']['a']));
-    $this->assertTrue(array_key_exists("data-entity-uuid", $htmlRestrictions['allowed']['a']));
+    $this->assertArrayHasKey("data-entity-type", $htmlRestrictions['allowed']['a']);
+    $this->assertArrayHasKey("data-entity-uuid", $htmlRestrictions['allowed']['a']);
   }
 
 }

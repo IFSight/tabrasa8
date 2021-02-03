@@ -10,9 +10,7 @@ use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ConfigSplitEntityForm.
- *
- * @package Drupal\config_split\Form
+ * The entity form.
  */
 class ConfigSplitEntityForm extends EntityForm {
 

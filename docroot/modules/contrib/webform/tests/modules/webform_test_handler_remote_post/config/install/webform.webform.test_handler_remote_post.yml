@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -172,6 +173,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -224,6 +226,7 @@ handlers:
   remote_post:
     id: remote_post
     label: 'Remote post'
+    notes: ''
     handler_id: remote_post
     status: true
     conditions: {  }

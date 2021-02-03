@@ -62,8 +62,8 @@ function libraries_drush_invalidate_cache() {
  */
 function libraries_drush_list() {
   $libraries = array();
-  foreach (libraries_info() as $name => $info) {
-    $libraries[$name] = libraries_detect($name);
+  foreach (\Drupal::service('libraries.manager')->info() as $name => $info) {
+    $libraries[$name] = \Drupal::service('libraries.manager')->getLibrary($name);
   }
   ksort($libraries);
 

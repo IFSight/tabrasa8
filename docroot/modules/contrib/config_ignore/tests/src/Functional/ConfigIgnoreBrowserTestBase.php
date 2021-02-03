@@ -3,9 +3,9 @@
 namespace Drupal\Tests\config_ignore\Functional;
 
 use Drupal\Core\Config\ConfigImporter;
-use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\StorageComparer;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\config_filter\Kernel\ConfigStorageTestTrait;
 
 /**
  * Class ConfigIgnoreBrowserTestBase.
@@ -13,6 +13,8 @@ use Drupal\Tests\BrowserTestBase;
  * @package Drupal\Tests\config_ignore
  */
 abstract class ConfigIgnoreBrowserTestBase extends BrowserTestBase {
+
+  use ConfigStorageTestTrait;
 
   /**
    * Modules to enable.
@@ -22,14 +24,18 @@ abstract class ConfigIgnoreBrowserTestBase extends BrowserTestBase {
   public static $modules = ['config_ignore', 'config', 'config_filter'];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Perform a config import from sync. folder.
    */
   public function doImport() {
     // Set up the ConfigImporter object for testing.
     $storage_comparer = new StorageComparer(
-      $this->container->get('config.storage.sync'),
-      $this->container->get('config.storage'),
-      $this->container->get('config.manager')
+      $this->getImportStorage(),
+      $this->container->get('config.storage')
     );
 
     $config_importer = new ConfigImporter(
@@ -41,7 +47,8 @@ abstract class ConfigIgnoreBrowserTestBase extends BrowserTestBase {
       $this->container->get('module_handler'),
       $this->container->get('module_installer'),
       $this->container->get('theme_handler'),
-      $this->container->get('string_translation')
+      $this->container->get('string_translation'),
+      $this->container->get('extension.list.module')
     );
 
     $config_importer->reset()->import();
@@ -51,16 +58,8 @@ abstract class ConfigIgnoreBrowserTestBase extends BrowserTestBase {
    * Perform a config export to sync. folder.
    */
   public function doExport() {
-    // Setup a config sync. dir with a, more or less,  know set of config
-    // entities. This is a full blown export of yaml files, written to the disk.
-    $destination = CONFIG_SYNC_DIRECTORY;
-    $destination_dir = config_get_config_directory($destination);
-    /** @var \Drupal\Core\Config\CachedStorage $source_storage */
-    $source_storage = \Drupal::service('config.storage');
-    $destination_storage = new FileStorage($destination_dir);
-    foreach ($source_storage->listAll() as $name) {
-      $destination_storage->write($name, $source_storage->read($name));
-    }
+    // Export the config using the export storage service.
+    $this->copyConfig($this->getExportStorage(), $this->getSyncFileStorage());
   }
 
 }

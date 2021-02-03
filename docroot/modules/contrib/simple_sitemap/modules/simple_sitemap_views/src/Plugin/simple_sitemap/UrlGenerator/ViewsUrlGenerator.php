@@ -116,9 +116,9 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
 
     // Get data sets.
     foreach ($this->sitemapViews->getIndexableViews() as $view) {
-      $settings = $this->sitemapViews->getSitemapSettings($view);
-      if ($settings['variant'] != $this->sitemapVariant) {
-        // Destroy a view instance.
+      $settings = $this->sitemapViews->getSitemapSettings($view, $this->sitemapVariant);
+
+      if (empty($settings)) {
         $view->destroy();
         continue;
       }
@@ -131,17 +131,20 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       $data_sets[] = $base_data_set + ['arguments' => NULL];
 
       // Process indexed arguments.
-      if ($args_ids = $this->sitemapViews->getIndexableArguments($view)) {
+      if ($args_ids = $this->sitemapViews->getIndexableArguments($view, $this->sitemapVariant)) {
+        $args_ids = $this->sitemapViews->getArgumentsStringVariations($args_ids);
+
         // Form the condition according to the variants of the
         // indexable arguments.
-        $args_ids = $this->sitemapViews->getArgumentsStringVariations($args_ids);
         $condition = new Condition('AND');
         $condition->condition('view_id', $view->id());
         $condition->condition('display_id', $view->current_display);
         $condition->condition('arguments_ids', $args_ids, 'IN');
+
         // Get the arguments values from the index.
         $max_links = is_numeric($settings['max_links']) ? $settings['max_links'] : NULL;
         $indexed_arguments = $this->sitemapViews->getArgumentsFromIndex($condition, $max_links, TRUE);
+
         // Add the arguments values for processing.
         foreach ($indexed_arguments as $index_id => $arguments_info) {
           $data_sets[] = $base_data_set + [
@@ -150,6 +153,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
           ];
         }
       }
+
       // Destroy a view instance.
       $view->destroy();
     }
@@ -179,7 +183,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       }
 
       // Trying to get the sitemap settings.
-      $settings = $this->sitemapViews->getSitemapSettings($view);
+      $settings = $this->sitemapViews->getSitemapSettings($view, $this->sitemapVariant);
       if (empty($settings)) {
         throw new \UnexpectedValueException('Failed to get the sitemap settings.');
       }
@@ -191,13 +195,16 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       if (is_array($args)) {
         $params = array_merge([$view_id, $display_id], $args);
         $view_result = call_user_func_array('views_get_view_result', $params);
+
         // Do not include paths on which the view returns an empty result.
         if (empty($view_result)) {
           throw new \UnexpectedValueException('The view returned an empty result.');
         }
+
         // Remove empty arguments from URL.
         $this->cleanRouteParameters($url, $args);
       }
+
       $path = $url->getInternalPath();
       // Destroy a view instance.
       $view->destroy();
@@ -243,11 +250,13 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
    */
   protected function cleanRouteParameters(Url $url, array $args) {
     $parameters = $url->getRouteParameters();
+
     // Check that the number of params does not match the number of arguments.
     if (count($parameters) != count($args)) {
       $route_name = $url->getRouteName();
       $route = $this->routeProvider->getRouteByName($route_name);
       $variables = $route->compile()->getVariables();
+
       // Remove params that are not present in the arguments.
       foreach ($variables as $variable_name) {
         if (empty($args)) {
@@ -257,6 +266,7 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
           array_shift($args);
         }
       }
+
       // Set new route params.
       $url->setRouteParameters($parameters);
     }

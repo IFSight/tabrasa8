@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -169,6 +170,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -221,6 +223,7 @@ handlers:
   tomorrow:
     id: scheduled_email
     label: Tomorow
+    notes: ''
     handler_id: tomorrow
     status: true
     conditions: {  }
@@ -264,6 +267,7 @@ handlers:
   yesterday:
     id: scheduled_email
     label: Yesterday
+    notes: ''
     handler_id: yesterday
     status: true
     conditions: {  }
@@ -307,6 +311,7 @@ handlers:
   last_year:
     id: scheduled_email
     label: 'Last year'
+    notes: ''
     handler_id: last_year
     status: true
     conditions: {  }
@@ -350,6 +355,7 @@ handlers:
   broken:
     id: scheduled_email
     label: Broken
+    notes: ''
     handler_id: broken
     status: true
     conditions: {  }
@@ -393,6 +399,7 @@ handlers:
   other:
     id: scheduled_email
     label: Other
+    notes: ''
     handler_id: other
     status: true
     conditions: {  }
@@ -439,6 +446,7 @@ handlers:
   draft_reminder:
     id: scheduled_email
     label: 'Draft reminder'
+    notes: ''
     handler_id: draft_reminder
     status: true
     conditions: {  }

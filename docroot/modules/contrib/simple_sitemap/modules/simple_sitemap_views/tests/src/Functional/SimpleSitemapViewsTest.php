@@ -42,7 +42,7 @@ class SimpleSitemapViewsTest extends SimpleSitemapViewsTestBase {
     $this->assertTrue($test_view_exists);
 
     // Check the indexing status of the arguments.
-    $indexable_arguments = $this->sitemapViews->getIndexableArguments($this->testView);
+    $indexable_arguments = $this->sitemapViews->getIndexableArguments($this->testView, $this->sitemapVariant);
     $this->assertContains('type', $indexable_arguments);
     $this->assertContains('title', $indexable_arguments);
     $this->assertNotContains('nid', $indexable_arguments);

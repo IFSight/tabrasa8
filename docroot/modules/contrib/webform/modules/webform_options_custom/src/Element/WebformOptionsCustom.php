@@ -111,8 +111,8 @@ class WebformOptionsCustom extends FormElement implements WebformOptionsCustomIn
     // @see webform_options_custom.element.js#initializeTemplateTooltip
     $descriptions = [];
     foreach ($element['#options'] as $option_value => $option_text) {
-      if (strpos($option_text, WebformOptionsHelper::DESCRIPTION_DELIMITER) !== FALSE) {
-        list($option_text, $option_description) = explode(WebformOptionsHelper::DESCRIPTION_DELIMITER, $option_text);
+      if (WebformOptionsHelper::hasOptionDescription($option_text)) {
+        list($option_text, $option_description) = WebformOptionsHelper::splitOption($option_text);
         $element['#options'][$option_value] = $option_text;
         $descriptions[$option_value] = Xss::filterAdmin($option_description);
       }
@@ -297,8 +297,8 @@ class WebformOptionsCustom extends FormElement implements WebformOptionsCustomIn
     $options_by_text = [];
     foreach ($options as $option_value => $option_text) {
       $option_description = '';
-      if (strpos($option_text, WebformOptionsHelper::DESCRIPTION_DELIMITER) !== FALSE) {
-        list($option_text, $option_description) = explode(WebformOptionsHelper::DESCRIPTION_DELIMITER, $option_text);
+      if (WebformOptionsHelper::hasOptionDescription($option_text)) {
+        list($option_text, $option_description) = WebformOptionsHelper::splitOption($option_text);
       }
       $options_by_text[$option_text] = ['value' => $option_value, 'text' => $option_text, 'description' => $option_description];
     }

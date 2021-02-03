@@ -19,11 +19,11 @@
   "support": {
     "issues": "http://drupal.org/project/config_ignore",
     "irc": "irc://irc.freenode.org/drupal-contribute",
-    "source": "http://cgit.drupalcode.org/config_ignore"
+    "source": "https://git.drupalcode.org/project/config_ignore"
   },
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "minimum-stability": "dev",
   "require": {
-    "drupal/config_filter": "1.*"
+    "drupal/config_filter": "^1 || ^2"
   }
 }

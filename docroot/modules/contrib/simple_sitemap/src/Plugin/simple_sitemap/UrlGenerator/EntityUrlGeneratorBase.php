@@ -4,7 +4,7 @@ namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapGeneratorBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\simple_sitemap\EntityHelper;
@@ -110,9 +110,9 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       $alternate_urls = $this->getAlternateUrlsForDefaultLanguage($url_object);
     }
     elseif ($this->settings['skip_untranslated']
-      && ($entity = $this->entityHelper->getEntityFromUrlObject($url_object)) instanceof ContentEntityBase) {
+      && ($entity = $this->entityHelper->getEntityFromUrlObject($url_object)) instanceof ContentEntityInterface) {
 
-      /** @var ContentEntityBase $entity */
+      /** @var ContentEntityInterface $entity */
       $translation_languages = $entity->getTranslationLanguages();
       if (isset($translation_languages[Language::LANGCODE_NOT_SPECIFIED])
         || isset($translation_languages[Language::LANGCODE_NOT_APPLICABLE])) {
@@ -149,7 +149,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     $alternate_urls = [];
     if ($url_object->access($this->anonUser)) {
       $alternate_urls[$this->defaultLanguageId] = $this->replaceBaseUrlWithCustom($url_object
-        ->setOption('language', $this->languages[$this->defaultLanguageId])->toString()
+        ->setAbsolute()->setOption('language', $this->languages[$this->defaultLanguageId])->toString()
       );
     }
 
@@ -157,11 +157,11 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   }
 
   /**
-   * @param \Drupal\Core\Entity\ContentEntityBase $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    * @param \Drupal\Core\Url $url_object
    * @return array
    */
-  protected function getAlternateUrlsForTranslatedLanguages(ContentEntityBase $entity, Url $url_object) {
+  protected function getAlternateUrlsForTranslatedLanguages(ContentEntityInterface $entity, Url $url_object) {
     $alternate_urls = [];
 
     /** @var Language $language */
@@ -169,7 +169,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       if (!isset($this->settings['excluded_languages'][$language->getId()]) || $language->isDefault()) {
         if ($entity->getTranslation($language->getId())->access('view', $this->anonUser)) {
           $alternate_urls[$language->getId()] = $this->replaceBaseUrlWithCustom($url_object
-            ->setOption('language', $language)->toString()
+            ->setAbsolute()->setOption('language', $language)->toString()
           );
         }
       }
@@ -188,7 +188,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
       foreach ($this->languages as $language) {
         if (!isset($this->settings['excluded_languages'][$language->getId()]) || $language->isDefault()) {
           $alternate_urls[$language->getId()] = $this->replaceBaseUrlWithCustom($url_object
-            ->setOption('language', $language)->toString()
+            ->setAbsolute()->setOption('language', $language)->toString()
           );
         }
       }
@@ -215,11 +215,11 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
   }
 
   /**
-   * @param \Drupal\Core\Entity\ContentEntityBase $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *
    * @return array
    */
-  protected function getEntityImageData(ContentEntityBase $entity) {
+  protected function getEntityImageData(ContentEntityInterface $entity) {
     $image_data = [];
     foreach ($entity->getFieldDefinitions() as $field) {
       if ($field->getType() === 'image') {

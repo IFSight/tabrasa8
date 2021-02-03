@@ -67,7 +67,7 @@ class WebformEntityConditionsManager implements WebformEntityConditionsManagerIn
       'empty' => $this->t('is empty'),
       'filled' => $this->t('is filled'),
       'checked' => $this->t('is checked'),
-      'unchecked' => $this->t('is unchecked'),
+      'unchecked' => $this->t('is not checked'),
       'value' => '=',
       '!value' => '!=',
       'pattern' => $this->t('matches'),
@@ -133,7 +133,7 @@ class WebformEntityConditionsManager implements WebformEntityConditionsManagerIn
         continue;
       }
 
-      if (is_int($index) && is_array($value) && WebformArrayHelper::isSequential($value)) {
+      if (is_int($index) && is_array($value) && (WebformArrayHelper::isSequential($value) || count($value) > 1)) {
         $condition_items[] = $this->buildConditions($webform, $value, $options + ['nested' => TRUE]);
       }
       else {
@@ -244,6 +244,16 @@ class WebformEntityConditionsManager implements WebformEntityConditionsManagerIn
     // Set trigger value and suffix element title with the trigger's option value.
     if ($element_option_key) {
       $element_title .= ': ' . WebformOptionsHelper::getOptionText($element_option_key, $element_options, TRUE);
+    }
+
+    // Checked 'checked: false' to 'unchecked: true' and vice-versa.
+    if ($trigger_state === 'checked' && $trigger_value === FALSE) {
+      $trigger_state = 'unchecked';
+      $trigger_value = TRUE;
+    }
+    elseif ($trigger_state === 'unchecked' && $trigger_value === FALSE) {
+      $trigger_state = 'checked';
+      $trigger_value = TRUE;
     }
 
     // Build the condition.

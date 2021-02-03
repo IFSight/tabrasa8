@@ -3,6 +3,7 @@
 namespace Drupal\libraries\StreamWrapper;
 
 use Drupal\Core\StreamWrapper\LocalStream;
+use Drupal\Core\Config\ConfigFactory;
 
 /**
  * Provides a stream wrapper for library definitions.
@@ -33,7 +34,7 @@ class LibraryDefinitionsStream extends LocalStream {
   use PrivateStreamTrait;
 
   /**
-   * The config factory
+   * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
@@ -44,8 +45,8 @@ class LibraryDefinitionsStream extends LocalStream {
    *
    * @todo Dependency injection.
    */
-  public function __construct() {
-    $this->configFactory = \Drupal::configFactory();
+  public function __construct(ConfigFactory $config_factory) {
+    $this->configFactory = $config_factory;
   }
 
   /**

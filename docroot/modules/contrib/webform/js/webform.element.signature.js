@@ -58,13 +58,13 @@
         }
 
         // Set resize handler.
-        $(window).resize(debounce(refresh, 10));
+        $(window).on('resize', debounce(refresh, 10));
 
         // Set reset handler.
         $button.on('click', function () {
           signaturePad.clear();
           $input.val('');
-          this.blur();
+          this.trigger('blur');
           return false;
         });
 

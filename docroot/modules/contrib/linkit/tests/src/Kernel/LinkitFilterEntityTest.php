@@ -151,4 +151,18 @@ class LinkitFilterEntityTest extends LinkitKernelTestBase {
     $this->assertTrue(strpos($this->process($input)->getProcessedText(), 'Do not override') !== FALSE, 'The filer is not overwrite the provided title attribute value.');
   }
 
+  /**
+   * Tests that the linkit filter do not overwrite provided fragment and query.
+   */
+  public function testQueryAndFragments() {
+    // Create an entity.
+    $entity = EntityTest::create(['name' => $this->randomMachineName()]);
+    $entity->save();
+
+    // Make sure original query and fragment are preserved.
+    $input = '<a data-entity-type="' . $entity->getEntityTypeId() . '" data-entity-uuid="' . $entity->uuid() . '" href="unimportant/1234?query=string#fragment">Link text</a>';
+    $this->assertContains('?query=string', $this->process($input)->getProcessedText());
+    $this->assertContains('#fragment', $this->process($input)->getProcessedText());
+  }
+
 }

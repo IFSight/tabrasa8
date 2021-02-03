@@ -40,6 +40,13 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
   protected $sitemapManager;
 
   /**
+   * The sitemap variants.
+   *
+   * @var array
+   */
+  protected $variants = [];
+
+  /**
    * Constructs the plugin.
    *
    * @param array $configuration
@@ -57,6 +64,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->formHelper = $form_helper;
     $this->sitemapManager = $sitemap_manager;
+    $this->variants = $sitemap_manager->getSitemapVariants(NULL, FALSE);
   }
 
   /**
@@ -87,12 +95,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-    $options['index'] = ['default' => 0];
-    $options['variant'] = ['default' => NULL];
-    $options['priority'] = ['default' => 0.5];
-    $options['changefreq'] = ['default' => ''];
-    $options['arguments'] = ['default' => []];
-    $options['max_links'] = ['default' => 100];
+    $options['variants'] = ['default' => []];
     return $options;
   }
 
@@ -101,92 +104,81 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     if ($this->hasSitemapSettings() && $form_state->get('section') == 'simple_sitemap') {
-      $form['#title'] .= $this->t('Simple XML Sitemap settings for this display');
-      $settings = $this->getSitemapSettings();
+      $arguments_options = $this->getArgumentsOptions();
 
-      // The index section.
-      $form['index'] = [
-        '#prefix' => '<div class="simple-sitemap-views-index">',
-        '#suffix' => '</div>',
-      ];
-      // Add a checkbox for JS users, which will have behavior attached to it
-      // so it can replace the button.
-      $form['index']['index'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Index this display'),
-        '#default_value' => $settings['index'],
-      ];
-      // Then add the button itself.
-      $form['index']['index_button'] = [
-        '#limit_validation_errors' => [],
-        '#type' => 'submit',
-        '#value' => $this->t('Index this display'),
-        '#submit' => [[$this, 'displaySitemapSettingsForm']],
+      $form['variants'] = [
+        '#type' => 'container',
+        '#tree' => TRUE,
       ];
 
-      // Show the whole form only if indexing is checked.
-      if ($this->options['index']) {
-        // Main settings fieldset.
-        $form['main'] = [
-          '#type' => 'fieldset',
-          '#title' => $this->t('Main settings'),
+      foreach ($this->variants as $variant => $definition) {
+        $settings = $this->getSitemapSettings($variant);
+        $variant_form = &$form['variants'][$variant];
+
+        $variant_form = [
+          '#type' => 'details',
+          '#title' => '<em>' . $definition['label'] . '</em>',
+          '#open' => (bool) $settings['index'],
         ];
-        // The sitemap variant.
-        $form['main']['variant'] = [
-          '#type' => 'select',
-          '#title' => $this->t('Sitemap variant'),
-          '#description' => $this->t('The sitemap variant this display is to be indexed in.'),
-          '#options' => $this->formHelper->getVariantSelectValues(),
-          '#default_value' => $this->formHelper->getVariantSelectValuesDefault($settings['variant']),
-          '#required' => TRUE,
+
+        $variant_form['index'] = [
+          '#type' => 'checkbox',
+          '#title' => $this->t('Index this display in variant <em>@variant_label</em>', [
+            '@variant_label' => $definition['label'],
+          ]),
+          '#default_value' => $settings['index'],
         ];
+
+        $states = [
+          'visible' => [
+            ':input[name="variants[' . $variant . '][index]"]' => ['checked' => TRUE],
+          ],
+        ];
+
         // The sitemap priority.
-        $form['main']['priority'] = [
+        $variant_form['priority'] = [
           '#type' => 'select',
           '#title' => $this->t('Priority'),
           '#description' => $this->t('The priority this display will have in the eyes of search engine bots.'),
           '#default_value' => $settings['priority'],
           '#options' => $this->formHelper->getPrioritySelectValues(),
+          '#states' => $states,
         ];
+
         // The sitemap change frequency.
-        $form['main']['changefreq'] = [
+        $variant_form['changefreq'] = [
           '#type' => 'select',
           '#title' => $this->t('Change frequency'),
           '#description' => $this->t('The frequency with which this display changes. Search engine bots may take this as an indication of how often to index it.'),
           '#default_value' => $settings['changefreq'],
           '#options' => $this->formHelper->getChangefreqSelectValues(),
+          '#states' => $states,
         ];
 
-        // Argument settings fieldset.
-        $form['arguments'] = [
-          '#type' => 'fieldset',
-          '#title' => $this->t('Argument settings'),
+        // Arguments to index.
+        $variant_form['arguments'] = [
+          '#type' => 'checkboxes',
+          '#title' => $this->t('Indexed arguments'),
+          '#options' => $arguments_options,
+          '#default_value' => $settings['arguments'],
+          '#attributes' => ['class' => ['indexed-arguments']],
+          '#access' => !empty($arguments_options),
+          '#states' => $states,
         ];
-        // Get view arguments options.
-        if ($arguments_options = $this->getArgumentsOptions()) {
-          // Indexed arguments element.
-          $form['arguments']['arguments'] = [
-            '#type' => 'checkboxes',
-            '#title' => $this->t('Indexed arguments'),
-            '#options' => $arguments_options,
-            '#default_value' => $settings['arguments'],
-            '#attributes' => ['class' => ['indexed-arguments']],
-          ];
-          // Max links with arguments.
-          $form['arguments']['max_links'] = [
-            '#type' => 'number',
-            '#title' => $this->t('Maximum display variations'),
-            '#description' => $this->t('The maximum number of link variations to be indexed for this display. If left blank, each argument will create link variations for this display. Use with caution, as a large number of argument values​can significantly increase the number of sitemap links.'),
-            '#default_value' => $settings['max_links'],
-            '#min' => 1,
-          ];
-        }
-        else {
-          $form['arguments']['#description'] = $this->t('This display has no arguments.');
-        }
+
+        // Max links with arguments.
+        $variant_form['max_links'] = [
+          '#type' => 'number',
+          '#title' => $this->t('Maximum display variations'),
+          '#description' => $this->t('The maximum number of link variations to be indexed for this display. If left blank, each argument will create link variations for this display. Use with caution, as a large number of argument values​can significantly increase the number of sitemap links.'),
+          '#default_value' => $settings['max_links'],
+          '#min' => 1,
+          '#access' => !empty($arguments_options),
+          '#states' => $states,
+        ];
       }
 
-      // Attaching script to form.
+      $form['#title'] .= $this->t('Simple XML Sitemap settings for this display');
       $form['#attached']['library'][] = 'simple_sitemap_views/viewsUi';
     }
   }
@@ -196,11 +188,13 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    */
   public function validateOptionsForm(&$form, FormStateInterface $form_state) {
     if ($this->hasSitemapSettings() && $form_state->get('section') == 'simple_sitemap') {
-      // Validate indexed arguments.
-      $arguments = $form_state->getValue('arguments', []);
-      $errors = $this->validateIndexedArguments($arguments);
-      foreach ($errors as $message) {
-        $form_state->setError($form['arguments']['arguments'], $message);
+      foreach (array_keys($this->variants) as $variant) {
+        $arguments = $form_state->getValue(['variants', $variant, 'arguments'], []);
+        $errors = $this->validateIndexedArguments($arguments);
+
+        foreach ($errors as $message) {
+          $form_state->setError($form['variants'][$variant]['arguments'], $message);
+        }
       }
     }
   }
@@ -210,12 +204,16 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     if ($this->hasSitemapSettings() && $form_state->get('section') == 'simple_sitemap') {
-      $values = $form_state->cleanValues()->getValues();
-      $values['arguments'] = isset($values['arguments']) ? array_filter($values['arguments']) : [];
-      // Save sitemap settings.
-      foreach ($values as $key => $value) {
-        if (array_key_exists($key, $this->options)) {
-          $this->options[$key] = $value;
+      $variants = $form_state->getValue('variants');
+      $this->options['variants'] = [];
+
+      // Save settings for each variant.
+      foreach (array_keys($this->variants) as $variant) {
+        $settings = $variants[$variant] + $this->getSitemapSettings($variant);
+
+        if ($settings['index']) {
+          $settings['arguments'] = array_filter($settings['arguments']);
+          $this->options['variants'][$variant] = $settings;
         }
       }
     }
@@ -225,16 +223,18 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
    * {@inheritdoc}
    */
   public function validate() {
-    $errors = parent::validate();
+    $errors = [parent::validate()];
 
     // Validate the argument options relative to the
     // current state of the view argument handlers.
     if ($this->hasSitemapSettings()) {
-      $settings = $this->getSitemapSettings();
-      $result = $this->validateIndexedArguments($settings['arguments']);
-      $errors = array_merge($errors, $result);
+      foreach (array_keys($this->variants) as $variant) {
+        $settings = $this->getSitemapSettings($variant);
+        $errors[] = $this->validateIndexedArguments($settings['arguments']);
+      }
     }
-    return $errors;
+
+    return array_merge([], ...$errors);
   }
 
   /**
@@ -246,48 +246,48 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
         'title' => $this->t('Simple XML Sitemap'),
         'column' => 'second',
       ];
+
+      $included_variants = [];
+      foreach (array_keys($this->variants) as $variant) {
+        $settings = $this->getSitemapSettings($variant);
+
+        if ($settings['index']) {
+          $included_variants[] = $variant;
+        }
+      }
+
       $options['simple_sitemap'] = [
+        'title' => NULL,
         'category' => 'simple_sitemap',
-        'title' => $this->t('Status'),
-        'value' => $this->isIndexingEnabled() ? $this->t('Included in sitemap') : $this->t('Excluded from sitemap'),
+        'value' => $included_variants ? $this->t('Included in sitemap variants: @variants', [
+          '@variants' => implode(', ', $included_variants),
+        ]) : $this->t('Excluded from all sitemap variants'),
       ];
     }
   }
 
   /**
-   * Displays the sitemap settings form.
+   * Gets the sitemap settings.
    *
-   * @param array $form
-   *   The form structure.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Current form state.
-   */
-  public function displaySitemapSettingsForm(array $form, FormStateInterface $form_state) {
-    // Update index option.
-    $this->options['index'] = empty($this->options['index']);
-
-    // Rebuild settings form.
-    /** @var \Drupal\views_ui\ViewUI $view */
-    $view = $form_state->get('view');
-    $display_handler = $view->getExecutable()->display_handler;
-    $extender_options = $display_handler->getOption('display_extenders');
-    if (isset($extender_options[$this->pluginId])) {
-      $extender_options[$this->pluginId] = $this->options;
-      $display_handler->setOption('display_extenders', $extender_options);
-    }
-    $view->cacheSet();
-    $form_state->set('rerender', TRUE);
-    $form_state->setRebuild();
-  }
-
-  /**
-   * Get sitemap settings configuration for this display.
+   * @param string $variant
+   *   The name of the sitemap variant.
    *
    * @return array
    *   The sitemap settings.
    */
-  public function getSitemapSettings() {
-    return $this->options;
+  public function getSitemapSettings($variant) {
+    $settings = [
+      'index' => 0,
+      'priority' => 0.5,
+      'changefreq' => '',
+      'arguments' => [],
+      'max_links' => 100,
+    ];
+
+    if (isset($this->options['variants'][$variant])) {
+      $settings = $this->options['variants'][$variant] + $settings;
+    }
+    return $settings;
   }
 
   /**
@@ -301,26 +301,15 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
   }
 
   /**
-   * Identify whether or not the current display indexing is enabled.
-   *
-   * @return bool
-   *   Indexing is enabled (TRUE) or not (FALSE).
-   */
-  public function isIndexingEnabled() {
-    $settings = $this->getSitemapSettings();
-    return !empty($settings['index']);
-  }
-
-  /**
    * Returns available view arguments options.
    *
    * @return array
    *   View arguments labels keyed by argument ID.
    */
   protected function getArgumentsOptions() {
-    $arguments_options = [];
-    // Get view argument handlers.
     $arguments = $this->displayHandler->getHandlers('argument');
+    $arguments_options = [];
+
     /** @var \Drupal\views\Plugin\views\argument\ArgumentPluginBase $argument */
     foreach ($arguments as $id => $argument) {
       $arguments_options[$id] = $argument->adminLabel();

@@ -89,8 +89,8 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
 
     foreach ($this->configuration['ignored'] as $config_ignore_setting) {
       // Split the ignore settings so that we can ignore individual keys.
-      $ignore = explode(':', $config_ignore_setting);
-      if (fnmatch($ignore[0], $config_name)) {
+      $ignore = explode(':', $config_ignore_setting, 2);
+      if (self::wildcardMatch($ignore[0], $config_name)) {
         return TRUE;
       }
     }
@@ -118,8 +118,8 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
     $keys = [];
     foreach ($this->configuration['ignored'] as $ignored) {
       // Split the ignore settings so that we can ignore individual keys.
-      $ignored = explode(':', $ignored);
-      if (fnmatch($ignored[0], $name)) {
+      $ignored = explode(':', $ignored, 2);
+      if (self::wildcardMatch($ignored[0], $name)) {
         if (count($ignored) == 1) {
           // If one of the definitions does not have keys ignore the
           // whole config.
@@ -134,7 +134,7 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
     }
 
     $active = $this->active->read($name);
-    if (!$active) {
+    if (!$active || !$data) {
       return $data;
     }
     foreach ($keys as $key) {
@@ -177,7 +177,7 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
       $filtered_data[$name] = $this->activeRead($name, $data[$name]);
     }
 
-    return $filtered_data;
+    return array_filter($filtered_data);
   }
 
   /**
@@ -237,6 +237,23 @@ class IgnoreFilter extends ConfigFilterBase implements ContainerFactoryPluginInt
   public function filterGetAllCollectionNames(array $collections) {
     // Add active collection names as there could be ignored config in them.
     return array_merge($collections, $this->active->getAllCollectionNames());
+  }
+
+  /**
+   * Checks if a string matches a given wildcard pattern.
+   *
+   * @param string $pattern
+   *   The wildcard pattern to me matched.
+   * @param string $string
+   *   The string to be checked.
+   *
+   * @return bool
+   *   TRUE if $string string matches the $pattern pattern.
+   */
+  protected static function wildcardMatch($pattern, $string) {
+    $pattern = '/^' . preg_quote($pattern, '/') . '$/';
+    $pattern = str_replace('\*', '.*', $pattern);
+    return (bool) preg_match($pattern, $string);
   }
 
 }

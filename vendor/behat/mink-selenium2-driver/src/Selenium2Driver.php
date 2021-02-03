@@ -972,14 +972,17 @@ JS;
      */
     public function wait($timeout, $condition)
     {
-        $script = 'return (' . $condition . ');';
+        $script = 'return (' . rtrim($condition, " \t\n\r;") . ');';
         $start = microtime(true);
         $end = $start + $timeout / 1000.0;
 
         do {
             $result = $this->wdSession->execute(array('script' => $script, 'args' => array()));
+            if ($result) {
+              break;
+            }
             usleep(10000);
-        } while (microtime(true) < $end && !$result);
+        } while (microtime(true) < $end);
 
         return (bool) $result;
     }
@@ -1192,7 +1195,7 @@ JS;
         $tempFilename = tempnam('', 'WebDriverZip');
 
         $archive = new \ZipArchive();
-        $result = $archive->open($tempFilename, \ZipArchive::CREATE);
+        $result = $archive->open($tempFilename, \ZipArchive::OVERWRITE);
         if (!$result) {
           throw new DriverException('Zip archive could not be created. Error ' . $result);
         }

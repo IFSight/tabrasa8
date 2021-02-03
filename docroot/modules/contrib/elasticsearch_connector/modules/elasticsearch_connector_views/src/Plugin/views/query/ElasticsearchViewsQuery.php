@@ -3,7 +3,6 @@
 namespace Drupal\elasticsearch_connector_views\Plugin\views\query;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\elasticsearch_connector\Entity\Cluster;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
@@ -185,6 +184,9 @@ class ElasticsearchViewsQuery extends QueryPluginBase {
       $this->index = $data['table']['base']['index'];
       $this->elasticsearchTypes[$data['table']['base']['type']] = $data['table']['base']['type'];
       $this->elasticsearchCluster = $this->entityTypeManager->getStorage('elasticsearch_cluster')->load($cluster_id);
+      if (!$this->elasticsearchCluster) {
+        throw new \Exception('Elasticsearch cluster is not configured.');
+      }
       $clientManager = \Drupal::service('elasticsearch_connector.client_manager');
       $this->elasticsearchClient = $clientManager->getClientForCluster($this->elasticsearchCluster);
     }
@@ -394,12 +396,12 @@ class ElasticsearchViewsQuery extends QueryPluginBase {
     $filter = array();
     foreach ($where as $wh) {
       foreach ($wh['conditions'] as $cond) {
-        $filter[Unicode::strtolower($wh['type'])][] = $cond['field'];
+        $filter[mb_strtolower($wh['type'])][] = $cond['field'];
       }
     }
 
     if (count($filter) > 1) {
-      $filter = array(Unicode::strtolower($this->group_operator) => $filter);
+      $filter = array(mb_strtolower($this->group_operator) => $filter);
     }
 
     return $filter;
@@ -483,7 +485,7 @@ class ElasticsearchViewsQuery extends QueryPluginBase {
 
     if ($this->errors) {
       foreach ($this->errors as $msg) {
-        drupal_set_message($msg, 'error');
+        $this->messenger()->addError($msg);
       }
       $view->result = array();
       $view->total_rows = 0;

@@ -134,7 +134,12 @@ class WebformElementFormatTest extends WebformElementBrowserTestBase {
       'File (File extension)' => 'txt',
       'File (URL)' => $this->getSubmissionFileUrl($submission, 'managed_file_url'),
     ];
+
     foreach ($elements as $label => $value) {
+      // @todo Remove once Drupal 9.1.x is only supported.
+      if (floatval(\Drupal::VERSION) >= 9.1) {
+        $value = str_replace('; length=43', '', $value);
+      }
       $this->assertStringContainsString('<b>' . $label . '</b><br />' . $value, $body, new FormattableMarkup('Found @label: @value', ['@label' => $label, '@value' => $value]));
     }
 

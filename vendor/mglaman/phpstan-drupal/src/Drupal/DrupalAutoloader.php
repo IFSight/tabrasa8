@@ -95,12 +95,20 @@ class DrupalAutoloader
             return $a->getName() === 'blazy_test' ? 10 : 0;
         });
         $this->themeData = $this->extensionDiscovery->scan('theme');
-        $this->addCoreNamespaces();
+        $this->addTestNamespaces();
         $this->addModuleNamespaces();
         $this->addThemeNamespaces();
         $this->registerPs4Namespaces($this->namespaces);
         $this->loadLegacyIncludes();
         require_once $this->drupalRoot . '/core/tests/bootstrap.php';
+
+        // class_alias is not supported by OptimizedDirectorySourceLocator or AutoloadSourceLocator,
+        // so we manually load this PHPUnit compatibility trait that exists in Drupal 8.
+        $phpunitCompatTraitFilepath = $this->drupalRoot . '/core/tests/Drupal/Tests/PhpunitCompatibilityTrait.php';
+        if (file_exists($phpunitCompatTraitFilepath)) {
+            require_once $phpunitCompatTraitFilepath;
+            $this->autoloader->addClassMap(['Drupal\\Tests\\PhpunitCompatibilityTrait' => $phpunitCompatTraitFilepath]);
+        }
 
         foreach ($this->moduleData as $extension) {
             $this->loadExtension($extension);
@@ -209,28 +217,18 @@ class DrupalAutoloader
         }
     }
 
-    protected function addCoreNamespaces(): void
+    protected function addTestNamespaces(): void
     {
-        foreach (['Core', 'Component'] as $parent_directory) {
-            $path = $this->drupalRoot . '/core/lib/Drupal/' . $parent_directory;
-            $parent_namespace = 'Drupal\\' . $parent_directory;
-            foreach (new \DirectoryIterator($path) as $component) {
-                if (!$component->isDot() && $component->isDir()) {
-                    $this->namespaces[$parent_namespace . '\\' . $component->getFilename()] = $path . '/' . $component->getFilename();
-                }
-            }
-        }
-
         // Add core test namespaces.
         $core_tests_dir = $this->drupalRoot . '/core/tests/Drupal';
+        $this->namespaces['Drupal\\BuildTests'] = $core_tests_dir . '/BuildTests';
+        $this->namespaces['Drupal\\FunctionalJavascriptTests'] = $core_tests_dir . '/FunctionalJavascriptTests';
+        $this->namespaces['Drupal\\FunctionalTests'] =  $core_tests_dir . '/FunctionalTests';
+        $this->namespaces['Drupal\\KernelTests'] = $core_tests_dir . '/KernelTests';
         $this->namespaces['Drupal\\Tests'] = $core_tests_dir . '/Tests';
         $this->namespaces['Drupal\\TestSite'] = $core_tests_dir . '/TestSite';
-        $this->namespaces['Drupal\\KernelTests'] = $core_tests_dir . '/KernelTests';
-        $this->namespaces['Drupal\\FunctionalTests'] =  $core_tests_dir . '/FunctionalTests';
-        $this->namespaces['Drupal\\FunctionalJavascriptTests'] = $core_tests_dir . '/FunctionalJavascriptTests';
-        $this->namespaces['Drupal\\Tests\\TestSuites'] = $this->drupalRoot . '/core/tests/TestSuites';
-        $this->namespaces['Drupal\\BuildTests'] = $core_tests_dir . '/BuildTests';
         $this->namespaces['Drupal\\TestTools'] = $core_tests_dir . '/TestTools';
+        $this->namespaces['Drupal\\Tests\\TestSuites'] = $this->drupalRoot . '/core/tests/TestSuites';
     }
 
     protected function addModuleNamespaces(): void

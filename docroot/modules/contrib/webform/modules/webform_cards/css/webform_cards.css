@@ -21,8 +21,7 @@ html.js .webform-card.webform-card--error[style*="display: block"] {
   display: block !important;
 }
 
-.webform-cards .webform-cards-button--previous,
-.webform-cards .webform-cards-button--next {
+html.js .webform-cards .form-actions {
   display: none;
 }
 

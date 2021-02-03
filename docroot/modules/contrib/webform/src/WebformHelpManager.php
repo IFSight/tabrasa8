@@ -1789,7 +1789,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         '<li>' . $this->t('Generate a *.make.yml or composer.json file using <code>drush @webform-libraries-make</code> or <code>drush @webform-libraries-composer</code>.', $t_args) . '</li>' .
         '<li>' . $this->t('Execute <code>drush @webform-libraries-download</code>, to download third-party libraries required by the Webform module. (OSX/Linux)', $t_args) . '</li>' .
         '<li>' . $this->t("Execute <code>drush @webform-composer-update</code>, to update your Drupal installation's composer.json to include the Webform module's selected libraries as repositories.", $t_args) . '</li>' .
-        '<li>' . $this->t('Download and extract a <a href=":href">zipped archive containing all webform libraries</a> and extract the directories and files to /libraries or /web/libraries', [':href' => 'https://git.drupalcode.org/sandbox/jrockowitz-2941983/raw/8.x-1.x/libraries.zip']) . '</li>' .
+        '<li>' . $this->t('Download and extract a <a href=":href">zipped archive containing all webform libraries</a> and extract the directories and files to /libraries or /web/libraries', [':href' => 'https://git.drupalcode.org/sandbox/jrockowitz-2941983/raw/8.x-5.x/libraries.zip']) . '</li>' .
         '</ul>',
       'message_type' => 'info',
       'message_close' => TRUE,

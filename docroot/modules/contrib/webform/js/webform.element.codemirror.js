@@ -59,7 +59,7 @@
               $(textarea).hide().removeClass('visually-hidden');
 
               // Tabindex + 2 accounts for the CodeMirror's iframe.
-              $tabbable.eq(tabindex + 2).focus();
+              $tabbable.eq(tabindex + 2).trigger('focus');
             }
 
           }

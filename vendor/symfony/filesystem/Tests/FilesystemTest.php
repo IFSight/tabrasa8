@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Filesystem\Tests;
 
+use Symfony\Component\Filesystem\Exception\IOException;
+
 /**
  * Test class for Filesystem.
  */
@@ -334,6 +336,28 @@ class FilesystemTest extends FilesystemTestCase
         $this->assertFileDoesNotExist($basePath.'dir');
     }
 
+    public function testRemoveThrowsExceptionOnPermissionDenied()
+    {
+        $this->markAsSkippedIfChmodIsMissing();
+
+        $basePath = $this->workspace.\DIRECTORY_SEPARATOR.'dir_permissions';
+        mkdir($basePath);
+        $file = $basePath.\DIRECTORY_SEPARATOR.'file';
+        touch($file);
+        chmod($basePath, 0400);
+
+        try {
+            $this->filesystem->remove($file);
+            $this->fail('Filesystem::remove() should throw an exception');
+        } catch (IOException $e) {
+            $this->assertStringContainsString('Failed to remove file "'.$file.'"', $e->getMessage());
+            $this->assertStringContainsString('Permission denied', $e->getMessage());
+        } finally {
+            // Make sure we can clean up this file
+            chmod($basePath, 0777);
+        }
+    }
+
     public function testRemoveCleansInvalidLinks()
     {
         $this->markAsSkippedIfSymlinkIsMissing();
@@ -377,7 +401,7 @@ class FilesystemTest extends FilesystemTestCase
             $this->markTestSkipped('Long file names are an issue on Windows');
         }
         $basePath = $this->workspace.'\\directory\\';
-        $maxPathLength = PHP_MAXPATHLEN - 2;
+        $maxPathLength = \PHP_MAXPATHLEN - 2;
 
         $oldPath = getcwd();
         mkdir($basePath);

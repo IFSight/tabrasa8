@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * @file
+ * Test file for the todo standard.
+ *
+ * These are valid examples.
+ *
+ * @todo Valid.
+ * @todo valid with lower-case first letter
+ * @todo $can start with a $
+ * @todo \also with backslash
+ *
+ * These are all incorrect but can be fixed automatically.
+ *
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ * @todo Error
+ *
+ * These are all incorrect but cannot be fully fixed automatically.
+ *
+ * @todo
+ * @todo
+ * @todo
+ */
+
+/**
+ * Example function.
+ */
+function foo() {
+  // These are valid examples.
+  // @todo Valid.
+  // @todo valid with lower-case first letter
+  // @todo $can start with a $
+  // @todo \also with backslash
+  // This is not a todo tag. It is a general comment and we do not want
+  // to do the standards checking here.
+  // These are all incorrect but can be fixed automatically.
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // @todo Error
+  // These are all incorrect but cannot be fully fixed automatically.
+  // @todo
+  // @todo
+  // @todo
+}

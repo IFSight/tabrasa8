@@ -7,7 +7,7 @@ configure: entity.config_split.collection
 dependencies:
   - config_filter:config_filter
 
-# Information added by Drupal.org packaging script on 2020-09-08
-version: '8.x-1.5'
+# Information added by Drupal.org packaging script on 2020-10-27
+version: '8.x-1.7'
 project: 'config_split'
-datestamp: 1599549546
+datestamp: 1603782948

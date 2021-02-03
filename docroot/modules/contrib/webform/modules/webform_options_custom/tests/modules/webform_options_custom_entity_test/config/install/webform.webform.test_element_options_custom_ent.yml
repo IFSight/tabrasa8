@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -157,6 +158,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -209,6 +211,7 @@ handlers:
   debug:
     id: debug
     label: Debug
+    notes: ''
     handler_id: debug
     status: true
     conditions: {  }
@@ -217,6 +220,7 @@ handlers:
   options_limit:
     id: options_limit
     label: 'Options limit'
+    notes: ''
     handler_id: options_limit
     status: true
     conditions: {  }

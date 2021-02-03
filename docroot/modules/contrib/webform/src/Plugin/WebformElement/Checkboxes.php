@@ -137,7 +137,7 @@ class Checkboxes extends OptionsBase {
     $selectors = $element['#options'];
     foreach ($selectors as $index => $text) {
       // Remove description from text.
-      list($text) = explode(WebformOptionsHelper::DESCRIPTION_DELIMITER, $text);
+      list($text) = WebformOptionsHelper::splitOption($text);
       // Append element type to text.
       $text .= ' [' . $this->t('Checkbox') . ']';
       $selectors[$index] = $text;

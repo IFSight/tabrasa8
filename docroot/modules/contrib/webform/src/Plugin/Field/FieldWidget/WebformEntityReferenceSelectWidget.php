@@ -55,7 +55,7 @@ class WebformEntityReferenceSelectWidget extends OptionsWidgetBase {
     // it as an option.
     if ($default_value && $webform = Webform::load($default_value)) {
       if ($webform->isArchived()) {
-        $options[(string) t('Archived')][$webform->id()] = $webform->label();
+        $options[(string) $this->t('Archived')][$webform->id()] = $webform->label();
       }
     }
 

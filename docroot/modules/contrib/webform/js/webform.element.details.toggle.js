@@ -42,13 +42,15 @@
         var $toggle = $(options.button)
           .attr('title', Drupal.t('Toggle details widget state.'))
           .on('click', function (e) {
+            // Get details that are not vertical tabs pane.
+            var $details = $form.find('details:not(.vertical-tabs__pane)');
             var open;
             if (Drupal.webform.detailsToggle.isFormDetailsOpen($form)) {
-              $form.find('details').removeAttr('open');
+              $details.removeAttr('open');
               open = 0;
             }
             else {
-              $form.find('details').attr('open', 'open');
+              $details.attr('open', 'open');
               open = 1;
             }
             Drupal.webform.detailsToggle.setDetailsToggleLabel($form);
@@ -56,7 +58,7 @@
             // Set the saved states for all the details elements.
             // @see webform.element.details.save.js
             if (Drupal.webformDetailsSaveGetName) {
-              $form.find('details').each(function () {
+              $details.each(function () {
                 // Note: Drupal.webformDetailsSaveGetName checks if localStorage
                 // exists and is enabled.
                 // @see webform.element.details.save.js

@@ -78,9 +78,10 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
 
   public function render() {
     return ['simple_sitemap_engines' => [
+      '#type' => 'details',
+      '#open' => TRUE,
       '#prefix' => FormHelper::getDonationText(),
       '#title' => $this->t('Submission status'),
-      '#type' => 'fieldset',
       'table' => parent::render(),
       '#description' => $this->t('Submission settings can be configured <a href="@url">here</a>.', ['@url' => $GLOBALS['base_url'] . '/admin/config/search/simplesitemap/engines/settings']),
     ]];

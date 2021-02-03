@@ -466,8 +466,19 @@ class Simplesitemap {
       }
       $bundle_settings->save();
 
+      if (empty($entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name))) {
+        return $this;
+      }
+
+      // Delete all entity overrides in case bundle indexation is disabled.
+      if (empty($settings['index'])) {
+        $this->removeEntityInstanceSettings($entity_type_id, $entity_ids);
+
+        return $this;
+      }
+
       // Delete entity overrides which are identical to new bundle settings.
-      $entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name);
+      // todo Enclose into some sensible method.
       $query = $this->db->select('simple_sitemap_entity_overrides', 'o')
         ->fields('o', ['id', 'inclusion_settings'])
         ->condition('o.entity_type', $entity_type_id)
@@ -491,6 +502,8 @@ class Simplesitemap {
         }
       }
       if (!empty($delete_instances)) {
+
+        // todo Use removeEntityInstanceSettings() instead.
         $this->db->delete('simple_sitemap_entity_overrides')
           ->condition('id', $delete_instances, 'IN')
           ->execute();
@@ -522,7 +535,6 @@ class Simplesitemap {
    *  entity type does not exist.
    */
   public function getBundleSettings($entity_type_id = NULL, $bundle_name = NULL, $supplement_defaults = TRUE, $multiple_variants = FALSE) {
-
     $bundle_name = NULL !== $bundle_name ? $bundle_name : $entity_type_id;
     $all_bundle_settings = [];
 
@@ -595,8 +607,9 @@ class Simplesitemap {
           ->getEditable("simple_sitemap.bundle_settings.$variant.$entity_type_id.$bundle_name")->delete();
       }
 
-      $entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name);
-      $this->removeEntityInstanceSettings($entity_type_id, (empty($entity_ids) ? NULL : $entity_ids));
+      if (!empty($entity_ids = $this->entityHelper->getEntityInstanceIds($entity_type_id, $bundle_name))) {
+        $this->removeEntityInstanceSettings($entity_type_id, $entity_ids);
+      }
     }
     else {
       foreach ($variants as $variant) {

@@ -36,7 +36,7 @@ class WebformStatesManagerTest extends WebformBrowserTestBase {
     $this->assertRaw('<label>textfield_or</label>');
     $this->assertRaw('This element is <strong>required</strong> when <strong>any</strong> of the following conditions are met:<ul><li><strong>some_trigger</strong> is checked.</li><li><strong>some_value</strong> = <strong>one</strong>.</li><li><strong>some_number</strong> &gt;= <strong>1</strong>.</li></ul>');
     $this->assertRaw('<label>textfield_or</label>');
-    $this->assertRaw('This element is <strong>required</strong> when <strong>any</strong> of the following conditions are met:<ul><li><strong>some_trigger</strong> is checked.</li><li>When <strong>any</strong> of the following (nested) conditions are met:<ul><li><strong>some_value</strong> = <strong>one</strong>.</li><li><strong>some_number</strong> is between <strong>1</strong> and <strong>10</strong>.</li></ul></li></ul>');
+    $this->assertRaw('This element is <strong>required</strong> when <strong>any</strong> of the following conditions are met:<ul><li><strong>some_trigger</strong> is not checked.</li><li>When <strong>any</strong> of the following (nested) conditions are met:<ul><li><strong>some_value</strong> = <strong>one</strong>.</li><li><strong>some_number</strong> is between <strong>1</strong> and <strong>10</strong>.</li></ul></li></ul>');
   }
 
 }

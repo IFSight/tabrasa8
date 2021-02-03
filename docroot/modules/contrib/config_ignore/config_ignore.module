@@ -6,9 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Config\StorageComparer;
-use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Url;
 
 /**
@@ -18,15 +16,14 @@ function config_ignore_form_config_admin_import_form_alter(&$form, FormStateInte
 
   // Load Services that we need.
   $stock_storage_sync = \Drupal::service('config_filter.storage_factory')->getSyncWithoutExcluded(['config_ignore']);
-  $active_storage_sync = \Drupal::service('config.storage.sync');
+  $active_storage_sync = \Drupal::service('config.import_transformer')->transform(\Drupal::service('config.storage.sync'));
   $storage = \Drupal::service('config.storage');
-  $config_manager = \Drupal::service('config.manager');
 
   // Create two StorageComparer objects, one with the filter enabled and one
   // as without. We will compare them later to see what changes that has been
   // ignored.
-  $unfiltered_storage_compare = new StorageComparer($stock_storage_sync, $storage, $config_manager);
-  $filtered_storage_compare = new StorageComparer($active_storage_sync, $storage, $config_manager);
+  $unfiltered_storage_compare = new StorageComparer($stock_storage_sync, $storage);
+  $filtered_storage_compare = new StorageComparer($active_storage_sync, $storage);
   $unfiltered_storage_compare->createChangelist();
   $filtered_storage_compare->createChangelist();
 
@@ -61,7 +58,7 @@ function config_ignore_form_config_admin_import_form_alter(&$form, FormStateInte
       '#header' => ['Config name', 'Action'],
       '#caption' => t('<h3>The following configuration entities are ignored due to the <a href="@url">Config Ignore Settings</a> and therefore not displayed in the list above</h3>', [
         '@url' => Url::fromRoute('config_ignore.settings')
-          ->toString()
+          ->toString(),
       ]),
       '#rows' => $ignored_config_entities,
     ];

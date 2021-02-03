@@ -129,7 +129,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       return FALSE;
     }
 
-    $url_object = $data_set->getUrlObject();
+    $url_object = $data_set->getUrlObject()->setAbsolute();
 
     // Do not include external paths.
     if ($url_object->isExternal()) {
@@ -173,8 +173,6 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
         $path = $uri;
       }
     }
-
-    $url_object->setOption('absolute', TRUE);
 
     $entity = $this->entityHelper->getEntityFromUrlObject($url_object);
 

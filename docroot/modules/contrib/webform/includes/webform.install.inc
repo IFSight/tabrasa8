@@ -100,9 +100,11 @@ function _webform_update_webform_settings() {
  */
 function _webform_update_webform_setting(array $data) {
   $default_properties = [
+    'uuid' => NULL,
     'langcode' => 'en',
     'status' => WebformInterface::STATUS_OPEN,
     'dependencies' => [],
+    'third_party_settings' => [],
     'open' => NULL,
     'close' => NULL,
     'weight' => 0,
@@ -129,6 +131,10 @@ function _webform_update_webform_setting(array $data) {
   // Now apply defined properties.
   foreach ($data as $name => $value) {
     $properties[$name] = $value;
+  }
+  // Empty settings.
+  if (empty($properties['third_party_settings'])) {
+    unset($properties['third_party_settings']);
   }
   // Set properties.
   $data = $properties;
@@ -171,11 +177,17 @@ function _webform_update_webform_setting_settings(array $settings) {
     }
     unset($settings['page_admin_theme']);
   }
+
+  // Issue #3151506: Remove .webform-elements wrapper around elements.
+  if (isset($settings['form_elements_attributes'])) {
+    unset($settings['form_elements_attributes']);
+  }
+
   return $settings;
 }
 
 /**
- * Update webform handler settings to reflect changes in a handler's default configuration.
+ * Update webform handler settings to reflect changes in the handler's settings.
  *
  * @see \Drupal\webform\Plugin\WebformHandlerInterface
  */
@@ -313,6 +325,10 @@ function _webform_update_field_storage_definitions() {
  */
 function _webform_update_webform_submission_storage_schema() {
   $manager = \Drupal::entityDefinitionUpdateManager();
+  if (!$manager->getEntityType('webform_submission')) {
+    $type = \Drupal::entityTypeManager()->getDefinition('webform_submission');
+    $manager->installEntityType($type);
+  }
   $manager->updateEntityType($manager->getEntityType('webform_submission'));
 }
 
