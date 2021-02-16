@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "724b2b515837677de213a0549ea4ab36",
+    "content-hash": "eb809142e25443da349c4f90fe087e06",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3165,16 +3165,6 @@
             }
         },
         {
-            "name": "drupal/paladin",
-            "version": "1.0",
-            "source": {
-                "type": "git",
-                "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
-                "reference": "8.x-1.0"
-            },
-            "type": "drupal-theme"
-        },
-        {
             "name": "drupal/paragraphs",
             "version": "1.12.0",
             "source": {
@@ -5166,6 +5156,16 @@
                 "reference": "0.2"
             },
             "type": "drupal-module"
+        },
+        {
+            "name": "ifsight/paladin",
+            "version": "1.1",
+            "source": {
+                "type": "git",
+                "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
+                "reference": "1.1"
+            },
+            "type": "drupal-theme"
         },
         {
             "name": "kenwheeler/slick-carousel",
@@ -10050,6 +10050,16 @@
             "time": "2020-06-01T18:13:52+00:00"
         },
         {
+            "name": "drupal/paladin",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
+                "reference": "8.x-1.0"
+            },
+            "type": "drupal-theme"
+        },
+        {
             "name": "drush/drush",
             "version": "10.3.6",
             "source": {
@@ -13867,5 +13877,6 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

@@ -40,7 +40,6 @@
         "drupal/mailsystem": "^4.1",
         "drupal/menu_block": "^1.4",
         "drupal/metatag": "^1.4",
-        "drupal/paladin": "^1.0",
         "drupal/paragraphs": "^1.2",
         "drupal/pathauto": "^1.0",
         "drupal/plupload": "^1.0@beta",
@@ -66,6 +65,7 @@
         "ifsight/fulcrum_whitelist": "1.1.0",
         "ifsight/if_admin": "0.1",
         "ifsight/if_helper": "0.1",
+        "ifsight/paladin": "1.1",
         "ifsight/if_varnish_purge_tags": "0.2",
         "kenwheeler/slick-carousel": "^1.8.1",
         "oomphinc/composer-installers-extender": "^1.1",
@@ -179,13 +179,13 @@
         {
             "type": "package",
             "package": {
-                "name": "drupal/paladin",
-                "version": "1.0",
+                "name": "ifsight/paladin",
+                "version": "1.1",
                 "type": "drupal-theme",
                 "source": {
                     "url": "git@git.ifsight.net:proj/contrib/if-paladin-theme.git",
                     "type": "git",
-                    "reference": "8.x-1.0"
+                    "reference": "1.1"
                 }
             }
         },

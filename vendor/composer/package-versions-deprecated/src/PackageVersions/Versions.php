@@ -79,7 +79,6 @@ final class Versions
   'drupal/mailsystem' => '4.3.0@8.x-4.3',
   'drupal/menu_block' => '1.6.0@8.x-1.6',
   'drupal/metatag' => '1.15.0@8.x-1.15',
-  'drupal/paladin' => '1.0@8.x-1.0',
   'drupal/paragraphs' => '1.12.0@8.x-1.12',
   'drupal/pathauto' => '1.8.0@8.x-1.8',
   'drupal/plupload' => '1.0.0-beta2@8.x-1.0-beta2',
@@ -114,6 +113,7 @@ final class Versions
   'ifsight/if_admin' => '0.1@v0.1',
   'ifsight/if_helper' => '0.1@v0.1',
   'ifsight/if_varnish_purge_tags' => '0.2@0.2',
+  'ifsight/paladin' => '1.1@1.1',
   'kenwheeler/slick-carousel' => '1.8.1@v1.8.1',
   'laminas/laminas-diactoros' => '1.8.7p2@6991c1af7c8d2c8efee81b22ba97024781824aaa',
   'laminas/laminas-escaper' => '2.6.1@25f2a053eadfa92ddacb609dcbbc39362610da70',
@@ -196,6 +196,7 @@ final class Versions
   'drupal/devel' => '2.1.0@8.x-2.1',
   'drupal/drupal-driver' => 'v2.1.0@ebc7fc3cbaa0b2eb7bcb100d1302dadb67a9de29',
   'drupal/drupal-extension' => 'v4.1.0@f611a70aaa2d1ef6b3fdae9c35dc573508c7d648',
+  'drupal/paladin' => '1.0@8.x-1.0',
   'drush/drush' => '10.3.6@fc985a95c6010e04891a2dbcf3f39984b8c9ef0a',
   'fabpot/goutte' => 'v3.2.3@3f0eaf0a40181359470651f1565b3e07e3dd31b8',
   'genesis/behat-fail-aid' => '2.5.3@d2003483676a6a0166867b1a0c03d1afbc850300',
@@ -260,7 +261,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.2@c8e5dbe65caef285fec8057a4c718a0d4138d1ee',
   'webmozart/assert' => '1.9.1@bafc69caeb4d49c39fd0779086c03a3738cbb389',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-master@fe290760dec98d926371b4aa6180823ae87923a9',
+  'drupal/drupal' => 'dev-paladin-versioning@24e1d29af0db03619e11a894a72349ab19fe5dcc',
 );
 
     private function __construct()
