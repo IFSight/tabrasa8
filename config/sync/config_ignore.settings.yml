@@ -1,4 +1,8 @@
 ignored_config_entities:
+  - cloudflare.settings
+  - google_analytics.settings
+  - if_govdelivery.settings
+  - recaptcha.settings
   - smtp.settings
 _core:
   default_config_hash: UVH1aJ4b44UM-VdPVN7hNNuuVqfReJxwfVeDQH1Hvsk
