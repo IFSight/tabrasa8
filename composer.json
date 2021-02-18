@@ -137,7 +137,8 @@
                 "type:drupal-library",
                 "type:npm-asset",
                 "type:bower-asset"
-            ]
+            ],
+            "{$name}": ["type:root-package"]
         }
     },
     "scripts": {
