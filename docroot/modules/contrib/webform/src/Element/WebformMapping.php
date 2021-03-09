@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 
 /**
@@ -174,7 +175,7 @@ class WebformMapping extends FormElement {
     array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformMapping']);
 
     if (!empty($element['#states'])) {
-      webform_process_states($element, '#wrapper_attributes');
+      WebformFormHelper::processStates($element, '#wrapper_attributes');
     }
 
     $element['#attached']['library'][] = 'webform/webform.element.mapping';

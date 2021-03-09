@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\webform\Unit\Plugin\WebformSourceEntity;
 
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -128,10 +129,18 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
     $language_manager->method('getCurrentLanguage')
       ->willReturn(new Language(['id' => 'es']));
 
+    // Build container.
+    $container = new ContainerBuilder();
+    $container->set('entity_type.manager', $entity_type_manager);
+    $container->set('current_route_match', $route_match);
+    $container->set('request_stack', $request_stack);
+    $container->set('language_manager', $language_manager);
+    $container->set('webform.entity_reference_manager', $webform_entity_reference_manager);
+
     /**************************************************************************/
 
     // Create QueryStringWebformSourceEntity plugin instance.
-    $plugin = new QueryStringWebformSourceEntity([], 'query_string', [], $entity_type_manager, $route_match, $request_stack, $language_manager, $webform_entity_reference_manager);
+    $plugin = QueryStringWebformSourceEntity::create($container, [], 'query_string', []);
 
     $output = $plugin->getSourceEntity($options['ignored_types']);
     if ($expect_source_entity) {

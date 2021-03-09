@@ -29,7 +29,7 @@ class WebformSection extends ContainerBase {
       'more' => '',
       'more_title' => '',
       // Title.
-      'title_tag' => \Drupal::config('webform.settings')->get('element.default_section_title_tag'),
+      'title_tag' => $this->configFactory->get('webform.settings')->get('element.default_section_title_tag'),
       'title_display' => '',
       'title_attributes' => [],
       'help_display' => '',

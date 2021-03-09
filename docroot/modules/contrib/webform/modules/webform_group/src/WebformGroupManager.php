@@ -6,6 +6,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupContentInterface;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\WebformAccessRulesManagerInterface;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformRequestInterface;
@@ -15,6 +16,8 @@ use Drupal\webform\WebformSubmissionInterface;
  * Webform group manager manager.
  */
 class WebformGroupManager implements WebformGroupManagerInterface {
+
+  use WebformEntityStorageTrait;
 
   /**
    * The current user.
@@ -29,13 +32,6 @@ class WebformGroupManager implements WebformGroupManagerInterface {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
 
   /**
    * The webform request handler.
@@ -162,7 +158,7 @@ class WebformGroupManager implements WebformGroupManagerInterface {
     }
 
     /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
-    $group_content_storage = $this->entityTypeManager->getStorage('group_content');
+    $group_content_storage = $this->getEntityStorage('group_content');
 
     // Get group content id for the source entity.
     $group_content_ids = $group_content_storage->getQuery()
@@ -201,7 +197,7 @@ class WebformGroupManager implements WebformGroupManagerInterface {
     }
 
     /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
-    $group_content_storage = $this->entityTypeManager->getStorage('group_content');
+    $group_content_storage = $this->getEntityStorage('group_content');
 
     // Get group content id for the source entity.
     $group_content_ids = $group_content_storage->getQuery()
@@ -277,7 +273,7 @@ class WebformGroupManager implements WebformGroupManagerInterface {
     // \Drupal\group\Entity\Storage\GroupRoleStorage::loadByUserAndGroup.
     // @see \Drupal\group\Entity\Storage\GroupRoleStorageInterface::loadByUserAndGroup
     /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $group_role_storage */
-    $group_role_storage = $this->entityTypeManager->getStorage('group_role');
+    $group_role_storage = $this->getEntityStorage('group_role');
     $group_roles = $group_role_storage->loadByUserAndGroup($account, $group, TRUE);
     if (!$group_roles) {
       return [];

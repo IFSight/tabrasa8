@@ -343,19 +343,7 @@ abstract class OptionsBase extends WebformElementBase {
           $value = WebformOptionsHelper::getOptionText($value, $element['#options'], $options_description);
         }
 
-        // Build a render array that uses #plain_text so that
-        // HTML characters are escaped.
-        // @see \Drupal\Core\Render\Renderer::ensureMarkupIsSafe
-        if ($value === '0') {
-          // Issue #2765609: #plain_text doesn't render empty-like values
-          // (e.g. 0 and "0").
-          // Workaround: Use #markup until this issue is fixed.
-          // @todo Remove workaround once only Drupal 8.7.x is supported.
-          $build = ['#markup' => $value];
-        }
-        else {
-          $build = ['#plain_text' => $value];
-        }
+        $build = ['#markup' => $value];
 
         $options += ['prefixing' => TRUE];
         if ($options['prefixing']) {

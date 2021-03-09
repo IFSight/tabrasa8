@@ -2,24 +2,20 @@
 
 namespace Drupal\webform\Plugin\DevelGenerate;
 
-use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Serialization\Yaml;
+use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Utility\WebformArrayHelper;
-use Drupal\webform\WebformEntityReferenceManagerInterface;
-use Drupal\webform\WebformSubmissionGenerateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Component\Datetime\TimeInterface;
 
 /**
- * Provides a WebformSubmissionDevelGenerate trait.
- *
- * @see webform_devel_generate_info_alter()
+ * Provides a WebformSubmissionDevelGenerate plugin.
  */
 trait WebformSubmissionDevelGenerateTrait {
+
+  use WebformEntityStorageTrait;
 
   /**
    * Track in webform submission are being generated.
@@ -50,20 +46,6 @@ trait WebformSubmissionDevelGenerateTrait {
   protected $entityTypeManager;
 
   /**
-   * The webform storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $webformStorage;
-
-  /**
-   * The webform submission storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $webformSubmissionStorage;
-
-  /**
    * The webform submission generation service.
    *
    * @var \Drupal\webform\WebformSubmissionGenerateInterface
@@ -92,59 +74,18 @@ trait WebformSubmissionDevelGenerateTrait {
   protected $time;
 
   /**
-   * Constructs a WebformSubmissionDevelGenerate object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
-   * @param \Drupal\Core\Database\Connection $database
-   *   The database.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
-   * @param \Drupal\webform\WebformSubmissionGenerateInterface $webform_submission_generate
-   *   The webform submission generator.
-   * @param \Drupal\webform\WebformEntityReferenceManagerInterface $webform_entity_reference_manager
-   *   The webform entity reference manager.
-   * @param \Drupal\Component\Datetime\TimeInterface $time
-   *   The time service.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RequestStack $request_stack, Connection $database, EntityTypeManagerInterface $entity_type_manager, MessengerInterface $messenger, WebformSubmissionGenerateInterface $webform_submission_generate, WebformEntityReferenceManagerInterface $webform_entity_reference_manager, TimeInterface $time) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->request = $request_stack->getCurrentRequest();
-    $this->database = $database;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->messenger = $messenger;
-    $this->webformSubmissionGenerate = $webform_submission_generate;
-    $this->webformEntityReferenceManager = $webform_entity_reference_manager;
-    $this->webformStorage = $entity_type_manager->getStorage('webform');
-    $this->webformSubmissionStorage = $entity_type_manager->getStorage('webform_submission');
-    $this->time = $time;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('request_stack'),
-      $container->get('database'),
-      $container->get('entity_type.manager'),
-      $container->get('messenger'),
-      $container->get('webform_submission.generate'),
-      $container->get('webform.entity_reference_manager'),
-      $container->get('datetime.time')
-    );
+    $instance = new static($configuration, $plugin_id, $plugin_definition);
+    $instance->request = $container->get('request_stack')->getCurrentRequest();
+    $instance->database = $container->get('database');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->messenger = $container->get('messenger');
+    $instance->webformSubmissionGenerate = $container->get('webform_submission.generate');
+    $instance->webformEntityReferenceManager = $container->get('webform.entity_reference_manager');
+    $instance->time = $container->get('datetime.time');
+    return $instance;
   }
 
   /**
@@ -158,14 +99,14 @@ trait WebformSubmissionDevelGenerateTrait {
     ];
 
     $options = [];
-    foreach ($this->webformStorage->loadMultiple() as $webform) {
+    foreach ($this->getWebformStorage()->loadMultiple() as $webform) {
       $options[$webform->id()] = $webform->label();
     }
 
     $webform_id = $this->request->get('webform_id');
     $source_entity_type = $this->request->get('entity_type');
     $source_entity_id = $this->request->get('entity_id');
-    $source_entity = ($source_entity_type && $source_entity_id) ? \Drupal::entityTypeManager()->getStorage($source_entity_type)->load($source_entity_id) : NULL;
+    $source_entity = ($source_entity_type && $source_entity_id) ? $this->getEntityStorage($source_entity_type)->load($source_entity_id) : NULL;
 
     if ($webform_id && isset($options[$webform_id])) {
       $form['webform_ids'] = [
@@ -322,10 +263,10 @@ trait WebformSubmissionDevelGenerateTrait {
    *   A webform source entity id.
    */
   protected function deleteWebformSubmissions(array $webform_ids, $entity_type = NULL, $entity_id = NULL) {
-    $webforms = $this->webformStorage->loadMultiple($webform_ids);
-    $entity = ($entity_type && $entity_id) ? $this->entityTypeManager->getStorage($entity_type)->load($entity_id) : NULL;
+    $webforms = $this->getWebformStorage()->loadMultiple($webform_ids);
+    $entity = ($entity_type && $entity_id) ? $this->getEntityStorage($entity_type)->load($entity_id) : NULL;
     foreach ($webforms as $webform) {
-      $this->webformSubmissionStorage->deleteAll($webform, $entity);
+      $this->getSubmissionStorage()->deleteAll($webform, $entity);
     }
   }
 
@@ -359,7 +300,7 @@ trait WebformSubmissionDevelGenerateTrait {
   protected function generateSubmission(&$results) {
     $webform_id = array_rand(array_filter($results['webform_ids']));
     /** @var \Drupal\webform\WebformInterface $webform */
-    $webform = $this->webformStorage->load($webform_id);
+    $webform = $this->getWebformStorage()->load($webform_id);
 
     $users = $results['users'];
     $uid = $users[array_rand($users)];
@@ -369,14 +310,14 @@ trait WebformSubmissionDevelGenerateTrait {
     // Get submission URL from source entity or webform.
     $url = $webform->toUrl();
     if ($entity_type && $entity_id) {
-      $source_entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
+      $source_entity = $this->getEntityStorage($entity_type)->load($entity_id);
       if ($source_entity->hasLinkTemplate('canonical')) {
         $url = $source_entity->toUrl();
       }
     }
 
     $timestamp = rand($results['created_min'], $results['created_max']);
-    $this->webformSubmissionStorage->create([
+    $this->getSubmissionStorage()->create([
       'webform_id' => $webform_id,
       'entity_type' => $entity_type,
       'entity_id' => $entity_id,
@@ -405,7 +346,7 @@ trait WebformSubmissionDevelGenerateTrait {
       return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Webform id required'));
     }
 
-    if (!$this->webformStorage->load($webform_id)) {
+    if (!$this->getWebformStorage()->load($webform_id)) {
       return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid webform name: @name', ['@name' => $webform_id]));
     }
 

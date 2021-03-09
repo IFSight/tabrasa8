@@ -64,7 +64,7 @@ Update libraries.zip
 
     # Checkout branch
     cd /var/www/sites/d8_webform/web/modules/sandbox/webform_libraries/
-    git checkout 8.x-5.x
+    git checkout 6.x
 
     # Remove libraries.zip
     cd /var/www/sites/d8_webform/web/modules/sandbox/webform_libraries/
@@ -79,7 +79,7 @@ Commit changes
 
     # Commit changes.
     cd /var/www/sites/d8_webform/web/modules/sandbox/webform_libraries/
-    git checkout 8.x-5.x
+    git checkout 6.x
     git commit -am"Update webform_libraries"
     git push
 

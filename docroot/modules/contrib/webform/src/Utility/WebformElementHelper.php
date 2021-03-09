@@ -586,7 +586,7 @@ class WebformElementHelper {
   public static function getFlattened(array $elements) {
     $flattened_elements = [];
     foreach ($elements as $key => &$element) {
-      if (!WebformElementHelper::isElement($element, $key)) {
+      if (!self::isElement($element, $key)) {
         continue;
       }
 

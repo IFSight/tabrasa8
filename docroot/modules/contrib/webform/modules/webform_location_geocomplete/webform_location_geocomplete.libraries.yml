@@ -19,6 +19,7 @@ libraries.jquery.geocomplete:
     name: MIT
     url: https://github.com/ubilabs/geocomplete/blob/master/MIT-LICENSE.txt
     gpl-compatible: true
+  directory: geocomplete
   cdn:
     /libraries/geocomplete/: https://cdnjs.cloudflare.com/ajax/libs/geocomplete/1.7.0/
   js:

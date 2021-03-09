@@ -12,6 +12,7 @@ use Drupal\webform\Element\WebformEntityTrait;
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides an 'entity_reference' trait.
@@ -19,6 +20,38 @@ use Drupal\webform\WebformSubmissionInterface;
 trait WebformEntityReferenceTrait {
 
   use WebformAjaxElementTrait;
+
+  /**
+   * The entity repository.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
+
+  /**
+   * The entity type repository.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeRepositoryInterface
+   */
+  protected $entityTypeRepository;
+
+  /**
+   * The selection plugin manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface
+   */
+  protected $selectionManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->entityRepository = $container->get('entity.repository');
+    $instance->entityTypeRepository = $container->get('entity_type.repository');
+    $instance->selectionManager = $container->get('plugin.manager.entity_reference_selection');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -89,7 +122,7 @@ trait WebformEntityReferenceTrait {
         }
 
       default:
-        return \Drupal::entityTypeManager()->getViewBuilder($entity->getEntityTypeId())->view($entity, $format);
+        return $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, $format);
     }
   }
 
@@ -110,7 +143,7 @@ trait WebformEntityReferenceTrait {
       case 'breadcrumb':
         if ($entity->getEntityTypeId() === 'taxonomy_term') {
           /** @var \Drupal\taxonomy\TermStorageInterface $taxonomy_storage */
-          $taxonomy_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+          $taxonomy_storage = $this->entityTypeManager->getStorage('taxonomy_term');
           $parents = $taxonomy_storage->loadAllParents($entity->id());
           $breadcrumb = [];
           foreach ($parents as $parent) {
@@ -408,14 +441,11 @@ trait WebformEntityReferenceTrait {
       $value = [$value];
     }
 
-    /** @var \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository */
-    $entity_repository = \Drupal::service('entity.repository');
-
     $target_type = $this->getTargetType($element);
     $entities = $this->entityTypeManager->getStorage($target_type)->loadMultiple($value);
     foreach ($entities as $entity_id => $entity) {
       // Set the entity in the correct language for display.
-      $entities[$entity_id] = $entity_repository->getTranslationFromContext($entity);
+      $entities[$entity_id] = $this->entityRepository->getTranslationFromContext($entity);
     }
     return $entities;
   }
@@ -487,11 +517,8 @@ trait WebformEntityReferenceTrait {
 
     /**************************************************************************/
 
-    /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $entity_reference_selection_manager */
-    $entity_reference_selection_manager = \Drupal::service('plugin.manager.entity_reference_selection');
-
     // @see \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem
-    $selection_plugins = $entity_reference_selection_manager->getSelectionGroups($target_type);
+    $selection_plugins = $this->selectionManager->getSelectionGroups($target_type);
     $handlers_options = [];
     foreach (array_keys($selection_plugins) as $selection_group_id) {
       if (array_key_exists($selection_group_id, $selection_plugins[$selection_group_id])) {
@@ -505,7 +532,7 @@ trait WebformEntityReferenceTrait {
 
     // Entity Reference fields are no longer supported to reference Paragraphs.
     // @see paragraphs_form_field_storage_config_edit_form_alter()
-    $target_type_options = \Drupal::service('entity_type.repository')->getEntityTypeLabels(TRUE);
+    $target_type_options = $this->entityTypeRepository->getEntityTypeLabels(TRUE);
     unset($target_type_options[(string) $this->t('Content')]['paragraph']);
 
     $form['entity_reference'] = [
@@ -534,7 +561,7 @@ trait WebformEntityReferenceTrait {
     // Selection settings.
     // Note: The below options are used to populate the #default_value for
     // selection settings.
-    $entity_reference_selection_handler = $entity_reference_selection_manager->getInstance([
+    $entity_reference_selection_handler = $this->selectionManager->getInstance([
       'target_type' => $target_type,
       'handler' => $selection_handler,
     ] + $selection_settings);

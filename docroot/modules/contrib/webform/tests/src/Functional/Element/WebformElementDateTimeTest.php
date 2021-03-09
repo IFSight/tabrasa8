@@ -14,6 +14,13 @@ use Drupal\webform\Entity\Webform;
 class WebformElementDateTimeTest extends WebformElementBrowserTestBase {
 
   /**
+   * Modules to enable.
+   *
+   * @var array
+   */
+  public static $modules = ['jquery_ui_datepicker'];
+
+  /**
    * Webforms to load.
    *
    * @var array

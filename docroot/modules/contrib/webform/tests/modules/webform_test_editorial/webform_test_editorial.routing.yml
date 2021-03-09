@@ -1,55 +1,55 @@
-webform_editorial.index:
+webform_test_editorial.index:
   path: '/admin/structure/webform/editorial'
   defaults:
-    _controller: '\Drupal\webform_editorial\Controller\WebformEditorialController::index'
+    _controller: '\Drupal\webform_test_editorial\Controller\WebformTestEditorialController::index'
     _title: 'Webform: Editorial'
   requirements:
     _permission: 'administer webform'
 
-webform_editorial.help:
+webform_test_editorial.help:
   path: '/admin/structure/webform/editorial/help'
   defaults:
-    _controller: '\Drupal\webform_editorial\Controller\WebformEditorialController::help'
+    _controller: '\Drupal\webform_test_editorial\Controller\WebformTestEditorialController::help'
     _title: 'Help'
   requirements:
     _permission: 'administer webform'
 
-webform_editorial.videos:
+webform_test_editorial.videos:
   path: '/admin/structure/webform/editorial/videos'
   defaults:
-    _controller: '\Drupal\webform_editorial\Controller\WebformEditorialController::videos'
+    _controller: '\Drupal\webform_test_editorial\Controller\WebformTestEditorialController::videos'
     _title: 'Videos'
   requirements:
     _permission: 'administer webform'
 
-webform_editorial.elements:
+webform_test_editorial.elements:
   path: '/admin/structure/webform/editorial/elements'
   defaults:
-    _controller: '\Drupal\webform_editorial\Controller\WebformEditorialController::elements'
+    _controller: '\Drupal\webform_test_editorial\Controller\WebformTestEditorialController::elements'
     _title: 'Help'
   requirements:
     _permission: 'administer webform'
 
-webform_editorial.libraries:
+webform_test_editorial.libraries:
   path: '/admin/structure/webform/editorial/libraries'
   defaults:
-    _controller: '\Drupal\webform_editorial\Controller\WebformEditorialController::libraries'
+    _controller: '\Drupal\webform_test_editorial\Controller\WebformTestEditorialController::libraries'
     _title: 'Libraries'
   requirements:
     _permission: 'administer webform'
 
-webform_editorial.schema:
+webform_test_editorial.schema:
   path: '/admin/structure/webform/editorial/schema'
   defaults:
-    _controller: '\Drupal\webform_editorial\Controller\WebformEditorialController::schema'
+    _controller: '\Drupal\webform_test_editorial\Controller\WebformTestEditorialController::schema'
     _title: 'Schema'
   requirements:
     _permission: 'administer webform'
 
-webform_editorial.drush:
+webform_test_editorial.drush:
   path: '/admin/structure/webform/editorial/drush'
   defaults:
-    _controller: '\Drupal\webform_editorial\Controller\WebformEditorialController::drush'
+    _controller: '\Drupal\webform_test_editorial\Controller\WebformTestEditorialController::drush'
     _title: 'Schema'
   requirements:
     _permission: 'administer webform'

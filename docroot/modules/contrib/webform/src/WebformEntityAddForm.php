@@ -18,6 +18,20 @@ class WebformEntityAddForm extends BundleEntityFormBase {
   use WebformDialogFormTrait;
 
   /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -32,26 +46,14 @@ class WebformEntityAddForm extends BundleEntityFormBase {
   protected $languageManager;
 
   /**
-   * Constructs a WebformEntityAddForm.
-   *
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
-   */
-  public function __construct(ModuleHandlerInterface $module_handler, LanguageManagerInterface $language_manager) {
-    $this->moduleHandler = $module_handler;
-    $this->languageManager = $language_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('module_handler'),
-      $container->get('language_manager')
-    );
+    $instance = parent::create($container);
+    $instance->state = $container->get('state');
+    $instance->routeMatch = $container->get('current_route_match');
+    $instance->languageManager = $container->get('language_manager');
+    return $instance;
   }
 
   /**
@@ -151,7 +153,7 @@ class WebformEntityAddForm extends BundleEntityFormBase {
     parent::submitForm($form, $form_state);
 
     if ($this->operation === 'duplicate') {
-      $original_id = \Drupal::routeMatch()->getRawParameter('webform');
+      $original_id = $this->routeMatch->getRawParameter('webform');
       $duplicate_id = $this->getEntity()->id();
 
       // Copy translations.
@@ -174,11 +176,11 @@ class WebformEntityAddForm extends BundleEntityFormBase {
       }
 
       // Copy webform export and results from state.
-      $state = \Drupal::state()->get("webform.webform.$original_id");
+      $state = $this->state->get("webform.webform.$original_id");
       // Remove node (source entity) keys.
       unset($state['results.export.node'], $state['results.custom.node']);
       if ($state) {
-        \Drupal::state()->set("webform.webform.$duplicate_id", $state);
+        $this->state->set("webform.webform.$duplicate_id", $state);
       }
     }
 

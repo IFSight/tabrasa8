@@ -8,6 +8,7 @@ use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 
 /**
@@ -199,7 +200,7 @@ abstract class WebformOtherBase extends FormElement {
     $element['#attached']['library'][] = 'webform/webform.element.other';
 
     // Process states.
-    webform_process_states($element, '#wrapper_attributes');
+    WebformFormHelper::processStates($element, '#wrapper_attributes');
 
     return $element;
   }
@@ -328,7 +329,7 @@ abstract class WebformOtherBase extends FormElement {
   protected static function convertDefaultValueToElementValue(array $element) {
     $type = str_replace('webform_', '', static::$type);
 
-    $default_value = isset($element['#default_value']) ? $element['#default_value'] : NULL;
+    $default_value = isset($element['#default_value']) && $element['#default_value'] !== '' ? $element['#default_value'] : NULL;
     if (static::isMultiple($element)) {
       // Handle edge case where $default_value is not an array.
       if (!is_array($default_value)) {
@@ -347,7 +348,7 @@ abstract class WebformOtherBase extends FormElement {
       return [$type => $default_options, 'other' => NULL];
     }
     else {
-      if (!empty($default_value) && !WebformOptionsHelper::hasOption($default_value, $element['#options'])) {
+      if ($default_value !== NULL && !WebformOptionsHelper::hasOption($default_value, $element['#options'])) {
         return [$type => static::OTHER_OPTION, 'other' => $default_value];
       }
 

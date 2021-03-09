@@ -506,6 +506,16 @@ function webform_preprocess_form_element(&$variables) {
     $variables['description_display'] = $element['#description_display'];
   }
 
+  // Issue #2700439: Description class not added to
+  // form-element.html.twig template.
+  // @see https://www.drupal.org/project/drupal/issues/2700439
+  if (isset($variables['description_display']) && $variables['description_display'] === 'before') {
+    // Add system .description class.
+    if (isset($variables['description'])) {
+      $variables['description']['attributes']->addClass('description');
+    }
+  }
+
   // Add missing classes to the Claro theme's form elements.
   // @see core/modules/system/templates/form-element.html.twig
   // @see claro/templates/form-element.html.twig

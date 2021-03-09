@@ -172,7 +172,7 @@ class WebformSettingsConfirmationTest extends WebformBrowserTestBase {
 
     $webform_confirmation_url = Webform::load('test_confirmation_url');
 
-    // Check confirmation URL.
+    // Check confirmation URL using special path <front>.
     $this->postSubmission($webform_confirmation_url);
     $this->assertNoRaw('<h2 class="visually-hidden">Status message</h2>');
     $this->assertUrl('/');
@@ -183,6 +183,21 @@ class WebformSettingsConfirmationTest extends WebformBrowserTestBase {
       ->save();
     $this->postSubmission($webform_confirmation_url);
     $this->assertUrl('/some-internal-path');
+
+    // Check confirmation URL using absolute path.
+    $webform_confirmation_url
+      ->setSetting('confirmation_url', '/some-absolute-path')
+      ->save();
+    $this->postSubmission($webform_confirmation_url);
+    $this->assertUrl('/some-absolute-path');
+
+    // Check confirmation URL using invalid path.
+    $webform_confirmation_url
+      ->setSetting('confirmation_url', 'invalid')
+      ->save();
+    $sid = $this->postSubmission($webform_confirmation_url);
+    $this->assertRaw('Confirmation URL <em class="placeholder">invalid</em> is not valid.');
+    $this->assertUrl('/webform/test_confirmation_url');
 
     /* Test confirmation URL (confirmation_type=url_message) */
 

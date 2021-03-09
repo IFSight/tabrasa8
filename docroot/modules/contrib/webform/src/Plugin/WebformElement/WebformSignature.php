@@ -3,22 +3,14 @@
 namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\webform\Element\WebformSignature as WebformSignatureElement;
 use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
-use Psr\Log\LoggerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Render\ElementInfoManagerInterface;
-use Drupal\webform\Plugin\WebformElementManagerInterface;
-use Drupal\webform\WebformTokenManagerInterface;
-use Drupal\webform\WebformLibrariesManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\File\FileSystemInterface;
 
 /**
  * Provides a 'signature' element.
@@ -33,63 +25,19 @@ use Drupal\Core\File\FileSystemInterface;
 class WebformSignature extends WebformElementBase {
 
   /**
-   * The helpers that operate on files.
+   * The file system service.
    *
    * @var \Drupal\Core\File\FileSystemInterface
    */
   protected $fileSystem;
 
   /**
-   * Constructs a WebformElementBase object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Psr\Log\LoggerInterface $logger
-   *   A logger instance.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\File\FileSystemInterface $file_system
-   *   The helpers that operate on files.
-   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
-   *   The element info manager.
-   * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
-   *   The webform element manager.
-   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
-   *   The webform token manager.
-   * @param \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager
-   *   The webform libraries manager.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerInterface $logger, ConfigFactoryInterface $config_factory, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, FileSystemInterface $file_system, ElementInfoManagerInterface $element_info, WebformElementManagerInterface $element_manager, WebformTokenManagerInterface $token_manager, WebformLibrariesManagerInterface $libraries_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $config_factory, $current_user, $entity_type_manager, $element_info, $element_manager, $token_manager, $libraries_manager);
-    $this->fileSystem = $file_system;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('logger.factory')->get('webform'),
-      $container->get('config.factory'),
-      $container->get('current_user'),
-      $container->get('entity_type.manager'),
-      $container->get('file_system'),
-      $container->get('plugin.manager.element_info'),
-      $container->get('plugin.manager.webform.element'),
-      $container->get('webform.token_manager'),
-      $container->get('webform.libraries_manager')
-    );
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->fileSystem = $container->get('file_system');
+    return $instance;
   }
 
   /**

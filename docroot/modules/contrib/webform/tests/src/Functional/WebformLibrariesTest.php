@@ -125,47 +125,30 @@ class WebformLibrariesTest extends WebformBrowserTestBase {
     $this->assertNoText('Signature Pad library');
     */
 
-    if (floatval(\Drupal::VERSION) >= 9) {
-      // Issue #3110478: [Webform 8.x-6.x] Track the D9 readiness state of the
-      // Webform module's (optional) dependencies
-      // @see https://www.drupal.org/project/webform/issues/3110478
-      // Check that choices, chosen, and select2 using webform's CDN URLs.
-      $edit = [
-        'excluded_libraries[jquery.select2]' => TRUE,
-      ];
-      $this->drupalPostForm('/admin/structure/webform/config/libraries', $edit, 'Save configuration');
-      $this->drupalGet('/webform/test_libraries_optional');
-      $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
+    // Issue #3110478: [Webform 8.x-6.x] Track the D9 readiness state of the
+    // Webform module's (optional) dependencies
+    // @see https://www.drupal.org/project/webform/issues/3110478
+    // Check that choices, chosen, and select2 using webform's CDN URLs.
+    // Check that choices, chosen, and select2 using webform's CDN URLs.
+    $edit = [
+      'excluded_libraries[jquery.select2]' => TRUE,
+//      'excluded_libraries[jquery.chosen]' => TRUE,
+    ];
+    $this->drupalPostForm('/admin/structure/webform/config/libraries', $edit, 'Save configuration');
+    $this->drupalGet('/webform/test_libraries_optional');
+//    $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
+    $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
 
-      // Install chosen and select2 modules.
-      \Drupal::service('module_installer')->install(['select2']);
-      drupal_flush_all_caches();
+    // Install chosen and select2 modules.
+//    \Drupal::service('module_installer')->install(['chosen', 'chosen_lib', 'select2']);
+    \Drupal::service('module_installer')->install(['select2']);
+    drupal_flush_all_caches();
 
-      // Check that chosen and select2 using module's path and not CDN.
-      $this->drupalGet('/webform/test_libraries_optional');
-      $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
-    }
-    else {
-      // Check that choices, chosen, and select2 using webform's CDN URLs.
-      $edit = [
-        'excluded_libraries[jquery.select2]' => TRUE,
-        'excluded_libraries[jquery.chosen]' => TRUE,
-      ];
-      $this->drupalPostForm('/admin/structure/webform/config/libraries', $edit, 'Save configuration');
-      $this->drupalGet('/webform/test_libraries_optional');
-      $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
-      $this->assertRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
-
-      // Install chosen and select2 modules.
-      \Drupal::service('module_installer')->install(['chosen', 'chosen_lib', 'select2']);
-      drupal_flush_all_caches();
-
-      // Check that chosen and select2 using module's path and not CDN.
-      $this->drupalGet('/webform/test_libraries_optional');
-      $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
-      $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
-      $this->assertRaw('/modules/contrib/chosen/css/chosen-drupal.css');
-    }
+    // Check that chosen and select2 using module's path and not CDN.
+    $this->drupalGet('/webform/test_libraries_optional');
+//    $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/chosen');
+    $this->assertNoRaw('https://cdnjs.cloudflare.com/ajax/libs/select2');
+//    $this->assertRaw('/modules/contrib/chosen/css/chosen-drupal.css');
   }
 
 }

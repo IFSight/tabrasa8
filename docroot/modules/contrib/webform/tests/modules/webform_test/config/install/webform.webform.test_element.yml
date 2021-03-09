@@ -64,7 +64,6 @@ elements: |
       '#default_value': |
         {textarea line 1}
         {textarea line 2}
-  
     textfield:
       '#type': textfield
       '#title': textfield
@@ -238,7 +237,7 @@ elements: |
       '#default_value':
         - 1
         - 2
-  
+
 css: ''
 javascript: ''
 settings:
@@ -259,7 +258,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false

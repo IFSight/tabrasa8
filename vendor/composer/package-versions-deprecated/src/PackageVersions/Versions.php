@@ -100,7 +100,7 @@ final class Versions
   'drupal/ultimate_cron' => '2.0.0-alpha5@8.x-2.0-alpha5',
   'drupal/varnish_purge' => '1.12.0@8.x-1.12',
   'drupal/viewsreference' => '1.7.0@8.x-1.7',
-  'drupal/webform' => '5.23.0@8.x-5.23',
+  'drupal/webform' => '6.0.2@6.0.2',
   'easyrdf/easyrdf' => '0.9.1@acd09dfe0555fbcfa254291e433c45fdd4652566',
   'egulias/email-validator' => '2.1.17@ade6887fd9bd74177769645ab5c474824f8a418a',
   'elasticsearch/elasticsearch' => 'v6.7.2@9ba89f905ebf699e72dacffa410331c7fecc8255',
@@ -261,7 +261,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.2@c8e5dbe65caef285fec8057a4c718a0d4138d1ee',
   'webmozart/assert' => '1.9.1@bafc69caeb4d49c39fd0779086c03a3738cbb389',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-paladin-versioning@24e1d29af0db03619e11a894a72349ab19fe5dcc',
+  'drupal/drupal' => 'dev-958-webform@5b5aca6c8dd79bc1f1fcfee691c1e9a59ac49b31',
 );
 
     private function __construct()

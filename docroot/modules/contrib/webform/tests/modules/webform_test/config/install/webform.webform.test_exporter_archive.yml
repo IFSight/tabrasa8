@@ -3,138 +3,31 @@ status: open
 dependencies:
   enforced:
     module:
-      - webform_test_entity_reference_views
+      - webform_test
 open: null
 close: null
 weight: 0
 uid: null
 template: false
 archive: false
-id: test_element_entity_reference_vs
-title: 'Test: Element: Entity reference views'
-description: 'Test entity reference views elements.'
-category: 'Test: Element'
+id: test_exporter_archive
+title: 'Test: Submission: Export'
+description: 'Test exporting archive with files and attachments.'
+category: 'Test: Exporter'
 elements: |
-  entity_autocomplete:
-    '#type': entity_autocomplete
-    '#title': entity_autocomplete
-    '#multiple': true
-    '#target_type': node
-    '#selection_handler': views
-    '#selection_settings':
-      view:
-        view_name: webform_test_entity_reference_vs
-        display_name: entity_reference_1
-        arguments: {  }
-  entity_select:
-    '#type': webform_entity_select
-    '#title': webform_entity_select
-    '#multiple': true
-    '#target_type': node
-    '#selection_handler': views
-    '#selection_settings':
-      view:
-        view_name: webform_test_entity_reference_vs
-        display_name: entity_reference_1
-        arguments: {  }
-  entity_radios:
-    '#type': webform_entity_radios
-    '#title': webform_entity_radios
-    '#multiple': true
-    '#target_type': node
-    '#selection_handler': views
-    '#selection_settings':
-      view:
-        view_name: webform_test_entity_reference_vs
-        display_name: entity_reference_1
-        arguments: {  }
-    '#wrapper_attributes':
-      class:
-        - webform-entity-reference-options
-  entity_checkboxes:
-    '#type': webform_entity_checkboxes
-    '#title': entity_checkboxes
-    '#multiple': true
-    '#target_type': node
-    '#selection_handler': views
-    '#selection_settings':
-      view:
-        view_name: webform_test_entity_reference_vs
-        display_name: entity_reference_1
-        arguments: {  }
-    '#wrapper_attributes':
-      class:
-        - webform-entity-reference-options
-  
-css: |
-  /* Autocomplete */
-  
-  .ui-autocomplete {
-    display: flex;
-    flex-wrap: wrap !important;
-    align-self: flex-start !important;
-    max-width: 540px !important;
-  }
-  
-  .ui-autocomplete .ui-menu-item-wrapper {
-    display: block !important;
-    border: 1px solid #ccc !important;
-    background-color: #eee !important;
-    width: 100px !important;
-    margin: 10px 0 0 10px !important;
-    padding: 10px !important;
-  }
-  
-  .ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
-    background-color: blue !important;
-  }
-  
-  .ui-autocomplete .views-field views-field-field-image {
-    display: block;
-    margin: 0 0 5px 0;
-  }
-  
-  /* Checkboex and radios */
-  
-  .webform-entity-reference-options .fieldset-wrapper > div {
-    display: flex;
-    flex-wrap: wrap;
-    align-self: flex-start;
-  }
-  
-  .webform-entity-reference-options .form-item {
-    position: relative;
-  }
-  
-  .webform-entity-reference-options .form-item input {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-  }
-  
-  .webform-entity-reference-options .form-item label {
-    display: block;
-    border: 1px solid #ccc;
-    background-color: #eee;
-    width: 100px;
-    margin: 0 10px 10px 0;
-    padding: 10px;
-  }
-  
-  .webform-entity-reference-options .form-item input:checked + label {
-    display: block;
-    border: 1px solid #ccc;
-    background-color: #ffc;
-    width: 100px;
-    margin: 0 10px 10px 0;
-    padding: 10px;
-  }
-  
-  .webform-entity-reference-options label.option img {
-    display: block;
-    margin: 0 0 5px 0;
-  }
-  
+  managed_file:
+    '#type': managed_file
+    '#title': managed_file
+    '#file_extensions': txt
+  webform_attachment:
+    '#type': webform_attachment_twig
+    '#title': webform_attachment
+    '#filename': test_twig.xml
+    '#template': |
+      <?xml version="1.0"?>
+      <textfield>{value}</textfield>
+
+css: ''
 javascript: ''
 settings:
   ajax: false
@@ -154,7 +47,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -263,7 +156,6 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
-  serial_disabled: false
 access:
   create:
     roles:
@@ -311,13 +203,5 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
-handlers:
-  debug:
-    id: debug
-    label: Debug
-    handler_id: debug
-    status: true
-    conditions: {  }
-    weight: 0
-    settings: {  }
+handlers: {  }
 variants: {  }

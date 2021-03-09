@@ -2,17 +2,10 @@
 
 namespace Drupal\webform;
 
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -36,7 +29,7 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
   protected $entityTypeManager;
 
   /**
-   * The helpers to operate on files.
+   * The file system service.
    *
    * @var \Drupal\Core\File\FileSystemInterface
    */
@@ -50,48 +43,14 @@ class WebformEntityStorage extends ConfigEntityStorage implements WebformEntityS
   protected $totals;
 
   /**
-   * Constructs a WebformEntityStorage object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   The entity type definition.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory service.
-   * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
-   *   The UUID service.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
-   * @param \Drupal\Core\Database\Connection $database
-   *   The database connection to be used.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager service.
-   * @param \Drupal\Core\Cache\MemoryCache\MemoryCacheInterface $memory_cache
-   *   The memory cache.
-   * @param \Drupal\Core\File\FileSystemInterface $file_system
-   *   The helpers to operate on files.
-   *
-   * @todo Webform 8.x-6.x: Move $memory_cache right after $language_manager.
-   */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, Connection $database, EntityTypeManagerInterface $entity_type_manager, MemoryCacheInterface $memory_cache = NULL, FileSystemInterface $file_system) {
-    parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager, $memory_cache);
-    $this->database = $database;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->fileSystem = $file_system;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static(
-      $entity_type,
-      $container->get('config.factory'),
-      $container->get('uuid'),
-      $container->get('language_manager'),
-      $container->get('database'),
-      $container->get('entity_type.manager'),
-      $container->get('entity.memory_cache'),
-      $container->get('file_system')
-    );
+    $instance = parent::createInstance($container, $entity_type);
+    $instance->database = $container->get('database');
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->fileSystem = $container->get('file_system');
+    return $instance;
   }
 
   /**

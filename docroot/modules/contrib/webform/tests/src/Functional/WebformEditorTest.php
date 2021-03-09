@@ -23,7 +23,7 @@ class WebformEditorTest extends WebformBrowserTestBase {
   public static $modules = ['file', 'webform'];
 
   /**
-   * File usage manager.
+   * The file usage service.
    *
    * @var \Drupal\file\FileUsage\FileUsageInterface
    */

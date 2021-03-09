@@ -48,6 +48,47 @@ Steps for creating a new release
     cd /var/www/sites/d8_webform/web/core
     yarn run lint:css ../modules/sandbox/webform/css --fix
 
+[Spell Check](https://www.drupal.org/node/3122084) for Drupal 9.1+
+
+    # Install Pspell. (One-time)
+    cd /var/www/sites/d8_webform/web/core
+    yarn install
+
+    # Update dictionary. (core/misc/cspell/dictionary.txt)
+    algolia
+    Algolia
+    Antibot
+    ANTIBOT
+    codemirror
+    CodeMirror
+    imce
+    IMCE
+    inputmask
+    Inputmask
+    likert
+    Likert
+    lingotek
+    Lingotek
+    maillog
+    Maillog
+    Rockowitz
+    screencast
+    Screencast
+    unstarred
+    UNSTARRED
+    webform
+    Webform
+    webforms
+    Webforms
+    webform's
+    Webform's
+    wkhtmltopdf
+
+    cd /var/www/sites/d8_webform/web/core
+    yarn run spellcheck ../modules/sandbox/webform/**/* > ~/webform-spell-check.txt
+    cat ~/webform-spell-check.txt
+
+
 [File Permissions](https://www.drupal.org/comment/reply/2690335#comment-form)
 
     # Files should be 644 or -rw-r--r--
@@ -197,7 +238,7 @@ References
 
 [Git Release Notes for Drush](https://www.drupal.org/project/grn)
 
-    drush release-notes --nouser 8.x-5.3-beta3 8.x-5.x
+    drush release-notes --nouser 6.0.0-VERSION 6.x
 
 
 6. Tag and create a new release
@@ -205,11 +246,11 @@ References
 
 [Tag a release](https://www.drupal.org/node/1066342)
 
-    git checkout 8.x-5.x
+    git checkout 6.x
     git up
-    git tag 8.x-5.0-VERSION
+    git tag 6.0.0-VERSION
     git push --tags
-    git push origin tag 8.x-5.0-VERSION
+    git push origin tag 6.0.0-VERSION
 
 [Create new release](https://www.drupal.org/node/add/project-release/2640714)
 
@@ -218,9 +259,9 @@ References
 ----------------------------------
 
     # Creete hotfix branch
-    git checkout 8.x-5.LATEST-VERSION
-    git checkout -b 8.x-5.NEXT-VERSION-hotfix
-    git push -u origin 8.x-5.NEXT-VERSION-hotfix
+    git checkout 6.0.LATEST-VERSION
+    git checkout -b 6.0.NEXT-VERSION-hotfix
+    git push -u origin 6.0.NEXT-VERSION-hotfix
 
     # Apply and commit remote patch
     curl https://www.drupal.org/files/issues/[project_name]-[issue-description]-[issue-number]-00.patch | git apply -
@@ -228,14 +269,14 @@ References
     git push
 
     # Tag hotfix release.
-    git tag 8.x-5.NEXT-VERSION
+    git tag 6.0.NEXT-VERSION
     git push --tags
-    git push origin tag 8.x-5.NEXT-VERSION
+    git push origin tag 6.0.NEXT-VERSION
 
     # Merge hotfix release with HEAD.
-    git checkout 8.x-5.x
-    git merge 8.x-5.NEXT-VERSION-hotfix
+    git checkout 6.x
+    git merge 6.0.NEXT-VERSION-hotfix
 
     # Delete hotfix release.
-    git branch -D 8.x-5.NEXT-VERSION-hotfix
-    git push origin :8.x-5.NEXT-VERSION-hotfix
+    git branch -D 6.0.NEXT-VERSION-hotfix
+    git push origin :6.0.NEXT-VERSION-hotfix

@@ -19,7 +19,15 @@ elements: |
   textfield:
     '#type': textfield
     '#title': textfield
-  
+  image_file_style:
+    '#type': webform_image_file
+    '#title': image_file_style
+    '#format': 'thumbnail:image'
+    '#file_extensions': gif
+  image_file:
+    '#type': webform_image_file
+    '#title': image_file
+    '#file_extensions': gif
 css: '/** custom webform css **/'
 javascript: ''
 settings:
@@ -40,7 +48,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false

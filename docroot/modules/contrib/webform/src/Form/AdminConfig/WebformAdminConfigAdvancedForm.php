@@ -2,13 +2,8 @@
 
 namespace Drupal\webform\Form\AdminConfig;
 
-use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
-use Drupal\webform\Commands\WebformCliService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -52,38 +47,15 @@ class WebformAdminConfigAdvancedForm extends WebformAdminConfigBaseForm {
   }
 
   /**
-   * Constructs a WebformAdminConfigAdvancedForm object.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
-   * @param \Drupal\Core\Cache\CacheBackendInterface $render_cache
-   *   The render cache service.
-   * @param \Drupal\Core\Routing\RouteBuilderInterface $router_builder
-   *   The router builder service.
-   * @param \Drupal\webform\Commands\WebformCliService $cli_service
-   *   The (drush) command-line service.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, CacheBackendInterface $render_cache, RouteBuilderInterface $router_builder, WebformCliService $cli_service) {
-    parent::__construct($config_factory);
-    $this->renderCache = $render_cache;
-    $this->moduleHandler = $module_handler;
-    $this->routerBuilder = $router_builder;
-    $this->cliService = $cli_service;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('module_handler'),
-      $container->get('cache.render'),
-      $container->get('router.builder'),
-      $container->get('webform.cli_service')
-    );
+    $instance = parent::create($container);
+    $instance->renderCache = $container->get('cache.render');
+    $instance->moduleHandler = $container->get('module_handler');
+    $instance->routerBuilder = $container->get('router.builder');
+    $instance->cliService = $container->get('webform.cli_service');
+    return $instance;
   }
 
   /**

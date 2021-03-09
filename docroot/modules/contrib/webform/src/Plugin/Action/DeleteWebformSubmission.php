@@ -5,7 +5,6 @@ namespace Drupal\webform\Plugin\Action;
 use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -35,37 +34,13 @@ class DeleteWebformSubmission extends ActionBase implements ContainerFactoryPlug
   protected $currentUser;
 
   /**
-   * Constructs a DeleteWebformSubmission object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
-   *   The tempstore factory.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, PrivateTempStoreFactory $temp_store_factory, AccountInterface $current_user) {
-    $this->currentUser = $current_user;
-    $this->tempStoreFactory = $temp_store_factory;
-
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('tempstore.private'),
-      $container->get('current_user')
-    );
+    $instance = new static($configuration, $plugin_id, $plugin_definition);
+    $instance->currentUser = $container->get('current_user');
+    $instance->tempStoreFactory = $container->get('tempstore.private');
+    return $instance;
   }
 
   /**

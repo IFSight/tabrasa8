@@ -36,7 +36,7 @@ class WebformFlexbox extends Container {
    */
   protected function build($format, array &$element, WebformSubmissionInterface $webform_submission, array $options = []) {
     /** @var \Drupal\webform\WebformSubmissionViewBuilderInterface $view_builder */
-    $view_builder = \Drupal::entityTypeManager()->getViewBuilder('webform_submission');
+    $view_builder = $this->entityTypeManager->getViewBuilder('webform_submission');
     return $view_builder->buildElements($element, $webform_submission, $options, $format);
   }
 

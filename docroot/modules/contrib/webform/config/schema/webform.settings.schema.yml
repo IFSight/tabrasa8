@@ -51,6 +51,9 @@ webform.settings:
         default_form_access_denied_message:
           type: text
           label: 'Default form access denied message'
+        default_form_disable_remote_addr:
+          type: boolean
+          label: 'Do not track user IP addresses'
         default_form_novalidate:
           type: boolean
           label: 'Disable client-side validation'

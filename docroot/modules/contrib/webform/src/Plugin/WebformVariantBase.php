@@ -2,7 +2,6 @@
 
 namespace Drupal\webform\Plugin;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\webform\Utility\WebformDialogHelper;
@@ -71,43 +70,24 @@ abstract class WebformVariantBase extends PluginBase implements WebformVariantIn
   protected $configFactory;
 
   /**
-   * Constructs a WebformVariantBase object.
+   * {@inheritdoc}
    *
    * IMPORTANT:
-   * Webform variants are initialized and serialized when they are attached to a
+   * Webform handlers are initialized and serialized when they are attached to a
    * webform. Make sure not include any services as a dependency injection
    * that directly connect to the database. This will prevent
    * "LogicException: The database connection is not serializable." exceptions
    * from being thrown when a form is serialized via an Ajax callback and/or
    * form build.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
-   *
-   * @see \Drupal\webform\Entity\Webform::getVariants
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->setConfiguration($configuration);
-    $this->configFactory = $config_factory;
-  }
-
-  /**
-   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('config.factory')
-    );
+    $instance = new static($configuration, $plugin_id, $plugin_definition);
+
+    $instance->configFactory = $container->get('config.factory');
+
+    $instance->setConfiguration($configuration);
+
+    return $instance;
   }
 
   /**

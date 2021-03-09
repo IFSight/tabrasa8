@@ -29,6 +29,43 @@ class WebformHelpTest extends WebformBrowserTestBase {
    * Tests webform help.
    */
   public function testHelp() {
+
+    /**************************************************************************/
+    // Help page.
+    /**************************************************************************/
+
+    // Check access denied to the webform help page.
+    $this->drupalGet('/admin/structure/webform/help');
+    $this->assertResponse(403);
+
+    // Check access denied to the webform help video.
+    $this->drupalGet('/admin/help/webform/video/introduction');
+    $this->assertResponse(403);
+
+    // Login with 'access content' permission.
+    $this->drupalLogin($this->createUser(['access content']));
+
+    // Check access allowed to the webform help video w/o watch more link.
+    $this->drupalGet('/admin/help/webform/video/introduction', ['query' => ['_wrapper_format' => 'drupal_modal', 'more' => 1]]);
+    $this->assertResponse(200);
+    $this->assertNoRaw('Watch more videos');
+
+    // Login with 'access webform help' permission.
+    $this->drupalLogin($this->createUser(['access content', 'access webform help']));
+
+    // Check access allowed to the webform help page.
+    $this->drupalGet('/admin/structure/webform/help');
+    $this->assertResponse(200);
+
+    // Check access allowed to the webform help video with watch more link.
+    $this->drupalGet('/admin/help/webform/video/introduction', ['query' => ['_wrapper_format' => 'drupal_modal', 'more' => 1]]);
+    $this->assertResponse(200);
+    $this->assertRaw('Watch more videos');
+
+    /**************************************************************************/
+    // Help block.
+    /**************************************************************************/
+
     $this->drupalLogin($this->rootUser);
 
     // Check notifications, promotion, and welcome messages displayed.

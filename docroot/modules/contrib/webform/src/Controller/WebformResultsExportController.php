@@ -9,11 +9,8 @@ use Drupal\Core\Url;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformRequestInterface;
-use Drupal\webform\WebformSubmissionExporterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -44,30 +41,14 @@ class WebformResultsExportController extends ControllerBase implements Container
   protected $requestHandler;
 
   /**
-   * Constructs a WebformResultsExportController object.
-   *
-   * @param \Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface $mime_type_guesser
-   *   The MIME type guesser instance to use.
-   * @param \Drupal\webform\WebformSubmissionExporterInterface $webform_submission_exporter
-   *   The webform submission exported.
-   * @param \Drupal\webform\WebformRequestInterface $request_handler
-   *   The webform request handler.
-   */
-  public function __construct(MimeTypeGuesserInterface $mime_type_guesser, WebformSubmissionExporterInterface $webform_submission_exporter, WebformRequestInterface $request_handler) {
-    $this->mimeTypeGuesser = $mime_type_guesser;
-    $this->submissionExporter = $webform_submission_exporter;
-    $this->requestHandler = $request_handler;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('file.mime_type.guesser'),
-      $container->get('webform_submission.exporter'),
-      $container->get('webform.request')
-    );
+    $instance = parent::create($container);
+    $instance->mimeTypeGuesser = $container->get('file.mime_type.guesser');
+    $instance->submissionExporter = $container->get('webform_submission.exporter');
+    $instance->requestHandler = $container->get('webform.request');
+    return $instance;
   }
 
   /**

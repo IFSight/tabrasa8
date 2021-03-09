@@ -5,20 +5,15 @@ namespace Drupal\webform\Plugin\WebformElement;
 use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
-use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Component\Utility\Environment;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url as UrlGenerator;
-use Drupal\Core\Render\ElementInfoManagerInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
@@ -30,11 +25,7 @@ use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionForm;
 use Drupal\webform\WebformSubmissionInterface;
-use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Plugin\WebformElementEntityReferenceInterface;
-use Drupal\webform\WebformLibrariesManagerInterface;
-use Drupal\webform\WebformTokenManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -55,98 +46,44 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
   ];
 
   /**
-   * The 'file_system' service.
+   * The file system service.
    *
    * @var \Drupal\Core\File\FileSystemInterface
    */
   protected $fileSystem;
 
   /**
-   * The 'file.usage' service.
+   * The file usage service.
    *
    * @var \Drupal\file\FileUsage\FileUsageInterface
    */
   protected $fileUsage;
 
   /**
-   * The 'transliteration' service.
+   * The transliteration service.
    *
    * @var \Drupal\Component\Transliteration\TransliterationInterface
    */
   protected $transliteration;
 
   /**
-   * The 'language_manager' service.
+   * The language manager service.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
   protected $languageManager;
 
   /**
-   * WebformManagedFileBase constructor.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Psr\Log\LoggerInterface $logger
-   *   A logger instance.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
-   *   The element info manager.
-   * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
-   *   The webform element manager.
-   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
-   *   The webform token manager.
-   * @param \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager
-   *   The webform libraries manager.
-   * @param \Drupal\Core\File\FileSystemInterface $file_system
-   *   The file system service.
-   * @param \Drupal\file\FileUsage\FileUsageInterface|null $file_usage
-   *   The file usage service.
-   * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
-   *   The transliteration service.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerInterface $logger, ConfigFactoryInterface $config_factory, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, ElementInfoManagerInterface $element_info, WebformElementManagerInterface $element_manager, WebformTokenManagerInterface $token_manager, WebformLibrariesManagerInterface $libraries_manager, FileSystemInterface $file_system, $file_usage, TransliterationInterface $transliteration, LanguageManagerInterface $language_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $config_factory, $current_user, $entity_type_manager, $element_info, $element_manager, $token_manager, $libraries_manager);
-
-    $this->fileSystem = $file_system;
-    $this->fileUsage = $file_usage;
-    $this->transliteration = $transliteration;
-    $this->languageManager = $language_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('logger.factory')->get('webform'),
-      $container->get('config.factory'),
-      $container->get('current_user'),
-      $container->get('entity_type.manager'),
-      $container->get('plugin.manager.element_info'),
-      $container->get('plugin.manager.webform.element'),
-      $container->get('webform.token_manager'),
-      $container->get('webform.libraries_manager'),
-      $container->get('file_system'),
-      // We soft depend on "file" module so this service might not be available.
-      $container->has('file.usage') ? $container->get('file.usage') : NULL,
-      $container->get('transliteration'),
-      $container->get('language_manager')
-    );
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->fileSystem = $container->get('file_system');
+    // We soft depend on "file" module so this service might not be available.
+    $instance->fileUsage = $container->has('file.usage') ? $container->get('file.usage') : NULL;
+    $instance->transliteration = $container->get('transliteration');
+    $instance->languageManager = $container->get('language_manager');
+    return $instance;
   }
 
   /**
@@ -280,7 +217,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     // Get file limit.
     if ($webform_submission) {
       $file_limit = $webform_submission->getWebform()->getSetting('form_file_limit')
-          ?: \Drupal::config('webform.settings')->get('settings.default_form_file_limit')
+          ?: $this->configFactory->get('webform.settings')->get('settings.default_form_file_limit')
           ?: '';
     }
     else {
@@ -362,7 +299,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     $element['#process'][] = [get_class($this), 'processManagedFile'];
 
     // Add managed file upload tracking.
-    if (\Drupal::moduleHandler()->moduleExists('file')) {
+    if ($this->moduleHandler->moduleExists('file')) {
       $element['#attached']['library'][] = 'webform/webform.element.managed_file';
     }
   }
@@ -512,7 +449,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
       return $value;
     }
 
-    return $this->entityTypeManager->getStorage('file')->load($value);
+    return $this->entityTypeManager->getStorage('file')->loadUnchanged($value);
   }
 
   /**
@@ -532,7 +469,9 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     if (empty($value)) {
       return [];
     }
-    return $this->entityTypeManager->getStorage('file')->loadMultiple((array) $value);
+    $fids = (array) $value;
+    $this->entityTypeManager->getStorage('file')->resetCache($fids);
+    return $this->entityTypeManager->getStorage('file')->loadMultiple($fids);
   }
 
   /**
@@ -614,7 +553,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     $file_destination = $upload_location . '/' . $key . '.' . $file_extension;
 
     // Look for an existing temp files that have not been uploaded.
-    $fids = $this->entityTypeManager->getStorage('file')->getQuery()
+    $fids = $this->getFileStorage()->getQuery()
       ->condition('status', 0)
       ->condition('uid', $this->currentUser->id())
       ->condition('uri', $upload_location . '/' . $key . '.%', 'LIKE')
@@ -632,7 +571,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
       $file_uri = $this->fileSystem->saveData('{empty}', $file_destination);
     }
 
-    $file = $this->entityTypeManager->getStorage('file')->create([
+    $file = $this->getFileStorage()->create([
       'uri' => $file_uri,
       'uid' => $this->currentUser->id(),
     ]);
@@ -1250,7 +1189,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
   public function addFiles(array $element, WebformSubmissionInterface $webform_submission, array $fids) {
     // Make sure the file.module is enabled since this method is called from
     // \Drupal\webform\Plugin\WebformElement\WebformCompositeBase::postSave.
-    if (!\Drupal::moduleHandler()->moduleExists('file')) {
+    if (!$this->moduleHandler->moduleExists('file')) {
       return;
     }
     // Make sure there are files that need to added.
@@ -1259,7 +1198,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     }
 
     /** @var \Drupal\file\FileInterface[] $files */
-    $files = $this->entityTypeManager->getStorage('file')->loadMultiple($fids);
+    $files = $this->getFileStorage()->loadMultiple($fids);
     foreach ($files as $file) {
       $source_uri = $file->getFileUri();
       $destination_uri = $this->getFileDestinationUri($element, $file, $webform_submission);
@@ -1270,6 +1209,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
         $file->setFileUri($destination_uri);
         $file->setFileName($this->fileSystem->basename($destination_uri));
         $file->save();
+        $this->entityTypeManager->getStorage('file')->resetCache([$file->id()]);
       }
 
       // Update file usage table.
@@ -1493,7 +1433,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
   /**
    * {@inheritdoc}
    */
-  public function getAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  public function getEmailAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
     $attachments = [];
     $files = $this->getTargetEntities($element, $webform_submission, $options) ?: [];
     foreach ($files as $file) {
@@ -1503,13 +1443,45 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
         'filemime' => $file->getMimeType(),
         // File URIs that are not supported return FALSE, when this happens
         // still use the file's URI as the file's path.
-        'filepath' => \Drupal::service('file_system')->realpath($file->getFileUri()) ?: $file->getFileUri(),
+        'filepath' => $this->fileSystem->realpath($file->getFileUri()) ?: $file->getFileUri(),
         // URI is used when debugging or resending messages.
         // @see \Drupal\webform\Plugin\WebformHandler\EmailWebformHandler::buildAttachments
         '_fileurl' => file_create_url($file->getFileUri()),
       ];
     }
     return $attachments;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExportAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    // Managed files are bulk copied during an export.
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasExportAttachments() {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExportAttachmentsBatchLimit() {
+    return NULL;
+  }
+
+  /**
+   * Retrieves the file storage.
+   *
+   * @return \Drupal\file\FileStorageInterface
+   *   The file storage.
+   */
+  protected function getFileStorage() {
+    return $this->getEntityStorage('file');
   }
 
 }
