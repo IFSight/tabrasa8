@@ -6,10 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\webform\Element\WebformMessage;
-use Drupal\webform\WebformAddonsManagerInterface;
-use Drupal\webform\WebformThemeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Provides route responses for Webform add-ons.
@@ -38,30 +35,14 @@ class WebformAddonsController extends ControllerBase implements ContainerInjecti
   protected $addons;
 
   /**
-   * Constructs a WebformAddonsController object.
-   *
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
-   *   The request stack.
-   * @param \Drupal\webform\WebformThemeManagerInterface $theme_manager
-   *   The webform theme manager.
-   * @param \Drupal\webform\WebformAddonsManagerInterface $addons
-   *   The webform add-ons manager.
-   */
-  public function __construct(RequestStack $request_stack, WebformThemeManagerInterface $theme_manager, WebformAddonsManagerInterface $addons) {
-    $this->request = $request_stack->getCurrentRequest();
-    $this->themeManager = $theme_manager;
-    $this->addons = $addons;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('request_stack'),
-      $container->get('webform.theme_manager'),
-      $container->get('webform.addons_manager')
-    );
+    $instance = parent::create($container);
+    $instance->request = $container->get('request_stack')->getCurrentRequest();
+    $instance->themeManager = $container->get('webform.theme_manager');
+    $instance->addons = $container->get('webform.addons_manager');
+    return $instance;
   }
 
   /**

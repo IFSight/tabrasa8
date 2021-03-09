@@ -37,7 +37,7 @@ abstract class TextBase extends WebformElementBase {
    * {@inheritdoc}
    */
   protected function defineTranslatableProperties() {
-    return array_merge(parent::defineTranslatableProperties(), ['counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
+    return array_merge(parent::defineTranslatableProperties(), ['default_value', 'counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
   }
 
   /****************************************************************************/
@@ -417,13 +417,13 @@ abstract class TextBase extends WebformElementBase {
     ];
 
     // Get input masks.
-    $modules = \Drupal::moduleHandler()->getImplementations('webform_element_input_masks');
+    $modules = $this->moduleHandler->getImplementations('webform_element_input_masks');
     foreach ($modules as $module) {
-      $input_masks += \Drupal::moduleHandler()->invoke($module, 'webform_element_input_masks');
+      $input_masks += $this->moduleHandler->invoke($module, 'webform_element_input_masks');
     }
 
     // Alter input masks.
-    \Drupal::moduleHandler()->alter('webform_element_input_masks', $input_masks);
+    $this->moduleHandler->alter('webform_element_input_masks', $input_masks);
 
     return $input_masks;
   }

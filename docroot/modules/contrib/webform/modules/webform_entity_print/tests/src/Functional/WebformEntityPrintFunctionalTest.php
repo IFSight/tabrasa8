@@ -3,6 +3,7 @@
 namespace Drupal\Tests\webform_entity_print\Functional;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
 
@@ -16,13 +17,13 @@ class WebformEntityPrintFunctionalTest extends WebformEntityPrintFunctionalTestB
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['webform_entity_print_test'];
+  public static $modules = ['image', 'webform_entity_print_test'];
 
   /**
    * Test entity print.
    */
   public function testEntityPrint() {
-    global $base_path;
+    global $base_path, $base_url;
 
     $this->drupalLogin($this->rootUser);
 
@@ -45,6 +46,8 @@ class WebformEntityPrintFunctionalTest extends WebformEntityPrintFunctionalTestB
     // Check PDF document HTML view mode.
     $this->drupalGet("/print/pdf/webform_submission/$sid/debug", ['query' => ['view_mode' => 'html']]);
     $this->assertRaw('<div class="webform-entity-print-header"><h1>' . Html::escape($submission->label()) . '</h1></div>');
+
+    // Check text field.
     $this->assertRaw('<label>textfield</label>');
 
     // Check PDF document includes custom style tag with webform and
@@ -60,6 +63,25 @@ body {
   padding: 0;
 }
 </style>');
+
+    // Check image.
+    $image_uri = $base_url . '/system/files/webform/test_entity_print/1/image_file.gif';
+    $image_token_query = [WEBFORM_ENTITY_PRINT_IMAGE_TOKEN => _webform_entity_print_token_generate($image_uri)];
+    $this->assertRaw('?' . UrlHelper::buildQuery($image_token_query));
+
+    // Check image style.
+    $image_style_uri = $base_url . '/system/files/styles/thumbnail/private/webform/test_entity_print/1/image_file_style.gif';
+    $image_style_token_query = [WEBFORM_ENTITY_PRINT_IMAGE_TOKEN => _webform_entity_print_token_generate($image_style_uri)];
+    $this->assertRaw('&' . UrlHelper::buildQuery($image_style_token_query));
+
+    // Check image access.
+    $this->drupalLogout();
+    $this->drupalGet($image_uri);
+    $this->assertRaw('Please login to access the uploaded file.');
+    $this->drupalGet($image_uri, ['query' => $image_token_query]);
+    $this->assertNoRaw('Please login to access the uploaded file.');
+    $this->assertResponse(200);
+    $this->drupalLogin($this->rootUser);
 
     // Check PDF document Table view mode.
     $this->drupalGet("/print/pdf/webform_submission/$sid/debug", ['query' => ['view_mode' => 'table']]);

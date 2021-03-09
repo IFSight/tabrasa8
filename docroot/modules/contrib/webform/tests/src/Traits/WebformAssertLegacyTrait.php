@@ -721,6 +721,90 @@ trait WebformAssertLegacyTrait {
   }
 
   /**
+   * Executes a form submission.
+   *
+   * It will be done as usual submit form with Mink.
+   *
+   * @param \Drupal\Core\Url|string $path
+   *   Location of the post form. Either a Drupal path or an absolute path or
+   *   NULL to post to the current page. For multi-stage forms you can set the
+   *   path to NULL and have it post to the last received page. Example:
+   *
+   *   @code
+   *   // First step in form.
+   *   $edit = array(...);
+   *   $this->drupalPostForm('some_url', $edit, 'Save');
+   *
+   *   // Second step in form.
+   *   $edit = array(...);
+   *   $this->drupalPostForm(NULL, $edit, 'Save');
+   *   @endcode
+   * @param array $edit
+   *   Field data in an associative array. Changes the current input fields
+   *   (where possible) to the values indicated.
+   *
+   *   When working with form tests, the keys for an $edit element should match
+   *   the 'name' parameter of the HTML of the form. For example, the 'body'
+   *   field for a node has the following HTML:
+   *   @code
+   *   <textarea id="edit-body-und-0-value" class="text-full form-textarea
+   *    resize-vertical" placeholder="" cols="60" rows="9"
+   *    name="body[0][value]"></textarea>
+   *   @endcode
+   *   When testing this field using an $edit parameter, the code becomes:
+   *   @code
+   *   $edit["body[0][value]"] = 'My test value';
+   *   @endcode
+   *
+   *   A checkbox can be set to TRUE to be checked and should be set to FALSE to
+   *   be unchecked. Multiple select fields can be tested using 'name[]' and
+   *   setting each of the desired values in an array:
+   *   @code
+   *   $edit = array();
+   *   $edit['name[]'] = array('value1', 'value2');
+   *   @endcode
+   * @param string $submit
+   *   The id, name, label or value of the submit button which is to be clicked.
+   *   For example, 'Save'. The first element matched by
+   *   \Drupal\Tests\WebAssert::buttonExists() will be used. The processing of
+   *   the request depends on this value. For example, a form may have one
+   *   button with the value 'Save' and another button with the value 'Delete',
+   *   and execute different code depending on which one is clicked.
+   * @param array $options
+   *   Options to be forwarded to the url generator.
+   * @param string|null $form_html_id
+   *   (optional) HTML ID of the form to be submitted. On some pages
+   *   there are many identical forms, so just using the value of the submit
+   *   button is not enough. For example: 'trigger-node-presave-assign-form'.
+   *   Note that this is not the Drupal $form_id, but rather the HTML ID of the
+   *   form, which is typically the same thing but with hyphens replacing the
+   *   underscores.
+   *
+   * @return string
+   *   The response content after submit form.
+   *
+   * @see \Drupal\Tests\WebAssert::buttonExists()
+   */
+  protected function drupalPostForm($path, $edit, $submit, array $options = [], $form_html_id = NULL) {
+    if (is_object($submit)) {
+      // Cast MarkupInterface objects to string.
+      $submit = (string) $submit;
+    }
+
+    if ($edit === NULL) {
+      $edit = [];
+    }
+
+    if (isset($path)) {
+      $this->drupalGet($path, $options);
+    }
+
+    $this->submitForm($edit, $submit, $form_html_id);
+
+    return $this->getSession()->getPage()->getContent();
+  }
+
+  /**
    * Gets the current raw content.
    */
   protected function getRawContent() {

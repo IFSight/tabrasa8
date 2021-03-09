@@ -6,6 +6,7 @@ use Drupal\Core\Asset\LibraryDiscoveryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\webform\Utility\WebformArrayHelper;
@@ -108,8 +109,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
         continue;
       }
 
-      $library_path = '/libraries/' . $library_name;
-      $library_exists = (file_exists(DRUPAL_ROOT . $library_path)) ? TRUE : FALSE;
+      $library_exists = $this->exists($library_name);
+      $library_path = ($library_exists) ? '/' . $this->find($library_name) : '/libraries/' . $library_name;
 
       $t_args = [
         '@title' => $library['title'],
@@ -199,6 +200,45 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
   }
 
   /**
+   * Determine if a library's directory exist.
+   *
+   * @param string $name
+   *   The library's directory name.
+   *
+   * @return bool
+   *   TRUE if the library's directory exist.
+   */
+  public function exists($name) {
+    // @todo Inject dependency once Drupal 8.9.x is only supported.
+    if (\Drupal::hasService('library.libraries_directory_file_finder')) {
+      return \Drupal::service('library.libraries_directory_file_finder')->find($name) ? TRUE : FALSE;
+    }
+    else {
+      return file_exists(DRUPAL_ROOT . '/libraries/' . $name);
+    }
+  }
+
+  /**
+   * Finds files that are located in the supported 'libraries' directories.
+   *
+   * @param string $path
+   *   The path for the library file to find.
+   *
+   * @return string|false
+   *   The real path to the library file relative to the root directory. If the
+   *   library cannot be found then FALSE.
+   */
+
+  public function find($name) {
+    if (\Drupal::hasService('library.libraries_directory_file_finder')) {
+      return \Drupal::service('library.libraries_directory_file_finder')->find($name);
+    }
+    else {
+      return (file_exists('libraries/' . $name)) ? 'libraries/' . $name : FALSE;
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getLibrary($name) {
@@ -216,11 +256,15 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     }
 
     $libraries = $this->libraries;
-    if ($included !== NULL) {
-      foreach ($libraries as $library_name => $library) {
-        if ($this->isIncluded($library_name) !== $included) {
-          unset($libraries[$library_name]);
-        }
+    foreach ($libraries as $library_name => $library) {
+      if ($included !== NULL
+        && $this->isIncluded($library_name) !== $included) {
+        unset($libraries[$library_name]);
+      }
+      if (isset($library['core'])
+        && $library['core'] !== intval(\Drupal::VERSION)
+        && !Settings::get('webform_libraries_ignore_core', FALSE)) {
+        unset($libraries[$library_name]);
       }
     }
     return $libraries;
@@ -402,8 +446,8 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'description' => $this->t("A flexible SASS component to illustrate the steps in a multi-step process e.g. a multi-step form, a timeline or a quiz."),
       'notes' => $this->t('Progress Tracker is used by multi-step wizard forms.'),
       'homepage_url' => Url::fromUri('http://nigelotoole.github.io/progress-tracker/'),
-      'download_url' => Url::fromUri('https://github.com/NigelOToole/progress-tracker/archive/v1.4.0.zip'),
-      'version' => '1.4.0',
+      'download_url' => Url::fromUri('https://github.com/NigelOToole/progress-tracker/archive/2.0.6.zip'),
+      'version' => '2.0.6',
     ];
     $libraries['signature_pad'] = [
       'title' => $this->t('Signature Pad'),
@@ -413,6 +457,35 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
       'download_url' => Url::fromUri('https://github.com/szimek/signature_pad/archive/v2.3.0.zip'),
       'version' => '2.3.0',
       'elements' => ['webform_signature'],
+    ];
+    $libraries['tabby'] = [
+      'title' => $this->t('Tabby'),
+      'description' => $this->t("Tabby provides lightweight, accessible vanilla JS toggle tabs."),
+      'notes' => $this->t('Tabby is used to display tabs in the administrative UI'),
+      'homepage_url' => Url::fromUri('https://github.com/cferdinandi/tabby'),
+      'download_url' =>  Url::fromUri('https://github.com/cferdinandi/tabby/archive/v12.0.3.zip'),
+      'version' => '12.0.3',
+    ];
+    // Drupal 8 and 9 supports different version of PopperJS which is a
+    // dependency for TipperJS.
+    // @see https://www.drupal.org/node/3112670
+    $libraries['tippyjs/5.x'] = [
+      'title' => $this->t('Tippy.j (5.x)'),
+      'description' => $this->t("Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper."),
+      'notes' => $this->t('Tippy.js is used to provide a tooltips. Tippy.js 5.x is compatible with Drupal 8.x.'),
+      'homepage_url' => Url::fromUri('https://github.com/atomiks/tippyjs'),
+      'download_url' =>  Url::fromUri('https://unpkg.com/tippy.js@5.2.1/dist/tippy-bundle.iife.min.js'),
+      'version' => '5.2.1',
+      'core' => 8,
+    ];
+    $libraries['tippyjs/6.x'] = [
+      'title' => $this->t('Tippy.js (6.x)'),
+      'description' => $this->t("Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper."),
+      'notes' => $this->t('Tippy.js is used to provide a tooltips. Tippy.js 6.x is compatible with Drupal 9.x.'),
+      'homepage_url' => Url::fromUri('https://github.com/atomiks/tippyjs'),
+      'download_url' =>  Url::fromUri('https://unpkg.com/tippy.js@6.2.6/dist/tippy-bundle.umd.min.js'),
+      'version' => '6.2.6',
+      'core' => 9,
     ];
     $libraries['jquery.select2'] = [
       'title' => $this->t('jQuery: Select2'),
@@ -464,15 +537,19 @@ class WebformLibrariesManager implements WebformLibrariesManagerInterface {
     // Sort libraries by key.
     ksort($libraries);
 
-    // Support CKEditor plugins without the ckeditor.* prefix.
+    // Map ckeditor plugin libraries and support CKEditor plugins without
+    // the ckeditor.* prefix.
     // @see https://www.drupal.org/project/fakeobjects
     // @see https://www.drupal.org/project/anchor_link
     foreach ($libraries as $library_name => $library) {
-      if (strpos($library_name, 'ckeditor.') === 0
-        && !file_exists($library['plugin_path'])
-        && file_exists(str_replace('ckeditor.', '', $library['plugin_path']))) {
-        $libraries[$library_name]['plugin_path'] = str_replace('ckeditor.', '', $library['plugin_path']);
+      if (strpos($library_name, 'ckeditor.') === 0) {
+        $library_path = $this->find($library_name)
+          ?: $this->find(str_replace('ckeditor.', '', $library_name));
+        if ($library_path) {
+          $libraries[$library_name]['plugin_path'] = str_replace('libraries/' . $library_name, $library_path, $library['plugin_path']);
+        }
       }
+
     }
 
     // Move deprecated libraries last.

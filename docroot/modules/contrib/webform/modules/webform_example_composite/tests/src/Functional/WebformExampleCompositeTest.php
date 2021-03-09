@@ -37,18 +37,18 @@ class WebformExampleCompositeTest extends WebformBrowserTestBase {
     $this->assertFieldById('edit-webform-example-composite-last-name');
     $this->assertRaw('<label for="edit-webform-example-composite-date-of-birth">Date of birth</label>');
     $this->assertFieldById('edit-webform-example-composite-date-of-birth');
-    $this->assertRaw('<label for="edit-webform-example-composite-gender">Gender</label>');
-    $this->assertFieldById('edit-webform-example-composite-gender');
+    $this->assertRaw('<label for="edit-webform-example-composite-sex">Sex</label>');
+    $this->assertFieldById('edit-webform-example-composite-sex');
 
     // Check webform element submission.
     $edit = [
       'webform_example_composite[first_name]' => 'John',
       'webform_example_composite[last_name]' => 'Smith',
-      'webform_example_composite[gender]' => 'Male',
+      'webform_example_composite[sex]' => 'Male',
       'webform_example_composite[date_of_birth]' => '1910-01-01',
       'webform_example_composite_multiple[items][0][first_name]' => 'Jane',
       'webform_example_composite_multiple[items][0][last_name]' => 'Doe',
-      'webform_example_composite_multiple[items][0][gender]' => 'Female',
+      'webform_example_composite_multiple[items][0][sex]' => 'Female',
       'webform_example_composite_multiple[items][0][date_of_birth]' => '1920-12-01',
     ];
     $sid = $this->postSubmission($webform, $edit);
@@ -56,14 +56,14 @@ class WebformExampleCompositeTest extends WebformBrowserTestBase {
     $this->assertEqual($webform_submission->getElementData('webform_example_composite'), [
       'first_name' => 'John',
       'last_name' => 'Smith',
-      'gender' => 'Male',
+      'sex' => 'Male',
       'date_of_birth' => '1910-01-01',
     ]);
     $this->assertEqual($webform_submission->getElementData('webform_example_composite_multiple'), [
       [
         'first_name' => 'Jane',
         'last_name' => 'Doe',
-        'gender' => 'Female',
+        'sex' => 'Female',
         'date_of_birth' => '1920-12-01',
       ],
     ]);

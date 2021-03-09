@@ -7,6 +7,7 @@ use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Plugin\WebformHandlerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Webform submission entity mapping test handler.
@@ -25,6 +26,30 @@ use Drupal\webform\Plugin\WebformHandlerBase;
  * )
  */
 class TestEntityMappingWebformHandler extends WebformHandlerBase {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = new static($configuration, $plugin_id, $plugin_definition);
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->entityFieldManager = $container->get('entity_field.manager');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -54,8 +79,6 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $this->applyFormStateToConfiguration($form_state);
 
-    $entity_type_manager = \Drupal::entityTypeManager();
-
     // Define #ajax callback.
     $ajax = [
       'callback' => [get_class($this), 'ajaxCallback'],
@@ -68,7 +91,7 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
 
     // Get entity type options.
     $entity_type_options = [];
-    foreach ($entity_type_manager->getDefinitions() as $entity_type_id => $entity_type) {
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
       if ($entity_type instanceof ContentEntityTypeInterface) {
         $entity_type_options[$entity_type_id] = $entity_type->getLabel();
       }
@@ -92,10 +115,10 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
 
     // Get entity type bundle options.
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity_type */
-    $entity_type = $entity_type_manager->getDefinition($this->configuration['entity_type']);
+    $entity_type = $this->entityTypeManager->getDefinition($this->configuration['entity_type']);
     $bundle_options = [];
     if ($bundle_entity_type = $entity_type->getBundleEntityType()) {
-      if ($bundles = $entity_type_manager->getStorage($bundle_entity_type)->loadMultiple()) {
+      if ($bundles = $this->entityTypeManager->getStorage($bundle_entity_type)->loadMultiple()) {
         foreach ($bundles as $bundle_id => $bundle) {
           $bundle_options[$bundle_id] = $bundle->label();
         }
@@ -136,7 +159,7 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
     }
 
     // Get field options.
-    $fields = \Drupal::service('entity_field.manager')->getFieldDefinitions($this->configuration['entity_type'], $this->configuration['bundle']);
+    $fields = $this->entityFieldManager->getFieldDefinitions($this->configuration['entity_type'], $this->configuration['bundle']);
     $field_options = [];
     foreach ($fields as $field_name => $field) {
       $field_options[$field_name] = $field->getLabel();

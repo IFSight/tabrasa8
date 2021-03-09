@@ -21,6 +21,7 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
     'address',
     'captcha',
     'image',
+    'jquery_ui_datepicker',
     'taxonomy',
     'webform',
     'webform_attachment',

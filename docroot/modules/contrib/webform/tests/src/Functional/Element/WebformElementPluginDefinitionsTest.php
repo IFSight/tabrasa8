@@ -1828,7 +1828,7 @@ webform_toggle:
   composite: false
   states_wrapper: false
   deprecated: true
-  deprecated_message: 'The Toogles library is not being maintained and has major accessibility issues. It has been <a href="https://www.drupal.org/project/webform/issues/2890861">deprecated</a> and will be removed before Webform 8.x-5.0.'
+  deprecated_message: 'The Toggles library is not being maintained and has major accessibility issues. It has been <a href="https://www.drupal.org/project/webform/issues/2890861">deprecated</a> and will be removed before Webform 8.x-5.0.'
   id: webform_toggle
   label: Toggle
   class: Drupal\webform_toggles\Plugin\WebformElement\WebformToggle
@@ -1847,7 +1847,7 @@ webform_toggles:
   composite: false
   states_wrapper: false
   deprecated: true
-  deprecated_message: 'The Toogles library is not being maintained and has major accessibility issues. It has been <a href="https://www.drupal.org/project/webform/issues/2890861">deprecated</a> and will be removed before Webform 8.x-5.0.'
+  deprecated_message: 'The Toggles library is not being maintained and has major accessibility issues. It has been <a href="https://www.drupal.org/project/webform/issues/2890861">deprecated</a> and will be removed before Webform 8.x-5.0.'
   id: webform_toggles
   label: Toggles
   class: Drupal\webform_toggles\Plugin\WebformElement\WebformToggles

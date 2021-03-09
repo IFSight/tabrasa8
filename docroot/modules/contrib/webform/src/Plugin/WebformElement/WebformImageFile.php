@@ -29,7 +29,7 @@ class WebformImageFile extends WebformManagedFileBase {
       'max_resolution' => '',
       'min_resolution' => '',
     ];
-    if (\Drupal::moduleHandler()->moduleExists('image')) {
+    if ($this->moduleHandler->moduleExists('image')) {
       $properties['attachment_image_style'] = '';
     }
     return $properties;
@@ -73,8 +73,8 @@ class WebformImageFile extends WebformManagedFileBase {
     $formats[$label][":image"] = $this->t('@label: Image', $t_args);
     $formats[$label][":link"] = $this->t('@label: Link', $t_args);
     $formats[$label][":modal"] = $this->t('@label: Modal', $t_args);
-    if (\Drupal::moduleHandler()->moduleExists('image')) {
-      $image_styles = $this->entityTypeManager->getStorage('image_style')->loadMultiple();
+    if ($this->moduleHandler->moduleExists('image')) {
+      $image_styles = $this->getEntityStorage('image_style')->loadMultiple();
       foreach ($image_styles as $id => $image_style) {
         $label = (string) $image_style->label();
         $t_args = ['@label' => $label];
@@ -137,7 +137,7 @@ class WebformImageFile extends WebformManagedFileBase {
       '#width_title' => $this->t('Minimum width'),
       '#height_title' => $this->t('Minimum height'),
     ];
-    if (\Drupal::moduleHandler()->moduleExists('image')) {
+    if ($this->moduleHandler->moduleExists('image')) {
       $form['image']['attachment_image_style'] = [
         '#type' => 'select',
         '#options' => image_style_options(),
@@ -151,13 +151,13 @@ class WebformImageFile extends WebformManagedFileBase {
   /**
    * {@inheritdoc}
    */
-  public function getAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+  public function getEmailAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
     $attachments = [];
 
     /** @var \Drupal\image\ImageStyleInterface $image_style */
     $image_style = NULL;
     $attachment_image_style = $this->getElementProperty($element, 'attachment_image_style');
-    if ($attachment_image_style && \Drupal::moduleHandler()->moduleExists('image')) {
+    if ($attachment_image_style && $this->moduleHandler->moduleExists('image')) {
       $image_style = $this->entityTypeManager
         ->getStorage('image_style')
         ->load($attachment_image_style);
@@ -182,7 +182,7 @@ class WebformImageFile extends WebformManagedFileBase {
         'filemime' => $file->getMimeType(),
         // File URIs that are not supported return FALSE, when this happens
         // still use the file's URI as the file's path.
-        'filepath' => \Drupal::service('file_system')->realpath($file->getFileUri()) ?: $file->getFileUri(),
+        'filepath' => $this->fileSystem->realpath($file->getFileUri()) ?: $file->getFileUri(),
         // URL is used when debugging or resending messages.
         // @see \Drupal\webform\Plugin\WebformHandler\EmailWebformHandler::buildAttachments
         '_fileurl' => $file_url,

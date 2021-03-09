@@ -10,7 +10,6 @@ use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformDateHelper;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,22 +25,12 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
   protected $tokenManager;
 
   /**
-   * Constructs a WebformEntitySettingsFormForm.
-   *
-   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
-   *   The webform token manager.
-   */
-  public function __construct(WebformTokenManagerInterface $token_manager) {
-    $this->tokenManager = $token_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('webform.token_manager')
-    );
+    $instance = parent::create($container);
+    $instance->tokenManager = $container->get('webform.token_manager');
+    return $instance;
   }
 
   /**
@@ -373,7 +362,7 @@ class WebformEntitySettingsFormForm extends WebformEntitySettingsBaseForm {
       '#access' => FALSE,
       '#states' => [
         'visible' => [
-          ':input[name="wizard_auto_forward]' => ['checked' => TRUE],
+          ':input[name="wizard_auto_forward"]' => ['checked' => TRUE],
         ],
       ],
     ];

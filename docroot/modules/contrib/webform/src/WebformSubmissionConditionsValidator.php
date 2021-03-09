@@ -221,7 +221,7 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
     $cross_page_conditions = [];
     foreach ($conditions as $index => $value) {
       if (is_int($index) && is_array($value) && WebformArrayHelper::isSequential($value)) {
-        $cross_page_conditions[$index] = $this->replaceCrossPageTargets($conditions, $webform_submission, $targets, $form);
+        $cross_page_conditions[$index] = $this->replaceCrossPageTargets($value, $webform_submission, $targets, $form);
       }
       else {
         $cross_page_conditions[$index] = $value;
@@ -875,8 +875,15 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
    *   Visible elements.
    */
   protected function &getBuildElements(array &$form) {
+    if (isset($form['#webform_id']) && isset($form['elements'])) {
+      $form_elements =& $form['elements'];
+    }
+    else {
+      $form_elements =& $form;
+    }
+
     $elements = [];
-    $this->getBuildElementsRecursive($elements, $form);
+    $this->getBuildElementsRecursive($elements, $form_elements);
     return $elements;
   }
 
@@ -1059,12 +1066,12 @@ class WebformSubmissionConditionsValidator implements WebformSubmissionCondition
       }
       elseif (is_int($index)) {
         $selector = key($value);
+        $targets[$selector] = $selector;
       }
       else {
         $selector = $index;
+        $targets[$selector] = $selector;
       }
-
-      $targets[$selector] = $selector;
     }
   }
 

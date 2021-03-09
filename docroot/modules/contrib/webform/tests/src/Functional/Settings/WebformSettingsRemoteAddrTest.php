@@ -47,7 +47,7 @@ class WebformSettingsRemoteAddrTest extends WebformBrowserTestBase {
     $this->assertEqual($webform_submission->getOwnerId(), 1);
 
     // Enable the setting and make sure the IP is stored.
-    $webform->setSetting('form_remote_addr', TRUE);
+    $webform->setSetting('form_disable_remote_addr', FALSE);
     $webform->save();
     $sid = $this->postSubmission($webform, ['name' => 'John']);
     $webform_submission = WebformSubmission::load($sid);

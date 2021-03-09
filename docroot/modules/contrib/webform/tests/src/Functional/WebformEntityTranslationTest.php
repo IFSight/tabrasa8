@@ -17,7 +17,7 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['block', 'webform', 'webform_ui', 'webform_test_translation'];
+  public static $modules = ['block', 'filter', 'webform', 'webform_ui', 'webform_test_translation'];
 
   /**
    * {@inheritdoc}
@@ -27,6 +27,9 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
 
     // Place blocks.
     $this->placeBlocks();
+
+    // Create filters.
+    $this->createFilters();
   }
 
   /**
@@ -61,7 +64,49 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
     // Check Spanish translation.
     $this->drupalGet('/admin/structure/webform/manage/test_translation/translate/es/edit');
     $this->assertFieldByName('translation[config_names][webform.webform.test_translation][title]', 'Prueba: Traducción');
-    $this->assertField('translation[config_names][webform.webform.test_translation][elements]');
+
+    // Check processed text translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][processed_text][text][value]', '<p><strong>Algún texto</strong></p>');
+
+    // Check textfield translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][textfield][title]', 'Campo de texto');
+
+    // Check select with options translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][select_options][title]', 'Seleccione (opciones)');
+
+    // Check select with custom options translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][select_custom][title]', 'Seleccione (personalizado)');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][select_custom][options][4]', 'Las cuatro');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][select_custom][other__option_label]', 'Número personalizado…');
+
+    // Check image select translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][webform_image_select][title]', 'Seleccionar imagen');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][webform_image_select][images][kitten_1][text]', 'Lindo gatito 1');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][webform_image_select][images][kitten_1][src]', 'http://placekitten.com/220/200');
+
+    // Check details translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][details][title]', 'Detalles');
+
+    // Check markup translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][markup][markup][value]', 'Esto es un poco de marcado HTML.');
+
+    // Check custom composite translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][composite][title]', 'Compuesto');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][composite][element][first_name][title]', 'Nombre');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][composite][element][last_name][title]', 'Apellido');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][composite][element][age][title]', 'Edad');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][composite][element][age][field_suffix]', 'años. antiguo');
+
+    // Check address translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][address][title]', 'Dirección');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][address][address__title]', 'Dirección');
+
+    // Check computed token translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][computed_token][title]', 'Computado (token)');
+
+    // Check action translation.
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][actions][title]', 'Enviar botón (s)');
+    $this->assertFieldByName('translation[config_names][webform.webform.test_translation][elements][actions][submit__label]', 'Enviar mensaje');
 
     // Check form builder is not translated.
     $this->drupalGet('/es/admin/structure/webform/manage/test_translation');
@@ -122,65 +167,16 @@ class WebformEntityTranslationTest extends WebformBrowserTestBase {
 
     // Check default elements.
     $this->drupalGet('/admin/structure/webform/manage/test_translation/translate/fr/add');
-    $this->assertRaw('<textarea lang="fr" data-drupal-selector="edit-translation-config-names-webformwebformtest-translation-elements" aria-describedby="edit-translation-config-names-webformwebformtest-translation-elements--description" class="js-webform-codemirror webform-codemirror yaml form-textarea" data-webform-codemirror-mode="text/x-yaml" id="edit-translation-config-names-webformwebformtest-translation-elements" name="translation[config_names][webform.webform.test_translation][elements]" rows="52" cols="60">variant:
-  &#039;#title&#039;: Variant
-textfield:
-  &#039;#title&#039;: &#039;Text field&#039;
-select_options:
-  &#039;#title&#039;: &#039;Select (options)&#039;
-select_custom:
-  &#039;#title&#039;: &#039;Select (custom)&#039;
-  &#039;#options&#039;:
-    4: Four
-    5: Five
-    6: Six
-  &#039;#other__option_label&#039;: &#039;Custom number…&#039;
-details:
-  &#039;#title&#039;: Details
-markup:
-  &#039;#markup&#039;: &#039;This is some HTML markup.&#039;
-composite:
-  &#039;#title&#039;: Composite
-  &#039;#element&#039;:
-    first_name:
-      &#039;#title&#039;: &#039;First name&#039;
-    last_name:
-      &#039;#title&#039;: &#039;Last name&#039;
-    age:
-      &#039;#title&#039;: Age
-      &#039;#field_suffix&#039;: &#039; yrs. old&#039;
-address:
-  &#039;#title&#039;: Address
-  &#039;#address__title&#039;: Address
-  &#039;#address_2__title&#039;: &#039;Address 2&#039;
-  &#039;#city__title&#039;: City/Town
-  &#039;#state_province__title&#039;: State/Province
-  &#039;#postal_code__title&#039;: &#039;ZIP/Postal Code&#039;
-  &#039;#country__title&#039;: Country
-token:
-  &#039;#title&#039;: &#039;Computed (token)&#039;
-actions:
-  &#039;#title&#039;: &#039;Submit button(s)&#039;
-  &#039;#submit__label&#039;: &#039;Send message&#039;</textarea>
-</div>');
 
     // Check customized maxlengths.
-    $this->assertCssSelect('input[name$="[title]"][maxlength=255]');
+    $this->assertCssSelect('input[name$="[title]"]');
+    $this->assertNoCssSelect('input[name$="[title][maxlength"]');
     $this->assertCssSelect('input[name$="[submission_label]"]');
     $this->assertNoCssSelect('input[name$="[submission_label]"][maxlength]');
 
     // Create French translation.
-    $translation_elements = [
-      'textfield' => [
-        '#title' => 'French',
-        '#custom' => 'custom',
-      ],
-      'custom' => [
-        '#title' => 'Custom',
-      ],
-    ] + $elements;
     $edit = [
-      'translation[config_names][webform.webform.test_translation][elements]' => Yaml::encode($translation_elements),
+      'translation[config_names][webform.webform.test_translation][elements][textfield][title]' => 'French',
     ];
     $this->drupalPostForm('/admin/structure/webform/manage/test_translation/translate/fr/add', $edit, 'Save translation');
 
@@ -329,7 +325,7 @@ actions:
     $webform = Webform::load('test_translation');
     $variants = $webform->getVariants();
     foreach ($variants as $variant) {
-       $webform->deleteWebformVariant($variant);
+      $webform->deleteWebformVariant($variant);
     }
     $webform->deleteElement('variant');
     $webform->save();

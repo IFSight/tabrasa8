@@ -206,10 +206,17 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         )
       );
 
+    // Build container.
+    $container = new ContainerBuilder();
+    $container->set('request_stack', $request_stack);
+    $container->set('entity_type.manager', $entity_type_manager);
+    $container->set('plugin.manager.webform.source_entity', $webform_source_entity_manager);
+    $container->set('webform.access_rules_manager', $access_rules_manager);
+
     /**************************************************************************/
 
     // Create webform access control handler.
-    $access_handler = new WebformEntityAccessControlHandler($entity_type, $request_stack, $entity_type_manager, $webform_source_entity_manager, $access_rules_manager);
+    $access_handler = WebformEntityAccessControlHandler::createInstance($container, $entity_type);
 
     // Check access.
     $access_result = $access_handler->checkAccess($webform, $operation, $account);

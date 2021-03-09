@@ -107,7 +107,7 @@ class WebformSettingsPathTest extends WebformBrowserTestBase {
     $this->drupalLogout();
 
     // Check custom submit and confirm path.
-    $webform->setSettings(['page' => TRUE, 'page_submit_path' => 'page_submit_path', 'page_confirm_path' => 'page_confirm_path'])->save();
+    $webform->setSettings(['page' => TRUE, 'page_submit_path' => '/page_submit_path', 'page_confirm_path' => '/page_confirm_path'])->save();
     $this->drupalGet('/page_submit_path');
     $this->assertResponse(200, 'Submit system path access permitted');
     $this->drupalGet('/page_confirm_path');
@@ -116,7 +116,7 @@ class WebformSettingsPathTest extends WebformBrowserTestBase {
     // Check custom base path.
     $webform->setSettings(['page_submit_path' => '', 'page_confirm_path' => ''])->save();
     $this->drupalLogin($this->rootUser);
-    $this->drupalPostForm('/admin/structure/webform/config', ['page_settings[default_page_base_path]' => 'base/path'], 'Save configuration');
+    $this->drupalPostForm('/admin/structure/webform/config', ['page_settings[default_page_base_path]' => '/base/path'], t('Save configuration'));
     $this->drupalGet('/base/path/' . str_replace('_', '-', $webform->id()));
     $this->assertResponse(200, 'Submit URL alias with custom base path exists');
     $this->drupalGet('/base/path/' . str_replace('_', '-', $webform->id()) . '/confirmation');

@@ -129,6 +129,7 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
   protected function appendBehaviors(array &$element, array $behavior_elements, array $settings, array $default_settings) {
     $weight = 0;
     foreach ($behavior_elements as $behavior_key => $behavior_element) {
+      $behavior_element += ['states' => []];
       // Add group.
       if (isset($behavior_element['group'])) {
         $group = (string) $behavior_element['group'];
@@ -148,6 +149,7 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
           '#type' => 'checkbox',
           '#title' => $behavior_element['title'],
           '#description' => $behavior_element['all_description'],
+          '#states' => $behavior_element['states'],
           '#disabled' => TRUE,
           '#default_value' => TRUE,
           '#weight' => $weight,
@@ -165,6 +167,7 @@ abstract class WebformEntitySettingsBaseForm extends EntityForm {
           '#type' => 'checkbox',
           '#title' => $behavior_element['title'],
           '#description' => $behavior_element['form_description'],
+          '#states' => $behavior_element['states'],
           '#return_value' => TRUE,
           '#default_value' => $settings[$behavior_key],
           '#weight' => $weight,

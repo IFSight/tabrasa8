@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -10,15 +11,92 @@ weight: 0
 uid: null
 template: false
 archive: false
-id: test_token_view_update
-title: 'Test: Token: View & Update'
-description: 'Test viewing and updating submission using secure token.'
-category: 'Test: Token'
+id: test_element_multiple_header
+title: 'Test: Element: Multiple header'
+description: 'Test multiple element header.'
+category: 'Test: Element'
 elements: |
-  textfield:
-    '#type': textfield
-    '#title': textfield
-  
+  webform_multiple_basic:
+    '#type': webform_multiple
+    '#title': webform_multiple_basic
+  webform_multiple_basic_header_string:
+    '#type': webform_multiple
+    '#title': webform_multiple_basic_header_string
+    '#header': '{webform_multiple_basic_header_string}'
+  webform_multiple_basic_header_label:
+    '#type': webform_multiple
+    '#title': webform_multiple_basic_header_label
+    '#header_label': '{webform_multiple_basic_header_label}'
+  webform_multiple_elements:
+    '#type': webform_multiple
+    '#title': webform_multiple_elements
+    '#element':
+      textfield:
+        '#type': textfield
+        '#title': textfield
+      email:
+        '#type': email
+        '#title': email
+  webform_multiple_elements_header_string:
+    '#type': webform_multiple
+    '#title': webform_multiple_elements_header_string
+    '#header': '{webform_multiple_elements_header_string}'
+    '#element':
+      textfield:
+        '#type': textfield
+        '#title': textfield
+      email:
+        '#type': email
+        '#title': email
+  webform_multiple_elements_header_true:
+    '#type': webform_multiple
+    '#title': webform_multiple_elements_header_true
+    '#header': true
+    '#element':
+      textfield:
+        '#type': textfield
+        '#title': textfield
+      email:
+        '#type': email
+        '#title': email
+  webform_multiple_elements_header_custom:
+    '#type': webform_multiple
+    '#title': webform_multiple_elements_header_custom
+    '#header':
+      - '{textfield_custom}'
+      - '{email_custom}'
+    '#element':
+      textfield:
+        '#type': textfield
+        '#title': textfield
+      email:
+        '#type': email
+        '#title': email
+  webform_multiple_elements_header_true_label:
+    '#type': webform_multiple
+    '#title': webform_multiple_elements_header_true_label
+    '#header': true
+    '#header_label': '{webform_multiple_elements_header_true_label}'
+    '#element':
+      textfield:
+        '#type': textfield
+        '#title': textfield
+      email:
+        '#type': email
+        '#title': email
+  webform_multiple_elements_header_false_label:
+    '#type': webform_multiple
+    '#title': webform_multiple_elements_header_false_label
+    '#header': false
+    '#header_label': '{webform_multiple_elements_header_false_label}'
+    '#element':
+      textfield:
+        '#type': textfield
+        '#title': textfield
+      email:
+        '#type': email
+        '#title': email
+
 css: ''
 javascript: ''
 settings:
@@ -39,7 +117,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -118,12 +196,9 @@ settings:
   draft_loaded_message: ''
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
-  confirmation_type: page
+  confirmation_type: message
   confirmation_title: ''
-  confirmation_message: |
-    <p>You can view your submission via <a href="[webform_submission:view-url]">[webform_submission:view-url:relative]</a></p>
-    <p>You can update your submission via <a href="[webform_submission:update-url]">[webform_submission:update-url:relative]</a></p>
-    
+  confirmation_message: ''
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
@@ -146,11 +221,11 @@ settings:
   entity_limit_user_interval: null
   purge: none
   purge_days: null
-  results_disabled: false
+  results_disabled: true
   results_disabled_ignore: false
   results_customize: false
-  token_view: true
-  token_update: true
+  token_view: false
+  token_update: false
   serial_disabled: false
 access:
   create:
@@ -200,43 +275,13 @@ access:
     users: {  }
     permissions: {  }
 handlers:
-  email:
-    id: email
-    label: Email
-    handler_id: email
+  debug:
+    id: debug
+    label: Debug
+    notes: ''
+    handler_id: debug
     status: true
     conditions: {  }
     weight: 0
-    settings:
-      states:
-        - completed
-      to_mail: _default
-      to_options: {  }
-      cc_mail: ''
-      cc_options: {  }
-      bcc_mail: ''
-      bcc_options: {  }
-      from_mail: _default
-      from_options: {  }
-      from_name: _default
-      subject: _default
-      body: |
-        <a href="[webform_submission:view-url]">[webform_submission:view-url]</a><br/>
-        <a href="[webform_submission:update-url]">[webform_submission:update-url]</a>
-        
-      excluded_elements: {  }
-      ignore_access: false
-      exclude_empty: true
-      exclude_empty_checkbox: false
-      exclude_attachments: false
-      html: true
-      attachments: false
-      twig: false
-      theme_name: ''
-      parameters: {  }
-      debug: false
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
+    settings: {  }
 variants: {  }

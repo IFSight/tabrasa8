@@ -9,17 +9,13 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\ElementInfoManagerInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Element\WebformElementStates;
 use Drupal\webform\Form\WebformEntityAjaxFormTrait;
 use Drupal\webform\Plugin\WebformElement\WebformElement;
 use Drupal\webform\Plugin\WebformElement\WebformTable;
 use Drupal\webform\Utility\WebformDialogHelper;
-use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Utility\WebformElementHelper;
-use Drupal\webform\WebformEntityElementsValidatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -77,34 +73,15 @@ class WebformUiEntityElementsForm extends BundleEntityFormBase {
   protected $tokenManager;
 
   /**
-   * Constructs a WebformUiEntityElementsForm.
-   *
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer.
-   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
-   *   The element manager.
-   * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
-   *   The webform element manager.
-   * @param \Drupal\webform\WebformEntityElementsValidatorInterface $elements_validator
-   *   Webform element validator.
-   */
-  public function __construct(RendererInterface $renderer, ElementInfoManagerInterface $element_info, WebformElementManagerInterface $element_manager, WebformEntityElementsValidatorInterface $elements_validator) {
-    $this->renderer = $renderer;
-    $this->elementInfo = $element_info;
-    $this->elementManager = $element_manager;
-    $this->elementsValidator = $elements_validator;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('renderer'),
-      $container->get('plugin.manager.element_info'),
-      $container->get('plugin.manager.webform.element'),
-      $container->get('webform.elements_validator')
-    );
+    $instance = parent::create($container);
+    $instance->renderer = $container->get('renderer');
+    $instance->elementInfo = $container->get('plugin.manager.element_info');
+    $instance->elementManager = $container->get('plugin.manager.webform.element');
+    $instance->elementsValidator = $container->get('webform.elements_validator');
+    return $instance;
   }
 
   /**

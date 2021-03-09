@@ -2,12 +2,10 @@
 
 namespace Drupal\webform\Form\AdminConfig;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Plugin\WebformElement\TableSelect;
-use Drupal\webform\WebformLibrariesManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -37,26 +35,12 @@ class WebformAdminConfigLibrariesForm extends WebformAdminConfigBaseForm {
   }
 
   /**
-   * Constructs a WebformAdminConfigLibrariesForm object.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager
-   *   The webform libraries manager.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory, WebformLibrariesManagerInterface $libraries_manager) {
-    parent::__construct($config_factory);
-    $this->librariesManager = $libraries_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('webform.libraries_manager')
-    );
+    $instance = parent::create($container);
+    $instance->librariesManager = $container->get('webform.libraries_manager');
+    return $instance;
   }
 
   /**

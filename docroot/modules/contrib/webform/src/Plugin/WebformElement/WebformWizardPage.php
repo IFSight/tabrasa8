@@ -133,24 +133,6 @@ class WebformWizardPage extends Details implements WebformElementWizardPageInter
   }
 
   /**
-   * Get default from webform or global settings.
-   *
-   * @param \Drupal\webform\WebformInterface $webform
-   *   A webform.
-   * @param string $name
-   *   The name of the setting.
-   *
-   * @return string
-   *   The setting's value.
-   *
-   * @deprecated Scheduled for removal in Webform 8.x-6.x
-   *   Use \Drupal\webform\Webform::getSetting instead.
-   */
-  protected function getDefaultSettings(WebformInterface $webform, $name) {
-    return $webform->getSetting($name, TRUE);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function getElementSelectorOptions(array $element) {

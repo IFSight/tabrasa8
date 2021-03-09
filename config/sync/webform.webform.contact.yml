@@ -1,3 +1,4 @@
+uuid: 4c134ce9-7ed3-4d4c-9051-a4084decaa47
 langcode: en
 status: open
 dependencies:
@@ -35,7 +36,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -144,6 +145,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -196,6 +198,7 @@ handlers:
   email_confirmation:
     id: email
     label: 'Email confirmation'
+    notes: ''
     handler_id: email_confirmation
     status: true
     conditions: {  }
@@ -203,7 +206,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: '[webform_submission:values:email:raw]'
+      to_mail: '[current-user:mail]'
       to_options: {  }
       cc_mail: ''
       cc_options: {  }
@@ -232,6 +235,7 @@ handlers:
   email_notification:
     id: email
     label: 'Email notification'
+    notes: ''
     handler_id: email_notification
     status: true
     conditions: {  }
@@ -266,6 +270,5 @@ handlers:
       theme_name: ''
       parameters: {  }
 variants: {  }
-uuid: 4c134ce9-7ed3-4d4c-9051-a4084decaa47
 _core:
   default_config_hash: GStSV-m8JLyGU8J6dk80TIppJJHYeq790I3m6ZRLS4w

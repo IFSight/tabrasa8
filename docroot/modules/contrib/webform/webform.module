@@ -5,6 +5,7 @@
  * Enables the creation of webforms and questionnaires.
  */
 
+use Drupal\Component\Utility\Mail;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
@@ -20,9 +21,7 @@ use Drupal\file\FileInterface;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
 use Drupal\webform\Plugin\WebformElement\ManagedFile;
-use Drupal\webform\Utility\Mail;
 use Drupal\webform\Utility\WebformElementHelper;
-use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\WebformInterface;
 
@@ -882,21 +881,6 @@ function webform_webform_access_rules() {
   ];
 }
 
-/**
- * Adds JavaScript to change the state of an element based on another element.
- *
- * @param array $elements
- *   A renderable array element having a #states property as described above.
- * @param string $key
- *   The element property to add the states attribute to.
- *
- * @deprecated Scheduled for removal in Webform 8.x-6.x
- *   Use \Drupal\Core\Form\FormHelper::processStates instead.
- */
-function webform_process_states(array &$elements, $key = '#attributes') {
-  WebformFormHelper::processStates($elements, $key);
-}
-
 /******************************************************************************/
 // Devel generate info hooks.
 /******************************************************************************/
@@ -1042,19 +1026,19 @@ function webform_process_options(&$element, FormStateInterface $form_state, &$co
  * @param string $message
  *   The error message.
  * @param string $filename
- *   The filename that the error was raised in.
- * @param int $line
- *   The line number the error was raised at.
+ *   (optional) The filename that the error was raised in.
+ * @param string $line
+ *   (optional) The line number the error was raised at.
  * @param array $context
- *   An array that points to the active symbol table at the point the error
- *   occurred.
+ *   (optional) An array that points to the active symbol table at the point the
+ *   error occurred.
  *
  * @throws \ErrorException
  *   Throw ErrorException for E_RECOVERABLE_ERROR errors.
  *
  * @see \Drupal\webform\WebformEntityElementsValidator::validateRendering()
  */
-function _webform_entity_element_validate_rendering_error_handler($error_level, $message, $filename, $line, array $context) {
+function _webform_entity_element_validate_rendering_error_handler($error_level, $message, $filename = NULL, $line = NULL, $context = NULL) {
   // From: http://stackoverflow.com/questions/15461611/php-try-catch-not-catching-all-exceptions
   if (E_RECOVERABLE_ERROR === $error_level) {
     // Allow Drupal to still log the error but convert it to a warning.

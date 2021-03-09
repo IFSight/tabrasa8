@@ -296,12 +296,6 @@ options:
     mime: text/plain
     uuid: $file_uuid
     data: dGhpcyBpcyBhIHNhbXBsZSB0eHQgZmlsZQppdCBoYXMgdHdvIGxpbmVzCg==
-  file__id: $file_id
-  file__name: file.txt
-  file__uri: 'private://webform/test_handler_remote_post_file/$sid/file.txt'
-  file__mime: text/plain
-  file__uuid: $file_uuid
-  file__data: dGhpcyBpcyBhIHNhbXBsZSB0eHQgZmlsZQppdCBoYXMgdHdvIGxpbmVzCg==
   _files:
     -
       id: $files_id

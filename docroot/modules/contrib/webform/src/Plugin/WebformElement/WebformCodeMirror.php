@@ -38,6 +38,13 @@ class WebformCodeMirror extends WebformElementBase {
     return $properties;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function defineTranslatableProperties() {
+    return array_merge(parent::defineTranslatableProperties(), ['default_value']);
+  }
+
   /****************************************************************************/
 
   /**

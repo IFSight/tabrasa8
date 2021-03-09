@@ -86,18 +86,18 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
 
     // Check first name set to Jane.
     $this->assertFieldById('edit-first-name', 'Jane');
-    // Check gender is still set to Male.
-    $this->assertFieldChecked('edit-gender-male');
+    // Check sex is still set to Male.
+    $this->assertFieldChecked('edit-sex-male');
 
-    // Change gender from Male to Female.
+    // Change sex from Male to Female.
     $edit = [
-      'gender' => 'Female',
+      'sex' => 'Female',
     ];
     $this->drupalPostForm(NULL, $edit, 'Save Draft');
     // Check first name set to Jane.
     $this->assertFieldById('edit-first-name', 'Jane');
-    // Check gender is now set to Female.
-    $this->assertFieldChecked('edit-gender-female');
+    // Check sex is now set to Female.
+    $this->assertFieldChecked('edit-sex-female');
 
     // Move to next page (Contact Information).
     $this->drupalPostForm('/webform/test_form_wizard_advanced', [], 'Next >');
@@ -153,7 +153,7 @@ class WebformWizardAdvancedTest extends WebformWizardTestBase {
     $this->assertRaw('Jane');
     $this->assertRaw('<label>Last Name</label>');
     $this->assertRaw('Smith');
-    $this->assertRaw('<label>Gender</label>');
+    $this->assertRaw('<label>Sex</label>');
     $this->assertRaw('Female');
     $this->assertRaw('<label>Email</label>');
     $this->assertRaw('<a href="mailto:janesmith@example.com">janesmith@example.com</a>');

@@ -57,16 +57,16 @@ kitten_4:
 
     $dogs = Yaml::decode("dog_1:
   text: 'Cute Dog 1'
-  src: 'http://placedog.com/220/200'
+  src: 'http://placedog.net/220/200'
 dog_2:
   text: 'Cute Dog 2'
-  src: 'http://placedog.com/180/200'
+  src: 'http://placedog.net/180/200'
 dog_3:
   text: 'Cute Dog 3'
-  src: 'http://placedog.com/130/200'
+  src: 'http://placedog.net/130/200'
 dog_4:
   text: 'Cute Dog 4'
-  src: 'http://placedog.com/270/200'");
+  src: 'http://placedog.net/270/200'");
 
     // Check get element images for manually defined images.
     $element = ['#images' => $dogs];
@@ -92,22 +92,22 @@ dog_4:
     $this->assertEqual([], $webform_images->getImages());
 
     // Check admin user access denied.
-    $this->drupalGet('/admin/structure/webform/config/images/manage');
+    $this->drupalGet('/admin/structure/webform/options/images/manage');
     $this->assertResponse(403);
-    $this->drupalGet('/admin/structure/webform/config/images/manage/add');
+    $this->drupalGet('/admin/structure/webform/options/images/manage/add');
     $this->assertResponse(403);
-    $this->drupalGet('/admin/structure/webform/config/images/manage/animals/edit');
+    $this->drupalGet('/admin/structure/webform/options/images/manage/animals/edit');
     $this->assertResponse(403);
 
     // Check admin user access.
     $this->drupalLogin($admin_user);
-    $this->drupalGet('/admin/structure/webform/config/images/manage');
+    $this->drupalGet('/admin/structure/webform/options/images/manage');
     $this->assertResponse(200);
-    $this->drupalGet('/admin/structure/webform/config/images/manage/add');
+    $this->drupalGet('/admin/structure/webform/options/images/manage/add');
     $this->assertResponse(200);
 
     // Check image altered message.
-    $this->drupalGet('/admin/structure/webform/config/images/manage/animals/edit');
+    $this->drupalGet('/admin/structure/webform/options/images/manage/animals/edit');
     $this->assertRaw('The <em class="placeholder">Cute Animals</em> images are being altered by the <em class="placeholder">Webform Image Select test</em> module.');
 
     // Check hook_webform_image_select_images_alter().
@@ -115,7 +115,7 @@ dog_4:
     $element = ['#images' => 'animals'];
     $images = WebformImageSelectImages::getElementImages($element);
     $this->debug($images);
-    $this->assertEqual(array_keys($images), ['kitten_1', 'kitten_2', 'kitten_3', 'kitten_4', 'bear_1', 'bear_2', 'bear_3', 'bear_4']);
+    $this->assertEqual(array_keys($images), ['kitten_1', 'kitten_2', 'kitten_3', 'kitten_4', 'dog_1', 'dog_2', 'dog_3', 'dog_4']);
   }
 
 }

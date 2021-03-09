@@ -39,12 +39,12 @@ elements: |
       last_name:
         '#type': textfield
         '#title': 'Last name'
-      gender:
+      sex:
         '#type': select
         '#options':
           Male: Male
           Female: Female
-        '#title': Gender
+        '#title': Sex
       martial_status:
         '#type': webform_select_other
         '#options': marital_status
@@ -62,7 +62,7 @@ elements: |
     '#default_value':
       - first_name: John
         last_name: Smith
-        gender: Male
+        sex: Male
         martial_status: Single
         employment_status: Unemployed
         age: 20
@@ -87,7 +87,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false

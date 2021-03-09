@@ -63,6 +63,14 @@ elements: |
         - One
         - Two
         - Four
+    select_other_zero:
+      '#type': webform_select_other
+      '#title': 'Select other zero'
+      '#options':
+        One: One
+        Two: Two
+        Three: Three
+      '#default_value': 0
   checkboxes_other:
     '#type': details
     '#title': 'Checkboxes other (checkboxes_other)'
@@ -149,7 +157,7 @@ elements: |
         Two: Two
         Three: Three
       '#wrapper_type': container
-  
+
 css: ''
 javascript: ''
 settings:
@@ -170,7 +178,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false

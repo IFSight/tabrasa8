@@ -51,8 +51,26 @@ function webform_library_info_alter(&$libraries, $extension) {
   // @see hook_webform_libraries_info()
   $webform_libraries_modules = \Drupal::moduleHandler()->getImplementations('webform_libraries_info');
   $webform_libraries_modules[] = 'webform';
+
   if (!in_array($extension, $webform_libraries_modules)) {
     return;
+  }
+
+  // Use Tippy.js 6.x which is compatible with Drupal 9.x.
+  if (isset($libraries['libraries.tippyjs']) && floatval(\Drupal::VERSION) >= 9) {
+    /** @var \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager */
+    $libraries_manager = \Drupal::service('webform.libraries_manager');
+    $tippyjs_library = $libraries_manager->getLibrary('tippyjs/6.x');
+    $libraries['libraries.tippyjs']['version'] = $tippyjs_library['version'];
+    $libraries['libraries.tippyjs']['cdn'] = ['/libraries/tippyjs/6.x/' => 'https://unpkg.com/tippy.js@' .  $tippyjs_library['version'] . '/dist/'];
+    $libraries['libraries.tippyjs']['js'] = ['/libraries/tippyjs/6.x/' . basename($tippyjs_library['download_url']->toString()) => []];
+  }
+
+  // If webform date element in D8 use the old dependency on 'core/drupal.date'.
+  if (isset($libraries['webform.element.date'])
+    && floatval(\Drupal::VERSION) < 9
+    && !\Drupal::moduleHandler()->moduleExists('jquery_ui_datepicker')) {
+    $libraries['webform.element.date']['dependencies'] = ['core/drupal.date', 'core/drupalSettings'];
   }
 
   // If chosen_lib.module is installed, then update the dependency.
@@ -93,7 +111,6 @@ function webform_library_info_alter(&$libraries, $extension) {
       unset($libraries[$library_name]);
       continue;
     }
-
     // Skip libraries installed by other modules.
     if (isset($library['module'])) {
       continue;
@@ -109,18 +126,11 @@ function webform_library_info_alter(&$libraries, $extension) {
       }
     }
 
-    // Check CDN setting exists.
-    if (!isset($library['cdn'])) {
-      continue;
+    // Handle CDN support.
+    if (isset($library['cdn']) && isset($library['directory'])
+      && !$libraries_manager->exists($library['directory'])) {
+      _webform_library_info_alter_recursive($library, $library['cdn']);
     }
-
-    // Check if the CDN's source /library/* path exists.
-    reset($library['cdn']);
-    if (file_exists(DRUPAL_ROOT . key($library['cdn']))) {
-      continue;
-    }
-
-    _webform_library_info_alter_recursive($library, $library['cdn']);
   }
 }
 

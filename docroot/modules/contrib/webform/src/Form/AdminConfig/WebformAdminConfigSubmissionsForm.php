@@ -2,11 +2,8 @@
 
 namespace Drupal\webform\Form\AdminConfig;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Element\WebformMessage;
-use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -36,30 +33,13 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
   }
 
   /**
-   * Constructs a WebformAdminConfigSubmissionsForm object.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
-   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
-   *   The webform token manager.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $module_handler, WebformTokenManagerInterface $token_manager) {
-    parent::__construct($config_factory);
-    $this->moduleHandler = $module_handler;
-    $this->tokenManager = $token_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('module_handler'),
-      $container->get('webform.token_manager')
-    );
+    $instance = parent::create($container);
+    $instance->moduleHandler = $container->get('module_handler');
+    $instance->tokenManager = $container->get('webform.token_manager');
+    return $instance;
   }
 
   /**
@@ -128,6 +108,10 @@ class WebformAdminConfigSubmissionsForm extends WebformAdminConfigBaseForm {
       '#tree' => TRUE,
     ];
     $behavior_elements = [
+      'default_form_disable_remote_addr' => [
+        'title' => $this->t('Disable the tracking of user IP addresses for all webforms'),
+        'description' => $this->t("If checked, a user's IP address will not be recorded for all webforms."),
+      ],
       'default_submission_log' => [
         'title' => $this->t('Log all submission events for all webforms'),
         'description' => $this->t('If checked, all submission events will be logged to dedicated submission log available to all webforms and submissions.') . '<br/><br/>' .

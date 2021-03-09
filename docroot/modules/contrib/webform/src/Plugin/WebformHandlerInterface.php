@@ -20,7 +20,7 @@ use Drupal\webform\WebformSubmissionInterface;
  * @see \Drupal\webform\Plugin\WebformHandlerManagerInterface
  * @see plugin_api
  */
-interface WebformHandlerInterface extends PluginInspectionInterface, ConfigurableInterface, ContainerFactoryPluginInterface, PluginFormInterface {
+interface WebformHandlerInterface extends PluginInspectionInterface, ConfigurableInterface, ContainerFactoryPluginInterface, PluginFormInterface, WebformEntityInjectionInterface {
 
   /**
    * Value indicating unlimited plugin instances are permitted.
@@ -284,52 +284,6 @@ interface WebformHandlerInterface extends PluginInspectionInterface, Configurabl
    * @see \Drupal\webform_options_limit\Plugin\WebformHandler\OptionsLimitWebformHandler
    */
   public function hasAnonymousSubmissionTracking();
-
-  /**
-   * Set the webform that this is handler is attached to.
-   *
-   * @param \Drupal\webform\WebformInterface $webform
-   *   A webform.
-   *
-   * @return $this
-   *   This webform handler.
-   *
-   * @todo Webform 8.x-6.x: Replace with WebformEntityInjectionInterface.
-   */
-  public function setWebform(WebformInterface $webform);
-
-  /**
-   * Get the webform that this handler is attached to.
-   *
-   * @return \Drupal\webform\WebformInterface
-   *   A webform.
-   *
-   * @todo Webform 8.x-6.x: Replace with WebformEntityInjectionInterface.
-   */
-  public function getWebform();
-
-  /**
-   * Set the webform submission that this handler is handling.
-   *
-   * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
-   *   A webform submission.
-   *
-   * @return $this
-   *   This webform handler.
-   *
-   * @todo Webform 8.x-6.x: Replace with WebformEntityInjectionInterface.
-   */
-  public function setWebformSubmission(WebformSubmissionInterface $webform_submission = NULL);
-
-  /**
-   * Get the webform submission that this handler is handling.
-   *
-   * @return \Drupal\webform\WebformSubmissionInterface
-   *   A webform submission.
-   *
-   * @todo Webform 8.x-6.x: Replace with WebformEntityInjectionInterface.
-   */
-  public function getWebformSubmission();
 
   /**
    * Check handler conditions against a webform submission.

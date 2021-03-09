@@ -32,7 +32,7 @@ class WebformHandlerManager extends DefaultPluginManager implements WebformHandl
   protected $configFactory;
 
   /**
-   * Constructs a WebformHandlerManager.
+   * Constructs a WebformHandlerManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths

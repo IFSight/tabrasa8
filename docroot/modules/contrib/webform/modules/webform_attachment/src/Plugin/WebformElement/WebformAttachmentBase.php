@@ -10,6 +10,7 @@ use Drupal\webform\Plugin\WebformElementBase;
 use Drupal\webform\Plugin\WebformElementDisplayOnInterface;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a base class for 'webform_attachment' elements.
@@ -17,6 +18,22 @@ use Drupal\webform\WebformSubmissionInterface;
 abstract class WebformAttachmentBase extends WebformElementBase implements WebformElementAttachmentInterface, WebformElementDisplayOnInterface {
 
   use WebformDisplayOnTrait;
+
+  /**
+   * The webform submission (server-side) conditions (#states) validator.
+   *
+   * @var \Drupal\webform\WebformSubmissionConditionsValidator
+   */
+  protected $conditionsValidator;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->conditionsValidator = $container->get('webform_submission.conditions_validator');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -233,10 +250,8 @@ abstract class WebformAttachmentBase extends WebformElementBase implements Webfo
   /**
    * {@inheritdoc}
    */
-  public function getAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
-    /** @var \Drupal\webform\WebformSubmissionConditionsValidatorInterface $conditions_validator */
-    $conditions_validator = \Drupal::service('webform_submission.conditions_validator');
-    if (!$conditions_validator->isElementEnabled($element, $webform_submission)) {
+  public function getEmailAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    if (!$this->conditionsValidator->isElementEnabled($element, $webform_submission)) {
       return [];
     }
 
@@ -260,6 +275,27 @@ abstract class WebformAttachmentBase extends WebformElementBase implements Webfo
       ];
     }
     return $attachments;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExportAttachments(array $element, WebformSubmissionInterface $webform_submission, array $options = []) {
+    return $this->getEmailAttachments($element, $webform_submission, $options);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasExportAttachments() {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExportAttachmentsBatchLimit() {
+    return NULL;
   }
 
 }

@@ -7,21 +7,12 @@ use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface;
-use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\ContentEntityForm;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\PageCache\ResponsePolicy\KillSwitch;
-use Drupal\Core\Path\AliasManagerInterface;
-use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
@@ -31,7 +22,6 @@ use Drupal\webform\Plugin\WebformElement\Hidden;
 use Drupal\webform\Plugin\WebformElement\OptionsBase;
 use Drupal\webform\Plugin\WebformElement\WebformCompositeBase;
 use Drupal\webform\Plugin\WebformElementEntityReferenceInterface;
-use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Plugin\WebformElementOtherInterface;
 use Drupal\webform\Plugin\WebformElementWizardPageInterface;
 use Drupal\webform\Plugin\WebformHandlerInterface;
@@ -72,14 +62,21 @@ class WebformSubmissionForm extends ContentEntityForm {
   protected $formBuilder;
 
   /**
+   * The kill switch.
+   *
+   * @var \Drupal\Core\PageCache\ResponsePolicy\KillSwitch
+   */
+  protected $killSwitch;
+
+  /**
    * The path alias manager.
    *
-   * @var \Drupal\Core\Path\AliasManagerInterface
+   * @var \Drupal\path_alias\AliasManagerInterface
    */
   protected $aliasManager;
 
   /**
-   * The path validator.
+   * The path validator service.
    *
    * @var \Drupal\Core\Path\PathValidatorInterface
    */
@@ -91,6 +88,13 @@ class WebformSubmissionForm extends ContentEntityForm {
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $entityFieldManager;
+
+  /**
+   * The selection plugin manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface
+   */
+  protected $selectionManager;
 
   /**
    * The webform element plugin manager.
@@ -170,20 +174,6 @@ class WebformSubmissionForm extends ContentEntityForm {
   protected $statesPrefix;
 
   /**
-   * The kill switch.
-   *
-   * @var \Drupal\Core\PageCache\ResponsePolicy\KillSwitch
-   */
-  protected $killSwitch;
-
-  /**
-   * The selection plugin manager.
-   *
-   * @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface
-   */
-  protected $selectionManager;
-
-  /**
    * Stores the original submission data passed via the EntityFormBuilder.
    *
    * @var array
@@ -193,104 +183,27 @@ class WebformSubmissionForm extends ContentEntityForm {
   protected $originalData;
 
   /**
-   * Constructs a WebformSubmissionForm object.
-   *
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer service.
-   * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
-   *   The path alias manager.
-   * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
-   *   The path validator.
-   * @param \Drupal\webform\WebformRequestInterface $request_handler
-   *   The webform request handler.
-   * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
-   *   The webform element manager.
-   * @param \Drupal\webform\WebformThirdPartySettingsManagerInterface $third_party_settings_manager
-   *   The webform third party settings manager.
-   * @param \Drupal\webform\WebformMessageManagerInterface $message_manager
-   *   The webform message manager.
-   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
-   *   The webform token manager.
-   * @param \Drupal\webform\WebformSubmissionConditionsValidatorInterface $conditions_validator
-   *   The webform submission conditions (#states) validator.
-   * @param \Drupal\webform\WebformEntityReferenceManagerInterface $webform_entity_reference_manager
-   *   The webform entity reference manager.
-   * @param \Drupal\webform\WebformSubmissionGenerateInterface $submission_generate
-   *   The webform submission generation service.
-   * @param \Drupal\Core\PageCache\ResponsePolicy\KillSwitch $killSwitch
-   *   The page cache kill switch service.
-   * @param \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_manager
-   *   The selection plugin manager.
-   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
-   *   The entity field manager.
-   * @param \Drupal\Core\Form\FormBuilderInterface
-   *   The form builder.
-   */
-  public function __construct(
-    EntityRepositoryInterface $entity_repository,
-    ConfigFactoryInterface $config_factory,
-    RendererInterface $renderer,
-    AliasManagerInterface $alias_manager,
-    PathValidatorInterface $path_validator,
-    WebformRequestInterface $request_handler,
-    WebformElementManagerInterface $element_manager,
-    WebformThirdPartySettingsManagerInterface $third_party_settings_manager,
-    WebformMessageManagerInterface $message_manager,
-    WebformTokenManagerInterface $token_manager,
-    WebformSubmissionConditionsValidatorInterface $conditions_validator,
-    WebformEntityReferenceManagerInterface $webform_entity_reference_manager,
-    WebformSubmissionGenerateInterface $submission_generate,
-    KillSwitch $killSwitch,
-    SelectionPluginManagerInterface $selection_manager,
-    EntityFieldManagerInterface $entity_field_manager,
-    FormBuilderInterface $form_builder
-  ) {
-    parent::__construct($entity_repository);
-    $this->configFactory = $config_factory;
-    $this->renderer = $renderer;
-    $this->requestHandler = $request_handler;
-    $this->aliasManager = $alias_manager;
-    $this->pathValidator = $path_validator;
-    $this->elementManager = $element_manager;
-    $this->thirdPartySettingsManager = $third_party_settings_manager;
-    $this->messageManager = $message_manager;
-    $this->tokenManager = $token_manager;
-    $this->conditionsValidator = $conditions_validator;
-    $this->webformEntityReferenceManager = $webform_entity_reference_manager;
-    $this->generate = $submission_generate;
-    $this->killSwitch = $killSwitch;
-    $this->selectionManager = $selection_manager;
-    $this->entityFieldManager = $entity_field_manager;
-    $this->formBuilder = $form_builder;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity.repository'),
-      $container->get('config.factory'),
-      $container->get('renderer'),
-      $container->get('path.alias_manager'),
-      $container->get('path.validator'),
-      $container->get('webform.request'),
-      $container->get('plugin.manager.webform.element'),
-      $container->get('webform.third_party_settings_manager'),
-      $container->get('webform.message_manager'),
-      $container->get('webform.token_manager'),
-      $container->get('webform_submission.conditions_validator'),
-      $container->get('webform.entity_reference_manager'),
-      $container->get('webform_submission.generate'),
-      $container->get('page_cache_kill_switch'),
-      $container->get('plugin.manager.entity_reference_selection'),
-      $container->get('entity_field.manager'),
-      $container->get('form_builder')
-    );
+    $instance = parent::create($container);
+    $instance->configFactory = $container->get('config.factory');
+    $instance->renderer = $container->get('renderer');
+    $instance->formBuilder = $container->get('form_builder');
+    $instance->killSwitch = $container->get('page_cache_kill_switch');
+    $instance->aliasManager = $container->get('path_alias.manager');
+    $instance->pathValidator = $container->get('path.validator');
+    $instance->selectionManager = $container->get('plugin.manager.entity_reference_selection');
+    $instance->entityFieldManager = $container->get('entity_field.manager');
+    $instance->requestHandler = $container->get('webform.request');
+    $instance->elementManager = $container->get('plugin.manager.webform.element');
+    $instance->thirdPartySettingsManager = $container->get('webform.third_party_settings_manager');
+    $instance->messageManager = $container->get('webform.message_manager');
+    $instance->tokenManager = $container->get('webform.token_manager');
+    $instance->conditionsValidator = $container->get('webform_submission.conditions_validator');
+    $instance->webformEntityReferenceManager = $container->get('webform.entity_reference_manager');
+    $instance->generate = $container->get('webform_submission.generate');
+    return $instance;
   }
 
   /**
@@ -457,6 +370,12 @@ class WebformSubmissionForm extends ContentEntityForm {
         $last_submission = $this->getStorage()->getLastSubmission($webform, $source_entity, $account, ['in_draft' => FALSE]);
       }
 
+      // If the webform is closed and user can not update any submission,
+      // block the submission from being updated.
+      if ($webform->isClosed() && !$webform->access('submission_update_any')) {
+        $last_submission = NULL;
+      }
+
       // Set last submission and switch to the edit operation.
       if ($last_submission) {
         $entity = $last_submission;
@@ -609,11 +528,8 @@ class WebformSubmissionForm extends ContentEntityForm {
     // Apply variants.
     $webform->applyVariants($webform_submission);
 
-    // All anonymous submissions are tracked in the $_SESSION.
-    // @see \Drupal\webform\WebformSubmissionStorage::setAnonymousSubmission
-    if ($this->currentUser()->isAnonymous()) {
-      $form['#cache']['contexts'][] = 'session';
-    }
+    // Add cache dependency to the form's render array.
+    $this->addCacheableDependency($form);
 
     // Add the webform as a cacheable dependency.
     $this->renderer->addCacheableDependency($form, $webform);
@@ -2381,43 +2297,18 @@ class WebformSubmissionForm extends ContentEntityForm {
 
       case WebformInterface::CONFIRMATION_URL:
       case WebformInterface::CONFIRMATION_URL_MESSAGE:
-        $confirmation_url = trim($this->getWebformSetting('confirmation_url', ''));
-        // Remove base path from root-relative URL.
-        // Only applies for Drupal sites within a sub directory.
-        $confirmation_url = preg_replace('/^' . preg_quote(base_path(), '/') . '/', '/', $confirmation_url);
-        // Get system path.
-        $confirmation_url = $this->aliasManager->getPathByAlias($confirmation_url);
-        // Get redirect URL if internal or valid.
-        if (strpos($confirmation_url, 'internal:') === 0) {
-          $redirect_url = Url::fromUri($confirmation_url);
-        }
-        else {
-          $redirect_url = $this->pathValidator->getUrlIfValid($confirmation_url);
-        }
+        $redirect_url = $this->getConfirmationUrl();
         if ($redirect_url) {
           if ($confirmation_type === WebformInterface::CONFIRMATION_URL_MESSAGE) {
             $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_CONFIRMATION_MESSAGE);
           }
           $this->setTrustedRedirectUrl($form_state, $redirect_url);
-          return;
         }
         else {
-          $t_args = [
-            '@webform' => $webform->label(),
-            '%url' => $this->getWebformSetting('confirmation_url'),
-          ];
-          // Display warning to use who can update the webform.
-          if ($webform->access('update')) {
-            $this->messenger()->addWarning($this->t('Confirmation URL %url is not valid.', $t_args));
-          }
-          // Log warning.
-          $this->getLogger('webform')->warning('@webform: Confirmation URL %url is not valid.', $t_args);
+          $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_CONFIRMATION_MESSAGE);
+          $route_options['query']['webform_id'] = $webform->id();
+          $form_state->setRedirect($route_name, $route_parameters, $route_options);
         }
-
-        // If confirmation URL is invalid display message.
-        $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_CONFIRMATION_MESSAGE);
-        $route_options['query']['webform_id'] = $webform->id();
-        $form_state->setRedirect($route_name, $route_parameters, $route_options);
         return;
 
       case WebformInterface::CONFIRMATION_INLINE:
@@ -2448,6 +2339,55 @@ class WebformSubmissionForm extends ContentEntityForm {
         $this->getMessageManager()->display(WebformMessageManagerInterface::SUBMISSION_DEFAULT_CONFIRMATION);
         return;
     }
+  }
+
+  /**
+   * Get the webform's confrmation URL.
+   *
+   * @return \Drupal\Core\Url|false
+   *   The url object, or FALSE if the path is not valid.
+   *
+   * @see \Drupal\Core\Path\PathValidatorInterface::getUrlIfValid
+   */
+  protected function getConfirmationUrl() {
+    $confirmation_url = trim($this->getWebformSetting('confirmation_url', ''));
+
+    if (strpos($confirmation_url, '/') === 0) {
+      // Get redirect URL using an absolute URL for the absolute  path.
+      $redirect_url = Url::fromUri($this->getRequest()->getSchemeAndHttpHost() . $confirmation_url);
+    }
+    elseif (preg_match('#^[a-z]+(?:://|:)#', $confirmation_url)) {
+      // Get redirect URL from URI (i.e. http://, https:// or ftp://)
+      // and Drupal custom URIs (i.e internal:).
+      $redirect_url = Url::fromUri($confirmation_url);
+    }
+    elseif (strpos($confirmation_url, '<') === 0) {
+      // Get redirect URL from special paths: '<front>' and '<none>'.
+      $redirect_url = $this->pathValidator->getUrlIfValid($confirmation_url);
+    }
+    else  {
+      // Get redirect URL by validating the Drupal relative path which does not
+      // begin with a forward slash (/).
+      $confirmation_url = $this->aliasManager->getPathByAlias('/' . $confirmation_url);
+      $redirect_url = $this->pathValidator->getUrlIfValid($confirmation_url);
+    }
+
+    // If redirect url is FALSE, display and log a warning.
+    if (!$redirect_url) {
+      $webform = $this->getWebform();
+      $t_args = [
+        '@webform' => $webform->label(),
+        '%url' => $this->getWebformSetting('confirmation_url'),
+      ];
+      // Display warning to use who can update the webform.
+      if ($webform->access('update')) {
+        $this->messenger()->addWarning($this->t('Confirmation URL %url is not valid.', $t_args));
+      }
+      // Log warning.
+      $this->getLogger('webform')->warning('@webform: Confirmation URL %url is not valid.', $t_args);
+    }
+
+    return $redirect_url;
   }
 
   /**
@@ -2717,6 +2657,51 @@ class WebformSubmissionForm extends ContentEntityForm {
   }
 
   /****************************************************************************/
+  // Cache related functions.
+  /****************************************************************************/
+
+  /**
+   * Add cache dependency to the form's render array.
+   *
+   * @param array &$form
+   *   The form's render array to update.
+   */
+  protected function addCacheableDependency(array &$form) {
+    /* @var $webform_submission \Drupal\webform\WebformSubmissionInterface */
+    $webform_submission = $this->getEntity();
+
+    // All anonymous submissions are tracked in the $_SESSION.
+    // @see \Drupal\webform\WebformSubmissionStorage::setAnonymousSubmission
+    /** @var \Drupal\webform\WebformSubmissionStorageInterface $submission_storage */
+    $submission_storage = $this->entityTypeManager->getStorage('webform_submission');
+    if ($this->currentUser()->isAnonymous() && $submission_storage->hasAnonymousSubmissionTracking($webform_submission)) {
+      $form['#cache']['contexts'][] = 'session';
+    }
+    // Allow all form elements to be prepopulated via the URL.
+    if ($this->getWebformSetting('form_prepopulate')) {
+      $form['#cache']['contexts'][] = 'url.query_args';
+    }
+    else {
+      // Allow specific form elements to be prepopulated via the URL.
+      $elements_prepopulate = $this->getWebform()->getElementsPrepopulate();
+      if ($elements_prepopulate) {
+        foreach ($elements_prepopulate as $element_key) {
+          $form['#cache']['contexts'][] = 'url.query_args:' . $element_key;
+        }
+      }
+      // Allow source entity type and id to be passed via the URL.
+      if ($this->getWebformSetting('form_prepopulate_source_entity')) {
+        $form['#cache']['contexts'][] = 'url.query_args:source_entity_type';
+        $form['#cache']['contexts'][] = 'url.query_args:source_entity_id';
+      }
+      // Allow variants to be passed.
+      if ($this->getWebform()->hasVariants()) {
+        $form['#cache']['contexts'][] = 'url.query_args:_webform_variant';
+      }
+    }
+  }
+
+  /****************************************************************************/
   // Account related functions
   /****************************************************************************/
 
@@ -2970,26 +2955,6 @@ class WebformSubmissionForm extends ContentEntityForm {
   }
 
   /**
-   * Get last completed webform submission for the current user.
-   *
-   * @param bool $completed
-   *   Flag to get last completed or draft submission.
-   *
-   * @return \Drupal\webform\WebformSubmissionInterface|null
-   *   The last completed webform submission for the current user.
-   *
-   * @deprecated Scheduled for removal in Webform 8.x-6.x
-   *   Use $this->getStorage()->getLastSubmission instead.
-   */
-  protected function getLastSubmission($completed = TRUE) {
-    $webform = $this->getWebform();
-    $source_entity = $this->getSourceEntity();
-    $account = $this->getEntity()->getOwner();
-    $options = ($completed) ? ['in_draft' => FALSE] : [];
-    return $this->getStorage()->getLastSubmission($webform, $source_entity, $account, $options);
-  }
-
-  /**
    * Get a webform submission's webform setting.
    *
    * @param string $name
@@ -3039,6 +3004,13 @@ class WebformSubmissionForm extends ContentEntityForm {
     if ($this->operation === 'api') {
       return FALSE;
     }
+
+    // Disable Ajax if the form has its #method set to 'get'.
+    $elements = $this->getWebform()->getElementsInitialized();
+    if (isset($elements['#method']) && $elements['#method'] === 'get') {
+      return FALSE;
+    }
+
     return $this->getWebformSetting('ajax', FALSE);
   }
 

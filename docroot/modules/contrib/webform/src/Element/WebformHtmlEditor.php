@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformXss;
 
 /**
@@ -103,6 +104,13 @@ class WebformHtmlEditor extends FormElement {
         '#type' => 'text_format',
         '#format' => $format,
         '#allowed_formats' => [$format],
+        // Do not allow the text format value to be cleared when the text format
+        // is hidden via #states. We must use a wrapper <div> because
+        // The TextFormat element does not support #attributes.
+        // @see \Drupal\webform\Plugin\WebformElement\TextFormat::preRenderFixTextFormatStates
+        // @see \Drupal\filter\Element\TextFormat
+        '#prefix' => '<div data-webform-states-no-clear>',
+        '#suffix' => '</div>',
       ];
       WebformElementHelper::fixStatesWrapper($element);
       return $element;
@@ -143,7 +151,7 @@ class WebformHtmlEditor extends FormElement {
     }
 
     if (!empty($element['#states'])) {
-      webform_process_states($element, '#wrapper_attributes');
+      WebformFormHelper::processStates($element, '#wrapper_attributes');
     }
 
     return $element;

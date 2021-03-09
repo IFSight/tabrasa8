@@ -54,7 +54,7 @@ abstract class WebformVariantFormBase extends FormBase {
   }
 
   /**
-   * Constructs a WebformVariantFormBase.
+   * Constructs a WebformVariantFormBase object.
    *
    * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
    *   The webform token manager.

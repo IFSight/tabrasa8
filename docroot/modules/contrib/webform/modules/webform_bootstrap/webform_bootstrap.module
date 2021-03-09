@@ -46,13 +46,6 @@ function webform_bootstrap_webform_element_alter(array &$element, FormStateInter
     return;
   }
 
-  // Remove jQuery Tooltip and use Bootstrap Tooltip.
-  // @see \Drupal\webform\Plugin\WebformElementBase::prepare
-  if (isset($element['#attached']['library'][0]) && $element['#attached']['library'][0] === 'webform/webform.tooltip') {
-    unset($element['#attached']['library'][0]);
-    $element['#attached']['library'] = array_values($element['#attached']['library']);
-  }
-
   // Convert #description are being changed smart descriptions which
   // contain render arrays to rendered markup.
   // @see \Drupal\bootstrap\Utility\Element::smartDescription
@@ -98,28 +91,6 @@ function webform_bootstrap_webform_element_alter(array &$element, FormStateInter
         }
       }
     }
-  }
-}
-
-/**
- * Implements hook_js_alter().
- */
-function webform_bootstrap_js_alter(&$javascript, AttachedAssetsInterface $assets) {
-  if (!_webform_bootstrap_is_active_theme()) {
-    return;
-  }
-
-  // Make sure jQuery tooltip is never loaded and use
-  // bootstrap specific webform.element.help.js.
-  foreach ($javascript as $javascript_path => $javascript_item) {
-    if (strpos($javascript_path, 'tooltip-min') !== FALSE) {
-      unset($javascript[$javascript_path]);
-    }
-  }
-  $webform_help_path = drupal_get_path('module', 'webform') . '/js/webform.element.help.js';
-  $webform_bootstrap_help_path = drupal_get_path('module', 'webform_bootstrap') . '/js/webform.element.help.js';;
-  if (isset($javascript[$webform_help_path])) {
-    $javascript[$webform_help_path]['data'] = $webform_bootstrap_help_path;
   }
 }
 

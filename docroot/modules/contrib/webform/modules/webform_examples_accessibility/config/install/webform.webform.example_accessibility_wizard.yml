@@ -28,10 +28,10 @@ elements: |
     last_name:
       '#title': 'Last Name'
       '#type': textfield
-    gender:
+    sex:
       '#type': webform_radios_other
-      '#title': Gender
-      '#options': gender
+      '#title': Sex
+      '#options': sex
   contact:
     '#title': 'Contact Information'
     '#type': webform_wizard_page
@@ -77,7 +77,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false

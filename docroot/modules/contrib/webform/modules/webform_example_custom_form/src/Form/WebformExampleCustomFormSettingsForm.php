@@ -318,10 +318,10 @@ class WebformExampleCustomFormSettingsForm extends ConfigFormBase {
           '#type' => 'textfield',
           '#title' => 'Last name',
         ],
-        'gender' => [
+        'sex' => [
           '#type' => 'webform_select_other',
-          '#options' => 'gender',
-          '#title' => 'Gender',
+          '#options' => 'sex',
+          '#title' => 'Sex',
         ],
         'martial_status' => [
           '#type' => 'webform_select_other',

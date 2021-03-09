@@ -4,11 +4,8 @@ namespace Drupal\webform\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\webform\Plugin\WebformHandler\EmailWebformHandler;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformRequestInterface;
-use Drupal\webform\WebformSubmissionGenerateInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -40,30 +37,14 @@ class WebformTestController extends ControllerBase implements ContainerInjection
   protected $generate;
 
   /**
-   * Constructs a WebformTestController object.
-   *
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
-   * @param \Drupal\webform\WebformRequestInterface $request_handler
-   *   The webform request handler.
-   * @param \Drupal\webform\WebformSubmissionGenerateInterface $submission_generate
-   *   The webform submission generation service.
-   */
-  public function __construct(MessengerInterface $messenger, WebformRequestInterface $request_handler, WebformSubmissionGenerateInterface $submission_generate) {
-    $this->messenger = $messenger;
-    $this->requestHandler = $request_handler;
-    $this->generate = $submission_generate;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('messenger'),
-      $container->get('webform.request'),
-      $container->get('webform_submission.generate')
-    );
+    $instance = parent::create($container);
+    $instance->messenger = $container->get('messenger');
+    $instance->requestHandler = $container->get('webform.request');
+    $instance->generate = $container->get('webform_submission.generate');
+    return $instance;
   }
 
   /**
