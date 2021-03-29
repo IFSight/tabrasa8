@@ -1,0 +1,14 @@
+uuid: 82c12790-8f06-46b2-958e-95d03655fad2
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+id: default_media
+label: 'Default Media Pattern (Fallback - last on list)'
+type: 'canonical_entities:media'
+pattern: '/media/[media:name]'
+selection_criteria: {  }
+selection_logic: and
+weight: 0
+relationships: {  }
