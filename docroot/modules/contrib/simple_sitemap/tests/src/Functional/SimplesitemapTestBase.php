@@ -18,7 +18,7 @@ abstract class SimplesitemapTestBase extends BrowserTestBase {
    *
    * @var string[]
    */
-  public static $modules = [
+  protected static $modules = [
     'simple_sitemap',
     'node',
     'content_translation',

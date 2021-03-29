@@ -51,7 +51,7 @@
         "drupal/role_delegation": "^1.1",
         "drupal/scheduler": "^1.0",
         "drupal/search_api": "^1.12",
-        "drupal/simple_sitemap": "^3.0",
+        "drupal/simple_sitemap": "^3.9",
         "drupal/slick": "^2.2",
         "drupal/slick_browser": "^2.1",
         "drupal/smtp": "^1.0@beta",

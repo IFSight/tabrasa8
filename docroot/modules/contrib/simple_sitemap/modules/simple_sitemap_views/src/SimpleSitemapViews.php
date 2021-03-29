@@ -7,7 +7,6 @@ use Drupal\simple_sitemap\SimplesitemapManager;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Database\Query\Condition;
 use Drupal\views\ViewEntityInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Queue\QueueFactory;
@@ -263,7 +262,7 @@ class SimpleSitemapViews {
 
     // Check that the current number of rows in the index does not
     // exceed the specified number.
-    $condition = new Condition('AND');
+    $condition = Database::getConnection()->condition('AND');
     $condition->condition('view_id', $view->id());
     $condition->condition('display_id', $view->current_display);
     $settings = $this->getSitemapSettings($view, $variant);

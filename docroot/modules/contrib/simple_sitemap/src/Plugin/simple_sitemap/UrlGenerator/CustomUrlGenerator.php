@@ -120,8 +120,9 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
 
     $path_data = [
       'url' => $url_object,
-      'lastmod' => method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime()) : NULL,
+      'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
+        ? date('c', $entity->getChangedTime())
+        : NULL,
       'priority' => isset($data_set['priority']) ? $data_set['priority'] : NULL,
       'changefreq' => !empty($data_set['changefreq']) ? $data_set['changefreq'] : NULL,
       'images' => $this->includeImages && !empty($entity)

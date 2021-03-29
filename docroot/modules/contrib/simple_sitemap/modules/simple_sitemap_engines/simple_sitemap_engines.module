@@ -14,28 +14,22 @@
  * @see Drupal\simple_sitemap_engines\Plugin\QueueWorker\SitemapSubmitter
  */
 function simple_sitemap_engines_cron() {
-
-  /** @var \Drupal\Core\Config\Config $config */
   $config = \Drupal::config('simple_sitemap_engines.settings');
 
   if ($config->get('enabled')) {
     $interval = (int) $config->get('submission_interval') * 60 * 60;
     $request_time = \Drupal::service('datetime.time')->getRequestTime();
-    $state = \Drupal::state();
 
-    if ($interval === 0
-      || $state->get('simple_sitemap_engines_last_submitted', 0) + $interval <= $request_time) {
-
-      /** @var \Drupal\Core\Queue\QueueInterface $queue */
-      $queue = \Drupal::queue('simple_sitemap_engine_submit');
-
-      $state->set('simple_sitemap_engines_last_submitted', $request_time);
-      foreach (\Drupal::entityTypeManager()
-                 ->getStorage('simple_sitemap_engine')
-                 ->loadMultiple() as $id => $engine) {
-        if (!empty($engine->sitemap_variants)) {
-          $queue->createItem($id);
-        }
+    foreach (\Drupal::entityTypeManager()
+      ->getStorage('simple_sitemap_engine')
+      ->loadMultiple() as $id => $engine) {
+      $last_submitted = \Drupal::state()->get("simple_sitemap_engines.simple_sitemap_engine.{$id}.last_submitted", -1);
+      if ($last_submitted !== -1
+        && $last_submitted + $interval > $request_time) {
+        continue;
+      }
+      if (!empty($engine->sitemap_variants)) {
+        \Drupal::queue('simple_sitemap_engine_submit')->createItem($id);
       }
     }
   }

@@ -48,6 +48,7 @@ services:
     arguments:
     - 'simple_sitemap_elements'
     - '@database'
+    - '@datetime.time'
 
   simple_sitemap.sitemap_writer:
     class: Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator\SitemapWriter
@@ -61,6 +62,7 @@ services:
     arguments:
       - '@entity_type.manager'
       - '@entity_type.bundle.info'
+      - '@config.factory'
 
   simple_sitemap.form_helper:
     class: Drupal\simple_sitemap\Form\FormHelper
