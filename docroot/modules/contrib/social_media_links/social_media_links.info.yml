@@ -4,7 +4,7 @@ type: module
 core: 8.x
 core_version_requirement: ^8 || ^9
 
-# Information added by Drupal.org packaging script on 2020-07-24
-version: '8.x-2.7'
+# Information added by Drupal.org packaging script on 2021-03-08
+version: '8.x-2.8'
 project: 'social_media_links'
-datestamp: 1595616930
+datestamp: 1615222641

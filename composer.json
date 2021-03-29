@@ -55,7 +55,7 @@
         "drupal/slick": "^2.2",
         "drupal/slick_browser": "^2.1",
         "drupal/smtp": "^1.0@beta",
-        "drupal/social_media_links": "^2.6",
+        "drupal/social_media_links": "^2.8",
         "drupal/token": "^1.0",
         "drupal/twig_tweak": "^2.0",
         "drupal/ultimate_cron": "^2.0@alpha",

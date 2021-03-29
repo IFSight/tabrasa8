@@ -94,7 +94,7 @@ final class Versions
   'drupal/slick' => '2.2.0@8.x-2.2',
   'drupal/slick_browser' => '2.1.0@8.x-2.1',
   'drupal/smtp' => '1.0.0@8.x-1.0',
-  'drupal/social_media_links' => '2.7.0@8.x-2.7',
+  'drupal/social_media_links' => '2.8.0@8.x-2.8',
   'drupal/token' => '1.9.0@8.x-1.9',
   'drupal/twig_tweak' => '2.9.0@8.x-2.9',
   'drupal/ultimate_cron' => '2.0.0-alpha5@8.x-2.0-alpha5',
@@ -261,7 +261,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.2@c8e5dbe65caef285fec8057a4c718a0d4138d1ee',
   'webmozart/assert' => '1.9.1@bafc69caeb4d49c39fd0779086c03a3738cbb389',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-sec-updates@aa9555c9613f3e758aea0eedebe56d0b70b9704d',
+  'drupal/drupal' => 'dev-sec-updates@38134d945aada8dfe30f996d620d2bf0b44af6f7',
 );
 
     private function __construct()

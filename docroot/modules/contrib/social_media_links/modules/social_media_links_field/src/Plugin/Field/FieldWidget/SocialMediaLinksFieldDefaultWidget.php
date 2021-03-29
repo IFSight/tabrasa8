@@ -23,7 +23,7 @@ class SocialMediaLinksFieldDefaultWidget extends SocialMediaLinksFieldBaseWidget
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $item = $items[$delta];
-    $value = $item->getEntity()->isNew() ? [] : $item->toArray();
+    $value = $item->toArray();
 
     $element += [
       '#type' => 'details',
@@ -39,7 +39,12 @@ class SocialMediaLinksFieldDefaultWidget extends SocialMediaLinksFieldBaseWidget
         '#default_value' => isset($value['platform_values'][$platform_id]['value']) ? $value['platform_values'][$platform_id]['value'] : '',
         '#field_prefix' => $platform['instance']->getUrlPrefix(),
         '#field_suffix' => $platform['instance']->getUrlSuffix(),
-        '#element_validate' => [[get_class($platform['instance']), 'validateValue']],
+        '#element_validate' => [
+          [
+            get_class($platform['instance']),
+            'validateValue',
+          ],
+        ],
       ];
       if (!empty($platform['instance']->getFieldDescription())) {
         $element['platform_values'][$platform_id]['value']['#description'] = $platform['instance']->getFieldDescription();
