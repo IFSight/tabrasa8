@@ -4,6 +4,12 @@
 
 Extension for [PHPStan](https://phpstan.org/) to allow analysis of Drupal code.
 
+## Sponsors
+
+<a href="https://www.undpaul.de/"><img src="https://www.undpaul.de/themes/custom/undpaul3/logo.svg" alt="undpaul" width="250" /></a> <a href="https://www.intracto.com/"><img src="https://digidak.be/wp-content/uploads/2020/03/logo-intracto-base-positief-grijs-blauw@4x-rgb.png" alt="Intracto" width="225" /></a>
+
+[Would you like to sponsor?](https://github.com/sponsors/mglaman)
+
 ## Usage
 
 When you are using [`phpstan/extension-installer`](https://github.com/phpstan/extension-installer), `phpstan.neon` will be automatically included.
