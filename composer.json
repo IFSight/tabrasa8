@@ -39,7 +39,7 @@
         "drupal/linkit": "^5.0",
         "drupal/mailsystem": "^4.1",
         "drupal/menu_block": "^1.4",
-        "drupal/metatag": "^1.4",
+        "drupal/metatag": "^1.16",
         "drupal/paragraphs": "^1.2",
         "drupal/pathauto": "^1.0",
         "drupal/plupload": "^1.0@beta",
