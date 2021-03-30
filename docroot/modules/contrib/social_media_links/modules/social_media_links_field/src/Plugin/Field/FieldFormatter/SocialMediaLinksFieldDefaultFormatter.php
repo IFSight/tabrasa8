@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_media_links\IconsetBase;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Plugin implementation of the 'social_media_links_field_default' formatter.
@@ -20,6 +21,8 @@ use Drupal\Core\Template\Attribute;
  * )
  */
 class SocialMediaLinksFieldDefaultFormatter extends FormatterBase {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -149,11 +152,11 @@ class SocialMediaLinksFieldDefaultFormatter extends FormatterBase {
       $config['appearance']['show_name'] = 0;
     }
 
-    $orientation = $config['appearance']['orientation'] == 'v' ? t('vertical') : t('horizontal');
-    $summary[] = t('Orientation: @orientation', ['@orientation' => $orientation]);
+    $orientation = $config['appearance']['orientation'] == 'v' ? $this->t('vertical') : $this->t('horizontal');
+    $summary[] = $this->t('Orientation: @orientation', ['@orientation' => $orientation]);
 
-    $show_name = (isset($config['appearance']['show_name']) && $config['appearance']['show_name']) ? t('Yes') : t('No');
-    $summary[] = t('Show name: @show_name', ['@show_name' => $show_name]);
+    $show_name = (isset($config['appearance']['show_name']) && $config['appearance']['show_name']) ? $this->t('Yes') : $this->t('No');
+    $summary[] = $this->t('Show name: @show_name', ['@show_name' => $show_name]);
 
     return $summary;
   }
@@ -176,7 +179,7 @@ class SocialMediaLinksFieldDefaultFormatter extends FormatterBase {
     }
 
     $platforms = [];
-    foreach ($items as $delta => $item) {
+    foreach ($items as $item) {
       // We have two possible structures where the platform values can be
       // stored.
       // * If the select widget was used the values are saved in two fields

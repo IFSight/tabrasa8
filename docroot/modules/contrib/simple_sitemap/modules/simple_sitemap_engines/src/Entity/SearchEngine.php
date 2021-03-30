@@ -64,13 +64,6 @@ class SearchEngine extends ConfigEntityBase {
   public $sitemap_variants;
 
   /**
-   * Timestamp when the sitemap was last submitted to this search engine.
-   *
-   * @var int
-   */
-  public $last_submitted;
-
-  /**
    * Implements magic __toString() to simplify checkbox list building.
    *
    * @return string

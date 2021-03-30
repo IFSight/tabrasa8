@@ -69,6 +69,57 @@ function easy_breadcrumb_update_8005() {
 }
 
 /**
+ * Fix configuration.
+ */
+function easy_breadcrumb_update_8006() {
+  $config = \Drupal::configFactory()->getEditable(EasyBreadcrumbConstants::MODULE_SETTINGS);
+
+  $config
+    // This key is now named 'add_structured_data_json_ld'.
+    ->clear('add_structured_data_jsonld')
+    // This key is unnecessary.
+    ->clear('dependencies');
+
+  // Add missing keys if not present.
+  $potentially_missing_keys = [
+    EasyBreadcrumbConstants::ADD_STRUCTURED_DATA_JSON_LD => FALSE,
+    EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS => [],
+    EasyBreadcrumbConstants::INCLUDE_INVALID_PATHS => FALSE,
+    EasyBreadcrumbConstants::EXCLUDED_PATHS => '',
+    EasyBreadcrumbConstants::REPLACED_TITLES => '',
+    EasyBreadcrumbConstants::CUSTOM_PATHS => '',
+    EasyBreadcrumbConstants::TITLE_SEGMENT_AS_LINK => FALSE,
+  ];
+  $data = $config->get();
+  foreach ($potentially_missing_keys as $key => $default) {
+    if (!isset($data[$key])) {
+      $config->set($key, $default);
+    }
+  }
+
+  // Fix variable types.
+  $config->set(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_FIRST_LETTER, (bool) $config->get(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_FIRST_LETTER));
+  $config->set(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_CASE_SENSITIVITY, (bool) $config->get(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS_CASE_SENSITIVITY));
+  $config->set(EasyBreadcrumbConstants::ADD_STRUCTURED_DATA_JSON_LD, (bool) $config->get(EasyBreadcrumbConstants::ADD_STRUCTURED_DATA_JSON_LD));
+
+  // Change 'capitalizator_ignored_words' and 'capitalizator_forced_words' to be
+  // lists rather than maps.
+  $config->set(EasyBreadcrumbConstants::CAPITALIZATOR_IGNORED_WORDS, array_values($config->get(EasyBreadcrumbConstants::CAPITALIZATOR_IGNORED_WORDS) ?: []));
+  $config->set(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS, array_values($config->get(EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS) ?: []));
+
+  $config->save(TRUE);
+}
+
+/**
+ * Enable follow redirects.
+ */
+function easy_breadcrumb_update_8007() {
+  $config = \Drupal::configFactory()->getEditable(EasyBreadcrumbConstants::MODULE_SETTINGS);
+  $config->set(EasyBreadcrumbConstants::FOLLOW_REDIRECTS, TRUE);
+  $config->save(TRUE);
+}
+
+/**
  * Implements hook_install().
  *
  * Help users get started with the module.

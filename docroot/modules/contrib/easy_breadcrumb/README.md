@@ -25,7 +25,7 @@ to automatically extract the breadcrumb's segments and its respective links.
 The module is really a plug and play module because it auto-generates the
 breadcrumb by using the current URL and nothing extra is needed.
 
- * For a full description of the module visit:
+ * For the description of the module visit:
    https://www.drupal.org/project/easy_breadcrumb
    or
    https://www.drupal.org/docs/8/improve-the-breadcrumbs

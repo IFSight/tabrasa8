@@ -52,6 +52,11 @@ class EasyBreadcrumbConstants {
   const INCLUDE_HOME_SEGMENT = 'include_home_segment';
 
   /**
+   * Alternative title field for breadcrumbs.
+   */
+  const ALTERNATIVE_TITLE_FIELD = 'alternative_title_field';
+
+  /**
    * Title for the front page segment.
    */
   const HOME_SEGMENT_TITLE = 'home_segment_title';
@@ -145,6 +150,36 @@ class EasyBreadcrumbConstants {
    * Flag for adding the breadcrumb as structured to the HTML head.
    */
   const ADD_STRUCTURED_DATA_JSON_LD = 'add_structured_data_json_ld';
+
+  /**
+   * Follow redirects in case the redirect module is enabled.
+   */
+  const FOLLOW_REDIRECTS = 'follow_redirects';
+
+  /**
+   * Limit breadcrumb trail segments.
+   */
+  const LIMIT_SEGMENT_DISPLAY = 'limit_segment_display';
+
+  /**
+   * Breadcrumb segment count.
+   */
+  const SEGMENT_DISPLAY_LIMIT = 'segment_display_limit';
+
+  /**
+   * Breadcrumb truncator mode.
+   */
+  const TRUNCATOR_MODE = 'truncator_mode';
+
+  /**
+   * Breadcrumb truncator length.
+   */
+  const TRUNCATOR_LENGTH = 'truncator_length';
+
+  /**
+   * Breadcrumbs truncator dots.
+   */
+  const TRUNCATOR_DOTS = 'truncator_dots';
 
   /**
    * Default list of excluded paths.

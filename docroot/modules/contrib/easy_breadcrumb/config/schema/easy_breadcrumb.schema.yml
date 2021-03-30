@@ -20,6 +20,10 @@ easy_breadcrumb.settings:
     include_home_segment:
       type: boolean
       label: 'Include the front page as a segment in the breadcrumb'
+    alternative_title_field:
+      type: label
+      label: 'Alternative title field for the breadcrumb'
+      translatable: true
     home_segment_title:
       type: label
       label: 'Title for the front page segment in the breadcrumb'
@@ -60,9 +64,48 @@ easy_breadcrumb.settings:
     term_hierarchy:
       type: boolean
       label: 'Use term hierarchy'
-    add_structured_data_jsonld:
-      type: boolean
-      label: 'Add current breadcrumb as structured data in JSON-LD to the HTML head'
     use_site_title:
       type: boolean
       label: 'Use site title for the front page segment in the breadcrumb'
+    add_structured_data_json_ld:
+      type: boolean
+      label: 'Add current breadcrumb as structured data in JSON-LD to the HTML head'
+    capitalizator_mode:
+      type: string
+      label: 'Transformation mode for the segments titles'
+    capitalizator_ignored_words:
+      type: sequence
+      label: 'Words to be ignored by the capitalizator'
+      sequence:
+        type: text
+        label: 'Ignored word'
+    capitalizator_forced_words:
+      type: sequence
+      label: 'Words to be forced to capitalized by the capitalizator'
+      sequence:
+        type: text
+        label: 'Forced word'
+    capitalizator_forced_words_case_sensitivity:
+      type: boolean
+      label: 'Use case sensitivity when matching words to be forced to capitalization.'
+    capitalizator_forced_words_first_letter:
+      type: boolean
+      label: 'Make the first letters of each segment capitalized.'
+    follow_redirects:
+      type: boolean
+      label: 'Follow redirects if the redirect module is enabled.'
+    limit_segment_display:
+      type: boolean
+      label: 'Limit breadcrumb trail segments'
+    segment_display_limit:
+      type: number
+      label: 'Breadcrumb segment count'
+    truncator_mode:
+      type: boolean
+      label: 'Enable truncation for titles.'
+    truncator_length:
+      type: text
+      label: 'Set the limit for truncation.'
+    truncator_dots:
+      type: boolean
+      label: 'Enable dots at the end of truncation.'

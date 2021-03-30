@@ -10,9 +10,9 @@
 
 ## INTRODUCTION ##
 
-Author and maintainer: Pawel Ginalski (gbyte.co)
- * Drupal: https://www.drupal.org/u/gbyte.co
- * Personal: https://gbyte.co/
+Author and maintainer: Pawel Ginalski (gbyte)
+ * Drupal: https://www.drupal.org/u/gbyte
+ * Personal: https://gbyte.dev/
 
 The module generates multilingual XML sitemaps which adhere to Google's new
 hreflang standard. Out of the box the sitemaps index most of Drupal's
@@ -24,7 +24,7 @@ content entity types including:
  * users
  * ...
 
-Contributed entity types like commerce products or media entities can be indexed
+Contributed entity types like commerce products can be indexed
 as well. On top of that custom links and view pages can be added to sitemaps.
 
 To learn about XML sitemaps, see https://en.wikipedia.org/wiki/Sitemaps.
@@ -94,7 +94,7 @@ To include custom links into a sitemap, visit
 ### SETTINGS ###
 
 The settings page can be found under admin/config/search/simplesitemap.
-Here the module can be configured and the sitemaps can be manually regenerated.
+Here the module can be configured and the sitemaps manually regenerated.
 
 #### VARIANTS ####
 
@@ -170,6 +170,8 @@ programmatic sitemap generation. These include:
     * removeSitemapVariants
  * getQueueWorker
     * getInitialElementCount
+    * getQueuedElementCount
+    * getStashedResultCount
     * getProcessedElementCount
     * generationInProgress
 
@@ -193,7 +195,7 @@ $generator
   ->generateSitemap();
 ```
 
-See https://gbyte.co/projects/simple-xml-sitemap and code documentation in 
+See https://gbyte.dev/projects/simple-xml-sitemap and code documentation in 
 Drupal\simple_sitemap\Simplesitemap for further details.
 
 ### API HOOKS ###
@@ -249,7 +251,7 @@ the settings array of the new generator plugin's annotation. See how the
 EntityUrlGenerator is overwritten by the EntityMenuLinkContentUrlGenerator to
 facilitate a different logic for menu links.
 
-See https://gbyte.co/projects/simple-xml-sitemap for further details.
+See https://gbyte.dev/projects/simple-xml-sitemap for further details.
 
 ## HOW CAN YOU CONTRIBUTE? ##
 
@@ -264,9 +266,9 @@ See https://gbyte.co/projects/simple-xml-sitemap for further details.
    donation will be much appreciated.
    https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5AFYRSBLGSC3W
    
- * Feel free to contact me for paid support: https://gbyte.co/contact
+ * Feel free to contact me for paid support: https://gbyte.dev/contact
 
 ## MAINTAINERS ##
 
 Current maintainers:
- * Pawel Ginalski (gbyte.co) - https://www.drupal.org/u/gbyte.co
+ * Pawel Ginalski (gbyte) - https://www.drupal.org/u/gbyte

@@ -109,7 +109,12 @@ class SocialMediaLinksPlatforms extends FormElement {
       '#default_value' => isset($value['value']) ? $value['value'] : '',
       '#field_prefix' => $selected_platform['instance']->getUrlPrefix(),
       '#field_suffix' => $selected_platform['instance']->getUrlSuffix(),
-      '#element_validate' => [[get_class($selected_platform['instance']), 'validateValue']],
+      '#element_validate' => [
+        [
+          get_class($selected_platform['instance']),
+          'validateValue',
+        ],
+      ],
     ];
     if (!empty($selected_platform['instance']->getFieldDescription())) {
       $element['value']['#description'] = $selected_platform['instance']->getFieldDescription();

@@ -2,13 +2,31 @@
 
 namespace Drupal\simple_sitemap\Queue;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Queue\DatabaseQueue;
+use Drupal\Component\Datetime\Time;
 
 /**
  * Class SimplesitemapQueue
  * @package Drupal\simple_sitemap\Queue
  */
 class SimplesitemapQueue extends DatabaseQueue {
+
+  /**
+   * @var \Drupal\Component\Datetime\Time
+   */
+  protected $time;
+
+  /**
+   * SimplesitemapQueue constructor.
+   * @param $name
+   * @param \Drupal\Core\Database\Connection $connection
+   * @param \Drupal\Component\Datetime\Time $time
+   */
+  public function __construct($name, Connection $connection, Time $time) {
+    parent::__construct($name, $connection);
+    $this->time = $time;
+  }
 
   /**
    * Overrides \Drupal\Core\Queue\DatabaseQueue::claimItem().
@@ -61,7 +79,7 @@ class SimplesitemapQueue extends DatabaseQueue {
       $query->values([
         $this->name,
         serialize($data),
-        time(),
+        $this->time->getRequestTime(),
       ]);
     }
 

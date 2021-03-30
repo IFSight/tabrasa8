@@ -6,7 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\simple_sitemap_views\SimpleSitemapViews;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Database\Query\Condition;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**
@@ -108,7 +108,7 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
 
         // Delete records about sets of arguments that are no longer indexed.
         $args_ids = $this->sitemapViews->getArgumentsStringVariations($args_ids);
-        $condition = new Condition('AND');
+        $condition = Database::getConnection()->condition('AND');
         $condition->condition('view_id', $view_id);
         $condition->condition('display_id', $display_id);
         $condition->condition('arguments_ids', $args_ids, 'NOT IN');
@@ -130,7 +130,7 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
 
         // Check if the records limit for display is exceeded.
         if ($max_links > 0) {
-          $condition = new Condition('AND');
+          $condition = Database::getConnection()->condition('AND');
           $condition->condition('view_id', $view_id);
           $condition->condition('display_id', $display_id);
 
@@ -144,7 +144,7 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
 
       // Delete records about view displays that do not exist or are disabled.
       if (!empty($display_ids)) {
-        $condition = new Condition('AND');
+        $condition = Database::getConnection()->condition('AND');
         $condition->condition('view_id', $view_id);
         $condition->condition('display_id', $display_ids, 'NOT IN');
         $this->sitemapViews->removeArgumentsFromIndex($condition);
@@ -157,7 +157,7 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
     // Delete records about the view, if it does not exist, is disabled or it
     // does not have a display whose arguments are indexed.
     if (empty($display_ids)) {
-      $condition = new Condition('AND');
+      $condition = Database::getConnection()->condition('AND');
       $condition->condition('view_id', $view_id);
       $this->sitemapViews->removeArgumentsFromIndex($condition);
     }

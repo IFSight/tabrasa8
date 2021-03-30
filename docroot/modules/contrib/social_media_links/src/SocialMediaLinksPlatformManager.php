@@ -69,7 +69,10 @@ class SocialMediaLinksPlatformManager extends DefaultPluginManager {
       $platforms[$platform_id]['weight'] = isset($settings['platforms'][$platform_id]['weight']) ? $settings['platforms'][$platform_id]['weight'] : $default_weight++;
     }
 
-    uasort($platforms, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
+    uasort($platforms, [
+      'Drupal\Component\Utility\SortArray',
+      'sortByWeightElement',
+    ]);
     return $platforms;
   }
 
@@ -98,7 +101,10 @@ class SocialMediaLinksPlatformManager extends DefaultPluginManager {
     }
 
     if ($sort) {
-      uasort($usedPlatforms, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
+      uasort($usedPlatforms, [
+        'Drupal\Component\Utility\SortArray',
+        'sortByWeightElement',
+      ]);
     }
 
     return $usedPlatforms;

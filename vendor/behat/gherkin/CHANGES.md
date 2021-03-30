@@ -1,3 +1,19 @@
+4.8.0 / 2021-02-04
+==================
+
+* Drop support for PHP before version 7.2
+
+4.7.3 / 2021-02-04
+==================
+
+* Refactored comments parsing to avoid Maximum function nesting level errors
+
+4.7.2 / 2021-02-03
+==================
+
+* Issue where Scenario Outline title was not populated into Examples
+* Updated translations from cucumber 16.0.0
+
 4.7.1 / 2021-01-26
 ==================
 

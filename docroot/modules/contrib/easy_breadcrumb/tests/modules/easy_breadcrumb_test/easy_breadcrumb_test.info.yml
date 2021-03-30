@@ -5,7 +5,7 @@ core: 8.x
 core_version_requirement: ^8 || ^9
 type: module
 
-# Information added by Drupal.org packaging script on 2020-07-22
-version: '8.x-1.13'
+# Information added by Drupal.org packaging script on 2021-03-09
+version: '8.x-1.15'
 project: 'easy_breadcrumb'
-datestamp: 1595377204
+datestamp: 1615310469

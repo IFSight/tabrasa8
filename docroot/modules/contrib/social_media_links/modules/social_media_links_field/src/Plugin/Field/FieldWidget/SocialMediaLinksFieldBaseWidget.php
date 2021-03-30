@@ -5,7 +5,7 @@ namespace Drupal\social_media_links_field\Plugin\Field\FieldWidget;
 use Drupal\Core\Field\WidgetBase;
 
 /**
- * Class SocialMediaLinksFieldBaseWidget.
+ * It allows to link social media.
  */
 abstract class SocialMediaLinksFieldBaseWidget extends WidgetBase {
 
@@ -54,7 +54,10 @@ abstract class SocialMediaLinksFieldBaseWidget extends WidgetBase {
       }
     }
 
-    uasort($available_platforms, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
+    uasort($available_platforms, [
+      'Drupal\Component\Utility\SortArray',
+      'sortByWeightElement',
+    ]);
 
     return $available_platforms;
   }

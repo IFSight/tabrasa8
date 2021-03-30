@@ -28,11 +28,12 @@ Install as normal (see http://drupal.org/documentation/install/modules-themes).
 
 
 CONFIGURATION
-============
+------------
 The module has no special configuration. All settings are available in the
 block settings: /admin/structure/block
 
 
 MAINTAINERS
 -----------
-Neslee Canil Pinto: https://www.drupal.org/u/neslee-canil-pinto
+ * Neslee Canil Pinto: https://www.drupal.org/u/neslee-canil-pinto
+ * Christian Beier: https://www.drupal.org/u/cbeier

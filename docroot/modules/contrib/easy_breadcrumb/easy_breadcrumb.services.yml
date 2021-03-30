@@ -7,3 +7,9 @@ services:
   easy_breadcrumb.structured_data_json_ld:
     class: Drupal\easy_breadcrumb\EasyBreadcrumbStructuredDataJsonLd
     arguments: ['@easy_breadcrumb.breadcrumb', '@config.factory', '@current_route_match']
+  logger.channel.easy_breadcrumb:
+    parent: logger.channel_base
+    arguments: ['easy_breadcrumb']
+  easy_breadcrumb.title_resolver:
+    class: Drupal\easy_breadcrumb\TitleResolver
+    arguments: ['@controller_resolver', '@string_translation', '@http_kernel.controller.argument_resolver']

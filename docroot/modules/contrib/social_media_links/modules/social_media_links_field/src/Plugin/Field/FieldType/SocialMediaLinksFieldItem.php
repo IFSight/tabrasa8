@@ -139,7 +139,10 @@ class SocialMediaLinksFieldItem extends FieldItemBase {
         '#title_display' => 'invisible',
         '#default_value' => $platform['weight'],
         '#attributes' => [
-          'class' => ['platform-order-weight', 'platform-order-weight-' . $platform_id],
+          'class' => [
+            'platform-order-weight',
+            'platform-order-weight-' . $platform_id,
+          ],
         ],
         // Delta: We need to use the max weight + number of platforms,
         // because if they get re-ordered it could start the count again from

@@ -84,6 +84,13 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get(EasyBreadcrumbConstants::INCLUDE_HOME_SEGMENT),
     ];
 
+    $details_general[EasyBreadcrumbConstants::ALTERNATIVE_TITLE_FIELD] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Alternative title field name for breadcrumb'),
+      '#description' => $this->t('This field name is to be added in the entity to display the alternative title in the breadcrumb.'),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::ALTERNATIVE_TITLE_FIELD),
+    ];
+
     $details_general[EasyBreadcrumbConstants::HOME_SEGMENT_TITLE] = [
       '#type' => 'textfield',
       '#title' => $this->t('Title for the front page segment in the breadcrumb'),
@@ -110,6 +117,16 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Use page title as fallback for menu title'),
       '#description' => $this->t('Use page title as fallback if menu title cannot be found. This option works when not using "real page title" above.'),
       '#default_value' => $config->get(EasyBreadcrumbConstants::USE_PAGE_TITLE_AS_MENU_TITLE_FALLBACK),
+      // This option is evaluated only if the USE_MENU_TITLE_AS_FALLBACK
+      // is checked.
+      '#states' => [
+        'disabled' => [
+          ':input[name="' . EasyBreadcrumbConstants::USE_MENU_TITLE_AS_FALLBACK . '"]' => ['checked' => FALSE],
+        ],
+        'invisible' => [
+          ':input[name="' . EasyBreadcrumbConstants::USE_MENU_TITLE_AS_FALLBACK . '"]' => ['checked' => FALSE],
+        ],
+      ],
     ];
 
     $details_general[EasyBreadcrumbConstants::USE_SITE_TITLE] = [
@@ -126,6 +143,13 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get(EasyBreadcrumbConstants::ADD_STRUCTURED_DATA_JSON_LD),
     ];
 
+    $details_general[EasyBreadcrumbConstants::FOLLOW_REDIRECTS] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Follow redirects.'),
+      '#description'   => $this->t('In case the <a href="@href" target="_blank">redirect module</a> is enabled, follow the configured redirects', ['@href' => 'https://www.drupal.org/project/redirect']),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::FOLLOW_REDIRECTS),
+    ];
+
     // Formats the excluded paths array as line separated list of paths
     // before displaying them.
     $excluded_paths = $config->get(EasyBreadcrumbConstants::EXCLUDED_PATHS);
@@ -136,6 +160,20 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Enter a line separated list of paths to be excluded while generating the segments.
 			Paths may use simple regex, i.e.: report/2[0-9][0-9][0-9].'),
       '#default_value' => $excluded_paths,
+    ];
+
+    $details_general[EasyBreadcrumbConstants::LIMIT_SEGMENT_DISPLAY] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Limit breadcrumb trail segments'),
+      '#description' => $this->t('Limit the number of displayed breadcrumb trail segments.'),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::LIMIT_SEGMENT_DISPLAY),
+    ];
+
+    $details_general[EasyBreadcrumbConstants::SEGMENT_DISPLAY_LIMIT] = [
+      '#type' => 'number',
+      '#title' => $this->t('Breadcrumb segment count'),
+      '#description' => $this->t('Number of breadcrumb trail segments to display'),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::SEGMENT_DISPLAY_LIMIT),
     ];
 
     // Formats the excluded paths array as line separated list of paths
@@ -293,6 +331,41 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $details_advanced[EasyBreadcrumbConstants::TRUNCATOR_MODE] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t("Truncate the page's title to a maximum number."),
+      '#description' => t("Example: if you set it to 10, from <em>Long page title</em> will be <em>Long pa...</em>"),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::TRUNCATOR_MODE),
+    ];
+
+    $details_advanced[EasyBreadcrumbConstants::TRUNCATOR_LENGTH] = [
+      '#type' => 'textfield',
+      '#title' => $this->t("Set the limit of truncation"),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::TRUNCATOR_LENGTH),
+      '#states' => [
+        'visible' => [
+          ':input[name="' . EasyBreadcrumbConstants::TRUNCATOR_MODE . '"]' => ['checked' => TRUE],
+        ],
+        'invisible' => [
+          ':input[name="' . EasyBreadcrumbConstants::TRUNCATOR_MODE . '"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
+    $details_advanced[EasyBreadcrumbConstants::TRUNCATOR_DOTS] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t("The truncated page's title will have 3 dots in its end."),
+      '#default_value' => $config->get(EasyBreadcrumbConstants::TRUNCATOR_DOTS),
+      '#states' => [
+        'visible' => [
+          ':input[name="' . EasyBreadcrumbConstants::TRUNCATOR_MODE . '"]' => ['checked' => TRUE],
+        ],
+        'invisible' => [
+          ':input[name="' . EasyBreadcrumbConstants::TRUNCATOR_MODE . '"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
     $form = [];
 
     // Inserts the details for grouping general settings fields.
@@ -309,7 +382,18 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
 
     $settings = $this->configFactory->getEditable(EasyBreadcrumbConstants::MODULE_SETTINGS);
 
+    // Get the values.
     $values = $form_state->cleanValues()->getValues();
+
+    // Convert words lists to arrays where required.
+    $keys_to_process = [
+      EasyBreadcrumbConstants::CAPITALIZATOR_IGNORED_WORDS,
+      EasyBreadcrumbConstants::CAPITALIZATOR_FORCED_WORDS,
+    ];
+    foreach ($keys_to_process as $key) {
+      $values[$key] = $this->processValuesToArray($values[$key]);
+    }
+
     foreach ($values as $field_key => $field_value) {
       $settings->set($field_key, $field_value);
     }
@@ -331,14 +415,7 @@ class EasyBreadcrumbGeneralSettingsForm extends ConfigFormBase {
    *   An array of processed words.
    */
   private function processValuesToArray($words) {
-    $words_arr = [];
-    $words = preg_replace('/\r*\n+/', ' ', $words);
-    $words = trim($words);
-    $words_arr_aux = $words === '' ? [] : preg_split('/\s+/', $words);
-    foreach ($words_arr_aux as $word) {
-      $words_arr[$word] = $word;
-    }
-    return $words_arr;
+    return preg_split('/\s+/', $words, -1, PREG_SPLIT_NO_EMPTY);
   }
 
 }

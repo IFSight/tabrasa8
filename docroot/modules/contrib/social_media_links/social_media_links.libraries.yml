@@ -6,4 +6,4 @@ social_media_links.theme:
 fontawesome.component:
   css:
     component:
-      //maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css: { type: external }
+      //maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css: { type: external }
