@@ -18,7 +18,6 @@
         "drupal/components": "^1.0",
         "drupal/config_ignore": "^2.2",
         "drupal/config_split": "^1.4",
-        "drupal/core": "~8.9",
         "drupal/core-composer-scaffold": "~8.9",
         "drupal/core-recommended": "~8.9",
         "drupal/ctools": "^3.0",

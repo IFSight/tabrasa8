@@ -261,7 +261,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.2@c8e5dbe65caef285fec8057a4c718a0d4138d1ee',
   'webmozart/assert' => '1.10.0@6964c76c7804814a842473e0c8fd15bab0f18e25',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-sec-updates@c73ca410bb8e19ff891b1f12eddced1d26d6986c',
+  'drupal/drupal' => 'dev-master@5125df702a10c703fef5a72038a0bd1ae3d07ba9',
 );
 
     private function __construct()

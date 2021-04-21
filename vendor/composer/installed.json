@@ -1117,20 +1117,6 @@
         "keywords": [
             "Xdebug",
             "performance"
-        ],
-        "funding": [
-            {
-                "url": "https://packagist.com",
-                "type": "custom"
-            },
-            {
-                "url": "https://github.com/composer",
-                "type": "github"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -7015,13 +7001,7 @@
             }
         ],
         "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
-        "homepage": "http://www.drush.org",
-        "funding": [
-            {
-                "url": "https://github.com/weitzman",
-                "type": "github"
-            }
-        ]
+        "homepage": "http://www.drush.org"
     },
     {
         "name": "easyrdf/easyrdf",
@@ -8533,12 +8513,6 @@
             "league",
             "provider",
             "service"
-        ],
-        "funding": [
-            {
-                "url": "https://github.com/philipobenito",
-                "type": "github"
-            }
         ]
     },
     {
@@ -8711,21 +8685,7 @@
                 "email": "nmd.matt@gmail.com"
             }
         ],
-        "description": "CLI tool for running checks on a Drupal code base",
-        "funding": [
-            {
-                "url": "https://github.com/mglaman",
-                "type": "github"
-            },
-            {
-                "url": "https://opencollective.com/phpstan-drupal",
-                "type": "open_collective"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/mglaman/drupal-check",
-                "type": "tidelift"
-            }
-        ]
+        "description": "CLI tool for running checks on a Drupal code base"
     },
     {
         "name": "mglaman/phpstan-drupal",
@@ -8810,21 +8770,7 @@
                 "email": "nmd.matt@gmail.com"
             }
         ],
-        "description": "Drupal extension and rules for PHPStan",
-        "funding": [
-            {
-                "url": "https://github.com/mglaman",
-                "type": "github"
-            },
-            {
-                "url": "https://opencollective.com/phpstan-drupal",
-                "type": "open_collective"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/mglaman/phpstan-drupal",
-                "type": "tidelift"
-            }
-        ]
+        "description": "Drupal extension and rules for PHPStan"
     },
     {
         "name": "mikey179/vfsstream",
@@ -9875,13 +9821,7 @@
                 "name": "Brent R. Matzelle"
             }
         ],
-        "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-        "funding": [
-            {
-                "url": "https://github.com/Synchro",
-                "type": "github"
-            }
-        ]
+        "description": "PHPMailer is a full-featured email creation and transfer class for PHP"
     },
     {
         "name": "phpspec/prophecy",
@@ -9990,21 +9930,7 @@
         "license": [
             "MIT"
         ],
-        "description": "PHPStan - PHP Static Analysis Tool",
-        "funding": [
-            {
-                "url": "https://github.com/ondrejmirtes",
-                "type": "github"
-            },
-            {
-                "url": "https://www.patreon.com/phpstan",
-                "type": "patreon"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
-                "type": "tidelift"
-            }
-        ]
+        "description": "PHPStan - PHP Static Analysis Tool"
     },
     {
         "name": "phpstan/phpstan-deprecation-rules",
@@ -11042,17 +10968,7 @@
                 "role": "maintainer"
             }
         ],
-        "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-        "funding": [
-            {
-                "url": "https://github.com/Ocramius",
-                "type": "github"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/roave/security-advisories",
-                "type": "tidelift"
-            }
-        ]
+        "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it"
     },
     {
         "name": "ruflin/elastica",
@@ -12189,21 +12105,7 @@
             }
         ],
         "description": "Helps you find, load, combine, autofill and validate configuration values of any kind",
-        "homepage": "https://symfony.com",
-        "funding": [
-            {
-                "url": "https://symfony.com/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https://github.com/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                "type": "tidelift"
-            }
-        ]
+        "homepage": "https://symfony.com"
     },
     {
         "name": "symfony/console",
@@ -13431,20 +13333,6 @@
             "polyfill",
             "portable",
             "shim"
-        ],
-        "funding": [
-            {
-                "url": "https://symfony.com/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https://github.com/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
@@ -14008,20 +13896,6 @@
         "keywords": [
             "debug",
             "dump"
-        ],
-        "funding": [
-            {
-                "url": "https://symfony.com/sponsor",
-                "type": "custom"
-            },
-            {
-                "url": "https://github.com/fabpot",
-                "type": "github"
-            },
-            {
-                "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                "type": "tidelift"
-            }
         ]
     },
     {
