@@ -57,9 +57,9 @@ final class Versions
   'drupal/config_filter' => '1.8.0@8.x-1.8',
   'drupal/config_ignore' => '2.3.0@8.x-2.3',
   'drupal/config_split' => '1.7.0@8.x-1.7',
-  'drupal/core' => '8.9.13@a53db77b55a035453d7229e0c3069f8591cb4cb6',
+  'drupal/core' => '8.9.14@84796e158cd3bd50af08974dd62931d0cc78dc7e',
   'drupal/core-composer-scaffold' => '8.9.13@c902d07cb49ef73777e2b33a39e54c2861a8c81d',
-  'drupal/core-recommended' => '8.9.13@7a940fd5b64d2b22366680e2a60d96bf2c10089d',
+  'drupal/core-recommended' => '8.9.14@4e468b0df84cdcf6f30594feb4e080c5c6ea7ab3',
   'drupal/ctools' => '3.4.0@8.x-3.4',
   'drupal/date_popup' => '1.1.0@8.x-1.1',
   'drupal/easy_breadcrumb' => '1.15.0@8.x-1.15',
@@ -261,7 +261,7 @@ final class Versions
   'webflo/drupal-finder' => '1.2.2@c8e5dbe65caef285fec8057a4c718a0d4138d1ee',
   'webmozart/assert' => '1.10.0@6964c76c7804814a842473e0c8fd15bab0f18e25',
   'webmozart/path-util' => '2.3.0@d939f7edc24c9a1bb9c0dee5cb05d8e859490725',
-  'drupal/drupal' => 'dev-sec-updates@c73ca410bb8e19ff891b1f12eddced1d26d6986c',
+  'drupal/drupal' => 'dev-hotfixes/drupal-security-upgrade-989@7803dd3c26e331af4b75ab983e9f823cc5cd4ea8',
 );
 
     private function __construct()
