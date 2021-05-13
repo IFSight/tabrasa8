@@ -11,7 +11,7 @@
   "devDependencies": {
     "breakpoint-sass": "^2.7.1",
     "bulma": "^0.7.2",
-    "gulp": "^4.0.0",
+    "gulp": "^4.0.2",
     "gulp-load-plugins": "^1.5.0",
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.1",
