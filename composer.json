@@ -20,7 +20,7 @@
         "drupal/config_split": "^1.4",
         "drupal/core-composer-scaffold": "~8.9",
         "drupal/core-recommended": "^8.9",
-        "drupal/ctools": "^3.0",
+        "drupal/ctools": "^3.7",
         "drupal/date_popup": "^1.0",
         "drupal/easy_breadcrumb": "^1.15",
         "drupal/elasticsearch_connector": "^6.0@alpha",
